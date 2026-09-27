@@ -1,0 +1,4292 @@
+[
+  {
+    "title_en": "Agate",
+    "title_ru": "Агат",
+    "source_url": "https://tyranny.fandom.com/wiki/Agate",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Aquamarine",
+    "title_ru": "Аквамарин",
+    "source_url": "https://tyranny.fandom.com/wiki/Aquamarine",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Scarlet Fury Gloves",
+    "title_ru": "Алая Фурия Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_Fury_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Amethyst",
+    "title_ru": "Аметист",
+    "source_url": "https://tyranny.fandom.com/wiki/Amethyst",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Artifact abilities",
+    "title_ru": "Артефакт абилитиес",
+    "source_url": "https://tyranny.fandom.com/wiki/Artifact_abilities",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Artifact weapons",
+    "title_ru": "Артефакт веапонс",
+    "source_url": "https://tyranny.fandom.com/wiki/Artifact_weapons",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Crimson greatspear",
+    "title_ru": "Багряное большое копьё",
+    "source_url": "https://tyranny.fandom.com/wiki/Crimson_greatspear",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Crimson Studded Leather Gloves",
+    "title_ru": "Багряные перчатки из клёпаной кожи",
+    "source_url": "https://tyranny.fandom.com/wiki/Crimson_Studded_Leather_Gloves",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Gambler's Treads",
+    "title_ru": "Башмаки игрока",
+    "source_url": "https://tyranny.fandom.com/wiki/Gambler%27s_Treads",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Beastwoman claw",
+    "title_ru": "Беаствоман клав",
+    "source_url": "https://tyranny.fandom.com/wiki/Beastwoman_claw",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Beastman claw",
+    "title_ru": "Беастман клав",
+    "source_url": "https://tyranny.fandom.com/wiki/Beastman_claw",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Beastmen fang",
+    "title_ru": "Беастмен фанг",
+    "source_url": "https://tyranny.fandom.com/wiki/Beastmen_fang",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bent bronze dagger",
+    "title_ru": "Бент бронзовый кинжал",
+    "source_url": "https://tyranny.fandom.com/wiki/Bent_bronze_dagger",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bent bronze sword",
+    "title_ru": "Бент бронзовый меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Bent_bronze_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ashe's Favor",
+    "title_ru": "Благосклонность Эша",
+    "source_url": "https://tyranny.fandom.com/wiki/Ashe%27s_Favor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloodstained Map",
+    "title_ru": "Блоодстаинед Мап",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloodstained_Map",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bronze Brotherhood warhammer",
+    "title_ru": "Боевой молот Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_warhammer",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Greater healing potion",
+    "title_ru": "Большое зелье лечения",
+    "source_url": "https://tyranny.fandom.com/wiki/Greater_healing_potion",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Greatbow",
+    "title_ru": "Большой лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Greatbow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken armor",
+    "title_ru": "Брокен броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken javelin",
+    "title_ru": "Брокен дротик",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_javelin",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken dha",
+    "title_ru": "Брокен дха",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_dha",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken dagger",
+    "title_ru": "Брокен кинжал",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_dagger",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken spear (item)",
+    "title_ru": "Брокен копьё (итем)",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_spear_%28item%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken bow",
+    "title_ru": "Брокен лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_bow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken hammer",
+    "title_ru": "Брокен молот",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_hammer",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken Disfavored buckler",
+    "title_ru": "Брокен Опальные букклер",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_Disfavored_buckler",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken staff",
+    "title_ru": "Брокен посох",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_staff",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken skull mask",
+    "title_ru": "Брокен скулл маска",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_skull_mask",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken axe",
+    "title_ru": "Брокен топор",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_axe",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken falx",
+    "title_ru": "Брокен фалкс",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_falx",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken helmet",
+    "title_ru": "Брокен шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_helmet",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Broken shield",
+    "title_ru": "Брокен щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_shield",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bronze halberd",
+    "title_ru": "Бронзовая алебарда",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_halberd",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze warmace",
+    "title_ru": "Бронзовая боевая булава",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_warmace",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze mace",
+    "title_ru": "Бронзовая булава",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_mace",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze greataxe",
+    "title_ru": "Бронзовая секира",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_greataxe",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze spear",
+    "title_ru": "Бронзовое копьё",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_spear",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze Bracers",
+    "title_ru": "Бронзовые наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Bracers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze tower shield",
+    "title_ru": "Бронзовый башенный щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_tower_shield",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze greatsword",
+    "title_ru": "Бронзовый двуручный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_greatsword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze javelin",
+    "title_ru": "Бронзовый дротик",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_javelin",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze dha",
+    "title_ru": "Бронзовый дха",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_dha",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze katar",
+    "title_ru": "Бронзовый катар",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_katar",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze dagger",
+    "title_ru": "Бронзовый кинжал",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_dagger",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze shortsword",
+    "title_ru": "Бронзовый короткий меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_shortsword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze throwing dagger",
+    "title_ru": "Бронзовый метательный кинжал",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_throwing_dagger",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze sword",
+    "title_ru": "Бронзовый меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_sword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Ardent bronze sword",
+    "title_ru": "Бронзовый меч Горячих Кровей",
+    "source_url": "https://tyranny.fandom.com/wiki/Ardent_bronze_sword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze dao sword",
+    "title_ru": "Бронзовый меч дао",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_dao_sword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze hammer",
+    "title_ru": "Бронзовый молот",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_hammer",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze Bulwark",
+    "title_ru": "Бронзовый оплот",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Bulwark",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze axe",
+    "title_ru": "Бронзовый топор",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_axe",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze Tabar axe",
+    "title_ru": "Бронзовый топор-табар",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Tabar_axe",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze shotel",
+    "title_ru": "Бронзовый шотел",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_shotel",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Scarlet Fury Armor",
+    "title_ru": "Броня Алой Фурии",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_Fury_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Crimson Spear Armor",
+    "title_ru": "Броня Багряного Копья",
+    "source_url": "https://tyranny.fandom.com/wiki/Crimson_Spear_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Crescent Runner Armor",
+    "title_ru": "Броня Бегущего Полумесяца",
+    "source_url": "https://tyranny.fandom.com/wiki/Crescent_Runner_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze Brotherhood Armor",
+    "title_ru": "Броня Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fatebinder of Tunon armor",
+    "title_ru": "Броня Вершителя Судеб Тунона",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder_of_Tunon_armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Forge-Bound Master Armor",
+    "title_ru": "Броня мастера Кузнецов Судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Master_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Forge-Bound Apprentice Armor",
+    "title_ru": "Броня ученика Кузнецов Судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Apprentice_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bucket of water",
+    "title_ru": "Буккет оф ватер",
+    "source_url": "https://tyranny.fandom.com/wiki/Bucket_of_water",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bronze Brotherhood mace",
+    "title_ru": "Булава Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_mace",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Burnt missive",
+    "title_ru": "Бурнт миссиве",
+    "source_url": "https://tyranny.fandom.com/wiki/Burnt_missive",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vagrant's Chaw",
+    "title_ru": "Вагрант'с Кхав",
+    "source_url": "https://tyranny.fandom.com/wiki/Vagrant%27s_Chaw",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Waking Death",
+    "title_ru": "Вакинг Деатх",
+    "source_url": "https://tyranny.fandom.com/wiki/Waking_Death",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Warrens shortbow",
+    "title_ru": "Варренс схортбов",
+    "source_url": "https://tyranny.fandom.com/wiki/Warrens_shortbow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Warrior's Girdle",
+    "title_ru": "Варриор'с Гирдле",
+    "source_url": "https://tyranny.fandom.com/wiki/Warrior%27s_Girdle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Water",
+    "title_ru": "Ватер",
+    "source_url": "https://tyranny.fandom.com/wiki/Water",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Weeping Wound",
+    "title_ru": "Веепинг Воунд",
+    "source_url": "https://tyranny.fandom.com/wiki/Weeping_Wound",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Weeping Whispers",
+    "title_ru": "Веепинг Вхисперс",
+    "source_url": "https://tyranny.fandom.com/wiki/Weeping_Whispers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Weightless Iron Shackle",
+    "title_ru": "Веигхтлесс Железный Схаккле",
+    "source_url": "https://tyranny.fandom.com/wiki/Weightless_Iron_Shackle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard Light Bronze Armor",
+    "title_ru": "Вендриен Гуард Лёгкий Бронзовый Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_Light_Bronze_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard Light Bronze Greaves",
+    "title_ru": "Вендриен Гуард Лёгкий Бронзовый Поножи",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_Light_Bronze_Greaves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard Light Bronze Gauntlets",
+    "title_ru": "Вендриен Гуард Лёгкий Бронзовый Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_Light_Bronze_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard light bronze helmet",
+    "title_ru": "Вендриен Гуард лёгкий бронзовый шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_light_bronze_helmet",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard Heavy Bronze Armor",
+    "title_ru": "Вендриен Гуард Тяжёлый Бронзовый Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_Heavy_Bronze_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard Heavy Bronze Greaves",
+    "title_ru": "Вендриен Гуард Тяжёлый Бронзовый Поножи",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_Heavy_Bronze_Greaves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard Heavy Bronze Gauntlets",
+    "title_ru": "Вендриен Гуард Тяжёлый Бронзовый Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_Heavy_Bronze_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien Guard heavy bronze helmet",
+    "title_ru": "Вендриен Гуард тяжёлый бронзовый шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_Guard_heavy_bronze_helmet",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Vendrien bow",
+    "title_ru": "Вендриен лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Vendrien_bow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Faithful Promise",
+    "title_ru": "Верное обещание",
+    "source_url": "https://tyranny.fandom.com/wiki/Faithful_Promise",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Veteran Helm",
+    "title_ru": "Ветеран Шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Veteran_Helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Wild Scale",
+    "title_ru": "Вилд Скале",
+    "source_url": "https://tyranny.fandom.com/wiki/Wild_Scale",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Viletongue",
+    "title_ru": "Вилетонгуе",
+    "source_url": "https://tyranny.fandom.com/wiki/Viletongue",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Commander's Will",
+    "title_ru": "Воля командира",
+    "source_url": "https://tyranny.fandom.com/wiki/Commander%27s_Will",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Writ of Execution",
+    "title_ru": "Врит оф Ексекутион",
+    "source_url": "https://tyranny.fandom.com/wiki/Writ_of_Execution",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Wrought in Ruin",
+    "title_ru": "Вроугхт ин Руин",
+    "source_url": "https://tyranny.fandom.com/wiki/Wrought_in_Ruin",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Whetstone",
+    "title_ru": "Вхетстоне",
+    "source_url": "https://tyranny.fandom.com/wiki/Whetstone",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Garnet",
+    "title_ru": "Гарнет",
+    "source_url": "https://tyranny.fandom.com/wiki/Garnet",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fatebinder of Tunon headwrap",
+    "title_ru": "Головная повязка Вершителя Судеб Тунона",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder_of_Tunon_headwrap",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Crashing Thunder",
+    "title_ru": "Грохочущий гром",
+    "source_url": "https://tyranny.fandom.com/wiki/Crashing_Thunder",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Damp Note",
+    "title_ru": "Дамп Ноте",
+    "source_url": "https://tyranny.fandom.com/wiki/Damp_Note",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Earthshaker's Gift",
+    "title_ru": "Дар Землетряса",
+    "source_url": "https://tyranny.fandom.com/wiki/Earthshaker%27s_Gift",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Jagged Remedy's Orders",
+    "title_ru": "Джаггед Лекарство'с Ордерс",
+    "source_url": "https://tyranny.fandom.com/wiki/Jagged_Remedy%27s_Orders",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Jagged Remedy's Thirst",
+    "title_ru": "Джаггед Лекарство'с Тхирст",
+    "source_url": "https://tyranny.fandom.com/wiki/Jagged_Remedy%27s_Thirst",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Jasper",
+    "title_ru": "Джаспер",
+    "source_url": "https://tyranny.fandom.com/wiki/Jasper",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Jaspos' Armor",
+    "title_ru": "Джаспос' Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Jaspos%27_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Jewel of Fortune",
+    "title_ru": "Джевел оф Фортуне",
+    "source_url": "https://tyranny.fandom.com/wiki/Jewel_of_Fortune",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Jet Periapt",
+    "title_ru": "Джет Периапт",
+    "source_url": "https://tyranny.fandom.com/wiki/Jet_Periapt",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Juggler's Gloves",
+    "title_ru": "Джугглер'с Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Juggler%27s_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Junk",
+    "title_ru": "Джунк",
+    "source_url": "https://tyranny.fandom.com/wiki/Junk",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Diamond",
+    "title_ru": "Диамонд",
+    "source_url": "https://tyranny.fandom.com/wiki/Diamond",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ancient Archon Robes",
+    "title_ru": "Древние одеяния Архонта",
+    "source_url": "https://tyranny.fandom.com/wiki/Ancient_Archon_Robes",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Disfavored javelin",
+    "title_ru": "Дротик Опальных",
+    "source_url": "https://tyranny.fandom.com/wiki/Disfavored_javelin",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Gore-Claw's Tanned Hide",
+    "title_ru": "Дублёная шкура Кровавого Когтя",
+    "source_url": "https://tyranny.fandom.com/wiki/Gore-Claw%27s_Tanned_Hide",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Dusty missive",
+    "title_ru": "Дустй миссиве",
+    "source_url": "https://tyranny.fandom.com/wiki/Dusty_missive",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Echocall Crossing Food Supplies",
+    "title_ru": "Екхокалл Кроссинг Фоод Супплиес",
+    "source_url": "https://tyranny.fandom.com/wiki/Echocall_Crossing_Food_Supplies",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Emerald",
+    "title_ru": "Емералд",
+    "source_url": "https://tyranny.fandom.com/wiki/Emerald",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Disfavored iron spear",
+    "title_ru": "Железное копьё Опальных",
+    "source_url": "https://tyranny.fandom.com/wiki/Disfavored_iron_spear",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Iron warmace",
+    "title_ru": "Железный боевая булава",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_warmace",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron warhammer",
+    "title_ru": "Железный боевой молот",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_warhammer",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron greatspear",
+    "title_ru": "Железный большое копьё",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_greatspear",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron brand",
+    "title_ru": "Железный бранд",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_brand",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Breastplate",
+    "title_ru": "Железный Бреастплате",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Breastplate",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron armor",
+    "title_ru": "Железный броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron mace",
+    "title_ru": "Железный булава",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_mace",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Walker Armor",
+    "title_ru": "Железный Валкер Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Walker_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Walker Gauntlets",
+    "title_ru": "Железный Валкер Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Walker_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Walker Boots",
+    "title_ru": "Железный Валкер Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Walker_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Walker helm",
+    "title_ru": "Железный Валкер шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Walker_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Walker's crest",
+    "title_ru": "Железный Валкер'с крест",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Walker%27s_crest",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron glaive",
+    "title_ru": "Железный глаиве",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_glaive",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Guard Armor",
+    "title_ru": "Железный Гуард Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Guard_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Guard greatsword",
+    "title_ru": "Железный Гуард двуручный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Guard_greatsword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Guard Gauntlets",
+    "title_ru": "Железный Гуард Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Guard_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Guard Boots",
+    "title_ru": "Железный Гуард Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Guard_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Guard helm",
+    "title_ru": "Железный Гуард шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Guard_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron greatsword",
+    "title_ru": "Железный двуручный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_greatsword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron javelin",
+    "title_ru": "Железный дротик",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_javelin",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron katar",
+    "title_ru": "Железный катар",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_katar",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron dagger",
+    "title_ru": "Железный кинжал",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_dagger",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Cuirass",
+    "title_ru": "Железный Кираса",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Cuirass",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron spear",
+    "title_ru": "Железный копьё",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_spear",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Marshal's heirloom blade",
+    "title_ru": "Железный Марсхал'с наследный бладе",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Marshal%27s_heirloom_blade",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron throwing dagger",
+    "title_ru": "Железный метательный кинжал",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_throwing_dagger",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron sword",
+    "title_ru": "Железный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Disfavored iron sword",
+    "title_ru": "Железный меч Опальных",
+    "source_url": "https://tyranny.fandom.com/wiki/Disfavored_iron_sword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Iron hammer",
+    "title_ru": "Железный молот",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_hammer",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron pole",
+    "title_ru": "Железный поле",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_pole",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Greaves",
+    "title_ru": "Железный Поножи",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Greaves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron ridge helm",
+    "title_ru": "Железный ридге шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_ridge_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Gauntlets",
+    "title_ru": "Железный Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Sabatons",
+    "title_ru": "Железный Сабатонс",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Sabatons",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron Boots",
+    "title_ru": "Железный Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron greataxe",
+    "title_ru": "Железный секира",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_greataxe",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron axe",
+    "title_ru": "Железный топор",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_axe",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron halberd",
+    "title_ru": "Железный халберд",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_halberd",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron heater shield",
+    "title_ru": "Железный хеатер щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_heater_shield",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Iron helm",
+    "title_ru": "Железный шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Iron_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Grounding Garbs",
+    "title_ru": "Заземляющее одеяние",
+    "source_url": "https://tyranny.fandom.com/wiki/Grounding_Garbs",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Barbed Pilum",
+    "title_ru": "Зазубренный пилум",
+    "source_url": "https://tyranny.fandom.com/wiki/Barbed_Pilum",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Frozen Sentinel",
+    "title_ru": "Замёрзший страж",
+    "source_url": "https://tyranny.fandom.com/wiki/Frozen_Sentinel",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Eclipse",
+    "title_ru": "Затмение",
+    "source_url": "https://tyranny.fandom.com/wiki/Eclipse",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Enchanted Cloth Slippers",
+    "title_ru": "Зачарованные тканевые туфли",
+    "source_url": "https://tyranny.fandom.com/wiki/Enchanted_Cloth_Slippers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Zeal",
+    "title_ru": "Зеал",
+    "source_url": "https://tyranny.fandom.com/wiki/Zeal",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Healing potion",
+    "title_ru": "Зелье лечения",
+    "source_url": "https://tyranny.fandom.com/wiki/Healing_potion",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Potion of Elemental Barrier",
+    "title_ru": "Зелье оф Елементал Барриер",
+    "source_url": "https://tyranny.fandom.com/wiki/Potion_of_Elemental_Barrier",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Potion of Invisibility",
+    "title_ru": "Зелье оф Инвисибилитй",
+    "source_url": "https://tyranny.fandom.com/wiki/Potion_of_Invisibility",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Potion of Protection",
+    "title_ru": "Зелье оф Протектион",
+    "source_url": "https://tyranny.fandom.com/wiki/Potion_of_Protection",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Potion of Revival",
+    "title_ru": "Зелье оф Ревивал",
+    "source_url": "https://tyranny.fandom.com/wiki/Potion_of_Revival",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Potion of Heroes",
+    "title_ru": "Зелье оф Хероес",
+    "source_url": "https://tyranny.fandom.com/wiki/Potion_of_Heroes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Earthshaker staff fragment",
+    "title_ru": "Землетряс посох фрагмент",
+    "source_url": "https://tyranny.fandom.com/wiki/Earthshaker_staff_fragment",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Grain",
+    "title_ru": "Зерно",
+    "source_url": "https://tyranny.fandom.com/wiki/Grain",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Banner of Ardent",
+    "title_ru": "Знамя Горячих Кровей",
+    "source_url": "https://tyranny.fandom.com/wiki/Banner_of_Ardent",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Eojah's Calling",
+    "title_ru": "Зов Эоджи",
+    "source_url": "https://tyranny.fandom.com/wiki/Eojah%27s_Calling",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fatiguing toxin",
+    "title_ru": "Изнуряющий токсин",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatiguing_toxin",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Emerald Pin",
+    "title_ru": "Изумрудная заколка",
+    "source_url": "https://tyranny.fandom.com/wiki/Emerald_Pin",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elegance",
+    "title_ru": "Изящество",
+    "source_url": "https://tyranny.fandom.com/wiki/Elegance",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elegant Heirloom Necklace",
+    "title_ru": "Изящное фамильное ожерелье",
+    "source_url": "https://tyranny.fandom.com/wiki/Elegant_Heirloom_Necklace",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elegant Staff",
+    "title_ru": "Изящный посох",
+    "source_url": "https://tyranny.fandom.com/wiki/Elegant_Staff",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Imbued Rod of Strength",
+    "title_ru": "Имбуед Род оф Стренгтх",
+    "source_url": "https://tyranny.fandom.com/wiki/Imbued_Rod_of_Strength",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Imperial iron falcata",
+    "title_ru": "Империал железный фалката",
+    "source_url": "https://tyranny.fandom.com/wiki/Imperial_iron_falcata",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Indigo",
+    "title_ru": "Индиго",
+    "source_url": "https://tyranny.fandom.com/wiki/Indigo",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ink-stirring pole",
+    "title_ru": "Инк-стирринг поле",
+    "source_url": "https://tyranny.fandom.com/wiki/Ink-stirring_pole",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Incomplete passphrase",
+    "title_ru": "Инкомплете пасспхрасе",
+    "source_url": "https://tyranny.fandom.com/wiki/Incomplete_passphrase",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Inspirited Elder Teeth Necklace",
+    "title_ru": "Инспиритед Елдер Теетх Ожерелье",
+    "source_url": "https://tyranny.fandom.com/wiki/Inspirited_Elder_Teeth_Necklace",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Irentis' Notes",
+    "title_ru": "Ирентис' Нотес",
+    "source_url": "https://tyranny.fandom.com/wiki/Irentis%27_Notes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ironfoot Knockers",
+    "title_ru": "Иронфоот Кноккерс",
+    "source_url": "https://tyranny.fandom.com/wiki/Ironfoot_Knockers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Gut-Seeker",
+    "title_ru": "Искатель внутренностей",
+    "source_url": "https://tyranny.fandom.com/wiki/Gut-Seeker",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Heartfinder",
+    "title_ru": "Искатель сердец",
+    "source_url": "https://tyranny.fandom.com/wiki/Heartfinder",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fatefinder",
+    "title_ru": "Искатель судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatefinder",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Kaidi's Spikes",
+    "title_ru": "Каиди'с Спикес",
+    "source_url": "https://tyranny.fandom.com/wiki/Kaidi%27s_Spikes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Kailor's Cap",
+    "title_ru": "Каилор'с Шапка",
+    "source_url": "https://tyranny.fandom.com/wiki/Kailor%27s_Cap",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fire-Eye Stone",
+    "title_ru": "Камень Огненного Глаза",
+    "source_url": "https://tyranny.fandom.com/wiki/Fire-Eye_Stone",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Stone Shield tower shield",
+    "title_ru": "Камень Щит башенный щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Stone_Shield_tower_shield",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stone Shield Armor",
+    "title_ru": "Камень Щит Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Stone_Shield_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stone Shield Gloves",
+    "title_ru": "Камень Щит Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Stone_Shield_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stone Shield Boots",
+    "title_ru": "Камень Щит Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Stone_Shield_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stone Shield helm",
+    "title_ru": "Камень Щит шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Stone_Shield_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fatebinder of Tunon hood",
+    "title_ru": "Капюшон Вершителя Судеб Тунона",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder_of_Tunon_hood",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Earthshaker hood",
+    "title_ru": "Капюшон Землетряса",
+    "source_url": "https://tyranny.fandom.com/wiki/Earthshaker_hood",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blood Hound hood",
+    "title_ru": "Капюшон Кровавого Пса",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood_Hound_hood",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cowl of Disbelief",
+    "title_ru": "Капюшон неверия",
+    "source_url": "https://tyranny.fandom.com/wiki/Cowl_of_Disbelief",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Hood of the rixatrix",
+    "title_ru": "Капюшон оф тхе риксатрикс",
+    "source_url": "https://tyranny.fandom.com/wiki/Hood_of_the_rixatrix",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Emberglow Hood",
+    "title_ru": "Капюшон угольного свечения",
+    "source_url": "https://tyranny.fandom.com/wiki/Emberglow_Hood",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Keen Eye Facewrap",
+    "title_ru": "Кеен Глаз Факеврап",
+    "source_url": "https://tyranny.fandom.com/wiki/Keen_Eye_Facewrap",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Dense Iron Cuirass",
+    "title_ru": "Кираса из плотного железа",
+    "source_url": "https://tyranny.fandom.com/wiki/Dense_Iron_Cuirass",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blood Hound Fist Wraps",
+    "title_ru": "Кистевые обмотки Кровавого Пса",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood_Hound_Fist_Wraps",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Kyros' Edict",
+    "title_ru": "Кйрос' Едикт",
+    "source_url": "https://tyranny.fandom.com/wiki/Kyros%27_Edict",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Dusk Claw",
+    "title_ru": "Коготь сумерек",
+    "source_url": "https://tyranny.fandom.com/wiki/Dusk_Claw",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Glory Seeker's Leathers",
+    "title_ru": "Кожаная броня искателя славы",
+    "source_url": "https://tyranny.fandom.com/wiki/Glory_Seeker%27s_Leathers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blood Hound Leather",
+    "title_ru": "Кожаная броня Кровавого Пса",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood_Hound_Leather",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloodchanter Leathers",
+    "title_ru": "Кожаная броня Певца Крови",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloodchanter_Leathers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Leather buckler",
+    "title_ru": "Кожаный букклер",
+    "source_url": "https://tyranny.fandom.com/wiki/Leather_buckler",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Char-Coated Leather Girdle",
+    "title_ru": "Кожаный пояс, покрытый углём",
+    "source_url": "https://tyranny.fandom.com/wiki/Char-Coated_Leather_Girdle",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Ring Counter's Seal",
+    "title_ru": "Кольцо Коунтер'с Печать",
+    "source_url": "https://tyranny.fandom.com/wiki/Ring_Counter%27s_Seal",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Barbed Fur Mantle",
+    "title_ru": "Колючая меховая мантия",
+    "source_url": "https://tyranny.fandom.com/wiki/Barbed_Fur_Mantle",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Combined Parchment",
+    "title_ru": "Комбинед Паркхмент",
+    "source_url": "https://tyranny.fandom.com/wiki/Combined_Parchment",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Completed passphrase",
+    "title_ru": "Комплетед пасспхрасе",
+    "source_url": "https://tyranny.fandom.com/wiki/Completed_passphrase",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scarlet Fury scythe",
+    "title_ru": "Коса Алой Фурии",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_Fury_scythe",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Creeping Dusk",
+    "title_ru": "Крадущиеся сумерки",
+    "source_url": "https://tyranny.fandom.com/wiki/Creeping_Dusk",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Gorethrust",
+    "title_ru": "Кровавый выпад",
+    "source_url": "https://tyranny.fandom.com/wiki/Gorethrust",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloodmoss",
+    "title_ru": "Кровавый мох",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloodmoss",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blood stone",
+    "title_ru": "Кровь камень",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood_stone",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heart's Blood",
+    "title_ru": "Кровь сердца",
+    "source_url": "https://tyranny.fandom.com/wiki/Heart%27s_Blood",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blood Stained and Torn Pieces of Parchment",
+    "title_ru": "Кровь Стаинед анд Торн Пиекес оф Паркхмент",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood_Stained_and_Torn_Pieces_of_Parchment",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Crumpled Missive",
+    "title_ru": "Крумплед Миссиве",
+    "source_url": "https://tyranny.fandom.com/wiki/Crumpled_Missive",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Quartermaster's Scales",
+    "title_ru": "Куартермастер'с Скалес",
+    "source_url": "https://tyranny.fandom.com/wiki/Quartermaster%27s_Scales",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Forge-Bound Iron Ingots",
+    "title_ru": "Кузнец Судьбы Железный Инготс",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Iron_Ingots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Forge-Bound Shipment",
+    "title_ru": "Кузнец Судьбы Схипмент",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Shipment",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Forge-Bound Tools",
+    "title_ru": "Кузнец Судьбы Тоолс",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Tools",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Quickfinger Bangles",
+    "title_ru": "Куиккфингер Банглес",
+    "source_url": "https://tyranny.fandom.com/wiki/Quickfinger_Bangles",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Chalcedony",
+    "title_ru": "Кхалкедонй",
+    "source_url": "https://tyranny.fandom.com/wiki/Chalcedony",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Cheese",
+    "title_ru": "Кхеесе",
+    "source_url": "https://tyranny.fandom.com/wiki/Cheese",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Azurebell",
+    "title_ru": "Лазурный колокольчик",
+    "source_url": "https://tyranny.fandom.com/wiki/Azurebell",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Azure Shield",
+    "title_ru": "Лазурный щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Azure_Shield",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Lanara's Relent",
+    "title_ru": "Ланара'с Релент",
+    "source_url": "https://tyranny.fandom.com/wiki/Lanara%27s_Relent",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Lantry's Quill",
+    "title_ru": "Лантрй'с Куилл",
+    "source_url": "https://tyranny.fandom.com/wiki/Lantry%27s_Quill",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Commander's Plate",
+    "title_ru": "Латы командира",
+    "source_url": "https://tyranny.fandom.com/wiki/Commander%27s_Plate",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Frozen Shackle",
+    "title_ru": "Ледяные оковы",
+    "source_url": "https://tyranny.fandom.com/wiki/Frozen_Shackle",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Lesser Staff of Atrophy",
+    "title_ru": "Лессер Посох оф Атропхй",
+    "source_url": "https://tyranny.fandom.com/wiki/Lesser_Staff_of_Atrophy",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Lesser Staff of Boreal Frost",
+    "title_ru": "Лессер Посох оф Бореал Фрост",
+    "source_url": "https://tyranny.fandom.com/wiki/Lesser_Staff_of_Boreal_Frost",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Lesser Staff of Storm's Heart",
+    "title_ru": "Лессер Посох оф Сторм'с Хеарт",
+    "source_url": "https://tyranny.fandom.com/wiki/Lesser_Staff_of_Storm%27s_Heart",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Lesser Staff of Titans",
+    "title_ru": "Лессер Посох оф Титанс",
+    "source_url": "https://tyranny.fandom.com/wiki/Lesser_Staff_of_Titans",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Lesser healing potion",
+    "title_ru": "Лессер хеалинг зелье",
+    "source_url": "https://tyranny.fandom.com/wiki/Lesser_healing_potion",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Liberating Handwraps",
+    "title_ru": "Либератинг Обмотки для рук",
+    "source_url": "https://tyranny.fandom.com/wiki/Liberating_Handwraps",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Lieutenant's Scar-Pitted Breastplate",
+    "title_ru": "Лиеутенант'с Скар-Питтед Бреастплате",
+    "source_url": "https://tyranny.fandom.com/wiki/Lieutenant%27s_Scar-Pitted_Breastplate",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Face of Judgment",
+    "title_ru": "Лик Правосудия",
+    "source_url": "https://tyranny.fandom.com/wiki/Face_of_Judgment",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cairn's Leaf",
+    "title_ru": "Лист Каирна",
+    "source_url": "https://tyranny.fandom.com/wiki/Cairn%27s_Leaf",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Lifeblood Signet",
+    "title_ru": "Лифеблоод Сигнет",
+    "source_url": "https://tyranny.fandom.com/wiki/Lifeblood_Signet",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Locked Iron Gauntlets",
+    "title_ru": "Локкед Железный Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Locked_Iron_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Longclaw's Rage",
+    "title_ru": "Лонгклав'с Раге",
+    "source_url": "https://tyranny.fandom.com/wiki/Longclaw%27s_Rage",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Lohara's Pride",
+    "title_ru": "Лохара'с Приде",
+    "source_url": "https://tyranny.fandom.com/wiki/Lohara%27s_Pride",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light Bronze Armor",
+    "title_ru": "Лёгкий Бронзовый Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_Bronze_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light bronze ridge helm",
+    "title_ru": "Лёгкий бронзовый ридге шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_bronze_ridge_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light Bronze Boots",
+    "title_ru": "Лёгкий Бронзовый Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_Bronze_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light Leather Vest",
+    "title_ru": "Лёгкий Кожаный Вест",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_Leather_Vest",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light leather gloves",
+    "title_ru": "Лёгкий кожаный перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_leather_gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light Leather Gauntlets",
+    "title_ru": "Лёгкий Кожаный Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_Leather_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light leather boots",
+    "title_ru": "Лёгкий кожаный сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_leather_boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Light leather helm",
+    "title_ru": "Лёгкий кожаный шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Light_leather_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Magebane Helm",
+    "title_ru": "Магебане Шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Magebane_Helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Magic staffs",
+    "title_ru": "Магик стаффс",
+    "source_url": "https://tyranny.fandom.com/wiki/Magic_staffs",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Magician's Mantle",
+    "title_ru": "Магикиан'с Мантия",
+    "source_url": "https://tyranny.fandom.com/wiki/Magician%27s_Mantle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Manteau of Mirrors",
+    "title_ru": "Мантеау оф Миррорс",
+    "source_url": "https://tyranny.fandom.com/wiki/Manteau_of_Mirrors",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Banecaller's Manteau",
+    "title_ru": "Мантия Призывателя Погибели",
+    "source_url": "https://tyranny.fandom.com/wiki/Banecaller%27s_Manteau",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Map to the Helm of the First Regent",
+    "title_ru": "Мап то тхе Шлем оф тхе Фирст Регент",
+    "source_url": "https://tyranny.fandom.com/wiki/Map_to_the_Helm_of_the_First_Regent",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Maric's Blackened Spear",
+    "title_ru": "Марик'с Почерневший Копьё",
+    "source_url": "https://tyranny.fandom.com/wiki/Maric%27s_Blackened_Spear",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Mark of the Tribe",
+    "title_ru": "Марк оф тхе Трибе",
+    "source_url": "https://tyranny.fandom.com/wiki/Mark_of_the_Tribe",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Marrow-Reaver",
+    "title_ru": "Марров-Реавер",
+    "source_url": "https://tyranny.fandom.com/wiki/Marrow-Reaver",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Marshberry",
+    "title_ru": "Марсхберрй",
+    "source_url": "https://tyranny.fandom.com/wiki/Marshberry",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fifth Eye's Mask",
+    "title_ru": "Маска Пятого Глаза",
+    "source_url": "https://tyranny.fandom.com/wiki/Fifth_Eye%27s_Mask",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Mead",
+    "title_ru": "Меад",
+    "source_url": "https://tyranny.fandom.com/wiki/Mead",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Champion's Medallion",
+    "title_ru": "Медальон чемпиона",
+    "source_url": "https://tyranny.fandom.com/wiki/Champion%27s_Medallion",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Mending Grips",
+    "title_ru": "Мендинг Грипс",
+    "source_url": "https://tyranny.fandom.com/wiki/Mending_Grips",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Mercy",
+    "title_ru": "Меркй",
+    "source_url": "https://tyranny.fandom.com/wiki/Mercy",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Merchant Tunic",
+    "title_ru": "Меркхант Туника",
+    "source_url": "https://tyranny.fandom.com/wiki/Merchant_Tunic",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Merchant's Bracers",
+    "title_ru": "Меркхант'с Наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Merchant%27s_Bracers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Merchant's Boots",
+    "title_ru": "Меркхант'с Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Merchant%27s_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Merchant's hat",
+    "title_ru": "Меркхант'с шляпа",
+    "source_url": "https://tyranny.fandom.com/wiki/Merchant%27s_hat",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Mindrot venom",
+    "title_ru": "Миндрот веном",
+    "source_url": "https://tyranny.fandom.com/wiki/Mindrot_venom",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Mindstatic Torc",
+    "title_ru": "Миндстатик Гривна",
+    "source_url": "https://tyranny.fandom.com/wiki/Mindstatic_Torc",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Mirrored Stompers",
+    "title_ru": "Мирроред Стомперс",
+    "source_url": "https://tyranny.fandom.com/wiki/Mirrored_Stompers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Misstep",
+    "title_ru": "Мисстеп",
+    "source_url": "https://tyranny.fandom.com/wiki/Misstep",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Mysterious Missive",
+    "title_ru": "Мйстериоус Миссиве",
+    "source_url": "https://tyranny.fandom.com/wiki/Mysterious_Missive",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Gravebow",
+    "title_ru": "Могильный лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Gravebow",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Forge-Bound hammer",
+    "title_ru": "Молот Кузнецов Судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_hammer",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Hammer of Sunder",
+    "title_ru": "Молот раскола",
+    "source_url": "https://tyranny.fandom.com/wiki/Hammer_of_Sunder",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Momentum Gauntlets",
+    "title_ru": "Моментум Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Momentum_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Davidian's Monocle",
+    "title_ru": "Монокль Давидиана",
+    "source_url": "https://tyranny.fandom.com/wiki/Davidian%27s_Monocle",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Moonstone",
+    "title_ru": "Моонстоне",
+    "source_url": "https://tyranny.fandom.com/wiki/Moonstone",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bronze Brotherhood Bracers",
+    "title_ru": "Наручи Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_Bracers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloodchanter Bracers",
+    "title_ru": "Наручи Певца Крови",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloodchanter_Bracers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Adjudicator's Bracers",
+    "title_ru": "Наручи Судьи",
+    "source_url": "https://tyranny.fandom.com/wiki/Adjudicator%27s_Bracers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Ashe's Finery",
+    "title_ru": "Наряд Эша",
+    "source_url": "https://tyranny.fandom.com/wiki/Ashe%27s_Finery",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Discordant Melody",
+    "title_ru": "Неблагозвучная мелодия",
+    "source_url": "https://tyranny.fandom.com/wiki/Discordant_Melody",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Gentle Touch",
+    "title_ru": "Нежное касание",
+    "source_url": "https://tyranny.fandom.com/wiki/Gentle_Touch",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Deathbringer",
+    "title_ru": "Несущий смерть",
+    "source_url": "https://tyranny.fandom.com/wiki/Deathbringer",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Dauntless",
+    "title_ru": "Неустрашимый",
+    "source_url": "https://tyranny.fandom.com/wiki/Dauntless",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Nightwalker Coif",
+    "title_ru": "Нигхтвалкер Коиф",
+    "source_url": "https://tyranny.fandom.com/wiki/Nightwalker_Coif",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Nightwalker's Boots",
+    "title_ru": "Нигхтвалкер'с Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Nightwalker%27s_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Nightfall Casque",
+    "title_ru": "Нигхтфалл Каскуе",
+    "source_url": "https://tyranny.fandom.com/wiki/Nightfall_Casque",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Noble Purpose",
+    "title_ru": "Нобле Пурпосе",
+    "source_url": "https://tyranny.fandom.com/wiki/Noble_Purpose",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Nobleman's Bracers",
+    "title_ru": "Ноблеман'с Наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Nobleman%27s_Bracers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Nobleman's Sandals",
+    "title_ru": "Ноблеман'с Сандалии",
+    "source_url": "https://tyranny.fandom.com/wiki/Nobleman%27s_Sandals",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Nobleman's Tunic",
+    "title_ru": "Ноблеман'с Туника",
+    "source_url": "https://tyranny.fandom.com/wiki/Nobleman%27s_Tunic",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Nobleman's hat",
+    "title_ru": "Ноблеман'с шляпа",
+    "source_url": "https://tyranny.fandom.com/wiki/Nobleman%27s_hat",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Noggin Protector",
+    "title_ru": "Ноггин Протектор",
+    "source_url": "https://tyranny.fandom.com/wiki/Noggin_Protector",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Note",
+    "title_ru": "Ноте",
+    "source_url": "https://tyranny.fandom.com/wiki/Note",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Note from Iron Guard Vintara",
+    "title_ru": "Ноте фром Железный Гуард Винтара",
+    "source_url": "https://tyranny.fandom.com/wiki/Note_from_Iron_Guard_Vintara",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Numbing agent",
+    "title_ru": "Нумбинг агент",
+    "source_url": "https://tyranny.fandom.com/wiki/Numbing_agent",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Oath Bound Armor",
+    "title_ru": "Оатх Боунд Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Oath_Bound_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Oath Bound dagger",
+    "title_ru": "Оатх Боунд кинжал",
+    "source_url": "https://tyranny.fandom.com/wiki/Oath_Bound_dagger",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Oath Bound Lieutenant's Leathers",
+    "title_ru": "Оатх Боунд Лиеутенант'с Леатхерс",
+    "source_url": "https://tyranny.fandom.com/wiki/Oath_Bound_Lieutenant%27s_Leathers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Oath Bound Gloves",
+    "title_ru": "Оатх Боунд Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Oath_Bound_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Oath Bound Boots",
+    "title_ru": "Оатх Боунд Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Oath_Bound_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Oath Bound helm",
+    "title_ru": "Оатх Боунд шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Oath_Bound_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Oathbreaker",
+    "title_ru": "Оатхбреакер",
+    "source_url": "https://tyranny.fandom.com/wiki/Oathbreaker",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Cinder Ward",
+    "title_ru": "Оберег от углей",
+    "source_url": "https://tyranny.fandom.com/wiki/Cinder_Ward",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Assassin's Raiment",
+    "title_ru": "Облачение убийцы",
+    "source_url": "https://tyranny.fandom.com/wiki/Assassin%27s_Raiment",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Frostbite",
+    "title_ru": "Обморожение",
+    "source_url": "https://tyranny.fandom.com/wiki/Frostbite",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Earthshaker Robes",
+    "title_ru": "Одеяния Землетряса",
+    "source_url": "https://tyranny.fandom.com/wiki/Earthshaker_Robes",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Robes of the Adjudicator",
+    "title_ru": "Одеяния оф тхе Адджудикатор",
+    "source_url": "https://tyranny.fandom.com/wiki/Robes_of_the_Adjudicator",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Deya's Necklace",
+    "title_ru": "Ожерелье Деи",
+    "source_url": "https://tyranny.fandom.com/wiki/Deya%27s_Necklace",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blackened Iron Choker",
+    "title_ru": "Ожерелье из чернёного железа",
+    "source_url": "https://tyranny.fandom.com/wiki/Blackened_Iron_Choker",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Necklace of Arbitration",
+    "title_ru": "Ожерелье оф Арбитратион",
+    "source_url": "https://tyranny.fandom.com/wiki/Necklace_of_Arbitration",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Occon's bronze sword",
+    "title_ru": "Оккон'с бронзовый меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Occon%27s_bronze_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fiend's Eye",
+    "title_ru": "Око изверга",
+    "source_url": "https://tyranny.fandom.com/wiki/Fiend%27s_Eye",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Chronicler's Eye",
+    "title_ru": "Око летописца",
+    "source_url": "https://tyranny.fandom.com/wiki/Chronicler%27s_Eye",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bindings of Shadows",
+    "title_ru": "Оковы теней",
+    "source_url": "https://tyranny.fandom.com/wiki/Bindings_of_Shadows",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloody Scarlet Fury Armor",
+    "title_ru": "Окровавленная броня Алой Фурии",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloody_Scarlet_Fury_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloody Scarlet Fury Gauntlets",
+    "title_ru": "Окровавленные рукавицы Алой Фурии",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloody_Scarlet_Fury_Gauntlets",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloody Scarlet Fury Boots",
+    "title_ru": "Окровавленные сапоги Алой Фурии",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloody_Scarlet_Fury_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Oldwater",
+    "title_ru": "Олдватер",
+    "source_url": "https://tyranny.fandom.com/wiki/Oldwater",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "One-handed weapons",
+    "title_ru": "Оне-хандед веапонс",
+    "source_url": "https://tyranny.fandom.com/wiki/One-handed_weapons",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Opal",
+    "title_ru": "Опал",
+    "source_url": "https://tyranny.fandom.com/wiki/Opal",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Disfavored patrol map",
+    "title_ru": "Опальные патрол мап",
+    "source_url": "https://tyranny.fandom.com/wiki/Disfavored_patrol_map",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Banebrew",
+    "title_ru": "Отвар Погибели",
+    "source_url": "https://tyranny.fandom.com/wiki/Banebrew",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Aversion",
+    "title_ru": "Отвращение",
+    "source_url": "https://tyranny.fandom.com/wiki/Aversion",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Counted Glory",
+    "title_ru": "Отмеренная слава",
+    "source_url": "https://tyranny.fandom.com/wiki/Counted_Glory",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Dire Remedy",
+    "title_ru": "Отчаянное лекарство",
+    "source_url": "https://tyranny.fandom.com/wiki/Dire_Remedy",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Agent's Reports",
+    "title_ru": "Отчёты агента",
+    "source_url": "https://tyranny.fandom.com/wiki/Agent%27s_Reports",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Outbreak",
+    "title_ru": "Оутбреак",
+    "source_url": "https://tyranny.fandom.com/wiki/Outbreak",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Cleansing Charm",
+    "title_ru": "Очищающий талисман",
+    "source_url": "https://tyranny.fandom.com/wiki/Cleansing_Charm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Path of Roses",
+    "title_ru": "Патх оф Росес",
+    "source_url": "https://tyranny.fandom.com/wiki/Path_of_Roses",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Paulex's Bracers",
+    "title_ru": "Паулекс'с Наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Paulex%27s_Bracers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Peacemaker",
+    "title_ru": "Пеакемакер",
+    "source_url": "https://tyranny.fandom.com/wiki/Peacemaker",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Pearl",
+    "title_ru": "Пеарл",
+    "source_url": "https://tyranny.fandom.com/wiki/Pearl",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Penumbra",
+    "title_ru": "Пенумбра",
+    "source_url": "https://tyranny.fandom.com/wiki/Penumbra",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ashen Cowl",
+    "title_ru": "Пепельный капюшон",
+    "source_url": "https://tyranny.fandom.com/wiki/Ashen_Cowl",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Periapt of Secrets",
+    "title_ru": "Периапт оф Секретс",
+    "source_url": "https://tyranny.fandom.com/wiki/Periapt_of_Secrets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Peridot",
+    "title_ru": "Перидот",
+    "source_url": "https://tyranny.fandom.com/wiki/Peridot",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Alchemist's Gloves",
+    "title_ru": "Перчатки алхимика",
+    "source_url": "https://tyranny.fandom.com/wiki/Alchemist%27s_Gloves",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fatebinder of Tunon gloves",
+    "title_ru": "Перчатки Вершителя Судеб Тунона",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder_of_Tunon_gloves",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Earthshaker Gloves",
+    "title_ru": "Перчатки Землетряса",
+    "source_url": "https://tyranny.fandom.com/wiki/Earthshaker_Gloves",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Petrified Grand Staff",
+    "title_ru": "Петрифиед Гранд Посох",
+    "source_url": "https://tyranny.fandom.com/wiki/Petrified_Grand_Staff",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Petrified Spine Totem",
+    "title_ru": "Петрифиед Спине Тотем",
+    "source_url": "https://tyranny.fandom.com/wiki/Petrified_Spine_Totem",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fatebinder's Seal",
+    "title_ru": "Печать Вершителя Судеб",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder%27s_Seal",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Piece of Rubble",
+    "title_ru": "Пиеке оф Руббле",
+    "source_url": "https://tyranny.fandom.com/wiki/Piece_of_Rubble",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Pillar of Courage",
+    "title_ru": "Пиллар оф Коураге",
+    "source_url": "https://tyranny.fandom.com/wiki/Pillar_of_Courage",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Pyrestring Bow",
+    "title_ru": "Пйрестринг Лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Pyrestring_Bow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Damaged bronze greatsword",
+    "title_ru": "Повреждённый бронзовый двуручный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Damaged_bronze_greatsword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Damaged leather shield",
+    "title_ru": "Повреждённый кожаный щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Damaged_leather_shield",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Damaged medal",
+    "title_ru": "Повреждённый медал",
+    "source_url": "https://tyranny.fandom.com/wiki/Damaged_medal",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Earth Crusted Pendant",
+    "title_ru": "Подвеска в земляной корке",
+    "source_url": "https://tyranny.fandom.com/wiki/Earth_Crusted_Pendant",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Greaves of the Endless March",
+    "title_ru": "Поножи Бесконечного Марша",
+    "source_url": "https://tyranny.fandom.com/wiki/Greaves_of_the_Endless_March",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze Brotherhood Greaves",
+    "title_ru": "Поножи Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_Greaves",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Dying Wish",
+    "title_ru": "Последнее желание",
+    "source_url": "https://tyranny.fandom.com/wiki/Dying_Wish",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Coward's Contingency",
+    "title_ru": "Последний довод труса",
+    "source_url": "https://tyranny.fandom.com/wiki/Coward%27s_Contingency",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Final Scream",
+    "title_ru": "Последний крик",
+    "source_url": "https://tyranny.fandom.com/wiki/Final_Scream",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Earthshaker staff",
+    "title_ru": "Посох Землетряса",
+    "source_url": "https://tyranny.fandom.com/wiki/Earthshaker_staff",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Azurelith Crystal Staff",
+    "title_ru": "Посох из кристалла лазурелита",
+    "source_url": "https://tyranny.fandom.com/wiki/Azurelith_Crystal_Staff",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Staff of Atrophy",
+    "title_ru": "Посох оф Атропхй",
+    "source_url": "https://tyranny.fandom.com/wiki/Staff_of_Atrophy",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Staff of Boreal Frost",
+    "title_ru": "Посох оф Бореал Фрост",
+    "source_url": "https://tyranny.fandom.com/wiki/Staff_of_Boreal_Frost",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Staff of Enigma",
+    "title_ru": "Посох оф Енигма",
+    "source_url": "https://tyranny.fandom.com/wiki/Staff_of_Enigma",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Staff of Cairn",
+    "title_ru": "Посох оф Каирн",
+    "source_url": "https://tyranny.fandom.com/wiki/Staff_of_Cairn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Staff of Storm's Heart",
+    "title_ru": "Посох оф Сторм'с Хеарт",
+    "source_url": "https://tyranny.fandom.com/wiki/Staff_of_Storm%27s_Heart",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Staff of Titans",
+    "title_ru": "Посох оф Титанс",
+    "source_url": "https://tyranny.fandom.com/wiki/Staff_of_Titans",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Staff of Hours",
+    "title_ru": "Посох оф Хоурс",
+    "source_url": "https://tyranny.fandom.com/wiki/Staff_of_Hours",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bloodchanter staff",
+    "title_ru": "Посох Певца Крови",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloodchanter_staff",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Banetouched Staff",
+    "title_ru": "Посох, затронутый Погибелью",
+    "source_url": "https://tyranny.fandom.com/wiki/Banetouched_Staff",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Battle-Worn Torc",
+    "title_ru": "Потрёпанная в боях гривна",
+    "source_url": "https://tyranny.fandom.com/wiki/Battle-Worn_Torc",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Exploit",
+    "title_ru": "Преимущество",
+    "source_url": "https://tyranny.fandom.com/wiki/Exploit",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Pride of the Forgotten",
+    "title_ru": "Приде оф тхе Форготтен",
+    "source_url": "https://tyranny.fandom.com/wiki/Pride_of_the_Forgotten",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Camping supplies",
+    "title_ru": "Припасы для лагеря",
+    "source_url": "https://tyranny.fandom.com/wiki/Camping_supplies",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blood-Soaked Mantle",
+    "title_ru": "Пропитанная кровью мантия",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood-Soaked_Mantle",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Blood-soaked Boots",
+    "title_ru": "Пропитанные кровью сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood-soaked_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Beastblood Pollen",
+    "title_ru": "Пыльца звериной крови",
+    "source_url": "https://tyranny.fandom.com/wiki/Beastblood_Pollen",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Raw Meat",
+    "title_ru": "Рав Меат",
+    "source_url": "https://tyranny.fandom.com/wiki/Raw_Meat",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ravager",
+    "title_ru": "Равагер",
+    "source_url": "https://tyranny.fandom.com/wiki/Ravager",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Raven Shawl",
+    "title_ru": "Равен Схавл",
+    "source_url": "https://tyranny.fandom.com/wiki/Raven_Shawl",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Razor Scout armor",
+    "title_ru": "Разор Скоут броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Razor_Scout_armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Razor Scout gloves",
+    "title_ru": "Разор Скоут перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Razor_Scout_gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Razor Scout helm",
+    "title_ru": "Разор Скоут шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Razor_Scout_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Corpse-Reaver",
+    "title_ru": "Разоритель трупов",
+    "source_url": "https://tyranny.fandom.com/wiki/Corpse-Reaver",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Entropy's Rend",
+    "title_ru": "Разрыв энтропии",
+    "source_url": "https://tyranny.fandom.com/wiki/Entropy%27s_Rend",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Red moss poultice",
+    "title_ru": "Ред мосс поултике",
+    "source_url": "https://tyranny.fandom.com/wiki/Red_moss_poultice",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Red Rivers",
+    "title_ru": "Ред Риверс",
+    "source_url": "https://tyranny.fandom.com/wiki/Red_Rivers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Etched Wooden Charm",
+    "title_ru": "Резной деревянный талисман",
+    "source_url": "https://tyranny.fandom.com/wiki/Etched_Wooden_Charm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Relentless",
+    "title_ru": "Релентлесс",
+    "source_url": "https://tyranny.fandom.com/wiki/Relentless",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rending Edge",
+    "title_ru": "Рендинг Едге",
+    "source_url": "https://tyranny.fandom.com/wiki/Rending_Edge",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Research Notes",
+    "title_ru": "Ресеаркх Нотес",
+    "source_url": "https://tyranny.fandom.com/wiki/Research_Notes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Reforged Arm of Cairn",
+    "title_ru": "Рефоргед Арм оф Каирн",
+    "source_url": "https://tyranny.fandom.com/wiki/Reforged_Arm_of_Cairn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Reforged Eye of Cairn",
+    "title_ru": "Рефоргед Глаз оф Каирн",
+    "source_url": "https://tyranny.fandom.com/wiki/Reforged_Eye_of_Cairn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Reforged Left Hand of Cairn",
+    "title_ru": "Рефоргед Лефт Ханд оф Каирн",
+    "source_url": "https://tyranny.fandom.com/wiki/Reforged_Left_Hand_of_Cairn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Reforged Right Hand of Cairn",
+    "title_ru": "Рефоргед Ригхт Ханд оф Каирн",
+    "source_url": "https://tyranny.fandom.com/wiki/Reforged_Right_Hand_of_Cairn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Reforged Head of Cairn",
+    "title_ru": "Рефоргед Хеад оф Каирн",
+    "source_url": "https://tyranny.fandom.com/wiki/Reforged_Head_of_Cairn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Reforged Heart of Cairn",
+    "title_ru": "Рефоргед Хеарт оф Каирн",
+    "source_url": "https://tyranny.fandom.com/wiki/Reforged_Heart_of_Cairn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ringblade",
+    "title_ru": "Рингбладе",
+    "source_url": "https://tyranny.fandom.com/wiki/Ringblade",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rinoxa's Grace",
+    "title_ru": "Ринокса'с Граке",
+    "source_url": "https://tyranny.fandom.com/wiki/Rinoxa%27s_Grace",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ripper",
+    "title_ru": "Риппер",
+    "source_url": "https://tyranny.fandom.com/wiki/Ripper",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rogue's Leathers",
+    "title_ru": "Рогуе'с Леатхерс",
+    "source_url": "https://tyranny.fandom.com/wiki/Rogue%27s_Leathers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rock-Laden Shackles",
+    "title_ru": "Рокк-Ладен Схакклес",
+    "source_url": "https://tyranny.fandom.com/wiki/Rock-Laden_Shackles",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rockbiter Vambraces",
+    "title_ru": "Роккбитер Вамбракес",
+    "source_url": "https://tyranny.fandom.com/wiki/Rockbiter_Vambraces",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rotspear",
+    "title_ru": "Ротспеар",
+    "source_url": "https://tyranny.fandom.com/wiki/Rotspear",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Ruby",
+    "title_ru": "Рубй",
+    "source_url": "https://tyranny.fandom.com/wiki/Ruby",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Crimson Spear Gauntlets",
+    "title_ru": "Рукавицы Багряного Копья",
+    "source_url": "https://tyranny.fandom.com/wiki/Crimson_Spear_Gauntlets",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Forge-Bound Master Gauntlets",
+    "title_ru": "Рукавицы мастера Кузнецов Судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Master_Gauntlets",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Forge-Bound Apprentice Gauntlets",
+    "title_ru": "Рукавицы ученика Кузнецов Судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Apprentice_Gauntlets",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Banetouched Gauntlets",
+    "title_ru": "Рукавицы, затронутые Погибелью",
+    "source_url": "https://tyranny.fandom.com/wiki/Banetouched_Gauntlets",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Rule of Law",
+    "title_ru": "Руле оф Лав",
+    "source_url": "https://tyranny.fandom.com/wiki/Rule_of_Law",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rune-etched Buckler",
+    "title_ru": "Руне-еткхед Букклер",
+    "source_url": "https://tyranny.fandom.com/wiki/Rune-etched_Buckler",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rupture",
+    "title_ru": "Руптуре",
+    "source_url": "https://tyranny.fandom.com/wiki/Rupture",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rust Coated Bangle",
+    "title_ru": "Руст Коатед Бангле",
+    "source_url": "https://tyranny.fandom.com/wiki/Rust_Coated_Bangle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rust Charm",
+    "title_ru": "Руст Талисман",
+    "source_url": "https://tyranny.fandom.com/wiki/Rust_Charm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Rusted iron sword",
+    "title_ru": "Рустед железный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Rusted_iron_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fish",
+    "title_ru": "Рыба",
+    "source_url": "https://tyranny.fandom.com/wiki/Fish",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sableroot",
+    "title_ru": "Саблероот",
+    "source_url": "https://tyranny.fandom.com/wiki/Sableroot",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sage Torven's Notes",
+    "title_ru": "Саге Торвен'с Нотес",
+    "source_url": "https://tyranny.fandom.com/wiki/Sage_Torven%27s_Notes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sage's Journal Entry",
+    "title_ru": "Саге'с Джоурнал Ентрй",
+    "source_url": "https://tyranny.fandom.com/wiki/Sage%27s_Journal_Entry",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sage's Enigma",
+    "title_ru": "Саге'с Енигма",
+    "source_url": "https://tyranny.fandom.com/wiki/Sage%27s_Enigma",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sage's hood",
+    "title_ru": "Саге'с капюшон",
+    "source_url": "https://tyranny.fandom.com/wiki/Sage%27s_hood",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sage's Robes",
+    "title_ru": "Саге'с Одеяния",
+    "source_url": "https://tyranny.fandom.com/wiki/Sage%27s_Robes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sage's gloves",
+    "title_ru": "Саге'с перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Sage%27s_gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sage's boots",
+    "title_ru": "Саге'с сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Sage%27s_boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Salted rations",
+    "title_ru": "Салтед ратионс",
+    "source_url": "https://tyranny.fandom.com/wiki/Salted_rations",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sanguine Scroll",
+    "title_ru": "Сангуине Скролл",
+    "source_url": "https://tyranny.fandom.com/wiki/Sanguine_Scroll",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Blood Hound Sandals",
+    "title_ru": "Сандалии Кровавого Пса",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood_Hound_Sandals",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bloodchanter Sandals",
+    "title_ru": "Сандалии Певца Крови",
+    "source_url": "https://tyranny.fandom.com/wiki/Bloodchanter_Sandals",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Scarlet Fury Boots",
+    "title_ru": "Сапоги Алой Фурии",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_Fury_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Crimson Spear Boots",
+    "title_ru": "Сапоги Багряного Копья",
+    "source_url": "https://tyranny.fandom.com/wiki/Crimson_Spear_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fatebinder of Tunon boots",
+    "title_ru": "Сапоги Вершителя Судеб Тунона",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder_of_Tunon_boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Grizzly Hide Boots",
+    "title_ru": "Сапоги из медвежьей шкуры",
+    "source_url": "https://tyranny.fandom.com/wiki/Grizzly_Hide_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Forge-Bound Master Boots",
+    "title_ru": "Сапоги мастера Кузнецов Судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Master_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Feather-lined Boots",
+    "title_ru": "Сапоги на перьевой подкладке",
+    "source_url": "https://tyranny.fandom.com/wiki/Feather-lined_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Adjudicator's Boots",
+    "title_ru": "Сапоги Судьи",
+    "source_url": "https://tyranny.fandom.com/wiki/Adjudicator%27s_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Forge-Bound Apprentice Boots",
+    "title_ru": "Сапоги ученика Кузнецов Судьбы",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_Apprentice_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Sapphire",
+    "title_ru": "Саппхире",
+    "source_url": "https://tyranny.fandom.com/wiki/Sapphire",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Swig of Insight",
+    "title_ru": "Свиг оф Инсигхт",
+    "source_url": "https://tyranny.fandom.com/wiki/Swig_of_Insight",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Swine Herder",
+    "title_ru": "Свине Хердер",
+    "source_url": "https://tyranny.fandom.com/wiki/Swine_Herder",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Binding Oath",
+    "title_ru": "Связывающая клятва",
+    "source_url": "https://tyranny.fandom.com/wiki/Binding_Oath",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Sever",
+    "title_ru": "Север",
+    "source_url": "https://tyranny.fandom.com/wiki/Sever",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Seeker",
+    "title_ru": "Сеекер",
+    "source_url": "https://tyranny.fandom.com/wiki/Seeker",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bronze Brotherhood greataxe",
+    "title_ru": "Секира Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_greataxe",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Sender Cade kill order",
+    "title_ru": "Сендер Каде килл ордер",
+    "source_url": "https://tyranny.fandom.com/wiki/Sender_Cade_kill_order",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sentinel",
+    "title_ru": "Сентинел",
+    "source_url": "https://tyranny.fandom.com/wiki/Sentinel",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Silvercore",
+    "title_ru": "Силверкоре",
+    "source_url": "https://tyranny.fandom.com/wiki/Silvercore",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Silken Gloves",
+    "title_ru": "Силкен Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Silken_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Simplicity",
+    "title_ru": "Симпликитй",
+    "source_url": "https://tyranny.fandom.com/wiki/Simplicity",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Singed Scarlet Chorus report",
+    "title_ru": "Сингед Скарлет Кхорус отчёт",
+    "source_url": "https://tyranny.fandom.com/wiki/Singed_Scarlet_Chorus_report",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Syzygy",
+    "title_ru": "Сйзйгй",
+    "source_url": "https://tyranny.fandom.com/wiki/Syzygy",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scavenger Leather Armor",
+    "title_ru": "Скавенгер Кожаный Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Scavenger_Leather_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scavenger Leather Gloves",
+    "title_ru": "Скавенгер Кожаный Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Scavenger_Leather_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scavenger Leather Boots",
+    "title_ru": "Скавенгер Кожаный Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Scavenger_Leather_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scavenger logbook",
+    "title_ru": "Скавенгер логбоок",
+    "source_url": "https://tyranny.fandom.com/wiki/Scavenger_logbook",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scavenger mask",
+    "title_ru": "Скавенгер маска",
+    "source_url": "https://tyranny.fandom.com/wiki/Scavenger_mask",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scales of Mercy",
+    "title_ru": "Скалес оф Меркй",
+    "source_url": "https://tyranny.fandom.com/wiki/Scales_of_Mercy",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scarlet Chorus Leather Armor",
+    "title_ru": "Скарлет Кхорус Кожаный Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_Chorus_Leather_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scarlet notebook",
+    "title_ru": "Скарлет нотебоок",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_notebook",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scarlet poison",
+    "title_ru": "Скарлет поисон",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_poison",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Skirmisher Armor",
+    "title_ru": "Скирмисхер Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Skirmisher_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sky Blade javelin",
+    "title_ru": "Скй Бладе дротик",
+    "source_url": "https://tyranny.fandom.com/wiki/Sky_Blade_javelin",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sky Piercer",
+    "title_ru": "Скй Пиеркер",
+    "source_url": "https://tyranny.fandom.com/wiki/Sky_Piercer",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Skycap",
+    "title_ru": "Скйкап",
+    "source_url": "https://tyranny.fandom.com/wiki/Skycap",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Skorn",
+    "title_ru": "Скорн",
+    "source_url": "https://tyranny.fandom.com/wiki/Skorn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scribbled Map",
+    "title_ru": "Скрибблед Мап",
+    "source_url": "https://tyranny.fandom.com/wiki/Scribbled_Map",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scrivener's Eye",
+    "title_ru": "Скривенер'с Глаз",
+    "source_url": "https://tyranny.fandom.com/wiki/Scrivener%27s_Eye",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Cyclical Energies (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Кйкликал Енергиес (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Cyclical_Energies_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Limitless Boundaries (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Лимитлесс Боундариес (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Limitless_Boundaries_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Piercing Force (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Пиеркинг Форке (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Piercing_Force_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Precise Action (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Прекисе Актион (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Precise_Action_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Reaching Grasp (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Реакхинг Грасп (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Reaching_Grasp_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Staggering Force (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Стаггеринг Форке (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Staggering_Force_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Strength (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Стренгтх (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Strength_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Greater Sigil of Timeless Form (Accent)",
+    "title_ru": "Скролл: Греатер Сигил оф Тимелесс Форм (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Greater_Sigil_of_Timeless_Form_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Exceptional Sigil of Precise Action (Accent)",
+    "title_ru": "Скролл: Екскептионал Сигил оф Прекисе Актион (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Exceptional_Sigil_of_Precise_Action_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Exceptional Sigil of Strength (Accent)",
+    "title_ru": "Скролл: Екскептионал Сигил оф Стренгтх (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Exceptional_Sigil_of_Strength_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Bounding Bolts (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Боундинг Болтс (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Bounding_Bolts_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Cyclical Energies (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Кйкликал Енергиес (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Cyclical_Energies_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Limitless Boundaries (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Лимитлесс Боундариес (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Limitless_Boundaries_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Piercing Force (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Пиеркинг Форке (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Piercing_Force_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Precise Action (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Прекисе Актион (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Precise_Action_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Reaching Grasp (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Реакхинг Грасп (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Reaching_Grasp_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Staggering Force (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Стаггеринг Форке (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Staggering_Force_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Strength (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Стренгтх (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Strength_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Lesser Sigil of Timeless Form (Accent)",
+    "title_ru": "Скролл: Лессер Сигил оф Тимелесс Форм (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Lesser_Sigil_of_Timeless_Form_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Atrophy (Core)",
+    "title_ru": "Скролл: Сигил оф Атропхй (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Atrophy_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Bounding Bolts (Accent)",
+    "title_ru": "Скролл: Сигил оф Боундинг Болтс (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Bounding_Bolts_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Vigor (Core)",
+    "title_ru": "Скролл: Сигил оф Вигор (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Vigor_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Wild Magic (Accent)",
+    "title_ru": "Скролл: Сигил оф Вилд Магик (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Wild_Magic_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Volcanic Weapon (Accent)",
+    "title_ru": "Скролл: Сигил оф Волканик Оружие (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Volcanic_Weapon_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Volleys (Accent)",
+    "title_ru": "Скролл: Сигил оф Воллейс (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Volleys_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Guarded Form (Expression)",
+    "title_ru": "Скролл: Сигил оф Гуардед Форм (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Guarded_Form_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Dazing (Accent)",
+    "title_ru": "Скролл: Сигил оф Дазинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Dazing_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Deflecting (Accent)",
+    "title_ru": "Скролл: Сигил оф Дефлектинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Deflecting_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Directed Force (Expression)",
+    "title_ru": "Скролл: Сигил оф Директед Форке (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Directed_Force_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Distant Impact (Expression)",
+    "title_ru": "Скролл: Сигил оф Дистант Импакт (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Distant_Impact_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Illusion (Core)",
+    "title_ru": "Скролл: Сигил оф Иллусион (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Illusion_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Impact (Accent)",
+    "title_ru": "Скролл: Сигил оф Импакт (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Impact_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Influential Domain (Expression)",
+    "title_ru": "Скролл: Сигил оф Инфлуентиал Домаин (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Influential_Domain_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Stone (Core)",
+    "title_ru": "Скролл: Сигил оф Камень (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Stone_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Killing Blows (Accent)",
+    "title_ru": "Скролл: Сигил оф Киллинг Бловс (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Killing_Blows_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Cyclical Energies (Accent)",
+    "title_ru": "Скролл: Сигил оф Кйкликал Енергиес (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Cyclical_Energies_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Blood Magic (Accent)",
+    "title_ru": "Скролл: Сигил оф Кровь Магик (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Blood_Magic_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Channeled Strength (Expression)",
+    "title_ru": "Скролл: Сигил оф Кханнелед Стренгтх (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Channeled_Strength_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Chaotic Descent (Expression)",
+    "title_ru": "Скролл: Сигил оф Кхаотик Дескент (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Chaotic_Descent_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Lightning (Core)",
+    "title_ru": "Скролл: Сигил оф Лигхтнинг (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Lightning_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Limitless Boundaries (Accent)",
+    "title_ru": "Скролл: Сигил оф Лимитлесс Боундариес (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Limitless_Boundaries_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Magic Boost (Accent)",
+    "title_ru": "Скролл: Сигил оф Магик Боост (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Magic_Boost_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Marking (Accent)",
+    "title_ru": "Скролл: Сигил оф Маркинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Marking_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Material Force (Expression)",
+    "title_ru": "Скролл: Сигил оф Материал Форке (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Material_Force_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Passion (Core)",
+    "title_ru": "Скролл: Сигил оф Пассион (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Passion_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Piercing (Accent)",
+    "title_ru": "Скролл: Сигил оф Пиеркинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Piercing_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Piercing Force (Accent)",
+    "title_ru": "Скролл: Сигил оф Пиеркинг Форке (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Piercing_Force_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Precise Action (Accent)",
+    "title_ru": "Скролл: Сигил оф Прекисе Актион (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Precise_Action_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Pride Magic (Accent)",
+    "title_ru": "Скролл: Сигил оф Приде Магик (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Pride_Magic_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Proximate Action (Expression)",
+    "title_ru": "Скролл: Сигил оф Проксимате Актион (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Proximate_Action_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Phasing (Accent)",
+    "title_ru": "Скролл: Сигил оф Пхасинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Phasing_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Rapid Casting (Accent)",
+    "title_ru": "Скролл: Сигил оф Рапид Кастинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Rapid_Casting_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Reaching Grasp (Accent)",
+    "title_ru": "Скролл: Сигил оф Реакхинг Грасп (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Reaching_Grasp_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Regeneration (Core)",
+    "title_ru": "Скролл: Сигил оф Регенератион (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Regeneration_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Rooting (Accent)",
+    "title_ru": "Скролл: Сигил оф Роотинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Rooting_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Selfless Magic (Accent)",
+    "title_ru": "Скролл: Сигил оф Селфлесс Магик (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Selfless_Magic_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Spellsurge (Accent)",
+    "title_ru": "Скролл: Сигил оф Спеллсурге (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Spellsurge_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Staggering Force (Accent)",
+    "title_ru": "Скролл: Сигил оф Стаггеринг Форке (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Staggering_Force_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Strength (Accent)",
+    "title_ru": "Скролл: Сигил оф Стренгтх (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Strength_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Stunning (Accent)",
+    "title_ru": "Скролл: Сигил оф Стуннинг (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Stunning_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Terratus (Core)",
+    "title_ru": "Скролл: Сигил оф Терратус (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Terratus_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Timeless Form (Accent)",
+    "title_ru": "Скролл: Сигил оф Тимелесс Форм (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Timeless_Form_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Fire (Core)",
+    "title_ru": "Скролл: Сигил оф Фире (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Fire_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Focused Intent (Expression)",
+    "title_ru": "Скролл: Сигил оф Фокусед Интент (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Focused_Intent_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Focused Rain (Accent)",
+    "title_ru": "Скролл: Сигил оф Фокусед Раин (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Focused_Rain_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Force (Core)",
+    "title_ru": "Скролл: Сигил оф Форке (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Force_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Frost (Core)",
+    "title_ru": "Скролл: Сигил оф Фрост (Коре)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Frost_%28Core%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Frostfire (Accent)",
+    "title_ru": "Скролл: Сигил оф Фростфире (Аккент)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Frostfire_%28Accent%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scroll: Sigil of Hidden Danger (Expression)",
+    "title_ru": "Скролл: Сигил оф Хидден Дангер (Експрессион)",
+    "source_url": "https://tyranny.fandom.com/wiki/Scroll%3A_Sigil_of_Hidden_Danger_%28Expression%29",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scholar's Robes",
+    "title_ru": "Скхолар'с Одеяния",
+    "source_url": "https://tyranny.fandom.com/wiki/Scholar%27s_Robes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scholar's Gloves",
+    "title_ru": "Скхолар'с Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Scholar%27s_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Scholar's Boots",
+    "title_ru": "Скхолар'с Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Scholar%27s_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Glory",
+    "title_ru": "Слава",
+    "source_url": "https://tyranny.fandom.com/wiki/Glory",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Broken Maw",
+    "title_ru": "Сломанная пасть",
+    "source_url": "https://tyranny.fandom.com/wiki/Broken_Maw",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Slugfist Gauntlets",
+    "title_ru": "Слугфист Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Slugfist_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Small bottle",
+    "title_ru": "Смалл боттле",
+    "source_url": "https://tyranny.fandom.com/wiki/Small_bottle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Snowfang",
+    "title_ru": "Сновфанг",
+    "source_url": "https://tyranny.fandom.com/wiki/Snowfang",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Songbird's Bridle",
+    "title_ru": "Сонгбирд'с Бридле",
+    "source_url": "https://tyranny.fandom.com/wiki/Songbird%27s_Bridle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Songbird's Dress",
+    "title_ru": "Сонгбирд'с Дресс",
+    "source_url": "https://tyranny.fandom.com/wiki/Songbird%27s_Dress",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Songbird's Gloves",
+    "title_ru": "Сонгбирд'с Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Songbird%27s_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Songbird's Cloth Wraps",
+    "title_ru": "Сонгбирд'с Тканевый Обмотки",
+    "source_url": "https://tyranny.fandom.com/wiki/Songbird%27s_Cloth_Wraps",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Songstress' Dress",
+    "title_ru": "Сонгстресс' Дресс",
+    "source_url": "https://tyranny.fandom.com/wiki/Songstress%27_Dress",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Drowsy Drop",
+    "title_ru": "Сонная капля",
+    "source_url": "https://tyranny.fandom.com/wiki/Drowsy_Drop",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Sorcerer Savant's gloves",
+    "title_ru": "Соркерер Савант'с перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Sorcerer_Savant%27s_gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sorcerer Savant's boots",
+    "title_ru": "Соркерер Савант'с сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Sorcerer_Savant%27s_boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sorcerer's Blade",
+    "title_ru": "Соркерер'с Бладе",
+    "source_url": "https://tyranny.fandom.com/wiki/Sorcerer%27s_Blade",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Softstep Heelwraps",
+    "title_ru": "Софтстеп Хеелврапс",
+    "source_url": "https://tyranny.fandom.com/wiki/Softstep_Heelwraps",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Spidersilk Sash",
+    "title_ru": "Спидерсилк Кушак",
+    "source_url": "https://tyranny.fandom.com/wiki/Spidersilk_Sash",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Spiked iron helm",
+    "title_ru": "Спикед железный шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Spiked_iron_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fused Iron Armor",
+    "title_ru": "Сплавленная железная броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Fused_Iron_Armor",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fused Iron Gauntlets",
+    "title_ru": "Сплавленные железные рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Fused_Iron_Gauntlets",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fused Iron Boots",
+    "title_ru": "Сплавленные железные сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Fused_Iron_Boots",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fused Iron Helmet",
+    "title_ru": "Сплавленный железный шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Fused_Iron_Helmet",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Staggering Burn",
+    "title_ru": "Стаггеринг Бурн",
+    "source_url": "https://tyranny.fandom.com/wiki/Staggering_Burn",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stalwart bronze sword",
+    "title_ru": "Сталварт бронзовый меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Stalwart_bronze_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stalwart greataxe",
+    "title_ru": "Сталварт секира",
+    "source_url": "https://tyranny.fandom.com/wiki/Stalwart_greataxe",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stalwart Helm",
+    "title_ru": "Сталварт Шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Stalwart_Helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stalker's Shako",
+    "title_ru": "Сталкер'с Схако",
+    "source_url": "https://tyranny.fandom.com/wiki/Stalker%27s_Shako",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Brotherhood stout",
+    "title_ru": "Стаут Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Brotherhood_stout",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Steadfast Insignia",
+    "title_ru": "Стеадфаст Инсигниа",
+    "source_url": "https://tyranny.fandom.com/wiki/Steadfast_Insignia",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Storyteller's Manteau",
+    "title_ru": "Сторйтеллер'с Мантеау",
+    "source_url": "https://tyranny.fandom.com/wiki/Storyteller%27s_Manteau",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Striderunner's Heels",
+    "title_ru": "Стридеруннер'с Хеелс",
+    "source_url": "https://tyranny.fandom.com/wiki/Striderunner%27s_Heels",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Striker's Cowl",
+    "title_ru": "Стрикер'с Капюшон",
+    "source_url": "https://tyranny.fandom.com/wiki/Striker%27s_Cowl",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Stubborn Aegis",
+    "title_ru": "Стубборн Аегис",
+    "source_url": "https://tyranny.fandom.com/wiki/Stubborn_Aegis",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Studded Iron Gorget",
+    "title_ru": "Студдед Железный Горгет",
+    "source_url": "https://tyranny.fandom.com/wiki/Studded_Iron_Gorget",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sturdy metal pole",
+    "title_ru": "Стурдй метал поле",
+    "source_url": "https://tyranny.fandom.com/wiki/Sturdy_metal_pole",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Submission Gloves",
+    "title_ru": "Субмиссион Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Submission_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sun Soldier's javelin",
+    "title_ru": "Сун Солдиер'с дротик",
+    "source_url": "https://tyranny.fandom.com/wiki/Sun_Soldier%27s_javelin",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sun Soldier's shield",
+    "title_ru": "Сун Солдиер'с щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Sun_Soldier%27s_shield",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sunder's Seal",
+    "title_ru": "Сундер'с Печать",
+    "source_url": "https://tyranny.fandom.com/wiki/Sunder%27s_Seal",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sundered bronze sword",
+    "title_ru": "Сундеред бронзовый меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Sundered_bronze_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sunlance",
+    "title_ru": "Сунланке",
+    "source_url": "https://tyranny.fandom.com/wiki/Sunlance",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Sureshot Slippers",
+    "title_ru": "Суресхот Туфли",
+    "source_url": "https://tyranny.fandom.com/wiki/Sureshot_Slippers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Surefoot Scale Greaves",
+    "title_ru": "Сурефоот Скале Поножи",
+    "source_url": "https://tyranny.fandom.com/wiki/Surefoot_Scale_Greaves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Gnarled Staff of Entropy",
+    "title_ru": "Сучковатый посох энтропии",
+    "source_url": "https://tyranny.fandom.com/wiki/Gnarled_Staff_of_Entropy",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bane essence",
+    "title_ru": "Сущность Погибели",
+    "source_url": "https://tyranny.fandom.com/wiki/Bane_essence",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Shattered glass vial",
+    "title_ru": "Схаттеред гласс виал",
+    "source_url": "https://tyranny.fandom.com/wiki/Shattered_glass_vial",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Shattered iron sword",
+    "title_ru": "Схаттеред железный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Shattered_iron_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Shattered iron spaulder",
+    "title_ru": "Схаттеред железный спаулдер",
+    "source_url": "https://tyranny.fandom.com/wiki/Shattered_iron_spaulder",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Shattered Stone Shield",
+    "title_ru": "Схаттеред Камень Щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Shattered_Stone_Shield",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Shields",
+    "title_ru": "Схиелдс",
+    "source_url": "https://tyranny.fandom.com/wiki/Shields",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Shortbow",
+    "title_ru": "Схортбов",
+    "source_url": "https://tyranny.fandom.com/wiki/Shortbow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Shrieking Maw",
+    "title_ru": "Схриекинг Мав",
+    "source_url": "https://tyranny.fandom.com/wiki/Shrieking_Maw",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tangleroot Braid",
+    "title_ru": "Танглероот Браид",
+    "source_url": "https://tyranny.fandom.com/wiki/Tangleroot_Braid",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tattered Journal",
+    "title_ru": "Таттеред Джоурнал",
+    "source_url": "https://tyranny.fandom.com/wiki/Tattered_Journal",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Twice-Warded Periapt",
+    "title_ru": "Твике-Вардед Периапт",
+    "source_url": "https://tyranny.fandom.com/wiki/Twice-Warded_Periapt",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Twice-Forged Bronze Shirt",
+    "title_ru": "Твике-Форгед Бронзовый Схирт",
+    "source_url": "https://tyranny.fandom.com/wiki/Twice-Forged_Bronze_Shirt",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Twisted iron sword",
+    "title_ru": "Твистед железный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Twisted_iron_sword",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Two-handed weapons",
+    "title_ru": "Тво-хандед веапонс",
+    "source_url": "https://tyranny.fandom.com/wiki/Two-handed_weapons",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tempest",
+    "title_ru": "Темпест",
+    "source_url": "https://tyranny.fandom.com/wiki/Tempest",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tenderizer",
+    "title_ru": "Тендеризер",
+    "source_url": "https://tyranny.fandom.com/wiki/Tenderizer",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tidecaster's Garments",
+    "title_ru": "Тидекастер'с Гарментс",
+    "source_url": "https://tyranny.fandom.com/wiki/Tidecaster%27s_Garments",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tidecaster's Opal",
+    "title_ru": "Тидекастер'с Опал",
+    "source_url": "https://tyranny.fandom.com/wiki/Tidecaster%27s_Opal",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tidecaster's Gloves",
+    "title_ru": "Тидекастер'с Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Tidecaster%27s_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tidecaster's Boots",
+    "title_ru": "Тидекастер'с Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Tidecaster%27s_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tiersman greatbow",
+    "title_ru": "Тиерсман большой лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Tiersman_greatbow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tiersman spine bow",
+    "title_ru": "Тиерсман спине лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Tiersman_spine_bow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tiersman hunting bow",
+    "title_ru": "Тиерсман хунтинг лук",
+    "source_url": "https://tyranny.fandom.com/wiki/Tiersman_hunting_bow",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tierforged bronze greatspear",
+    "title_ru": "Тиерфоргед бронзовый большое копьё",
+    "source_url": "https://tyranny.fandom.com/wiki/Tierforged_bronze_greatspear",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tierforged bronze spear",
+    "title_ru": "Тиерфоргед бронзовый копьё",
+    "source_url": "https://tyranny.fandom.com/wiki/Tierforged_bronze_spear",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Tireless Protector",
+    "title_ru": "Тирелесс Протектор",
+    "source_url": "https://tyranny.fandom.com/wiki/Tireless_Protector",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Titan's Blade",
+    "title_ru": "Титан'с Бладе",
+    "source_url": "https://tyranny.fandom.com/wiki/Titan%27s_Blade",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Titan's Knuckle",
+    "title_ru": "Титан'с Кнуккле",
+    "source_url": "https://tyranny.fandom.com/wiki/Titan%27s_Knuckle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Titan's Hoof",
+    "title_ru": "Титан'с Хооф",
+    "source_url": "https://tyranny.fandom.com/wiki/Titan%27s_Hoof",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Cloth Tunic",
+    "title_ru": "Тканевая туника",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_Tunic",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cloth hat",
+    "title_ru": "Тканевая шляпа",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_hat",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cloth Garb",
+    "title_ru": "Тканевое одеяние",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_Garb",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cloth Bracers",
+    "title_ru": "Тканевые наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_Bracers",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cloth Footwraps",
+    "title_ru": "Тканевые обмотки для ног",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_Footwraps",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cloth Handwraps",
+    "title_ru": "Тканевые обмотки для рук",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_Handwraps",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cloth hood",
+    "title_ru": "Тканевый капюшон",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_hood",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cloth Sash",
+    "title_ru": "Тканевый кушак",
+    "source_url": "https://tyranny.fandom.com/wiki/Cloth_Sash",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Tooth",
+    "title_ru": "Тоотх",
+    "source_url": "https://tyranny.fandom.com/wiki/Tooth",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Topaz",
+    "title_ru": "Топаз",
+    "source_url": "https://tyranny.fandom.com/wiki/Topaz",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Bronze Brotherhood axe",
+    "title_ru": "Топор Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_axe",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Axe of the First Brother",
+    "title_ru": "Топор Первого Брата",
+    "source_url": "https://tyranny.fandom.com/wiki/Axe_of_the_First_Brother",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Torn leather spaulder",
+    "title_ru": "Торн кожаный спаулдер",
+    "source_url": "https://tyranny.fandom.com/wiki/Torn_leather_spaulder",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Torn Piece of Parchment",
+    "title_ru": "Торн Пиеке оф Паркхмент",
+    "source_url": "https://tyranny.fandom.com/wiki/Torn_Piece_of_Parchment",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Trapper's Folly",
+    "title_ru": "Траппер'с Фоллй",
+    "source_url": "https://tyranny.fandom.com/wiki/Trapper%27s_Folly",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fractured iron sword",
+    "title_ru": "Треснувший железный меч",
+    "source_url": "https://tyranny.fandom.com/wiki/Fractured_iron_sword",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Trickster's Tooth",
+    "title_ru": "Триккстер'с Тоотх",
+    "source_url": "https://tyranny.fandom.com/wiki/Trickster%27s_Tooth",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Turquoise",
+    "title_ru": "Туркуоисе",
+    "source_url": "https://tyranny.fandom.com/wiki/Turquoise",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "The Baneward",
+    "title_ru": "Тхе Баневард",
+    "source_url": "https://tyranny.fandom.com/wiki/The_Baneward",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "The Everwell",
+    "title_ru": "Тхе Евервелл",
+    "source_url": "https://tyranny.fandom.com/wiki/The_Everwell",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "The Silent Archive",
+    "title_ru": "Тхе Силент Аркхиве",
+    "source_url": "https://tyranny.fandom.com/wiki/The_Silent_Archive",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "The First Kings of Stalwart",
+    "title_ru": "Тхе Фирст Кингс оф Сталварт",
+    "source_url": "https://tyranny.fandom.com/wiki/The_First_Kings_of_Stalwart",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Thieves' Bravado",
+    "title_ru": "Тхиевес' Бравадо",
+    "source_url": "https://tyranny.fandom.com/wiki/Thieves%27_Bravado",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Bronze Armor",
+    "title_ru": "Тяжёлый Бронзовый Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Bronze_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Bronze Cuirass",
+    "title_ru": "Тяжёлый Бронзовый Кираса",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Bronze_Cuirass",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy bronze crested helm",
+    "title_ru": "Тяжёлый бронзовый крестед шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_bronze_crested_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy bronze ridge helm",
+    "title_ru": "Тяжёлый бронзовый ридге шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_bronze_ridge_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Bronze Boots",
+    "title_ru": "Тяжёлый Бронзовый Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Bronze_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Leather Armor",
+    "title_ru": "Тяжёлый Кожаный Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Leather_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Leather Bracers",
+    "title_ru": "Тяжёлый Кожаный Наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Leather_Bracers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Leather Gloves",
+    "title_ru": "Тяжёлый Кожаный Перчатки",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Leather_Gloves",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Leather Boots",
+    "title_ru": "Тяжёлый Кожаный Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Leather_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy leather helm",
+    "title_ru": "Тяжёлый кожаный шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_leather_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Cloth Armor",
+    "title_ru": "Тяжёлый Тканевый Броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Cloth_Armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy cloth cowl",
+    "title_ru": "Тяжёлый тканевый капюшон",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_cloth_cowl",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Cloth Bracers",
+    "title_ru": "Тяжёлый Тканевый Наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Cloth_Bracers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Cloth Sandals",
+    "title_ru": "Тяжёлый Тканевый Сандалии",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Cloth_Sandals",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Cloth Boots",
+    "title_ru": "Тяжёлый Тканевый Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Cloth_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heavy Cloth Shoes",
+    "title_ru": "Тяжёлый Тканевый Туфли",
+    "source_url": "https://tyranny.fandom.com/wiki/Heavy_Cloth_Shoes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Cinder",
+    "title_ru": "Уголёк",
+    "source_url": "https://tyranny.fandom.com/wiki/Cinder",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Unbroken armor",
+    "title_ru": "Унброкен броня",
+    "source_url": "https://tyranny.fandom.com/wiki/Unbroken_armor",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Unbroken Legacy",
+    "title_ru": "Унброкен Легакй",
+    "source_url": "https://tyranny.fandom.com/wiki/Unbroken_Legacy",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Unbroken Gauntlets",
+    "title_ru": "Унброкен Рукавицы",
+    "source_url": "https://tyranny.fandom.com/wiki/Unbroken_Gauntlets",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Unbroken Boots",
+    "title_ru": "Унброкен Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Unbroken_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Unbroken helm",
+    "title_ru": "Унброкен шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Unbroken_helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Unbroken shield",
+    "title_ru": "Унброкен щит",
+    "source_url": "https://tyranny.fandom.com/wiki/Unbroken_shield",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Unraveler's Cane",
+    "title_ru": "Унравелер'с Кане",
+    "source_url": "https://tyranny.fandom.com/wiki/Unraveler%27s_Cane",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Unstoppable Force",
+    "title_ru": "Унстоппабле Форке",
+    "source_url": "https://tyranny.fandom.com/wiki/Unstoppable_Force",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Used armorer's kit",
+    "title_ru": "Усед арморер'с кит",
+    "source_url": "https://tyranny.fandom.com/wiki/Used_armorer%27s_kit",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Brawn",
+    "title_ru": "Физическая мощь",
+    "source_url": "https://tyranny.fandom.com/wiki/Brawn",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "First Sage Arwel's directives",
+    "title_ru": "Фирст Саге Арвел'с директивес",
+    "source_url": "https://tyranny.fandom.com/wiki/First_Sage_Arwel%27s_directives",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "First Sage's note",
+    "title_ru": "Фирст Саге'с ноте",
+    "source_url": "https://tyranny.fandom.com/wiki/First_Sage%27s_note",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fragment of Cairn's Eye",
+    "title_ru": "Фрагмент глаза Каирна",
+    "source_url": "https://tyranny.fandom.com/wiki/Fragment_of_Cairn%27s_Eye",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fragment of Cairn's Head",
+    "title_ru": "Фрагмент головы Каирна",
+    "source_url": "https://tyranny.fandom.com/wiki/Fragment_of_Cairn%27s_Head",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fragment of Cairn's Left Hand",
+    "title_ru": "Фрагмент левой кисти Каирна",
+    "source_url": "https://tyranny.fandom.com/wiki/Fragment_of_Cairn%27s_Left_Hand",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fragment of Cairn's Right Hand",
+    "title_ru": "Фрагмент правой кисти Каирна",
+    "source_url": "https://tyranny.fandom.com/wiki/Fragment_of_Cairn%27s_Right_Hand",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fragment of Cairn's Arm",
+    "title_ru": "Фрагмент руки Каирна",
+    "source_url": "https://tyranny.fandom.com/wiki/Fragment_of_Cairn%27s_Arm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fragment of Cairn's Heart",
+    "title_ru": "Фрагмент сердца Каирна",
+    "source_url": "https://tyranny.fandom.com/wiki/Fragment_of_Cairn%27s_Heart",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fragments of a Bloodchanter's cloak",
+    "title_ru": "Фрагментс оф а Певец Крови'с клоак",
+    "source_url": "https://tyranny.fandom.com/wiki/Fragments_of_a_Bloodchanter%27s_cloak",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Frayed purple cloth",
+    "title_ru": "Фрайед пурпле тканевый",
+    "source_url": "https://tyranny.fandom.com/wiki/Frayed_purple_cloth",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fruit",
+    "title_ru": "Фруит",
+    "source_url": "https://tyranny.fandom.com/wiki/Fruit",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Hawk Eye Helm",
+    "title_ru": "Хавк Глаз Шлем",
+    "source_url": "https://tyranny.fandom.com/wiki/Hawk_Eye_Helm",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Harbinger's Wings",
+    "title_ru": "Харбингер'с Вингс",
+    "source_url": "https://tyranny.fandom.com/wiki/Harbinger%27s_Wings",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Hardy Headgear",
+    "title_ru": "Хардй Хеадгеар",
+    "source_url": "https://tyranny.fandom.com/wiki/Hardy_Headgear",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Harm's Way",
+    "title_ru": "Харм'с Вай",
+    "source_url": "https://tyranny.fandom.com/wiki/Harm%27s_Way",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Censor's Grip",
+    "title_ru": "Хватка цензора",
+    "source_url": "https://tyranny.fandom.com/wiki/Censor%27s_Grip",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Headwrap",
+    "title_ru": "Хеадврап",
+    "source_url": "https://tyranny.fandom.com/wiki/Headwrap",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Headhunter",
+    "title_ru": "Хеадхунтер",
+    "source_url": "https://tyranny.fandom.com/wiki/Headhunter",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Heart of Battle",
+    "title_ru": "Хеарт оф Боевой",
+    "source_url": "https://tyranny.fandom.com/wiki/Heart_of_Battle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Herbalist's Mits",
+    "title_ru": "Хербалист'с Митс",
+    "source_url": "https://tyranny.fandom.com/wiki/Herbalist%27s_Mits",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Hermit's Walking Stick",
+    "title_ru": "Хермит'с Валкинг Стикк",
+    "source_url": "https://tyranny.fandom.com/wiki/Hermit%27s_Walking_Stick",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Hero's Insignia",
+    "title_ru": "Херо'с Инсигниа",
+    "source_url": "https://tyranny.fandom.com/wiki/Hero%27s_Insignia",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Hierarch's Robes",
+    "title_ru": "Хиераркх'с Одеяния",
+    "source_url": "https://tyranny.fandom.com/wiki/Hierarch%27s_Robes",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Honor Guard's bronze falx",
+    "title_ru": "Хонор Гуард'с бронзовый фалкс",
+    "source_url": "https://tyranny.fandom.com/wiki/Honor_Guard%27s_bronze_falx",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Horde Bracers",
+    "title_ru": "Хорде Наручи",
+    "source_url": "https://tyranny.fandom.com/wiki/Horde_Bracers",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Horde Boots",
+    "title_ru": "Хорде Сапоги",
+    "source_url": "https://tyranny.fandom.com/wiki/Horde_Boots",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Hound's Hide Mantle",
+    "title_ru": "Хоунд'с Шкура Мантия",
+    "source_url": "https://tyranny.fandom.com/wiki/Hound%27s_Hide_Mantle",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Blood Chanter's Spine",
+    "title_ru": "Хребет Певца Крови",
+    "source_url": "https://tyranny.fandom.com/wiki/Blood_Chanter%27s_Spine",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Hundred Blood's Claw",
+    "title_ru": "Хундред Кровь'с Клав",
+    "source_url": "https://tyranny.fandom.com/wiki/Hundred_Blood%27s_Claw",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Baneweave Shawl",
+    "title_ru": "Шаль из ткани Погибели",
+    "source_url": "https://tyranny.fandom.com/wiki/Baneweave_Shawl",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cap of Absorption",
+    "title_ru": "Шапка поглощения",
+    "source_url": "https://tyranny.fandom.com/wiki/Cap_of_Absorption",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Cap of Precision",
+    "title_ru": "Шапка точности",
+    "source_url": "https://tyranny.fandom.com/wiki/Cap_of_Precision",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Flayman's Spike",
+    "title_ru": "Шип живодёра",
+    "source_url": "https://tyranny.fandom.com/wiki/Flayman%27s_Spike",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Barbed Haubergeon",
+    "title_ru": "Шипованный хаубержон",
+    "source_url": "https://tyranny.fandom.com/wiki/Barbed_Haubergeon",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Scarlet Fury helm",
+    "title_ru": "Шлем Алой Фурии",
+    "source_url": "https://tyranny.fandom.com/wiki/Scarlet_Fury_helm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Crimson Spear helm",
+    "title_ru": "Шлем Багряного Копья",
+    "source_url": "https://tyranny.fandom.com/wiki/Crimson_Spear_helm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bronze Brotherhood helm",
+    "title_ru": "Шлем Бронзового Братства",
+    "source_url": "https://tyranny.fandom.com/wiki/Bronze_Brotherhood_helm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Fatebinder of Tunon helm",
+    "title_ru": "Шлем Вершителя Судеб Тунона",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder_of_Tunon_helm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Freeblade Marauder Helm",
+    "title_ru": "Шлем мародёра-вольного клинка",
+    "source_url": "https://tyranny.fandom.com/wiki/Freeblade_Marauder_Helm",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Helm of the Fish",
+    "title_ru": "Шлем оф тхе Рыба",
+    "source_url": "https://tyranny.fandom.com/wiki/Helm_of_the_Fish",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Helm of the First Regent",
+    "title_ru": "Шлем оф тхе Фирст Регент",
+    "source_url": "https://tyranny.fandom.com/wiki/Helm_of_the_First_Regent",
+    "translation_mode": "словарный — требует редакторской проверки"
+  },
+  {
+    "title_en": "Fatebinder of Tunon shield",
+    "title_ru": "Щит Вершителя Судеб Тунона",
+    "source_url": "https://tyranny.fandom.com/wiki/Fatebinder_of_Tunon_shield",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Greystone Shield",
+    "title_ru": "Щит из серого камня",
+    "source_url": "https://tyranny.fandom.com/wiki/Greystone_Shield",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Disfavored shield",
+    "title_ru": "Щит Опальных",
+    "source_url": "https://tyranny.fandom.com/wiki/Disfavored_shield",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elixir of Quickness",
+    "title_ru": "Эликсир Быстроты",
+    "source_url": "https://tyranny.fandom.com/wiki/Elixir_of_Quickness",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elixir of Vitality",
+    "title_ru": "Эликсир Живучести",
+    "source_url": "https://tyranny.fandom.com/wiki/Elixir_of_Vitality",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elixir of Finesse",
+    "title_ru": "Эликсир Искусности",
+    "source_url": "https://tyranny.fandom.com/wiki/Elixir_of_Finesse",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elixir of Resolve",
+    "title_ru": "Эликсир Решимости",
+    "source_url": "https://tyranny.fandom.com/wiki/Elixir_of_Resolve",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elixir of Might",
+    "title_ru": "Эликсир Силы",
+    "source_url": "https://tyranny.fandom.com/wiki/Elixir_of_Might",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Elixir of Wits",
+    "title_ru": "Эликсир Смекалки",
+    "source_url": "https://tyranny.fandom.com/wiki/Elixir_of_Wits",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Bleakwalker's Emblem",
+    "title_ru": "Эмблема Мрачного Странника",
+    "source_url": "https://tyranny.fandom.com/wiki/Bleakwalker%27s_Emblem",
+    "translation_mode": "ручной"
+  },
+  {
+    "title_en": "Chrysalis Amber Brooch",
+    "title_ru": "Янтарная брошь-куколка",
+    "source_url": "https://tyranny.fandom.com/wiki/Chrysalis_Amber_Brooch",
+    "translation_mode": "ручной"
+  }
+]

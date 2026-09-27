@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.py[cod]
+.venv/
+data/*.sqlite3
+data/*.sqlite3-*
+data/*.json
+data/portraits/
+data/photos/
+data/card-preview.png

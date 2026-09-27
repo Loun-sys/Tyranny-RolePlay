@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#1a100b">
+  <title>Архив Вершителей Судеб · Tyranny</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__runes" aria-hidden="true">⚖</div>
+    <div class="hero__inner">
+      <p class="eyebrow">СУД ТУНОНА · ЛИЧНОЕ ДЕЛО</p>
+      <h1>Вершитель<br><span>Судеб</span></h1>
+      <p class="lead">Создайте персонажа Tyranny. Все значения будут проверены и сохранены непосредственно в Discord-боте.</p>
+      <a class="start" href="#builder">НАЧАТЬ СОЗДАНИЕ <b>↓</b></a>
+    </div>
+    <div class="seal">KYROS<small>ЗАКОН ЕДИН</small></div>
+  </header>
+
+  <main id="builder" class="builder">
+    <div id="connection" class="connection loading">Проверяем личную ссылку…</div>
+    <div id="form" hidden>
+      <section data-step="1">
+        <div class="section-head"><span>01</span><div><p>ПРОШЛОЕ</p><h2>Выберите происхождение</h2></div><em>Определяет стартовые навыки и место героя в империи</em></div>
+        <div id="backgrounds" class="card-grid backgrounds"></div>
+      </section>
+
+      <section data-step="2">
+        <div class="section-head"><span>02</span><div><p>БОЕВАЯ ПОДГОТОВКА</p><h2>Две специализации</h2></div><em id="spec-counter">Выбрано 0 из 2</em></div>
+        <div id="specializations" class="card-grid specs"></div>
+      </section>
+
+      <section data-step="3">
+        <div class="section-head"><span>03</span><div><p>ЛИЧНОЕ ДЕЛО</p><h2>Имя и портрет</h2></div></div>
+        <div class="identity">
+          <label>Имя Вершителя Судеб<input id="name" maxlength="80" placeholder="Например, Калио" autocomplete="off"></label>
+          <label class="portrait-field">Портрет PNG, JPEG или WEBP<input id="portrait" type="file" accept="image/png,image/jpeg,image/webp"><span>ВЫБРАТЬ ИЗОБРАЖЕНИЕ</span></label>
+          <div class="portrait-preview"><img id="portrait-preview" alt="Предпросмотр портрета" hidden><b id="portrait-empty">ПОРТРЕТ<br>НЕ ВЫБРАН</b></div>
+        </div>
+      </section>
+
+      <div class="allocation-grid">
+        <section class="allocation" data-step="4">
+          <div class="allocation-title"><div><p>04 · ОСНОВА</p><h2>Характеристики</h2></div><div id="attribute-counter" class="counter"><b>60</b><span>/ 68</span><small>РАСПРЕДЕЛЕНО</small></div></div>
+          <p class="hint"><button class="term" data-tip="attributes">Характеристики</button> начинаются с 10. Можно опустить значение до 8 и распределить итоговую сумму 68; максимум при создании — 18.</p>
+          <div id="attributes" class="rows"></div>
+        </section>
+
+        <section class="allocation" data-step="5">
+          <div class="allocation-title"><div><p>05 · ОПЫТ</p><h2>Навыки</h2></div><div id="skill-counter" class="counter"><b>0</b><span>/ 20</span><small>ДОПОЛНИТЕЛЬНЫХ ОЧКОВ</small></div></div>
+          <p class="hint">Базовые значения вычисляются из характеристик и специализаций. Здесь распределяются ровно 20 дополнительных очков.</p>
+          <div id="skills" class="rows skills"></div>
+        </section>
+      </div>
+
+      <section class="result" data-step="6">
+        <div class="result-copy">
+          <p>06 · ПЕЧАТЬ СУДА</p><h2 id="result-title">Завершите личное дело</h2>
+          <p id="result-text">Выберите происхождение и две специализации, заполните имя и распределите очки без остатка.</p>
+          <div id="checks" class="checks"></div>
+          <button id="submit" class="submit" disabled>СОХРАНИТЬ В DISCORD</button>
+          <p id="submit-status" class="submit-status" role="status"></p>
+        </div>
+        <div id="summary" class="summary">Здесь появится сводка персонажа…</div>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="tooltip" class="tooltip"><button id="tooltip-close" aria-label="Закрыть">×</button><p>АРХИВНАЯ СПРАВКА</p><h2 id="tooltip-title"></h2><div id="tooltip-text"></div></dialog>
+  <footer><b>TYRANNY</b><span>НЕОФИЦИАЛЬНЫЙ КОНСТРУКТОР ДЛЯ DISCORD · ДАННЫЕ TYRANNY WIKI</span></footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
