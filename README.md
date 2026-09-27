@@ -85,7 +85,7 @@ python import_english_catalog.py
 
 ## Railway и Docker
 
-Проект запускается как Worker. Подключите постоянный Volume к `/app/data`, установите `TYRANNY_DATA_DIR=/app/data` и добавьте остальные переменные окружения. Публичный HTTP-порт не нужен.
+Проект запускается как один Railway-сервис: Discord-бот и HTTP API работают в одном контейнере. Подключите постоянный Volume к `/app/data`, установите `TYRANNY_DATA_DIR=/app/data`, добавьте переменные окружения и создайте публичный домен для API на порту `8080`.
 
 ```powershell
 docker compose up -d --build
