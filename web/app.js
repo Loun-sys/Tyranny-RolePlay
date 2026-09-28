@@ -110,7 +110,7 @@ function renderBackgrounds() {
   const details = state.config.backgroundDetails;
   $("#backgrounds").innerHTML = state.config.backgrounds.map((name) => `
     <button type="button" class="choice-option ${state.background === name ? "selected" : ""}" data-background="${escapeHtml(name)}">
-      <span>${escapeHtml(name)}</span><small>${Object.entries(details[name].bonuses).map(([skill, value]) => `${skill} +${value}`).join(" · ")}</small>
+      <span>${escapeHtml(name)}</span>
     </button>`).join("");
   const name = state.background || state.config.backgrounds[0];
   const detail = details[name];
