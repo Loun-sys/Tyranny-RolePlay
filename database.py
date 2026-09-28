@@ -13,8 +13,8 @@ from typing import Any
 import aiosqlite
 
 from constants import (
-    ATTRIBUTES, EQUIPMENT_SLOTS, SKILLS, SKILL_ATTRIBUTES,
-    SPECIALIZATION_ABILITIES, SPECIALIZATION_BONUSES,
+    ATTRIBUTES, BACKGROUND_BONUSES, EQUIPMENT_SLOTS, SKILLS, SKILL_ATTRIBUTES,
+    SPECIALIZATION_ABILITIES, SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES,
 )
 
 
@@ -235,7 +235,7 @@ class Database:
 
     async def create_character(
         self, guild_id: int, user_id: int, name: str, background: str,
-        specialization_1: str, specialization_2: str,
+        specialization_1: str, specialization_2: str, abilities: list[str] | None = None,
     ) -> int:
         async with self.connect() as db:
             await db.execute(
@@ -259,7 +259,7 @@ class Database:
                 "INSERT INTO attributes(character_id,name,value) VALUES(?,?,?)",
                 [(character_id, name, value) for name, value in attrs.items()],
             )
-            bonuses: dict[str, int] = {}
+            bonuses: dict[str, int] = dict(BACKGROUND_BONUSES.get(background, {}))
             for specialization in (specialization_1, specialization_2):
                 for skill, bonus in SPECIALIZATION_BONUSES[specialization].items():
                     bonuses[skill] = bonuses.get(skill, 0) + bonus
@@ -267,11 +267,19 @@ class Database:
                 "INSERT INTO skills(character_id,name,value) VALUES(?,?,?)",
                 [(character_id, skill, self._skill_base(skill, attrs) + bonuses.get(skill, 0)) for skill in SKILLS],
             )
+            selected_abilities = abilities or [
+                SPECIALIZATION_ABILITIES[specialization_1], SPECIALIZATION_ABILITIES[specialization_2]
+            ]
+            valid_abilities = []
+            for specialization, ability in zip((specialization_1, specialization_2), selected_abilities):
+                chosen = ability if ability in SPECIALIZATION_ABILITY_CHOICES[specialization] else SPECIALIZATION_ABILITIES[specialization]
+                if chosen not in valid_abilities:
+                    valid_abilities.append(chosen)
             await db.executemany(
                 "INSERT INTO talents(character_id,tree_name,tier,name,description) VALUES(?,?,?,?,?)",
                 [
-                    (character_id, "Специализация", 0, SPECIALIZATION_ABILITIES[spec], f"Стартовая способность специализации «{spec}».")
-                    for spec in (specialization_1, specialization_2)
+                    (character_id, "Специализация", 0, ability, "Стартовая способность, выбранная при создании персонажа.")
+                    for ability in valid_abilities
                 ],
             )
             await self._recalculate_health(db, character_id)
@@ -341,9 +349,9 @@ class Database:
                 for row in await db.execute_fetchall("SELECT name,value FROM attributes WHERE character_id=?", (character_id,))
             }
             specializations = await db.execute_fetchall(
-                "SELECT specialization_1,specialization_2 FROM characters WHERE id=?", (character_id,)
+                "SELECT background,specialization_1,specialization_2 FROM characters WHERE id=?", (character_id,)
             )
-            bonuses: dict[str, int] = {}
+            bonuses: dict[str, int] = dict(BACKGROUND_BONUSES.get(specializations[0]["background"], {})) if specializations else {}
             if specializations:
                 for specialization in (specializations[0]["specialization_1"], specializations[0]["specialization_2"]):
                     for skill_name, bonus in SPECIALIZATION_BONUSES[specialization].items():

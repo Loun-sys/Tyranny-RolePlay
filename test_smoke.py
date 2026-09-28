@@ -6,7 +6,7 @@ from card_renderer import render_character_card
 from database import Database
 from combat import Combatant, CombatSession, resolve_attack
 from registration_api import _validate_payload
-from constants import ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS
+from constants import ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS, SPECIALIZATION_ABILITY_CHOICES
 
 
 class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
@@ -86,9 +86,27 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         clean, problem = _validate_payload(payload)
         self.assertFalse(problem)
         self.assertEqual(clean["name"], "Калио")
+        payload["ability1"] = "Несуществующая способность"
+        clean, problem = _validate_payload(payload)
+        self.assertIsNone(clean)
+        self.assertIn("способность", problem)
         self.assertTrue(await self.db.consume_registration_token(token))
         self.assertIsNone(await self.db.registration_token_owner(token))
         self.assertFalse(await self.db.consume_registration_token(token))
+
+    async def test_selected_starting_abilities_and_background_bonus(self):
+        abilities = [
+            SPECIALIZATION_ABILITY_CHOICES["Меч и щит"][1],
+            SPECIALIZATION_ABILITY_CHOICES["Двуручный меч"][0],
+        ]
+        character_id = await self.db.create_character(
+            9, 10, "Нерат", "Солдат", "Меч и щит", "Двуручный меч", abilities,
+        )
+        character = await self.db.get_character(9, 10)
+        self.assertEqual(character_id, character["id"])
+        self.assertIn("Раскол", {talent["name"] for talent in character["talents"]})
+        # 20 от характеристик +2 от происхождения +6 от основной специализации.
+        self.assertEqual(character["skills"]["Одноручное оружие"]["value"], 28)
 
 
 if __name__ == "__main__":

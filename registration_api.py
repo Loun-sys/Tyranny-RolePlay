@@ -11,7 +11,12 @@ from typing import Any
 from aiohttp import web
 from PIL import Image
 
-from constants import ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS
+from constants import (
+    ABILITY_DESCRIPTIONS, ATTRIBUTE_DETAILS, ATTRIBUTES, BACKGROUND_BONUSES,
+    BACKGROUND_DESCRIPTIONS, BACKGROUNDS, SKILLS,
+    SKILL_ATTRIBUTES, SPECIALIZATIONS, SPECIALIZATION_ABILITIES,
+    SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES, SPECIALIZATION_DESCRIPTIONS,
+)
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -47,6 +52,23 @@ def _configuration() -> dict[str, Any]:
         "specializations": list(SPECIALIZATIONS), "skills": list(SKILLS),
         "attributeTotal": ATTRIBUTE_TOTAL, "skillPoints": SKILL_POINTS,
         "attributeMin": 8, "attributeMax": 18,
+        "specializationDetails": {
+            name: {
+                "description": SPECIALIZATION_DESCRIPTIONS[name],
+                "bonuses": SPECIALIZATION_BONUSES[name],
+                "abilities": [
+                    {"name": ability, "description": ABILITY_DESCRIPTIONS[ability]}
+                    for ability in SPECIALIZATION_ABILITY_CHOICES[name]
+                ],
+            }
+            for name in SPECIALIZATIONS
+        },
+        "attributeDetails": ATTRIBUTE_DETAILS,
+        "skillAttributes": {name: list(pair) for name, pair in SKILL_ATTRIBUTES.items()},
+        "backgroundDetails": {
+            name: {"description": BACKGROUND_DESCRIPTIONS[name], "bonuses": BACKGROUND_BONUSES[name]}
+            for name in BACKGROUNDS
+        },
     }
 
 
@@ -59,8 +81,12 @@ def _validate_payload(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, s
         return None, "Имя должно содержать от 2 до 80 символов."
     if background not in BACKGROUNDS:
         return None, "Выберите происхождение из списка."
-    if first not in SPECIALIZATIONS or second not in SPECIALIZATIONS or first == second:
-        return None, "Выберите две разные специализации."
+    if first not in SPECIALIZATIONS or second not in SPECIALIZATIONS:
+        return None, "Выберите основную и дополнительную специализации."
+    ability1 = str(payload.get("ability1", SPECIALIZATION_ABILITIES.get(first, "")))
+    ability2 = str(payload.get("ability2", SPECIALIZATION_ABILITIES.get(second, "")))
+    if ability1 not in SPECIALIZATION_ABILITY_CHOICES[first] or ability2 not in SPECIALIZATION_ABILITY_CHOICES[second]:
+        return None, "Выберите допустимую стартовую способность для каждой специализации."
     raw_attributes = payload.get("attributes")
     raw_skills = payload.get("skills")
     if not isinstance(raw_attributes, dict) or not isinstance(raw_skills, dict):
@@ -76,7 +102,8 @@ def _validate_payload(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, s
         return None, f"Распределите ровно {SKILL_POINTS} дополнительных очков навыков."
     return {
         "name": name, "background": background, "specialization1": first,
-        "specialization2": second, "attributes": attributes, "skills": skills,
+        "specialization2": second, "ability1": ability1, "ability2": ability2,
+        "attributes": attributes, "skills": skills,
         "portrait": str(payload.get("portrait", "")),
     }, ""
 
@@ -132,7 +159,7 @@ async def registration_submit(request: web.Request) -> web.Response:
     db = request.app["db"]
     character_id = await db.create_character(
         guild_id, user_id, clean["name"], clean["background"],
-        clean["specialization1"], clean["specialization2"],
+        clean["specialization1"], clean["specialization2"], [clean["ability1"], clean["ability2"]],
     )
     for name, value in clean["attributes"].items():
         await db.set_attribute(character_id, name, value)

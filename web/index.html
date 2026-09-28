@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#050506">
   <title>Редактор жителя Империи · Tyranny</title>
-  <link rel="stylesheet" href="styles.css?v=20260928-6">
+  <link rel="stylesheet" href="styles.css?v=20260928-8">
 </head>
 <body>
   <header class="hero">
@@ -18,55 +18,54 @@
 
   <main id="builder" class="builder">
     <div id="connection" class="connection loading">Проверяем личную ссылку…</div>
-    <div id="form" hidden>
-      <section data-step="1">
-        <div class="section-head"><span>01</span><div><p>ПРОШЛОЕ</p><h2>Выберите происхождение</h2></div><em>Определяет стартовые навыки и место героя в империи</em></div>
-        <div id="backgrounds" class="card-grid backgrounds"></div>
+    <div id="form" class="creation" hidden>
+      <nav id="creation-progress" class="creation-progress" aria-label="Этапы создания персонажа"></nav>
+
+      <section class="wizard-step" data-screen="0">
+        <div class="screen-title"><small>ИСТОРИЯ</small><h2>Как вы вступили в армию Кайрос?</h2><p>Прошлое определяет стартовые навыки и доступные реплики.</p></div>
+        <div class="choice-stage"><div id="backgrounds" class="choice-list"></div><aside id="background-detail" class="lore-panel"></aside></div>
       </section>
 
-      <section data-step="2">
-        <div class="section-head"><span>02</span><div><p>БОЕВАЯ ПОДГОТОВКА</p><h2>Две специализации</h2></div><em id="spec-counter">Выбрано 0 из 2</em></div>
-        <div id="specializations" class="card-grid specs"></div>
+      <section class="wizard-step" data-screen="1" hidden>
+        <div class="screen-title"><small>БОЕВАЯ ПОДГОТОВКА I</small><h2>Основная специализация</h2><p>Главный стиль получает бонусы к навыкам и выбранную стартовую способность.</p></div>
+        <div class="choice-stage"><div id="primary-specializations" class="choice-list"></div><aside id="primary-detail" class="lore-panel"></aside></div>
       </section>
 
-      <section data-step="3">
-        <div class="section-head"><span>03</span><div><p>ЛИЧНОЕ ДЕЛО</p><h2>Имя и портрет</h2></div></div>
-        <div class="identity">
-          <label>Имя Вершителя Судеб<input id="name" maxlength="80" placeholder="Например, Калио" autocomplete="off"></label>
+      <section class="wizard-step" data-screen="2" hidden>
+        <div class="screen-title"><small>БОЕВАЯ ПОДГОТОВКА II</small><h2>Дополнительная специализация</h2><p>Второй стиль расширяет набор навыков. Как и в игре, можно повторить основной стиль.</p></div>
+        <div class="choice-stage"><div id="secondary-specializations" class="choice-list"></div><aside id="secondary-detail" class="lore-panel"></aside></div>
+      </section>
+
+      <section class="wizard-step" data-screen="3" hidden>
+        <div class="screen-title"><small>ИМЯ</small><h2>Личное дело</h2><p>Назовите жителя Империи и добавьте портрет для карточки Discord.</p></div>
+        <div class="identity canonical-identity">
+          <label>Имя персонажа<input id="name" maxlength="80" placeholder="Например, Калио" autocomplete="off"></label>
           <label class="portrait-field">Портрет PNG, JPEG или WEBP<input id="portrait" type="file" accept="image/png,image/jpeg,image/webp"><span>ВЫБРАТЬ ИЗОБРАЖЕНИЕ</span></label>
           <div class="portrait-preview"><img id="portrait-preview" alt="Предпросмотр портрета" hidden><b id="portrait-empty">ПОРТРЕТ<br>НЕ ВЫБРАН</b></div>
         </div>
       </section>
 
-      <div class="allocation-grid">
-        <section class="allocation" data-step="4">
-          <div class="allocation-title"><div><p>04 · ОСНОВА</p><h2>Характеристики</h2></div><div id="attribute-counter" class="counter"><b>60</b><span>/ 68</span><small>РАСПРЕДЕЛЕНО</small></div></div>
-          <p class="hint"><button class="term" data-tip="attributes">Характеристики</button> начинаются с 10. Можно опустить значение до 8 и распределить итоговую сумму 68; максимум при создании — 18.</p>
-          <div id="attributes" class="rows"></div>
-        </section>
-
-        <section class="allocation" data-step="5">
-          <div class="allocation-title"><div><p>05 · ОПЫТ</p><h2>Навыки</h2></div><div id="skill-counter" class="counter"><b>0</b><span>/ 20</span><small>ДОПОЛНИТЕЛЬНЫХ ОЧКОВ</small></div></div>
-          <p class="hint">Базовые значения вычисляются из характеристик и специализаций. Здесь распределяются ровно 20 дополнительных очков.</p>
-          <div id="skills" class="rows skills"></div>
-        </section>
-      </div>
-
-      <section class="result" data-step="6">
-        <div class="result-copy">
-          <p>06 · ПЕЧАТЬ СУДА</p><h2 id="result-title">Завершите личное дело</h2>
-          <p id="result-text">Выберите происхождение и две специализации, заполните имя и распределите очки без остатка.</p>
-          <div id="checks" class="checks"></div>
-          <button id="submit" class="submit" disabled>СОХРАНИТЬ В DISCORD</button>
-          <p id="submit-status" class="submit-status" role="status"></p>
-        </div>
-        <div id="summary" class="summary">Здесь появится сводка персонажа…</div>
+      <section class="wizard-step" data-screen="4" hidden>
+        <div class="screen-title"><small>ХАРАКТЕРИСТИКИ</small><h2>Распределите природные качества</h2><p>Все значения начинаются с 10. Доступно ещё 8 очков; минимум 8, максимум 18.</p></div>
+        <div class="choice-stage stats-stage"><div class="allocation"><div class="allocation-title"><div><p>ДОСТУПНЫЕ ОЧКИ</p><h2>Характеристики</h2></div><div id="attribute-counter" class="counter"></div></div><div id="attributes" class="rows"></div></div><aside id="attribute-detail" class="lore-panel"></aside></div>
       </section>
+
+      <section class="wizard-step" data-screen="5" hidden>
+        <div class="screen-title"><small>НАВЫКИ</small><h2>Распределите подготовку</h2><p>База навыка вычисляется из характеристик и двух специализаций. Распределите ещё 20 очков.</p></div>
+        <div class="choice-stage stats-stage"><div class="allocation"><div class="allocation-title"><div><p>ДОСТУПНЫЕ ОЧКИ</p><h2>Навыки</h2></div><div id="skill-counter" class="counter"></div></div><div id="skills" class="rows skills"></div></div><aside id="skill-detail" class="lore-panel"></aside></div>
+      </section>
+
+      <section class="wizard-step" data-screen="6" hidden>
+        <div class="screen-title"><small>ПЕЧАТЬ СУДА</small><h2 id="result-title">Проверьте личное дело</h2><p id="result-text">Все выбранные значения будут сохранены прямо в Discord-боте.</p></div>
+        <div class="result canonical-result"><div class="result-copy"><div id="checks" class="checks"></div><button id="submit" class="submit" disabled>СОХРАНИТЬ В DISCORD</button><p id="submit-status" class="submit-status" role="status"></p></div><div id="summary" class="summary"></div></div>
+      </section>
+
+      <div class="wizard-controls"><button id="back" class="nav-button secondary" type="button">← НАЗАД</button><span id="step-status"></span><button id="next" class="nav-button" type="button">ДАЛЕЕ →</button></div>
     </div>
   </main>
 
   <dialog id="tooltip" class="tooltip"><button id="tooltip-close" aria-label="Закрыть">×</button><p>АРХИВНАЯ СПРАВКА</p><h2 id="tooltip-title"></h2><div id="tooltip-text"></div></dialog>
   <footer><b>TYRANNY</b><span>Лоун был здесь</span></footer>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=20260928-8" defer></script>
 </body>
 </html>
