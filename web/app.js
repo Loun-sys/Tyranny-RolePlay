@@ -122,7 +122,7 @@ function renderSpecializations(slot) {
   const selected = state.specs[slot];
   $("#" + prefix + "-specializations").innerHTML = state.config.specializations.map((name) => `
     <button type="button" class="choice-option ${selected === name ? "selected" : ""}" data-spec-slot="${slot}" data-spec-name="${escapeHtml(name)}">
-      <span>${escapeHtml(name)}</span><small>${Object.entries(state.config.specializationDetails[name].bonuses).map(([skill, value]) => `${skill} +${value}`).join(" · ")}</small>
+      <span>${escapeHtml(name)}</span>
     </button>`).join("");
   const name = selected || state.config.specializations[0];
   const detail = state.config.specializationDetails[name];
