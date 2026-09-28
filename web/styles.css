@@ -10,7 +10,7 @@ body:before{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;opa
 button,input{font:inherit}button,a{-webkit-tap-highlight-color:transparent}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--blood-bright);outline-offset:3px}
 
 .hero{position:relative;min-height:720px;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--blood);background:#070709}
-.hero:before{content:"";position:absolute;inset:-2px;background:url("assets/tyranny-hero.jpg") left center/cover no-repeat;filter:brightness(1.55) saturate(1.22) contrast(1.04);-webkit-mask-image:linear-gradient(90deg,#000 0 48%,#000c 62%,transparent 94%);mask-image:linear-gradient(90deg,#000 0 48%,#000c 62%,transparent 94%)}
+.hero:before{content:"";position:absolute;inset:-2px;background:url("assets/tyranny-hero.jpg") -8vw center/cover no-repeat;filter:brightness(1.55) saturate(1.22) contrast(1.04);-webkit-mask-image:linear-gradient(90deg,#000 0 30%,#000c 37%,#0004 47%,transparent 60%);mask-image:linear-gradient(90deg,#000 0 30%,#000c 37%,#0004 47%,transparent 60%)}
 .hero:after{content:"IMPERIUM  •  LEX  •  KYROS";position:absolute;left:0;right:0;bottom:0;padding:13px 3vw;color:#6d6668;background:#050506e0;border-top:1px solid #2a2529;font:700 9px/1 Arial,sans-serif;letter-spacing:.52em;white-space:nowrap;overflow:hidden}
 .hero__inner{position:relative;z-index:2;width:min(1180px,calc(100% - 48px));margin:auto;padding-left:43%}
 .eyebrow,.section-head p,.allocation-title p,.result-copy>p:first-child{margin:0;color:var(--blood-bright);font:800 10px/1.2 Arial,sans-serif;letter-spacing:.34em;text-transform:uppercase}
