@@ -12,7 +12,7 @@ from aiohttp import web
 from PIL import Image
 
 from constants import (
-    ABILITY_DESCRIPTIONS, ATTRIBUTE_DETAILS, ATTRIBUTES, BACKGROUND_BONUSES,
+    ABILITY_DETAILS, ATTRIBUTE_DETAILS, ATTRIBUTES, BACKGROUND_BONUSES,
     BACKGROUND_DESCRIPTIONS, BACKGROUNDS, SKILLS,
     SKILL_ATTRIBUTES, SPECIALIZATIONS, SPECIALIZATION_ABILITIES,
     SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES, SPECIALIZATION_DESCRIPTIONS,
@@ -57,7 +57,7 @@ def _configuration() -> dict[str, Any]:
                 "description": SPECIALIZATION_DESCRIPTIONS[name],
                 "bonuses": SPECIALIZATION_BONUSES[name],
                 "abilities": [
-                    {"name": ability, "description": ABILITY_DESCRIPTIONS[ability]}
+                    {"name": ability, **ABILITY_DETAILS[ability]}
                     for ability in SPECIALIZATION_ABILITY_CHOICES[name]
                 ],
             }

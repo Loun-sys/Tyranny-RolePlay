@@ -5,8 +5,11 @@ from pathlib import Path
 from card_renderer import render_character_card
 from database import Database
 from combat import Combatant, CombatSession, resolve_attack
-from registration_api import _validate_payload
-from constants import ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS, SPECIALIZATION_ABILITY_CHOICES
+from registration_api import _configuration, _validate_payload
+from constants import (
+    ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
+    SPECIALIZATION_ABILITY_CHOICES,
+)
 
 
 class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
@@ -107,6 +110,19 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Раскол", {talent["name"] for talent in character["talents"]})
         # 20 от характеристик +2 от происхождения +6 от основной специализации.
         self.assertEqual(character["skills"]["Одноручное оружие"]["value"], 28)
+
+    async def test_ability_reference_data_and_wiki_icons(self):
+        config = _configuration()
+        configured = {
+            ability["name"]
+            for specialization in config["specializationDetails"].values()
+            for ability in specialization["abilities"]
+        }
+        self.assertEqual(configured, set(ABILITY_DETAILS))
+        for name, details in ABILITY_DETAILS.items():
+            self.assertTrue(details["effects"], name)
+            self.assertTrue(details["source"].startswith("https://tyranny.fandom.com/wiki/"), name)
+            self.assertTrue((Path("web") / details["icon"]).is_file(), name)
 
 
 if __name__ == "__main__":
