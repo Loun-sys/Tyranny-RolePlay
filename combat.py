@@ -68,11 +68,11 @@ class Combatant:
             return self.skills.get("Парирование", self.accuracy)
         if kind == "Уклонение":
             return self.skills.get("Уклонение", self.accuracy)
-        if kind == "Стойкость":
-            return round(self.attributes.get("Живучесть", 10) * 1.5 + self.attributes.get("Решимость", 10) * .5)
+        if kind in {"Выносливость", "Стойкость"}:
+            return round(self.attributes.get("Стойкость", 10) * 1.5 + self.attributes.get("Сила", 10) * .5)
         if kind == "Воля":
-            return round(self.attributes.get("Решимость", 10) * 1.5 + self.attributes.get("Смекалка", 10) * .5)
-        return round(self.attributes.get("Смекалка", 10) + self.attributes.get("Решимость", 10))
+            return round(self.attributes.get("Стойкость", 10) * 1.5 + self.attributes.get("Живучесть", 10) * .5)
+        return round(self.attributes.get("Стойкость", 10) * 1.5 + self.attributes.get("Смекалка", 10) * .5)
 
 
 @dataclass
@@ -437,7 +437,7 @@ class EnemyModal(discord.ui.Modal, title="Добавить противника"
             key=key, name=self.name.value, team="Противники", health=hp, health_max=hp,
             accuracy=accuracy, damage_min=max(1, low), damage_max=max(low, high), armor=armor,
             skills={"Парирование": defense, "Уклонение": defense},
-            attributes={"Живучесть": defense // 2, "Решимость": defense // 2, "Смекалка": defense // 2},
+            attributes={"Живучесть": defense // 2, "Стойкость": defense // 2, "Смекалка": defense // 2},
         )
         await interaction.response.send_message(f"Добавлен противник **{self.name.value}**.", ephemeral=True)
         await self.session.refresh()

@@ -60,12 +60,12 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         attacker = Combatant(
             key="a", name="Вершитель", team="Герои", health=30, health_max=30,
             accuracy=80, damage_min=8, damage_max=8,
-            skills={"Парирование": 30}, attributes={"Живучесть": 10, "Решимость": 10, "Смекалка": 10},
+            skills={"Парирование": 30}, attributes={"Живучесть": 10, "Стойкость": 10, "Смекалка": 10},
         )
         target = Combatant(
             key="b", name="Страж", team="Враги", health=30, health_max=30,
             armor=2, skills={"Парирование": 1},
-            attributes={"Живучесть": 10, "Решимость": 10, "Смекалка": 10},
+            attributes={"Живучесть": 10, "Стойкость": 10, "Смекалка": 10},
         )
         text = resolve_attack(attacker, target)
         self.assertIn("Вершитель", text)
@@ -123,6 +123,22 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(details["effects"], name)
             self.assertTrue(details["source"].startswith("https://tyranny.fandom.com/wiki/"), name)
             self.assertTrue((Path("web") / details["icon"]).is_file(), name)
+
+    async def test_legacy_resolve_name_migrates_to_stoikost(self):
+        character_id = await self.db.create_character(
+            3, 4, "Клеон", "Солдат", "Меч и щит", "Двуручный меч",
+        )
+        async with self.db.connect() as db:
+            await db.execute("DELETE FROM attributes WHERE character_id=? AND name='Стойкость'", (character_id,))
+            await db.execute(
+                "INSERT INTO attributes(character_id,name,value) VALUES(?,?,?)",
+                (character_id, "Решимость", 14),
+            )
+            await db.commit()
+        await self.db.initialize()
+        character = await self.db.get_character(3, 4)
+        self.assertEqual(character["attributes"]["Стойкость"], 14)
+        self.assertNotIn("Решимость", character["attributes"])
 
 
 if __name__ == "__main__":

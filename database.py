@@ -173,6 +173,12 @@ class Database:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         async with self.connect() as db:
             await db.executescript(SCHEMA)
+            # Каноническое русское название Resolve — «Стойкость»; сохраняем значения старых персонажей.
+            await db.execute(
+                "INSERT OR IGNORE INTO attributes(character_id,name,value) "
+                "SELECT character_id,'Стойкость',value FROM attributes WHERE name='Решимость'"
+            )
+            await db.execute("DELETE FROM attributes WHERE name='Решимость'")
             await db.commit()
             count = int((await db.execute_fetchall("SELECT COUNT(*) AS total FROM item_catalog"))[0]["total"])
         if count == 0:

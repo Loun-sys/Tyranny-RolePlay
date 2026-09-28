@@ -4,19 +4,36 @@ const $ = (selector) => document.querySelector(selector);
 const screens = ["История", "Основа", "Доп.", "Имя", "Характеристики", "Навыки", "Итог"];
 const weaponSkills = ["Волшебный посох", "Луки", "Безоружный бой", "Двуручное оружие", "Одноручное оружие", "Парное оружие"];
 const supportSkills = ["Знания", "Уклонение", "Хитроумие", "Атлетика", "Парирование"];
-const skillDescriptions = {
-  "Одноручное оружие": "Определяет точность и критические попадания мечами, булавами, копьями и другим одноручным оружием.",
-  "Двуручное оружие": "Определяет точность и критические попадания тяжёлым двуручным оружием.",
-  "Парное оружие": "Определяет эффективность одновременной атаки оружием в обеих руках.",
-  "Луки": "Определяет точность и критические попадания луками на дальней дистанции.",
-  "Безоружный бой": "Определяет точность, критические попадания и эффективность атак без оружия.",
-  "Волшебный посох": "Определяет точность и критические попадания при атаках волшебными посохами.",
-  "Атлетика": "Используется для физических испытаний, силовых действий и ряда боевых способностей.",
-  "Парирование": "Защищает от оружейных атак, позволяя отклонять удары оружием или щитом.",
-  "Уклонение": "Защищает от атак движением и особенно полезно персонажам без тяжёлой брони.",
-  "Знания": "Определяют сложность доступных заклинаний и помогают в учёных, магических и исторических проверках.",
-  "Хитроумие": "Отвечает за скрытность, ловушки, замки и находчивые варианты в диалогах.",
+const glossary = {
+  "Удерживание": { aliases: ["Удерживание", "Удерживания", "Удерживаемые"], text: "Удерживаемые цели не могут свободно перемещаться без риска получить удар при выходе из ближнего боя. Удерживание создаётся противником, способным контролировать область рядом с собой." },
+  "Одноручное оружие": { aliases: ["Одноручное оружие", "одноручного оружия", "одноручным оружием"], text: "Определяет эффективность одноручного оружия: мечей, топоров, кинжалов и булав. Чем больше уровень навыка, тем выше точность атак и шанс нанесения критических попаданий." },
+  "Парирование": { aliases: ["Парирование", "Парированием", "Парирования"], text: "Парирование используется для защиты от атак и заклинаний ближнего боя. Чем выше уровень навыка, тем меньше урона наносят вражеские атаки и тем выше вероятность их промаха." },
+  "Атлетика": { aliases: ["Атлетика", "Атлетики", "Атлетикой"], text: "Определяет способность персонажа к перемещению по пересечённой местности, а также к выполнению сложных движений в бою. Кроме того, в разговорах Атлетика используется для запугивания или угроз физической расправой над собеседником." },
+  "Уклонение": { aliases: ["Уклонение", "Уклонением", "Уклонения"], text: "Уклонение используется для защиты от атак из луков, дротиками и заклинаний дальнего боя. Чем выше уровень навыка, тем меньше урона наносят вражеские атаки и тем выше вероятность их промаха." },
+  "Парное оружие": { aliases: ["Парное оружие", "парного оружия", "парным оружием"], text: "Определяет эффективность парного оружия. Чем больше уровень навыка, тем выше точность атак и шанс нанесения критических попаданий." },
+  "Хитроумие": { aliases: ["Хитроумие", "Хитроумия", "Хитроумием"], text: "Хитроумие определяет способность персонажа к скрытному перемещению, обнаружению ловушек и скрытых устройств и взаимодействию с ними, а также способность вскрывать запертые сундуки и двери. В разговорах Хитроумие используется для обмана или одурачивания собеседника." },
+  "Луки": { aliases: ["Луки", "луков", "луками"], text: "Определяет эффективность применения луков. Чем больше уровень навыка, тем выше точность атак и шанс нанесения критических попаданий." },
+  "Безоружный бой": { aliases: ["Безоружный бой", "безоружного боя", "безоружных атак"], text: "Определяет эффективность безоружных атак. Чем больше уровень навыка, тем выше точность атак и шанс нанесения критических попаданий." },
+  "Управление молниями": { aliases: ["Управление молниями"], text: "Определяет способность персонажа к применению заклинаний, использующих Сигил Молнии. Чем больше уровень навыка, тем выше шанс попаданий и критических попаданий." },
+  "Волшебный посох": { aliases: ["Волшебный посох", "Волшебные посохи", "магических посохов", "волшебными посохами"], text: "Определяет эффективность применения магических посохов. Чем больше уровень навыка, тем выше точность атак и шанс нанесения критических попаданий. Точность магических атак определяется как уровнем навыка, так и свойствами оружия." },
+  "Знания": { aliases: ["Знания", "Знаний", "Знаниями"], text: "Знания определяют способность персонажа к расшифровке тайных сведений и восстановлению общей картины по найденным клочкам информации. Этот навык критически важен для магов, которые хотят изучать новые руны для усиления заклинаний. В разговорах Знания используются для определения того, что вы знаете об истории мира, а также чтобы впечатлить собеседников уровнем вашего интеллекта." },
+  "Управление холодом": { aliases: ["Управление холодом"], text: "Определяет способность персонажа к применению заклинаний, использующих Сигил Льда. Чем больше уровень навыка, тем выше шанс попаданий и критических попаданий." },
+  "Управление рвением": { aliases: ["Управление рвением"], text: "Определяет способность персонажа к применению заклинаний, использующих Сигил Рвения. Чем больше уровень навыка, тем выше шанс попаданий и критических попаданий." },
+  "Управление истощением": { aliases: ["Управление истощением"], text: "Определяет способность персонажа к применению заклинаний, использующих Сигил Истощения. Чем больше уровень навыка, тем выше шанс попаданий и критических попаданий, которые, в свою очередь, продлевают действие штрафов Истощения для противников." },
+  "Сила": { aliases: ["Сила", "Силы", "Силой", "Силу", "Силе"], text: "Сила определяет физическую мощь персонажа. Чем выше Сила, тем больше урона наносят атаки и тем мощнее действие способностей. Кроме того, она повышает защиту Выносливостью." },
+  "Защита Выносливостью": { aliases: ["Защита Выносливостью", "защите Выносливостью", "Выносливость", "Выносливостью"], text: "Выносливость противостоит атакам, цель которых — внутренние органы персонажа: яду, болезни, оглушению и подобным воздействиям. Прежде всего она определяется Стойкостью и Силой персонажа, но также на неё могут повлиять снаряжённые предметы, таланты и эффекты зелий и заклинаний." },
+  "Искусность": { aliases: ["Искусность", "Искусности", "Искусностью"], text: "Искусность определяет точность физических и ментальных способностей персонажа и используется для проверки точности атак и заклинаний. Кроме того, Искусность увеличивает шанс того, что доспех снизит результативность удара: критическое попадание станет попаданием, попадание — задеванием, а задевание — промахом." },
+  "Точность": { aliases: ["Точность", "точности", "точностью"], text: "Во время атаки точность нападающего сравнивается с одной из пяти защит цели: Парированием в ближнем бою, Уклонением при дальней атаке, Выносливостью при оглушении и ошеломлении, Волей при ментальной атаке и Магией при атаке заклинанием.\n\nВ первую очередь точность определяется навыком нападающего в этом виде атаки. На неё могут влиять Искусность, таланты и активные эффекты заклинаний или предметов.\n\nЕсли точность выше защиты, результат чаще становится попаданием или критическим попаданием, а не задеванием или промахом." },
+  "Отражение": { aliases: ["Отражение", "Отражения", "отражением"], text: "После определения результата атаки происходит проверка отражения. Оно может снизить результат на один ранг: критическое попадание станет попаданием, попадание — задеванием, задевание — промахом.\n\nОтражение зависит от одежды, брони, талантов и способностей. Искусность увеличивает общий показатель отражения, даваемого бронёй." },
+  "Быстрота": { aliases: ["Быстрота", "Быстроты", "Быстротой"], text: "Быстрота сокращает перезарядку способностей и определяет скорость действий персонажа в бою." },
+  "Живучесть": { aliases: ["Живучесть", "Живучести", "Живучестью"], text: "Живучесть определяет физическое здоровье персонажа и силу его духа. Кроме того, она увеличивает защиту Волей." },
+  "Защита Волей": { aliases: ["Защита Волей", "защите Воли", "защиту Волей", "Воля", "Волей", "Воли"], text: "Защита Волей оберегает от атак на разум, например от дезориентации. Она определяется Стойкостью и Смекалкой персонажа, но также на неё могут повлиять снаряжённые предметы, таланты и эффекты зелий и заклинаний." },
+  "Смекалка": { aliases: ["Смекалка", "Смекалки", "Смекалкой"], text: "Смекалка определяет способность персонажа наблюдать за окружающим миром и обнаруживать следы и улики. Кроме того, Смекалка увеличивает силу заклинаний и защиту Магией." },
+  "Защита Магией": { aliases: ["Защита Магией", "защите Магии", "защиту Магией", "Магическая защита", "Магической защите"], text: "Защита Магией даёт сопротивление заклинаниям и атакам, наносящим магический урон. Она определяется Стойкостью и Живучестью персонажа, но также на неё могут повлиять снаряжённые предметы, таланты и эффекты зелий и заклинаний." },
+  "Стойкость": { aliases: ["Стойкость", "Стойкости", "Стойкостью"], text: "Стойкость определяет способность персонажа переносить тяготы и невзгоды физического и ментального характера. Это основная характеристика для определения защиты Выносливостью, Волей и Магией. Кроме того, она повышает длительность воздействий, которые накладывает персонаж." },
 };
+
+const skillDescriptions = Object.fromEntries(Object.entries(glossary).map(([name, details]) => [name, details.text]));
 
 const state = {
   config: null, screen: 0, furthest: 0, background: "", specs: ["", ""], abilities: ["", ""],
@@ -32,6 +49,49 @@ function escapeHtml(value) {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   })[character]);
 }
+
+const glossaryAliases = Object.entries(glossary).flatMap(([name, details]) => details.aliases.map((alias) => ({ alias, name })))
+  .sort((left, right) => right.alias.length - left.alias.length);
+const glossaryLookup = new Map(glossaryAliases.map(({ alias, name }) => [alias.toLocaleLowerCase("ru-RU"), name]));
+const glossaryPattern = glossaryAliases.map(({ alias }) => alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+
+function annotateGlossary(root = $("#form")) {
+  if (!root || !glossaryPattern) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) {
+    const parent = walker.currentNode.parentElement;
+    if (!parent || parent.closest(".glossary-term,.glossary-tooltip,script,style,textarea,input,option")) continue;
+    if (walker.currentNode.nodeValue.trim()) nodes.push(walker.currentNode);
+  }
+  const letters = "А-Яа-яЁёA-Za-z0-9";
+  const matcher = new RegExp(`(^|[^${letters}])(${glossaryPattern})(?=$|[^${letters}])`, "giu");
+  nodes.forEach((node) => {
+    const text = node.nodeValue; let match; let last = 0; let changed = false;
+    matcher.lastIndex = 0; const fragment = document.createDocumentFragment();
+    while ((match = matcher.exec(text))) {
+      const start = match.index + match[1].length; const found = match[2];
+      fragment.append(text.slice(last, start));
+      const term = document.createElement("span");
+      term.className = "glossary-term"; term.tabIndex = 0; term.textContent = found;
+      term.dataset.glossary = glossaryLookup.get(found.toLocaleLowerCase("ru-RU"));
+      fragment.append(term); last = start + found.length; matcher.lastIndex = last; changed = true;
+    }
+    if (changed) { fragment.append(text.slice(last)); node.replaceWith(fragment); }
+  });
+}
+
+function showGlossary(term) {
+  const entry = glossary[term.dataset.glossary]; if (!entry) return;
+  const tooltip = $("#glossary-tooltip"); tooltip.querySelector("b").textContent = term.dataset.glossary;
+  tooltip.querySelector("p").textContent = entry.text; tooltip.hidden = false;
+  const rect = term.getBoundingClientRect(); const width = Math.min(420, innerWidth - 24);
+  tooltip.style.width = `${width}px`; tooltip.style.left = `${Math.max(12, Math.min(innerWidth - width - 12, rect.left))}px`;
+  const height = tooltip.offsetHeight; const below = rect.bottom + 10;
+  tooltip.style.top = `${below + height <= innerHeight - 10 ? below : Math.max(10, rect.top - height - 10)}px`;
+}
+
+function hideGlossary() { $("#glossary-tooltip").hidden = true; }
 
 function bonusesHtml(bonuses = {}) {
   const entries = Object.entries(bonuses);
@@ -137,9 +197,12 @@ function renderSkills() {
   $("#skill-counter").className = `counter ${left === 0 ? "done" : left < 0 ? "over" : ""}`;
   $("#skill-counter").innerHTML = `<b>${left}</b><span>/ ${state.config.skillPoints}</span><small>${left === 0 ? "РАСПРЕДЕЛЕНО" : "ОСТАЛОСЬ"}</small>`;
   const magicSkills = state.config.skills.filter((name) => !weaponSkills.includes(name) && !supportSkills.includes(name));
-  $("#skills").innerHTML = [
-    ["НАВЫКИ ОРУЖИЯ", weaponSkills], ["НАВЫКИ ПОДДЕРЖКИ", supportSkills], ["НАВЫКИ МАГИИ", magicSkills],
-  ].map(([label, names]) => `<section class="skill-group"><h3>${label}</h3>${names.map(skillRow).join("")}</section>`).join("");
+  $("#skills").innerHTML = `
+    <div class="mundane-skills">
+      <section class="skill-group"><h3>НАВЫКИ ОРУЖИЯ</h3>${weaponSkills.map(skillRow).join("")}</section>
+      <section class="skill-group"><h3>НАВЫКИ ПОДДЕРЖКИ</h3>${supportSkills.map(skillRow).join("")}</section>
+    </div>
+    <section class="skill-group magic-skills"><header><span>СИГИЛЫ КАЙРОС</span><h3>НАВЫКИ ЗАКЛИНАНИЙ</h3><p>Магические школы отделены от оружейной и вспомогательной подготовки.</p></header>${magicSkills.map(skillRow).join("")}</section>`;
   const name = state.focusedSkill;
   const [primaryAttribute, secondaryAttribute] = state.config.skillAttributes[name];
   const bonus = sourceBonuses(name);
@@ -190,7 +253,7 @@ function renderNavigation() {
 
 function renderAll() {
   document.querySelectorAll(".wizard-step").forEach((element, index) => { element.hidden = index !== state.screen; });
-  renderProgress(); renderBackgrounds(); renderSpecializations(0); renderSpecializations(1); renderIdentity(); renderAttributes(); renderSkills(); renderResult(); renderNavigation();
+  renderProgress(); renderBackgrounds(); renderSpecializations(0); renderSpecializations(1); renderIdentity(); renderAttributes(); renderSkills(); renderResult(); renderNavigation(); annotateGlossary();
 }
 
 function moveTo(screen) {
@@ -265,6 +328,10 @@ function bindEvents() {
   $("#back").addEventListener("click", () => moveTo(state.screen - 1));
   $("#next").addEventListener("click", () => canAdvance() ? moveTo(state.screen + 1) : pulseCurrent());
   $("#submit").addEventListener("click", submitCharacter);
+  document.addEventListener("pointerover", (event) => { const term = event.target.closest?.(".glossary-term"); if (term) showGlossary(term); });
+  document.addEventListener("pointerout", (event) => { const term = event.target.closest?.(".glossary-term"); if (term && !term.contains(event.relatedTarget)) hideGlossary(); });
+  document.addEventListener("focusin", (event) => { const term = event.target.closest?.(".glossary-term"); if (term) showGlossary(term); });
+  document.addEventListener("focusout", (event) => { if (event.target.closest?.(".glossary-term")) hideGlossary(); });
 }
 
 async function boot() {
