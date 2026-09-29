@@ -36,6 +36,9 @@ FACTION_TRANSLATIONS = {
     "Disfavored": "Опальные", "Scarlet Chorus": "Алый Хор", "Vendrien Guard": "Гвардия Вендриенов",
     "Unbroken": "Несломленные", "Sages' Guild": "Школа Чернил и Пера", "Tunon": "Тунон",
     "Graven Ashe": "Грейвен Эш", "Voices of Nerat": "Голоса Нерата", "Bleden Mark": "Бледен Марк",
+    # В таблице Reputation названия части фракций сокращены или записаны с артиклем.
+    "Bronze Brotherhood": "Бронзовое Братство", "Dis": "Опальные",
+    "Sage's Guild": "Школа Чернил и Пера", "The Unbroken": "Несломленные",
 }
 
 TITLE_PHRASES = {
