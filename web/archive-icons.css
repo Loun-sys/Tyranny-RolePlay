@@ -17,3 +17,45 @@
 
 .rep-axis.wrath { color: #dc5666; }
 .rep-axis.wrath .meter i { background: #8b1023; }
+
+.talent-heading p { margin: 0 0 18px; font-size: 18px; }
+.talent-heading small { display: block; margin-top: 6px; color: #9b9690; font-size: 13px; }
+.talent-carousel { position: relative; display: grid; grid-template-columns: 48px minmax(0,1fr) 48px; align-items: stretch; }
+.talent-track { display: flex; gap: 12px; overflow: hidden; scroll-snap-type: x mandatory; }
+.talent-tree { flex: 0 0 min(390px,calc(33.333% - 8px)); min-width: 300px; min-height: 485px; padding: 0 18px 18px; border: 1px solid #5a4c2a; background: linear-gradient(180deg,rgba(27,28,22,.98),rgba(9,10,9,.98)); clip-path: polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px); scroll-snap-align: start; }
+.talent-tree header { height: 64px; display: flex; align-items: center; justify-content: center; gap: 14px; border-bottom: 1px solid #4d442b; color: #d9d0bc; }
+.talent-tree header h2 { margin: 0; font: 24px Georgia,serif; text-align: center; }
+.talent-tree header b { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid #80662a; border-radius: 50%; color: #dfc778; font: 20px Georgia,serif; }
+.talent-lanes { padding-top: 12px; }
+.talent-tier { display: grid; grid-template-columns: 30px 1fr; min-height: 68px; align-items: center; border-bottom: 1px solid #2e3026; }
+.talent-tier>span { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid #655629; border-radius: 50%; color: #b8a66f; font: 15px Georgia,serif; }
+.talent-tier>div { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.talent-node { position: relative; width: 56px; height: 56px; padding: 0; border: 1px solid transparent; background: transparent; cursor: pointer; filter: grayscale(1) brightness(.48); transition: .15s; }
+.talent-node:hover,.talent-node.selected { filter: none; border-color: #d1b45e; box-shadow: 0 0 0 2px #17130a,0 0 12px #bc8f28aa; }
+.talent-node.available { filter: grayscale(.45) brightness(.8); }
+.talent-node.owned { filter: none; }
+.talent-node.owned::after { content: '✓'; position: absolute; right: -4px; bottom: -3px; width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: #7f111f; color: white; font-size: 12px; }
+.talent-game-icon { position: relative; display: grid; place-items: center; width: 100%; height: 100%; overflow: hidden; background: radial-gradient(circle,#3d291d,#0a0a0b 72%); color: #bc9b55; font: 700 22px Georgia,serif; }
+.talent-game-icon img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.talent>.talent-game-icon { width: 44px; height: 44px; }
+.talent-game-icon.large { width: 76px; height: 76px; flex: 0 0 76px; border: 1px solid #9b7127; }
+.talent-fallback { opacity: .75; }
+.talent-arrow { border: 0; background: linear-gradient(90deg,transparent,#18150e); color: #bda258; font: 52px Georgia,serif; cursor: pointer; z-index: 2; }
+.talent-arrow.prev { background: linear-gradient(270deg,transparent,#18150e); }
+.talent-arrow:hover { color: #fff0a9; }
+.talent-selection { margin-top: 14px; min-height: 150px; display: grid; grid-template-columns: 76px minmax(0,1fr) auto; gap: 18px; align-items: center; padding: 20px 28px; border: 1px solid #5c4c27; background: rgba(7,7,7,.96); }
+.talent-selection h2 { margin: 4px 0; font: 25px Georgia,serif; color: #ded7c7; }
+.talent-selection p { margin: 7px 0 0; color: #b9b0a3; line-height: 1.5; }
+.talent-selection small { color: #a88b4b; }
+.talent-requirement { color: #ca394c; }.talent-requirement.ready { color: #d8bd65; }
+.talent-actions { display: grid; gap: 8px; min-width: 150px; }
+.talent-more,.wiki-link { border: 1px solid #6d5b30; background: #11110e; color: #d9ca9f; padding: 11px 14px; text-decoration: none; font-weight: 800; cursor: pointer; text-align: center; }
+.talent-more:hover,.wiki-link:hover { border-color: #d1b45e; color: white; }
+.talent-dialog { width: min(560px,92vw); min-height: 430px; border-color: #9e843e; background: linear-gradient(150deg,#11110e,#030303); box-shadow: 0 0 0 2px #33290f,0 20px 80px #000; }
+.talent-dialog-head { display: flex; gap: 18px; align-items: center; }.talent-dialog-head h2 { margin: 4px 0; font: 27px Georgia,serif; }.talent-dialog-head small,.talent-dialog-head i { color: #ae9150; }
+.talent-divider { height: 1px; margin: 20px 0; background: linear-gradient(90deg,#9c8039,transparent); }
+.talent-dialog-requirement { color: #a98b47; }.talent-dialog-requirement b { color: #d74753; }.talent-dialog-description { min-height: 180px; color: #d1c9ba; font: 17px/1.55 Georgia,serif; }
+.wiki-link { display: inline-block; margin-top: 20px; }
+
+@media(max-width:1000px){.talent-tree{flex-basis:calc(50% - 6px)}}
+@media(max-width:680px){.talent-carousel{grid-template-columns:34px minmax(0,1fr) 34px}.talent-tree{flex-basis:100%;min-width:260px}.talent-selection{grid-template-columns:64px 1fr;padding:16px}.talent-game-icon.large{width:64px;height:64px}.talent-actions{grid-column:1/-1;grid-template-columns:1fr 1fr}.talent-node{width:50px;height:50px}}

@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import base64
+import asyncio
+import hashlib
 import io
 import os
+import re
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote, unquote, urlsplit
 
+import aiohttp
 from aiohttp import web
 from PIL import Image
 
@@ -194,6 +199,34 @@ def _portrait_url(request: web.Request, value: str) -> str:
     return value if value.startswith("https://") else ""
 
 
+def _public_base(request: web.Request) -> str:
+    scheme = request.headers.get("X-Forwarded-Proto", request.scheme).split(",", 1)[0].strip()
+    return f"{scheme}://{request.host}"
+
+
+def _proxied_talent(request: web.Request, talent: dict[str, Any]) -> dict[str, Any]:
+    """Serve Wiki art through our API so browser hot-link protection cannot break it."""
+    result = dict(talent)
+    icon_url = str(result.get("icon_url", ""))
+    parts = unquote(urlsplit(icon_url).path).split("/")
+    try:
+        filename = Path(parts[parts.index("revision") - 1]).name
+    except (ValueError, IndexError):
+        return result
+    if re.fullmatch(r"[\w .()'’-]+\.(?:png|jpe?g|webp)", filename, flags=re.I):
+        result["icon_url"] = f"{_public_base(request)}/media/wiki-icons/{quote(filename)}"
+    return result
+
+
+def _wiki_cdn_url(filename: str) -> str:
+    normalized = filename[0].upper() + filename[1:]
+    digest = hashlib.md5(normalized.encode("utf-8")).hexdigest()
+    return (
+        "https://static.wikia.nocookie.net/tyranny_gamepedia_en/images/"
+        f"{digest[0]}/{digest[:2]}/{quote(normalized)}/revision/latest"
+    )
+
+
 def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict[str, Any]:
     attrs = character["attributes"]
     quickness = attrs.get("Быстрота", 10)
@@ -242,9 +275,9 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "spells": await db.spells(character_id),
         "derived": _derived(character, inventory),
         "equipmentSlots": list(EQUIPMENT_SLOTS),
-        "talentLibrary": [*TALENTS, *background_talents],
+        "talentLibrary": [_proxied_talent(request, item) for item in [*TALENTS, *background_talents]],
         "reputations": reputations,
-        "factionTalents": request.app["extended_talents"]["factions"],
+        "factionTalents": [_proxied_talent(request, item) for item in request.app["extended_talents"]["factions"]],
         "sigils": {
             "cores": list(CORE_SIGILS), "expressions": list(EXPRESSION_SIGILS),
             "accents": list(ACCENT_SIGILS), "enhancements": list(ENHANCEMENT_SIGILS),
@@ -355,6 +388,28 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
     return web.FileResponse(path)
 
 
+async def wiki_icon_media(request: web.Request) -> web.Response:
+    filename = unquote(request.match_info["name"])
+    if Path(filename).name != filename or not re.fullmatch(r"[\w .()'’-]+\.(?:png|jpe?g|webp)", filename, flags=re.I):
+        raise web.HTTPNotFound()
+    cached = request.app["wiki_icon_cache"].get(filename)
+    if cached is None:
+        timeout = aiohttp.ClientTimeout(total=20)
+        try:
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(_wiki_cdn_url(filename), headers={"Referer": ""}) as response:
+                    if response.status != 200:
+                        raise web.HTTPNotFound()
+                    body = await response.read()
+                    if not body or len(body) > 2 * 1024 * 1024:
+                        raise web.HTTPNotFound()
+                    cached = (body, response.headers.get("Content-Type", "image/webp").split(";", 1)[0])
+                    request.app["wiki_icon_cache"][filename] = cached
+        except (aiohttp.ClientError, asyncio.TimeoutError):
+            raise web.HTTPBadGateway(reason="Tyranny Wiki временно не отдала иконку.")
+    return web.Response(body=cached[0], content_type=cached[1], headers={"Cache-Control": "public, max-age=604800"})
+
+
 async def health(_: web.Request) -> web.Response:
     return web.json_response({"ok": True, "service": "tyranny-registration"})
 
@@ -364,6 +419,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
         return None
     app = web.Application(middlewares=[cors_middleware], client_max_size=7 * 1024 * 1024)
     app["bot"], app["db"], app["data_dir"] = bot, db, data_dir
+    app["wiki_icon_cache"] = {}
     app["extended_talents"] = await load_extended_talents(data_dir)
     app.router.add_get("/health", health)
     app.router.add_get("/api/registration/{token}", registration_info)
@@ -377,6 +433,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/spell", portal_spell)
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
     app.router.add_get("/media/portraits/{name}", portrait_media)
+    app.router.add_get("/media/wiki-icons/{name}", wiki_icon_media)
     app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))
     runner = web.AppRunner(app)
     await runner.setup()
