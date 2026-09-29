@@ -210,7 +210,7 @@ def _proxied_talent(request: web.Request, talent: dict[str, Any]) -> dict[str, A
     icon_url = str(result.get("icon_url", ""))
     parts = unquote(urlsplit(icon_url).path).split("/")
     try:
-        filename = Path(parts[parts.index("revision") - 1]).name
+        filename = re.sub(r"[\s_]+", "_", Path(parts[parts.index("revision") - 1]).name)
     except (ValueError, IndexError):
         return result
     if re.fullmatch(r"[\w .()'’-]+\.(?:png|jpe?g|webp)", filename, flags=re.I):
@@ -219,6 +219,7 @@ def _proxied_talent(request: web.Request, talent: dict[str, Any]) -> dict[str, A
 
 
 def _wiki_cdn_url(filename: str) -> str:
+    filename = re.sub(r"[\s_]+", "_", filename.strip())
     normalized = filename[0].upper() + filename[1:]
     digest = hashlib.md5(normalized.encode("utf-8")).hexdigest()
     return (
@@ -397,7 +398,7 @@ async def wiki_icon_media(request: web.Request) -> web.Response:
         timeout = aiohttp.ClientTimeout(total=20)
         try:
             async with aiohttp.ClientSession(timeout=timeout) as session:
-                async with session.get(_wiki_cdn_url(filename), headers={"Referer": ""}) as response:
+                async with session.get(_wiki_cdn_url(filename), headers={"User-Agent": "Mozilla/5.0 Tyranny-RolePlay"}) as response:
                     if response.status != 200:
                         raise web.HTTPNotFound()
                     body = await response.read()

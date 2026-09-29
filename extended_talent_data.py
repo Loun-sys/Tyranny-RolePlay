@@ -180,6 +180,7 @@ def _clean_wiki(value: str) -> str:
 
 
 def _icon_url(filename: str) -> str:
+    filename = re.sub(r"[\s_]+", "_", filename.strip())
     normalized = filename[0].upper() + filename[1:]
     digest = hashlib.md5(normalized.encode("utf-8")).hexdigest()
     return f"https://static.wikia.nocookie.net/tyranny_gamepedia_en/images/{digest[0]}/{digest[:2]}/{quote(normalized)}/revision/latest"
