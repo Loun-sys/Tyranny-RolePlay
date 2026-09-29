@@ -9,3 +9,11 @@
   object-fit: contain;
   image-rendering: auto;
 }
+
+.rep-axis {
+  margin: 12px 0;
+  color: #c7b882;
+}
+
+.rep-axis.wrath { color: #dc5666; }
+.rep-axis.wrath .meter i { background: #8b1023; }

@@ -14,12 +14,14 @@ from PIL import Image
 from constants import (
     ABILITY_DETAILS, ACCENT_SIGILS, ATTRIBUTE_DETAILS, ATTRIBUTES, BACKGROUND_BONUSES,
     BACKGROUND_DESCRIPTIONS, BACKGROUNDS, SKILLS,
+    BACKGROUND_TALENT_SOURCES,
     CORE_SIGILS, ENHANCEMENT_SIGILS, EQUIPMENT_SLOTS, EXPRESSION_SIGILS,
     SKILL_ATTRIBUTES, SPECIALIZATIONS, SPECIALIZATION_ABILITIES,
     SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES, SPECIALIZATION_DESCRIPTIONS,
 )
 from mechanics_data import MECHANICS
 from talent_data import TALENT_BY_NAME, TALENTS
+from extended_talent_data import load_extended_talents
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -70,7 +72,8 @@ def _configuration() -> dict[str, Any]:
         "abilityDetails": ABILITY_DETAILS,
         "skillAttributes": {name: list(pair) for name, pair in SKILL_ATTRIBUTES.items()},
         "backgroundDetails": {
-            name: {"description": BACKGROUND_DESCRIPTIONS[name], "bonuses": BACKGROUND_BONUSES[name]}
+            name: {"description": BACKGROUND_DESCRIPTIONS[name], "bonuses": BACKGROUND_BONUSES[name],
+                   "talentSource": BACKGROUND_TALENT_SOURCES[name]}
             for name in BACKGROUNDS
         },
     }
@@ -230,6 +233,8 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
     character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
     character.pop("guild_id", None)
     character.pop("user_id", None)
+    background_talents = request.app["extended_talents"]["backgrounds"].get(character["background"], [])
+    reputations = {row["faction"]: row for row in await db.reputations(character_id)}
     return {
         "character": character,
         "inventory": inventory,
@@ -237,7 +242,9 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "spells": await db.spells(character_id),
         "derived": _derived(character, inventory),
         "equipmentSlots": list(EQUIPMENT_SLOTS),
-        "talentLibrary": TALENTS,
+        "talentLibrary": [*TALENTS, *background_talents],
+        "reputations": reputations,
+        "factionTalents": request.app["extended_talents"]["factions"],
         "sigils": {
             "cores": list(CORE_SIGILS), "expressions": list(EXPRESSION_SIGILS),
             "accents": list(ACCENT_SIGILS), "enhancements": list(ENHANCEMENT_SIGILS),
@@ -294,9 +301,13 @@ async def portal_attribute(request: web.Request) -> web.Response:
 
 async def portal_talent(request: web.Request) -> web.Response:
     cid, payload = await _portal_payload(request)
-    talent = TALENT_BY_NAME.get(str(payload.get("name", "")).casefold())
+    character = await request.app["db"].get_character_by_id(cid)
+    library = [*TALENTS, *request.app["extended_talents"]["backgrounds"].get(character["background"], [])]
+    talent = next((item for item in library if item["name"].casefold() == str(payload.get("name", "")).casefold()), None)
     if not talent:
         raise web.HTTPBadRequest(reason="Талант не найден.")
+    if talent.get("automatic_level"):
+        raise web.HTTPConflict(reason="Этот талант открывается автоматически с уровнем.")
     ok, message = await request.app["db"].spend_talent_point(cid, talent)
     if not ok:
         raise web.HTTPConflict(reason=message)
@@ -353,6 +364,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
         return None
     app = web.Application(middlewares=[cors_middleware], client_max_size=7 * 1024 * 1024)
     app["bot"], app["db"], app["data_dir"] = bot, db, data_dir
+    app["extended_talents"] = await load_extended_talents(data_dir)
     app.router.add_get("/health", health)
     app.router.add_get("/api/registration/{token}", registration_info)
     app.router.add_post("/api/registration/{token}", registration_submit)

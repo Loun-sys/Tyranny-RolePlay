@@ -7,6 +7,7 @@ from database import Database
 from combat import Combatant, CombatSession, resolve_attack
 from registration_api import _configuration, _validate_payload
 from talent_data import TALENTS
+from extended_talent_data import parse_faction_talents, parse_talent_page
 from constants import (
     ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
     SPECIALIZATION_ABILITY_CHOICES,
@@ -144,6 +145,7 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         character = await self.db.get_character(3, 4)
         self.assertEqual(character["attributes"]["Стойкость"], 14)
         self.assertNotIn("Решимость", character["attributes"])
+        self.assertEqual(character["background"], "Авангард")
 
     async def test_portal_level_rewards_and_safe_progression(self):
         character_id = await self.db.create_character(
@@ -183,6 +185,18 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(capacity["capacity"], 8 + capacity["athletics"] // 5)
         self.assertTrue(await self.db.give_item(character_id, "Тяжёлый трофей", capacity["capacity"]))
         self.assertFalse(await self.db.give_item(character_id, "Тяжёлый трофей"))
+
+    async def test_background_and_faction_wiki_talent_parsers(self):
+        page = """\n==Quill==\n{|class=\"wikitable\"\n|-\n! {{ficon|abl_lantry_quill_strike.png|Quill Strike|60px}}\n| 100% Damage attack with +20 Accuracy<br/>Weak Interrupt\n|0\n|}\n"""
+        talents = parse_talent_page(page, "Книгочей", "Lantry talents")
+        self.assertEqual(len(talents), 1)
+        self.assertEqual(talents[0]["tree"], "Книгочей · Перо")
+        self.assertIn("Удар", talents[0]["name"])
+        self.assertTrue(talents[0]["icon_url"].startswith("https://static.wikia.nocookie.net/"))
+        reputation = """==Unlocked abilities==\n{|class=\"wikitable\"\n|-\n! {{ficon|psv_rep_fallen_leader.png|Fallen Leader|60px}}\n| On defeat: Grant +3 Quickness to allies\n|[[Stonestalker Tribe]]<br/>Favor 3\n|}\n"""
+        faction = parse_faction_talents(reputation)
+        self.assertEqual(faction[0]["faction"], "Каменные Сталкеры")
+        self.assertEqual((faction[0]["axis"], faction[0]["tier"]), ("favor", 3))
 
 
 if __name__ == "__main__":

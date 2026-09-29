@@ -199,6 +199,13 @@ class Database:
                 "SELECT character_id,'Стойкость',value FROM attributes WHERE name='Решимость'"
             )
             await db.execute("DELETE FROM attributes WHERE name='Решимость'")
+            # Старые происхождения переводятся в новые архетипы с личными деревьями развития.
+            for old, new in {
+                "Боец арены": "Танцующий", "Солдат": "Авангард", "Охотник": "Зверолюд",
+                "Беззаконник": "Танцующий", "Подмастерье гильдии": "Книгочей",
+                "Боевой маг": "Заклинатель", "Благородный отпрыск": "Авангард", "Дипломат": "Книгочей",
+            }.items():
+                await db.execute("UPDATE characters SET background=? WHERE background=?", (new, old))
             await db.commit()
             count = int((await db.execute_fetchall("SELECT COUNT(*) AS total FROM item_catalog"))[0]["total"])
         if count == 0:
