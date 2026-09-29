@@ -4,6 +4,12 @@
 Таланты спутников сознательно не включены.
 """
 
+import json
+import hashlib
+import re
+from pathlib import Path
+from urllib.parse import quote
+
 from constants import TALENT_TREES
 
 
@@ -149,6 +155,45 @@ TALENTS = [
         (9, "Усиленный хаос", "28–42 случайного магического урона и случайные негативные состояния в радиусе 5 м."),
     ]),
 ]
+
+
+def _attach_wiki_media() -> None:
+    """Привязать все 121 русских таланта к каноническим иконкам английской Wiki."""
+    snapshot = Path(__file__).resolve().parent / "catalog" / "tyranny_wiki_en.json"
+    if not snapshot.is_file():
+        return
+    try:
+        pages = json.loads(snapshot.read_text(encoding="utf-8"))["pages"]
+        page = next(item for item in pages if item.get("title_en") == "Fatebinder talents")
+        chunks = re.split(r"\n==([^=]+)==\n", page["wikitext_en"])
+        sections = {
+            chunks[index].strip(): re.findall(r"\{\{ficon\|([^|}]+)\|([^|}]+)", chunks[index + 1])
+            for index in range(1, len(chunks), 2)
+        }
+    except (KeyError, ValueError, StopIteration, json.JSONDecodeError):
+        return
+    names = {
+        "Защита": "Defense", "Сила": "Power", "Лидерство": "Leadership",
+        "Ловкость": "Agility", "Дальний бой": "Range", "Магия": "Magic",
+    }
+    for tree_ru, tree_en in names.items():
+        talents = [talent for talent in TALENTS if talent["tree"] == tree_ru]
+        icons = sections.get(tree_en, [])
+        if len(talents) != len(icons):
+            continue
+        for talent, (filename, english_name) in zip(talents, icons):
+            english_name = english_name.replace("\u00a0", " ").strip()
+            normalized = filename[0].upper() + filename[1:]
+            digest = hashlib.md5(normalized.encode("utf-8")).hexdigest()
+            talent["icon_url"] = (
+                "https://static.wikia.nocookie.net/tyranny_gamepedia_en/images/"
+                f"{digest[0]}/{digest[:2]}/{quote(normalized)}/revision/latest"
+            )
+            talent["source_url"] = f"https://tyranny.fandom.com/wiki/{quote(english_name.replace(' ', '_'))}"
+            talent["name_en"] = english_name
+
+
+_attach_wiki_media()
 
 TALENT_BY_NAME = {talent["name"].casefold(): talent for talent in TALENTS}
 TALENTS_BY_TREE = {tree: [talent for talent in TALENTS if talent["tree"] == tree] for tree in TALENT_TREES}

@@ -124,6 +124,10 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(details["effects"], name)
             self.assertTrue(details["source"].startswith("https://tyranny.fandom.com/wiki/"), name)
             self.assertTrue((Path("web") / details["icon"]).is_file(), name)
+        self.assertEqual(len(TALENTS), 121)
+        for talent in TALENTS:
+            self.assertTrue(talent.get("icon_url", "").startswith("https://static.wikia.nocookie.net/tyranny_gamepedia_en/images/"), talent["name"])
+            self.assertTrue(talent.get("source_url", "").startswith("https://tyranny.fandom.com/wiki/"), talent["name"])
 
     async def test_legacy_resolve_name_migrates_to_stoikost(self):
         character_id = await self.db.create_character(

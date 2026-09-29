@@ -1,0 +1,11 @@
+.talent-icon {
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.talent-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+}

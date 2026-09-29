@@ -243,6 +243,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
             "accents": list(ACCENT_SIGILS), "enhancements": list(ENHANCEMENT_SIGILS),
         },
         "attributeDetails": ATTRIBUTE_DETAILS,
+        "abilityDetails": ABILITY_DETAILS,
         "skillAttributes": {name: list(pair) for name, pair in SKILL_ATTRIBUTES.items()},
         "mechanics": MECHANICS,
     }
