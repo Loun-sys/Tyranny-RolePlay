@@ -41,6 +41,19 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         }])
         self.assertTrue(await self.db.give_item(character_id, "Меч Вершителя"))
         inventory = await self.db.inventory(character_id)
+        self.assertEqual(await self.db.equipment_limits(character_id), {"weaponSets": 2, "quickSlots": 4})
+        locked, _ = await self.db.equip(character_id, inventory[0]["inventory_id"], "Оружие III — правая рука")
+        self.assertFalse(locked)
+        await self.db.add_talent(character_id, {
+            "tree": "Лидерство", "tier": 0, "name": "Изобилие оружия I", "description": "+1 комплект."
+        })
+        await self.db.add_talent(character_id, {
+            "tree": "Лидерство", "tier": 0, "name": "Патронташ", "description": "+2 быстрых слота."
+        })
+        self.assertEqual(await self.db.equipment_limits(character_id), {"weaponSets": 3, "quickSlots": 6})
+        switched, _ = await self.db.set_active_weapon_set(character_id, 3)
+        self.assertTrue(switched)
+        self.assertEqual((await self.db.get_character_by_id(character_id))["active_weapon_set"], 3)
         success, _ = await self.db.equip(character_id, inventory[0]["inventory_id"], "Оружие I — правая рука")
         self.assertTrue(success)
         await self.db.create_spell(

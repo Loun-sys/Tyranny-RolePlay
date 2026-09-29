@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS characters (
     attribute_points INTEGER NOT NULL DEFAULT 0,
     talent_points INTEGER NOT NULL DEFAULT 0,
     rewarded_level INTEGER NOT NULL DEFAULT 1,
+    active_weapon_set INTEGER NOT NULL DEFAULT 1 CHECK(active_weapon_set BETWEEN 1 AND 4),
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(guild_id, user_id)
@@ -190,6 +191,7 @@ class Database:
                 "attribute_points": "INTEGER NOT NULL DEFAULT 0",
                 "talent_points": "INTEGER NOT NULL DEFAULT 0",
                 "rewarded_level": "INTEGER NOT NULL DEFAULT 1",
+                "active_weapon_set": "INTEGER NOT NULL DEFAULT 1",
             }.items():
                 if name not in columns:
                     await db.execute(f"ALTER TABLE characters ADD COLUMN {name} {definition}")
@@ -308,6 +310,36 @@ class Database:
             and not any(part in name.casefold() for part in tiny)
             and not (0 < float(weight or 0) <= .25)
         )
+
+    @staticmethod
+    def _equipment_limits_from_talents(names: set[str]) -> dict[str, int]:
+        weapon_sets = 2
+        if "Изобилие оружия I" in names:
+            weapon_sets += 1
+        if "Изобилие оружия II" in names:
+            weapon_sets += 2
+        return {
+            "weaponSets": min(4, weapon_sets),
+            "quickSlots": 6 if "Патронташ" in names else 4,
+        }
+
+    async def equipment_limits(self, character_id: int) -> dict[str, int]:
+        async with self.connect() as db:
+            rows = await db.execute_fetchall("SELECT name FROM talents WHERE character_id=?", (character_id,))
+        return self._equipment_limits_from_talents({str(row["name"]) for row in rows})
+
+    async def set_active_weapon_set(self, character_id: int, number: int) -> tuple[bool, str]:
+        number = int(number)
+        limits = await self.equipment_limits(character_id)
+        if number < 1 or number > limits["weaponSets"]:
+            return False, "Этот комплект оружия ещё не открыт талантом «Изобилие оружия»."
+        async with self.connect() as db:
+            cursor = await db.execute(
+                "UPDATE characters SET active_weapon_set=?,updated_at=CURRENT_TIMESTAMP WHERE id=?",
+                (number, character_id),
+            )
+            await db.commit()
+        return bool(cursor.rowcount), f"Активирован комплект оружия {('I', 'II', 'III', 'IV')[number - 1]}."
 
     async def create_character(
         self, guild_id: int, user_id: int, name: str, background: str,
@@ -732,6 +764,15 @@ class Database:
         if slot not in EQUIPMENT_SLOTS:
             return False, "Неизвестный слот экипировки."
         async with self.connect() as db:
+            talent_rows = await db.execute_fetchall("SELECT name FROM talents WHERE character_id=?", (character_id,))
+            limits = self._equipment_limits_from_talents({str(row["name"]) for row in talent_rows})
+            roman_sets = {"I": 1, "II": 2, "III": 3, "IV": 4}
+            if slot.startswith("Оружие"):
+                set_number = roman_sets.get(slot.split()[1], 99)
+                if set_number > limits["weaponSets"]:
+                    return False, "Этот комплект оружия ещё не открыт талантом «Изобилие оружия»."
+            if slot.startswith("Быстрый предмет") and int(slot.rsplit(" ", 1)[1]) > limits["quickSlots"]:
+                return False, "Дополнительные быстрые ячейки открывает талант «Патронташ»."
             rows = await db.execute_fetchall(
                 """SELECT inventory.id,item_catalog.category,item_catalog.hands FROM inventory
                    JOIN item_catalog ON item_catalog.id=inventory.item_id

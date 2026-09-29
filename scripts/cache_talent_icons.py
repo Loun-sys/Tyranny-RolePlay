@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import asyncio
 import io
+import json
 import re
 import sys
 import tempfile
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import quote, unquote, urlsplit
 from urllib.request import Request, urlopen
 
 from PIL import Image
@@ -19,6 +20,22 @@ sys.path.insert(0, str(ROOT))
 
 from extended_talent_data import load_extended_talents  # noqa: E402
 from talent_data import TALENTS  # noqa: E402
+
+
+STAT_ICON_FILES = {
+    "health.png": "Potion_of_minor_endurance_L.png",
+    "accuracy.png": "SPELLMOD_accuracy_i.png",
+    "critical.png": "Psv_agility_stealth_accuracy.png",
+    "recovery.png": "SPELLMOD_recovery_i.png",
+    "damage.png": "Abl_power_cleave.png",
+    "endurance.png": "Psv_defense_heavy_guard_i.png",
+    "will.png": "Psv_sirin_defensive_cry.png",
+    "magic.png": "Psv_magic_ward_master.png",
+    "parry.png": "Psv_defense_blade_wall_i.png",
+    "dodge.png": "Psv_range_evasive.png",
+    "armor.png": "Shape-Armor.png",
+    "deflection.png": "Secondary_deflecting.png",
+}
 
 
 def filename_from_url(url: str) -> str:
@@ -60,6 +77,31 @@ async def main() -> None:
     for name, error in failures:
         print(f"ОШИБКА {name}: {error}")
     if failures:
+        raise SystemExit(1)
+
+    stat_target = ROOT / "web" / "assets" / "stat-icons"
+    stat_target.mkdir(parents=True, exist_ok=True)
+
+    def fetch_stat_icon(alias: str, filename: str) -> None:
+        api = (
+            "https://tyranny.fandom.com/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles="
+            + quote("File:" + filename)
+        )
+        with urlopen(Request(api, headers=headers), timeout=40) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        page = next(iter(payload["query"]["pages"].values()))
+        url = page["imageinfo"][0]["url"]
+        download(stat_target / alias, url)
+
+    stat_results = await asyncio.gather(
+        *(asyncio.to_thread(fetch_stat_icon, alias, filename) for alias, filename in STAT_ICON_FILES.items()),
+        return_exceptions=True,
+    )
+    stat_failures = [(alias, result) for alias, result in zip(STAT_ICON_FILES, stat_results) if isinstance(result, Exception)]
+    print(f"Иконки показателей: {len(STAT_ICON_FILES) - len(stat_failures)} / {len(STAT_ICON_FILES)}")
+    for alias, error in stat_failures:
+        print(f"ОШИБКА {alias}: {error}")
+    if stat_failures:
         raise SystemExit(1)
 
 

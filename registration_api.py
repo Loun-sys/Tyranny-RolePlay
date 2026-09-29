@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import io
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -194,21 +195,88 @@ def _portrait_url(request: web.Request, value: str) -> str:
     return value if value.startswith("https://") else ""
 
 
+def _property_number(properties: dict[str, Any], *names: str) -> tuple[float, bool]:
+    aliases = {name.casefold() for name in names}
+    for key, value in properties.items():
+        if str(key).strip().casefold() not in aliases:
+            continue
+        text = str(value).replace(",", ".")
+        match = re.search(r"[-+]?\d+(?:\.\d+)?", text)
+        if match:
+            return float(match.group()), "%" in text
+    return 0.0, False
+
+
+def _apply_property(base: float, items: list[dict[str, Any]], *names: str) -> float:
+    flat = percent = 0.0
+    for item in items:
+        value, is_percent = _property_number(item.get("properties") or {}, *names)
+        if is_percent:
+            percent += value
+        else:
+            flat += value
+    return base * (1 + percent / 100) + flat
+
+
 def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict[str, Any]:
-    attrs = character["attributes"]
+    active_set = max(1, min(4, int(character.get("active_weapon_set", 1))))
+    roman = ("I", "II", "III", "IV")[active_set - 1]
+    equipped = [item for item in inventory if item.get("equipped_slot")]
+    active_items = [
+        item for item in equipped
+        if not str(item.get("equipped_slot", "")).startswith("Быстрый предмет")
+        and (
+            not str(item.get("equipped_slot", "")).startswith("Оружие")
+            or str(item.get("equipped_slot", "")).startswith(f"Оружие {roman} ")
+        )
+    ]
+    attrs = dict(character["attributes"])
+    for name in attrs:
+        attrs[name] = round(_apply_property(attrs[name], active_items, name))
     quickness = attrs.get("Быстрота", 10)
     resolve = attrs.get("Стойкость", 10)
+    base_defenses = {
+        "Выносливость": resolve * 1.5 + attrs.get("Сила", 10) * .5,
+        "Воля": resolve * 1.5 + attrs.get("Живучесть", 10) * .5,
+        "Магия": resolve * 1.5 + attrs.get("Смекалка", 10) * .5,
+        "Парирование": character["skills"].get("Парирование", {}).get("value", 0),
+        "Уклонение": character["skills"].get("Уклонение", {}).get("value", 0),
+    }
+    defenses = {
+        name: round(_apply_property(value, active_items, name, f"Защита {name}", f"{name} defense"))
+        for name, value in base_defenses.items()
+    }
+    weapons = [item for item in active_items if str(item.get("equipped_slot", "")).startswith("Оружие")]
+    primary = next((item for item in weapons if "правая рука" in item.get("equipped_slot", "")), None)
+    skill_by_category = {
+        "Одноручное оружие": "Одноручное оружие", "Двуручное оружие": "Двуручное оружие",
+        "Парное оружие": "Парное оружие", "Луки": "Луки", "Метательное оружие": "Дротики",
+        "Посохи": "Волшебные посохи", "Щиты": "Одноручное оружие",
+    }
+    attack_skill = skill_by_category.get((primary or {}).get("category"), "Безоружный бой")
+    accuracy = character["skills"].get(attack_skill, {}).get("value", 0)
+    accuracy = round(_apply_property(accuracy, active_items, "Точность", "Accuracy"))
+    might_multiplier = max(.1, 1 + (attrs.get("Сила", 10) - 10) * .03)
+    damage_min = round(sum(int(item.get("damage_min") or 0) for item in weapons) * might_multiplier)
+    damage_max = round(sum(int(item.get("damage_max") or 0) for item in weapons) * might_multiplier)
+    if not damage_max:
+        damage_min, damage_max = max(1, round(2 * might_multiplier)), max(2, round(4 * might_multiplier))
+    armor = sum(int(item.get("armor") or 0) for item in active_items)
+    armor = round(_apply_property(armor, active_items, "Броня", "Armor"))
+    deflection = max(0, attrs.get("Искусность", 10) - 10)
+    deflection = round(_apply_property(deflection, active_items, "Отражение", "Deflection"))
+    recovery = sum(float(item.get("recovery") or 0) for item in active_items)
+    recovery = _apply_property(recovery, active_items, "Восстановление", "Recovery")
     return {
-        "defenses": {
-            "Выносливость": round(resolve * 1.5 + attrs.get("Сила", 10) * .5),
-            "Воля": round(resolve * 1.5 + attrs.get("Живучесть", 10) * .5),
-            "Магия": round(resolve * 1.5 + attrs.get("Смекалка", 10) * .5),
-            "Парирование": character["skills"].get("Парирование", {}).get("value", 0),
-            "Уклонение": character["skills"].get("Уклонение", {}).get("value", 0),
-        },
+        "defenses": defenses,
+        "effectiveAttributes": attrs,
+        "attack": {"accuracy": accuracy, "damageMin": damage_min, "damageMax": damage_max,
+                   "recovery": round(recovery, 2), "criticalChance": max(1, attrs.get("Искусность", 10) - 9),
+                   "skill": attack_skill},
+        "armor": armor, "deflection": deflection, "activeWeaponSet": active_set,
         "cooldownMultiplier": round(max(.1, 1 - (quickness - 10) * .03), 3),
         "cooldownPercent": round((1 - max(.1, 1 - (quickness - 10) * .03)) * 100),
-        "equipmentRecovery": round(sum(float(item.get("recovery") or 0) for item in inventory if item.get("equipped_slot")), 2),
+        "equipmentRecovery": round(recovery, 2),
     }
 
 
@@ -242,6 +310,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "spells": await db.spells(character_id),
         "derived": _derived(character, inventory),
         "equipmentSlots": list(EQUIPMENT_SLOTS),
+        "equipmentLimits": await db.equipment_limits(character_id),
         "talentLibrary": [*TALENTS, *background_talents],
         "reputations": reputations,
         "factionTalents": request.app["extended_talents"]["factions"],
@@ -346,6 +415,18 @@ async def portal_equip(request: web.Request) -> web.Response:
     return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
 
 
+async def portal_weapon_set(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    try:
+        number = int(payload.get("number", 0))
+    except (TypeError, ValueError) as error:
+        raise web.HTTPBadRequest(reason="Некорректный номер комплекта.") from error
+    ok, message = await request.app["db"].set_active_weapon_set(cid, number)
+    if not ok:
+        raise web.HTTPConflict(reason=message)
+    return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
+
+
 async def portrait_media(request: web.Request) -> web.StreamResponse:
     name = Path(request.match_info["name"]).name
     path = (request.app["data_dir"] / "portraits" / name).resolve()
@@ -376,6 +457,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/talent", portal_talent)
     app.router.add_post("/api/portal/{token}/spell", portal_spell)
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
+    app.router.add_post("/api/portal/{token}/weapon-set", portal_weapon_set)
     app.router.add_get("/media/portraits/{name}", portrait_media)
     app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))
     runner = web.AppRunner(app)
