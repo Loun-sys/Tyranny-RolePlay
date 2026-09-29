@@ -35,6 +35,9 @@ CREATE TABLE IF NOT EXISTS characters (
     wounds INTEGER NOT NULL DEFAULT 0,
     portrait_url TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
+    attribute_points INTEGER NOT NULL DEFAULT 0,
+    talent_points INTEGER NOT NULL DEFAULT 0,
+    rewarded_level INTEGER NOT NULL DEFAULT 1,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(guild_id, user_id)
@@ -152,6 +155,15 @@ CREATE TABLE IF NOT EXISTS registration_tokens (
 );
 CREATE INDEX IF NOT EXISTS idx_registration_tokens_owner
 ON registration_tokens(guild_id, user_id);
+CREATE TABLE IF NOT EXISTS portal_tokens (
+    token_hash TEXT PRIMARY KEY,
+    character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+    guild_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    expires_at TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_portal_tokens_owner ON portal_tokens(guild_id,user_id);
 """
 
 
@@ -173,6 +185,14 @@ class Database:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         async with self.connect() as db:
             await db.executescript(SCHEMA)
+            columns = {row["name"] for row in await db.execute_fetchall("PRAGMA table_info(characters)")}
+            for name, definition in {
+                "attribute_points": "INTEGER NOT NULL DEFAULT 0",
+                "talent_points": "INTEGER NOT NULL DEFAULT 0",
+                "rewarded_level": "INTEGER NOT NULL DEFAULT 1",
+            }.items():
+                if name not in columns:
+                    await db.execute(f"ALTER TABLE characters ADD COLUMN {name} {definition}")
             # Каноническое русское название Resolve — «Стойкость»; сохраняем значения старых персонажей.
             await db.execute(
                 "INSERT OR IGNORE INTO attributes(character_id,name,value) "
@@ -234,10 +254,53 @@ class Database:
             await db.commit()
             return bool(cursor.rowcount)
 
+    async def create_portal_token(self, guild_id: int, user_id: int, lifetime_days: int = 30) -> str | None:
+        """Создать отзываемую ссылку кабинета; открытый токен никогда не хранится в БД."""
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT id FROM characters WHERE guild_id=? AND user_id=?", (guild_id, user_id)
+            )
+            if not rows:
+                return None
+            token = secrets.token_urlsafe(36)
+            digest = hashlib.sha256(token.encode("utf-8")).hexdigest()
+            expires = datetime.now(timezone.utc) + timedelta(days=max(1, lifetime_days))
+            await db.execute("DELETE FROM portal_tokens WHERE guild_id=? AND user_id=?", (guild_id, user_id))
+            await db.execute(
+                "INSERT INTO portal_tokens(token_hash,character_id,guild_id,user_id,expires_at) VALUES(?,?,?,?,?)",
+                (digest, int(rows[0]["id"]), guild_id, user_id, expires.isoformat()),
+            )
+            await db.commit()
+            return token
+
+    async def portal_character_id(self, token: str) -> int | None:
+        digest = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT character_id,expires_at FROM portal_tokens WHERE token_hash=?", (digest,)
+            )
+        if not rows:
+            return None
+        try:
+            if datetime.fromisoformat(rows[0]["expires_at"]) <= datetime.now(timezone.utc):
+                return None
+        except ValueError:
+            return None
+        return int(rows[0]["character_id"])
+
     @staticmethod
     def _skill_base(name: str, attrs: dict[str, int]) -> int:
         primary, secondary = SKILL_ATTRIBUTES[name]
         return round(attrs[primary] * 1.5 + attrs[secondary] * 0.5)
+
+    @staticmethod
+    def _item_consumes_slot(name: str, category: str, weight: float, equipped_slot: str | None = None) -> bool:
+        tiny = ("чернил", "перо", "ключ", "руна", "самоцвет", "записка")
+        return (
+            not equipped_slot and category not in {"Материалы", "Сигилы"}
+            and not any(part in name.casefold() for part in tiny)
+            and not (0 < float(weight or 0) <= .25)
+        )
 
     async def create_character(
         self, guild_id: int, user_id: int, name: str, background: str,
@@ -333,6 +396,21 @@ class Database:
             ]
             return character
 
+    async def get_character_by_id(self, character_id: int) -> dict[str, Any] | None:
+        async with self.connect() as db:
+            rows = await db.execute_fetchall("SELECT guild_id,user_id FROM characters WHERE id=?", (character_id,))
+        if not rows:
+            return None
+        return await self.get_character(int(rows[0]["guild_id"]), int(rows[0]["user_id"]))
+
+    async def archive_characters(self) -> list[dict[str, Any]]:
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                """SELECT id,name,background,specialization_1,specialization_2,level,portrait_url,updated_at
+                   FROM characters ORDER BY updated_at DESC,name"""
+            )
+            return [dict(row) for row in rows]
+
     async def delete_character(self, guild_id: int, user_id: int) -> bool:
         async with self.connect() as db:
             cursor = await db.execute("DELETE FROM characters WHERE guild_id=? AND user_id=?", (guild_id, user_id))
@@ -349,23 +427,20 @@ class Database:
     async def set_attribute(self, character_id: int, name: str, value: int) -> None:
         value = max(1, min(30, int(value)))
         async with self.connect() as db:
+            old_attrs = {
+                row["name"]: int(row["value"])
+                for row in await db.execute_fetchall("SELECT name,value FROM attributes WHERE character_id=?", (character_id,))
+            }
             await db.execute("UPDATE attributes SET value=? WHERE character_id=? AND name=?", (value, character_id, name))
             attrs = {
                 row["name"]: int(row["value"])
                 for row in await db.execute_fetchall("SELECT name,value FROM attributes WHERE character_id=?", (character_id,))
             }
-            specializations = await db.execute_fetchall(
-                "SELECT background,specialization_1,specialization_2 FROM characters WHERE id=?", (character_id,)
-            )
-            bonuses: dict[str, int] = dict(BACKGROUND_BONUSES.get(specializations[0]["background"], {})) if specializations else {}
-            if specializations:
-                for specialization in (specializations[0]["specialization_1"], specializations[0]["specialization_2"]):
-                    for skill_name, bonus in SPECIALIZATION_BONUSES[specialization].items():
-                        bonuses[skill_name] = bonuses.get(skill_name, 0) + bonus
             for skill in SKILLS:
+                delta = self._skill_base(skill, attrs) - self._skill_base(skill, old_attrs)
                 await db.execute(
-                    "UPDATE skills SET value=? WHERE character_id=? AND name=?",
-                    (self._skill_base(skill, attrs) + bonuses.get(skill, 0), character_id, skill),
+                    "UPDATE skills SET value=MAX(0,MIN(300,value+?)) WHERE character_id=? AND name=?",
+                    (delta, character_id, skill),
                 )
             await self._recalculate_health(db, character_id)
             await db.commit()
@@ -402,13 +477,100 @@ class Database:
 
     async def adjust_experience(self, character_id: int, delta: int) -> tuple[int, int, int]:
         async with self.connect() as db:
-            rows = await db.execute_fetchall("SELECT experience,level FROM characters WHERE id=?", (character_id,))
+            rows = await db.execute_fetchall(
+                "SELECT experience,level,rewarded_level FROM characters WHERE id=?", (character_id,)
+            )
             experience = max(0, int(rows[0]["experience"]) + int(delta))
-            level = max(1, min(21, 1 + experience // 1000))
-            await db.execute("UPDATE characters SET experience=?,level=? WHERE id=?", (experience, level, character_id))
+            level = max(1, min(99, 1 + experience // 1000))
+            rewarded = int(rows[0]["rewarded_level"])
+            gained = max(0, level - rewarded)
+            await db.execute(
+                """UPDATE characters SET experience=?,level=?,rewarded_level=MAX(rewarded_level,?),
+                   attribute_points=attribute_points+?,talent_points=talent_points+?,updated_at=CURRENT_TIMESTAMP
+                   WHERE id=?""",
+                (experience, level, level, gained, gained, character_id),
+            )
             await self._recalculate_health(db, character_id)
             await db.commit()
             return experience, level, (level * 1000)
+
+    async def spend_attribute_point(self, character_id: int, name: str) -> tuple[bool, str]:
+        if name not in ATTRIBUTES:
+            return False, "Неизвестная характеристика."
+        async with self.connect() as db:
+            await db.execute("BEGIN IMMEDIATE")
+            rows = await db.execute_fetchall(
+                """SELECT attributes.value,characters.attribute_points FROM attributes
+                   JOIN characters ON characters.id=attributes.character_id
+                   WHERE attributes.character_id=? AND attributes.name=?""", (character_id, name)
+            )
+            if not rows:
+                await db.rollback(); return False, "Характеристика не найдена."
+            current, points = int(rows[0]["value"]), int(rows[0]["attribute_points"])
+            cost = 1 + max(0, current - 9) // 10
+            if current >= 30:
+                await db.rollback(); return False, "Достигнут предел характеристики."
+            if points < cost:
+                await db.rollback(); return False, f"Нужно очков: {cost}; доступно: {points}."
+            old_attrs = {
+                row["name"]: int(row["value"])
+                for row in await db.execute_fetchall("SELECT name,value FROM attributes WHERE character_id=?", (character_id,))
+            }
+            new_attrs = dict(old_attrs)
+            new_attrs[name] = current + 1
+            await db.execute("UPDATE characters SET attribute_points=attribute_points-? WHERE id=?", (cost, character_id))
+            await db.execute("UPDATE attributes SET value=? WHERE character_id=? AND name=?", (current + 1, character_id, name))
+            for skill in SKILLS:
+                delta = self._skill_base(skill, new_attrs) - self._skill_base(skill, old_attrs)
+                await db.execute(
+                    "UPDATE skills SET value=MAX(0,MIN(300,value+?)) WHERE character_id=? AND name=?",
+                    (delta, character_id, skill),
+                )
+            await self._recalculate_health(db, character_id)
+            await db.commit()
+        return True, f"{name}: {current} → {current + 1}. Потрачено очков: {cost}."
+
+    async def spend_talent_point(self, character_id: int, talent: dict[str, Any]) -> tuple[bool, str]:
+        async with self.connect() as db:
+            await db.execute("BEGIN IMMEDIATE")
+            character = await db.execute_fetchall("SELECT talent_points FROM characters WHERE id=?", (character_id,))
+            if not character or int(character[0]["talent_points"]) < 1:
+                await db.rollback(); return False, "Нет свободных очков талантов."
+            owned = await db.execute_fetchall("SELECT name FROM talents WHERE character_id=? AND name=?", (character_id, talent["name"]))
+            if owned:
+                await db.rollback(); return False, "Этот талант уже изучен."
+            tree_points = int((await db.execute_fetchall(
+                "SELECT COUNT(*) AS total FROM talents WHERE character_id=? AND tree_name=?",
+                (character_id, talent["tree"]),
+            ))[0]["total"])
+            if tree_points < int(talent["tier"]):
+                await db.rollback(); return False, f"Сначала вложите {talent['tier']} очк. в ветку «{talent['tree']}»."
+            await db.execute(
+                "INSERT INTO talents(character_id,tree_name,tier,name,description) VALUES(?,?,?,?,?)",
+                (character_id, talent["tree"], talent["tier"], talent["name"], talent["description"]),
+            )
+            await db.execute("UPDATE characters SET talent_points=talent_points-1 WHERE id=?", (character_id,))
+            await db.commit()
+            return True, f"Изучен талант «{talent['name']}»."
+
+    async def inventory_capacity(self, character_id: int) -> dict[str, int]:
+        async with self.connect() as db:
+            skill = await db.execute_fetchall(
+                "SELECT value FROM skills WHERE character_id=? AND name='Атлетика'", (character_id,)
+            )
+            rows = await db.execute_fetchall(
+                """SELECT inventory.equipped_slot,item_catalog.category,item_catalog.name,item_catalog.weight
+                   FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id
+                   WHERE inventory.character_id=?""", (character_id,)
+            )
+        athletics = int(skill[0]["value"]) if skill else 0
+        capacity = min(40, 8 + athletics // 5)
+        return {
+            "used": sum(1 for row in rows if self._item_consumes_slot(
+                row["name"], row["category"], row["weight"], row["equipped_slot"]
+            )),
+            "capacity": capacity, "athletics": athletics,
+        }
 
     async def add_talent(self, character_id: int, talent: dict[str, Any]) -> bool:
         async with self.connect() as db:
@@ -495,15 +657,33 @@ class Database:
 
     async def give_item(self, character_id: int, item_name: str, quantity: int = 1) -> bool:
         async with self.connect() as db:
-            rows = await db.execute_fetchall("SELECT id,category FROM item_catalog WHERE name=? COLLATE NOCASE", (item_name,))
+            rows = await db.execute_fetchall(
+                "SELECT id,name,category,weight FROM item_catalog WHERE name=? COLLATE NOCASE", (item_name,)
+            )
             if not rows:
                 return False
             item_id, category = int(rows[0]["id"]), rows[0]["category"]
             stackable = category in {"Расходуемые предметы", "Зелья", "Еда", "Материалы"}
-            if stackable:
-                existing = await db.execute_fetchall(
-                    "SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL", (character_id, item_id)
+            existing = await db.execute_fetchall(
+                "SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL", (character_id, item_id)
+            )
+            if self._item_consumes_slot(rows[0]["name"], category, rows[0]["weight"]) and not (stackable and existing):
+                athletics_rows = await db.execute_fetchall(
+                    "SELECT value FROM skills WHERE character_id=? AND name='Атлетика'", (character_id,)
                 )
+                capacity = min(40, 8 + (int(athletics_rows[0]["value"]) if athletics_rows else 0) // 5)
+                current = await db.execute_fetchall(
+                    """SELECT inventory.equipped_slot,item_catalog.name,item_catalog.category,item_catalog.weight
+                       FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id
+                       WHERE inventory.character_id=?""", (character_id,)
+                )
+                used = sum(self._item_consumes_slot(
+                    row["name"], row["category"], row["weight"], row["equipped_slot"]
+                ) for row in current)
+                needed = 1 if stackable else max(1, int(quantity))
+                if used + needed > capacity:
+                    return False
+            if stackable:
                 if existing:
                     await db.execute("UPDATE inventory SET quantity=quantity+? WHERE id=?", (quantity, existing[0]["id"]))
                 else:

@@ -12,11 +12,14 @@ from aiohttp import web
 from PIL import Image
 
 from constants import (
-    ABILITY_DETAILS, ATTRIBUTE_DETAILS, ATTRIBUTES, BACKGROUND_BONUSES,
+    ABILITY_DETAILS, ACCENT_SIGILS, ATTRIBUTE_DETAILS, ATTRIBUTES, BACKGROUND_BONUSES,
     BACKGROUND_DESCRIPTIONS, BACKGROUNDS, SKILLS,
+    CORE_SIGILS, ENHANCEMENT_SIGILS, EQUIPMENT_SLOTS, EXPRESSION_SIGILS,
     SKILL_ATTRIBUTES, SPECIALIZATIONS, SPECIALIZATION_ABILITIES,
     SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES, SPECIALIZATION_DESCRIPTIONS,
 )
+from mechanics_data import MECHANICS
+from talent_data import TALENT_BY_NAME, TALENTS
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -30,7 +33,7 @@ def _cors(request: web.Request, response: web.StreamResponse) -> web.StreamRespo
     if allowed == "*" or origin in {item.strip() for item in allowed.split(",")}:
         response.headers["Access-Control-Allow-Origin"] = origin or "*"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,PATCH,OPTIONS"
     response.headers["Vary"] = "Origin"
     return response
 
@@ -64,6 +67,7 @@ def _configuration() -> dict[str, Any]:
             for name in SPECIALIZATIONS
         },
         "attributeDetails": ATTRIBUTE_DETAILS,
+        "abilityDetails": ABILITY_DETAILS,
         "skillAttributes": {name: list(pair) for name, pair in SKILL_ATTRIBUTES.items()},
         "backgroundDetails": {
             name: {"description": BACKGROUND_DESCRIPTIONS[name], "bonuses": BACKGROUND_BONUSES[name]}
@@ -178,6 +182,167 @@ async def registration_submit(request: web.Request) -> web.Response:
     return web.json_response({"ok": True, "name": clean["name"]})
 
 
+def _portrait_url(request: web.Request, value: str) -> str:
+    if not value:
+        return ""
+    if value.startswith("local://"):
+        scheme = request.headers.get("X-Forwarded-Proto", request.scheme).split(",", 1)[0].strip()
+        return f"{scheme}://{request.host}/media/portraits/{Path(value[8:]).name}"
+    return value if value.startswith("https://") else ""
+
+
+def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict[str, Any]:
+    attrs = character["attributes"]
+    quickness = attrs.get("Быстрота", 10)
+    resolve = attrs.get("Стойкость", 10)
+    return {
+        "defenses": {
+            "Выносливость": round(resolve * 1.5 + attrs.get("Сила", 10) * .5),
+            "Воля": round(resolve * 1.5 + attrs.get("Живучесть", 10) * .5),
+            "Магия": round(resolve * 1.5 + attrs.get("Смекалка", 10) * .5),
+            "Парирование": character["skills"].get("Парирование", {}).get("value", 0),
+            "Уклонение": character["skills"].get("Уклонение", {}).get("value", 0),
+        },
+        "cooldownMultiplier": round(max(.1, 1 - (quickness - 10) * .03), 3),
+        "cooldownPercent": round((1 - max(.1, 1 - (quickness - 10) * .03)) * 100),
+        "equipmentRecovery": round(sum(float(item.get("recovery") or 0) for item in inventory if item.get("equipped_slot")), 2),
+    }
+
+
+def _clean_inventory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    result = []
+    for row in rows:
+        item = dict(row)
+        try:
+            item["properties"] = __import__("json").loads(item.get("properties") or "{}")
+        except (TypeError, ValueError):
+            item["properties"] = {}
+        result.append(item)
+    return result
+
+
+async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
+    db = request.app["db"]
+    character = await db.get_character_by_id(character_id)
+    if not character:
+        raise web.HTTPNotFound(reason="Персонаж не найден.")
+    inventory = _clean_inventory(await db.inventory(character_id))
+    character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
+    character.pop("guild_id", None)
+    character.pop("user_id", None)
+    return {
+        "character": character,
+        "inventory": inventory,
+        "capacity": await db.inventory_capacity(character_id),
+        "spells": await db.spells(character_id),
+        "derived": _derived(character, inventory),
+        "equipmentSlots": list(EQUIPMENT_SLOTS),
+        "talentLibrary": TALENTS,
+        "sigils": {
+            "cores": list(CORE_SIGILS), "expressions": list(EXPRESSION_SIGILS),
+            "accents": list(ACCENT_SIGILS), "enhancements": list(ENHANCEMENT_SIGILS),
+        },
+        "attributeDetails": ATTRIBUTE_DETAILS,
+        "skillAttributes": {name: list(pair) for name, pair in SKILL_ATTRIBUTES.items()},
+        "mechanics": MECHANICS,
+    }
+
+
+async def archive_list(request: web.Request) -> web.Response:
+    rows = await request.app["db"].archive_characters()
+    for row in rows:
+        row["portrait_url"] = _portrait_url(request, row.get("portrait_url", ""))
+    return web.json_response({"ok": True, "characters": rows})
+
+
+async def archive_character(request: web.Request) -> web.Response:
+    character_id = int(request.match_info["character_id"])
+    payload = await _dashboard(request, character_id)
+    for field in ("notes", "attribute_points", "talent_points", "rewarded_level"):
+        payload["character"].pop(field, None)
+    payload.pop("talentLibrary", None)
+    payload.pop("sigils", None)
+    return web.json_response({"ok": True, **payload})
+
+
+async def portal_info(request: web.Request) -> web.Response:
+    character_id = await request.app["db"].portal_character_id(request.match_info["token"])
+    if not character_id:
+        raise web.HTTPGone(reason="Личная ссылка истекла или была заменена новой.")
+    return web.json_response({"ok": True, **await _dashboard(request, character_id)})
+
+
+async def _portal_payload(request: web.Request) -> tuple[int, dict[str, Any]]:
+    character_id = await request.app["db"].portal_character_id(request.match_info["token"])
+    if not character_id:
+        raise web.HTTPGone(reason="Личная ссылка истекла или была заменена новой.")
+    try:
+        payload = await request.json()
+    except Exception as error:
+        raise web.HTTPBadRequest(reason="Некорректные данные.") from error
+    return character_id, payload
+
+
+async def portal_attribute(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    ok, message = await request.app["db"].spend_attribute_point(cid, str(payload.get("name", "")))
+    if not ok:
+        raise web.HTTPConflict(reason=message)
+    return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
+
+
+async def portal_talent(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    talent = TALENT_BY_NAME.get(str(payload.get("name", "")).casefold())
+    if not talent:
+        raise web.HTTPBadRequest(reason="Талант не найден.")
+    ok, message = await request.app["db"].spend_talent_point(cid, talent)
+    if not ok:
+        raise web.HTTPConflict(reason=message)
+    return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
+
+
+async def portal_spell(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    core, expression = str(payload.get("core", "")), str(payload.get("expression", ""))
+    accents = [str(x) for x in payload.get("accents", [])]
+    enhancements = [str(x) for x in payload.get("enhancements", [])]
+    if core not in CORE_SIGILS or expression not in EXPRESSION_SIGILS:
+        raise web.HTTPBadRequest(reason="Выберите допустимые сигилы основы и выражения.")
+    if any(x not in ACCENT_SIGILS for x in accents) or any(x not in ENHANCEMENT_SIGILS for x in enhancements):
+        raise web.HTTPBadRequest(reason="В формуле есть неизвестный сигил.")
+    difficulty = int(payload.get("difficulty", 0))
+    character = await request.app["db"].get_character_by_id(cid)
+    if difficulty > character["skills"]["Знания"]["value"]:
+        raise web.HTTPConflict(reason="Знаний персонажа недостаточно для этой сложности.")
+    name = str(payload.get("name", "")).strip()
+    if not 2 <= len(name) <= 80:
+        raise web.HTTPBadRequest(reason="Введите название заклинания.")
+    await request.app["db"].create_spell(cid, name, core, expression, accents, enhancements, difficulty)
+    return web.json_response({"ok": True, "message": f"Заклинание «{name}» записано.", **await _dashboard(request, cid)})
+
+
+async def portal_equip(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    if payload.get("unequip"):
+        ok = await request.app["db"].unequip(cid, int(payload.get("inventoryId", 0)))
+        message = "Предмет снят." if ok else "Предмет не найден."
+    else:
+        ok, message = await request.app["db"].equip(cid, int(payload.get("inventoryId", 0)), str(payload.get("slot", "")))
+    if not ok:
+        raise web.HTTPConflict(reason=message)
+    return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
+
+
+async def portrait_media(request: web.Request) -> web.StreamResponse:
+    name = Path(request.match_info["name"]).name
+    path = (request.app["data_dir"] / "portraits" / name).resolve()
+    root = (request.app["data_dir"] / "portraits").resolve()
+    if path.parent != root or not path.is_file():
+        raise web.HTTPNotFound()
+    return web.FileResponse(path)
+
+
 async def health(_: web.Request) -> web.Response:
     return web.json_response({"ok": True, "service": "tyranny-registration"})
 
@@ -191,6 +356,15 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_get("/api/registration/{token}", registration_info)
     app.router.add_post("/api/registration/{token}", registration_submit)
     app.router.add_options("/api/registration/{token}", lambda _: web.Response(status=204))
+    app.router.add_get("/api/archive", archive_list)
+    app.router.add_get("/api/archive/{character_id}", archive_character)
+    app.router.add_get("/api/portal/{token}", portal_info)
+    app.router.add_post("/api/portal/{token}/attribute", portal_attribute)
+    app.router.add_post("/api/portal/{token}/talent", portal_talent)
+    app.router.add_post("/api/portal/{token}/spell", portal_spell)
+    app.router.add_post("/api/portal/{token}/equipment", portal_equip)
+    app.router.add_get("/media/portraits/{name}", portrait_media)
+    app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, os.getenv("HOST", "0.0.0.0"), int(os.getenv("PORT", "8080")))

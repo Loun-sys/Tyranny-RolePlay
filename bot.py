@@ -6,7 +6,7 @@ import logging
 import os
 import random
 from pathlib import Path
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 import discord
 from discord import app_commands
@@ -38,6 +38,14 @@ MASTER_ROLE_IDS = {
 }
 BRONZE = discord.Color.from_rgb(139, 79, 42)
 CRIMSON = discord.Color.from_rgb(111, 27, 25)
+
+
+def archive_site_url() -> str:
+    explicit = os.getenv("TYRANNY_ARCHIVE_URL", "").strip()
+    if explicit:
+        return explicit
+    root = os.getenv("TYRANNY_REGISTRATION_URL", "").strip().split("?", 1)[0].rstrip("/")
+    return f"{root}/archive.html" if root else ""
 
 
 def guild_id(interaction: discord.Interaction) -> int:
@@ -166,6 +174,25 @@ class CharacterView(discord.ui.View):
             embed.description = "Гримуар пуст. Используйте `/заклинание-создать`."
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
+    @discord.ui.button(label="Личное дело", emoji="🔐", style=discord.ButtonStyle.danger, row=1)
+    async def portal(self, interaction: discord.Interaction, _: discord.ui.Button):
+        site, api = archive_site_url(), os.getenv("TYRANNY_PUBLIC_API_URL", "").strip().rstrip("/")
+        if not site or not api:
+            await interaction.response.send_message("Адрес личного кабинета ещё не настроен.", ephemeral=True)
+            return
+        token = await bot.db.create_portal_token(interaction.guild_id, self.character["user_id"])
+        if not token:
+            await interaction.response.send_message("Персонаж не найден.", ephemeral=True)
+            return
+        separator = "&" if "?" in site else "?"
+        link = f"{site}{separator}{urlencode({'api': api})}#token={quote(token)}"
+        view = discord.ui.View(timeout=900)
+        view.add_item(discord.ui.Button(label="Открыть личное дело", emoji="⚖️", url=link))
+        await interaction.response.send_message(
+            "Персональная ссылка создана на **30 дней**. Новая ссылка отзовёт предыдущую; не пересылайте её другим.",
+            view=view, ephemeral=True,
+        )
+
 
 class TyrannyBot(commands.Bot):
     def __init__(self):
@@ -239,6 +266,19 @@ async def character_command(interaction: discord.Interaction, участник: 
     if not character:
         return
     await interaction.response.send_message(embed=character_embed(character), view=CharacterView(character))
+
+
+@bot.tree.command(name="архив", description="Открыть архив всех созданных персонажей")
+async def archive_command(interaction: discord.Interaction):
+    site, api = archive_site_url(), os.getenv("TYRANNY_PUBLIC_API_URL", "").strip().rstrip("/")
+    if not site or not api:
+        await interaction.response.send_message("Архив ещё не опубликован.", ephemeral=True)
+        return
+    separator = "&" if "?" in site else "?"
+    link = f"{site}{separator}{urlencode({'api': api})}"
+    view = discord.ui.View()
+    view.add_item(discord.ui.Button(label="Открыть архив", emoji="📚", url=link))
+    await interaction.response.send_message("Архив жителей Империи Кайрос.", view=view, ephemeral=True)
 
 
 @bot.tree.command(name="портрет", description="Установить прямую HTTPS-ссылку на портрет")

@@ -6,6 +6,7 @@ from card_renderer import render_character_card
 from database import Database
 from combat import Combatant, CombatSession, resolve_attack
 from registration_api import _configuration, _validate_payload
+from talent_data import TALENTS
 from constants import (
     ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
     SPECIALIZATION_ABILITY_CHOICES,
@@ -139,6 +140,45 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         character = await self.db.get_character(3, 4)
         self.assertEqual(character["attributes"]["Стойкость"], 14)
         self.assertNotIn("Решимость", character["attributes"])
+
+    async def test_portal_level_rewards_and_safe_progression(self):
+        character_id = await self.db.create_character(
+            77, 88, "Лантри", "Дипломат", "Меч и щит", "Заклинания молний",
+        )
+        await self.db.set_skill(character_id, "Одноручное оружие", 47)
+        before = (await self.db.get_character(77, 88))["skills"]["Одноручное оружие"]["value"]
+        experience, level, _ = await self.db.adjust_experience(character_id, 1000)
+        self.assertEqual((experience, level), (1000, 2))
+        character = await self.db.get_character(77, 88)
+        self.assertEqual(character["attribute_points"], 1)
+        self.assertEqual(character["talent_points"], 1)
+        ok, _ = await self.db.spend_attribute_point(character_id, "Сила")
+        self.assertTrue(ok)
+        after = (await self.db.get_character(77, 88))["skills"]["Одноручное оружие"]["value"]
+        self.assertGreaterEqual(after, before)
+        tier_zero = next(talent for talent in TALENTS if talent["tier"] == 0)
+        ok, _ = await self.db.spend_talent_point(character_id, tier_zero)
+        self.assertTrue(ok)
+        token = await self.db.create_portal_token(77, 88)
+        self.assertEqual(await self.db.portal_character_id(token), character_id)
+        replacement = await self.db.create_portal_token(77, 88)
+        self.assertIsNone(await self.db.portal_character_id(token))
+        self.assertEqual(await self.db.portal_character_id(replacement), character_id)
+
+    async def test_inventory_capacity_depends_on_athletics_and_tiny_items_are_free(self):
+        character_id = await self.db.create_character(
+            90, 91, "Калеб", "Солдат", "Меч и щит", "Двуручный меч",
+        )
+        await self.db.upsert_catalog([
+            {"name": "Чернильница суда", "category": "Прочее", "weight": .1},
+            {"name": "Тяжёлый трофей", "category": "Прочее", "weight": 2},
+        ])
+        self.assertTrue(await self.db.give_item(character_id, "Чернильница суда", 5))
+        capacity = await self.db.inventory_capacity(character_id)
+        self.assertEqual(capacity["used"], 0)
+        self.assertEqual(capacity["capacity"], 8 + capacity["athletics"] // 5)
+        self.assertTrue(await self.db.give_item(character_id, "Тяжёлый трофей", capacity["capacity"]))
+        self.assertFalse(await self.db.give_item(character_id, "Тяжёлый трофей"))
 
 
 if __name__ == "__main__":
