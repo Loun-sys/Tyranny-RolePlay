@@ -14,6 +14,7 @@ from urllib.parse import quote
 import aiohttp
 
 from localization import localize_game_text
+from russian_translation import translate_title as translate_generic
 
 
 BACKGROUND_TALENT_PAGES = {
@@ -90,6 +91,8 @@ TITLE_WORDS = {
 }
 
 EFFECT_PHRASES = {
+    "Ashe Aegis": "защиты Эша",
+    "do not benefit from": "не получают преимуществ от", "does not benefit from": "не получает преимуществ от",
     "Damage attack": "урона атакой", "Armor penetration": "пробивания брони", "Armor Penetration": "пробивания брони",
     "Target is": "Цель получает состояние", "Targets are": "Цели получают состояние", "Foes are": "Враги получают состояние",
     "Allies receive": "Союзники получают", "On critical hit": "При критическом попадании",
@@ -146,7 +149,8 @@ EFFECT_WORDS = {
     "primary":"основного","arrows":"стрел","athletics":"Атлетики","splitter":"раскалыватель","attackers":"нападающих",
     "cannot":"не может","be":"быть","delay":"отсрочивает","unconsciousness":"потерю сознания","clash":"столкновение",
     "iron":"железа","veteran":"ветеран","phalanx":"фаланга","total":"всего","degree":"градусов","transfer":"переносит",
-    "blows":"ударов","aura":"аура","stand":"рубеж","ashe":"Эша","strikes":"удары","reduces":"сокращает",
+    "blows":"ударов","aura":"аура","stand":"рубеж","ashe":"Эша","aegis":"защиты",
+    "benefit":"преимущество","benefits":"преимущества","do":"","does":"","strikes":"удары","reduces":"сокращает",
     "cooldown":"перезарядку","flurry":"шквала","quillstorm":"бури перьев","other":"другие","projectiles":"снарядов",
     "breached":"пробитая магическая защита","judgment":"суда","raw":"чистого","d":"","i":"I","ii":"II","iii":"III","iv":"IV",
 }
@@ -156,18 +160,32 @@ def _translate_title(value: str) -> str:
     result = value.replace("\u00a0", " ").strip()
     for source, target in sorted(TITLE_PHRASES.items(), key=lambda item: len(item[0]), reverse=True):
         result = re.sub(re.escape(source), target, result, flags=re.IGNORECASE)
+    result = re.sub(r"([A-Za-z]+)['’]s\b", r"\1", result)
     tokens = re.split(r"(\s+|[-–:,'’])", result)
-    return re.sub(r"\s+", " ", "".join(TITLE_WORDS.get(token.casefold(), token) for token in tokens)).strip()
+    translated = []
+    for token in tokens:
+        replacement = TITLE_WORDS.get(token.casefold())
+        if replacement is None and re.search(r"[A-Za-z]", token):
+            replacement = translate_generic(token)
+        translated.append(token if replacement is None else replacement)
+    return localize_game_text(re.sub(r"\s+", " ", "".join(translated)).strip())
 
 
 def _translate_effect(value: str) -> str:
+    value = re.sub(r"([A-Za-z]+)['’]s\b", r"\1", value)
     result = re.sub(r"(?<=\d)m\b", " м", value)
     result = re.sub(r"(?<=\d)s\b", " сек.", result)
     for source, target in sorted(EFFECT_PHRASES.items(), key=lambda item: len(item[0]), reverse=True):
         result = re.sub(re.escape(source), target, result, flags=re.IGNORECASE)
     tokens = re.split(r"(\s+|[-–:;,().'’])", result)
     words = {**TITLE_WORDS, **EFFECT_WORDS}
-    result = "".join(words.get(token.casefold(), token) for token in tokens)
+    translated = []
+    for token in tokens:
+        replacement = words.get(token.casefold())
+        if replacement is None and re.search(r"[A-Za-z]", token):
+            replacement = translate_generic(token)
+        translated.append(token if replacement is None else replacement)
+    result = "".join(translated)
     return localize_game_text(re.sub(r"\s+", " ", result).strip(" ;")) or "Описание эффекта отсутствует."
 
 
@@ -206,8 +224,8 @@ def parse_talent_page(wikitext: str, background: str, page_title: str) -> list[d
             english_name = _clean_wiki(icon.group(2))
             result.append({
                 "tree": tree, "tier": tier, "name": _translate_title(english_name),
-                "name_en": english_name, "description": _translate_effect(effect),
-                "requires": requirement, "background": background,
+                "description": _translate_effect(effect),
+                "requires": _translate_effect(requirement), "background": background,
                 "automatic_level": tier if section_en == "Songs" and tier else 0,
                 "icon_url": _icon_url(icon.group(1)),
                 "source_url": f"https://tyranny.fandom.com/wiki/{quote(english_name.replace(' ', '_'))}",
@@ -232,7 +250,7 @@ def parse_faction_talents(wikitext: str) -> list[dict[str, Any]]:
             continue
         english_name = _clean_wiki(icon.group(2))
         result.append({
-            "name": _translate_title(english_name), "name_en": english_name,
+            "name": _translate_title(english_name),
             "description": _translate_effect(_clean_wiki(cells[-2])),
             "faction": FACTION_TRANSLATIONS.get(faction_en, faction_en), "axis": axis,
             "tier": int(tier_match.group(1)),
@@ -243,7 +261,7 @@ def parse_faction_talents(wikitext: str) -> list[dict[str, Any]]:
 
 
 async def load_extended_talents(data_dir: Path) -> dict[str, Any]:
-    cache = data_dir / "extended_talents_cache.json"
+    cache = data_dir / "extended_talents_cache_v2.json"
     pages = [*BACKGROUND_TALENT_PAGES.values(), "Reputation"]
     texts: dict[str, str] = {}
     timeout = aiohttp.ClientTimeout(total=20)
