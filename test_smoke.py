@@ -278,6 +278,38 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         with self.assertRaisesRegex(ValueError, "Сначала изучите"):
             validate_formula("core:Камень", "expression:Сосредоточенное намерение", [], [], known, 99)
 
+    async def test_admin_session_and_full_character_mutations(self):
+        character_id = await self.db.create_character(
+            555, 777, "Админская проверка", "Книгочей", "Меч и щит", "Короткий лук",
+        )
+        token = await self.db.create_admin_token(555, 999)
+        self.assertEqual(await self.db.admin_token_owner(token), (555, 999))
+        self.assertEqual((await self.db.admin_characters(555))[0]["id"], character_id)
+        self.assertTrue(await self.db.character_belongs_to_guild(character_id, 555))
+        self.assertFalse(await self.db.character_belongs_to_guild(character_id, 556))
+        await self.db.admin_update_character(character_id, {
+            "name": "Исправленное дело", "attribute_points": 9, "talent_points": 8,
+            "health": 17, "health_max": 25, "wounds": 2,
+        })
+        await self.db.admin_set_skill(character_id, "Знания", 88, 123)
+        gained = await self.db.admin_level_up(character_id, 2)
+        self.assertEqual(gained, 2)
+        await self.db.admin_set_reputation(character_id, "Опальные", 77, 12)
+        await self.db.admin_set_sigil(character_id, "core:Огонь", True)
+        async with self.db.connect() as db:
+            item = (await db.execute_fetchall("SELECT name FROM item_catalog ORDER BY name LIMIT 1"))[0]["name"]
+        self.assertTrue(await self.db.admin_give_item(character_id, item, 2))
+        await self.db.record_admin_action(555, 999, character_id, "test", {"ok": True})
+        character = await self.db.get_character_by_id(character_id)
+        self.assertEqual(character["name"], "Исправленное дело")
+        self.assertEqual((character["level"], character["attribute_points"], character["talent_points"]), (3, 11, 10))
+        self.assertEqual(character["skills"]["Знания"], {"value": 88, "experience": 123})
+        self.assertIn("core:Огонь", await self.db.known_sigils(character_id))
+        self.assertEqual((await self.db.reputations(character_id))[0]["favor"], 77)
+        async with self.db.connect() as db:
+            audit = await db.execute_fetchall("SELECT action FROM admin_audit WHERE character_id=?", (character_id,))
+        self.assertEqual(audit[0]["action"], "test")
+
 
 if __name__ == "__main__":
     unittest.main()

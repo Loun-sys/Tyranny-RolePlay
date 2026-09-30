@@ -48,6 +48,14 @@ def archive_site_url() -> str:
     return f"{root}/archive.html" if root else ""
 
 
+def admin_site_url() -> str:
+    explicit = os.getenv("TYRANNY_ADMIN_URL", "").strip()
+    if explicit:
+        return explicit
+    root = os.getenv("TYRANNY_REGISTRATION_URL", "").strip().split("?", 1)[0].rstrip("/")
+    return f"{root}/admin.html" if root else ""
+
+
 def guild_id(interaction: discord.Interaction) -> int:
     if interaction.guild_id is None:
         raise app_commands.NoPrivateMessage("Команда доступна только на сервере.")
@@ -279,6 +287,28 @@ async def archive_command(interaction: discord.Interaction):
     view = discord.ui.View()
     view.add_item(discord.ui.Button(label="Открыть архив", emoji="📚", url=link))
     await interaction.response.send_message("Архив жителей Империи Кайрос.", view=view, ephemeral=True)
+
+
+@bot.tree.command(name="админ", description="Открыть закрытую мастерскую управления персонажами")
+async def admin_command(interaction: discord.Interaction):
+    if not is_master(interaction):
+        await interaction.response.send_message("Мастерская доступна только администраторам и мастерам.", ephemeral=True)
+        return
+    site, api = admin_site_url(), os.getenv("TYRANNY_PUBLIC_API_URL", "").strip().rstrip("/")
+    if not site or not api:
+        await interaction.response.send_message("Администраторская панель ещё не опубликована.", ephemeral=True)
+        return
+    token = await bot.db.create_admin_token(guild_id(interaction), interaction.user.id)
+    separator = "&" if "?" in site else "?"
+    link = f"{site}{separator}{urlencode({'api': api})}#token={quote(token)}"
+    embed = discord.Embed(title="Мастерская Тунона", color=CRIMSON)
+    embed.description = (
+        "Закрытая панель полного управления анкетами этого сервера. Ссылка личная, действует **8 часов** "
+        "и заменяет предыдущую ссылку администратора. Не пересылайте её другим людям."
+    )
+    view = discord.ui.View(timeout=28_800)
+    view.add_item(discord.ui.Button(label="Открыть мастерскую", emoji="🛠️", url=link))
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 
 @bot.tree.command(name="портрет", description="Установить прямую HTTPS-ссылку на портрет")

@@ -17,7 +17,7 @@ from constants import (
     ABILITY_DETAILS, ACCENT_SIGILS, ATTRIBUTE_DETAILS, ATTRIBUTES, BACKGROUND_BONUSES,
     BACKGROUND_DESCRIPTIONS, BACKGROUNDS, SKILLS,
     BACKGROUND_TALENT_SOURCES,
-    CORE_SIGILS, ENHANCEMENT_SIGILS, EQUIPMENT_SLOTS, EXPRESSION_SIGILS,
+    CORE_SIGILS, ENHANCEMENT_SIGILS, EQUIPMENT_SLOTS, EXPRESSION_SIGILS, REPUTATION_FACTIONS,
     SKILL_ATTRIBUTES, SPECIALIZATIONS, SPECIALIZATION_ABILITIES,
     SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES, SPECIALIZATION_DESCRIPTIONS,
 )
@@ -453,6 +453,142 @@ async def portal_weapon_set(request: web.Request) -> web.Response:
     return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
 
 
+async def _admin_owner(request: web.Request) -> tuple[int, int]:
+    owner = await request.app["db"].admin_token_owner(request.match_info["token"])
+    if not owner:
+        raise web.HTTPGone(reason="Администраторская ссылка истекла или была заменена.")
+    return owner
+
+
+async def _admin_character(request: web.Request) -> tuple[int, int, int]:
+    guild_id, admin_user_id = await _admin_owner(request)
+    try:
+        character_id = int(request.match_info["character_id"])
+    except (TypeError, ValueError) as error:
+        raise web.HTTPBadRequest(reason="Некорректный номер персонажа.") from error
+    if not await request.app["db"].character_belongs_to_guild(character_id, guild_id):
+        raise web.HTTPNotFound(reason="Персонаж этого сервера не найден.")
+    return guild_id, admin_user_id, character_id
+
+
+async def admin_home(request: web.Request) -> web.Response:
+    guild_id, admin_user_id = await _admin_owner(request)
+    return web.json_response({
+        "ok": True, "adminUserId": str(admin_user_id),
+        "characters": await request.app["db"].admin_characters(guild_id),
+    })
+
+
+async def admin_character(request: web.Request) -> web.Response:
+    guild_id, _, character_id = await _admin_character(request)
+    original = await request.app["db"].get_character_by_id(character_id)
+    payload = await _dashboard(request, character_id)
+    payload["character"]["user_id"] = str(original["user_id"])
+    payload["adminConfig"] = {
+        "backgrounds": list(BACKGROUNDS), "specializations": list(SPECIALIZATIONS),
+        "attributes": list(ATTRIBUTES), "skills": list(SKILLS),
+        "factions": list(REPUTATION_FACTIONS), "guildId": str(guild_id),
+    }
+    return web.json_response({"ok": True, **payload})
+
+
+async def admin_catalog(request: web.Request) -> web.Response:
+    await _admin_owner(request)
+    query = str(request.query.get("q", ""))[:100]
+    category = str(request.query.get("category", ""))[:100]
+    rows = await request.app["db"].catalog_search(query=query, category=category, limit=50)
+    return web.json_response({"ok": True, "items": _clean_inventory(rows)})
+
+
+async def admin_mutation(request: web.Request) -> web.Response:
+    guild_id, admin_user_id, cid = await _admin_character(request)
+    try:
+        payload = await request.json()
+    except Exception as error:
+        raise web.HTTPBadRequest(reason="Некорректные данные.") from error
+    action = str(payload.get("action", ""))
+    db = request.app["db"]
+    message = "Изменения сохранены."
+    if action == "character":
+        values = dict(payload.get("values") or {})
+        if "background" in values and values["background"] not in BACKGROUNDS:
+            raise web.HTTPBadRequest(reason="Неизвестная предыстория.")
+        for field in ("specialization_1", "specialization_2"):
+            if field in values and values[field] not in SPECIALIZATIONS:
+                raise web.HTTPBadRequest(reason="Неизвестная специализация.")
+        await db.admin_update_character(cid, values)
+    elif action == "level_up":
+        gained = await db.admin_level_up(cid, int(payload.get("amount", 1)))
+        message = f"Получено уровней: {gained}. Начислены очки характеристик и талантов."
+    elif action == "attribute":
+        name = str(payload.get("name", ""))
+        if name not in ATTRIBUTES:
+            raise web.HTTPBadRequest(reason="Неизвестная характеристика.")
+        await db.set_attribute(cid, name, int(payload.get("value", 10)))
+    elif action == "skill":
+        name = str(payload.get("name", ""))
+        if name not in SKILLS:
+            raise web.HTTPBadRequest(reason="Неизвестный навык.")
+        await db.admin_set_skill(cid, name, int(payload.get("value", 0)), int(payload.get("experience", 0)))
+    elif action == "talent_add":
+        character = await db.get_character_by_id(cid)
+        library = [*TALENTS, *request.app["extended_talents"]["backgrounds"].get(character["background"], [])]
+        talent = next((row for row in library if row["name"] == str(payload.get("name", ""))), None)
+        if not talent:
+            raise web.HTTPBadRequest(reason="Талант не найден в доступных деревьях персонажа.")
+        if not await db.add_talent(cid, talent):
+            raise web.HTTPConflict(reason="Этот талант уже добавлен.")
+        message = f"Добавлен талант «{talent['name']}»."
+    elif action == "talent_remove":
+        if not await db.remove_talent(cid, str(payload.get("name", ""))):
+            raise web.HTTPNotFound(reason="Талант не найден.")
+        message = "Талант удалён."
+    elif action == "item_give":
+        if not await db.admin_give_item(cid, str(payload.get("name", "")), int(payload.get("quantity", 1))):
+            raise web.HTTPNotFound(reason="Предмет не найден в каталоге.")
+        message = "Предмет выдан."
+    elif action == "item_remove":
+        if not await db.remove_item(cid, int(payload.get("inventoryId", 0)), int(payload.get("quantity", 1))):
+            raise web.HTTPNotFound(reason="Предмет не найден.")
+        message = "Предмет удалён из инвентаря."
+    elif action == "equipment":
+        inventory_id = int(payload.get("inventoryId", 0))
+        if payload.get("unequip"):
+            ok, message = await db.unequip(cid, inventory_id), "Предмет снят."
+        else:
+            ok, message = await db.equip(cid, inventory_id, str(payload.get("slot", "")))
+        if not ok:
+            raise web.HTTPConflict(reason=message)
+    elif action == "reputation":
+        faction = str(payload.get("faction", ""))
+        if faction not in REPUTATION_FACTIONS:
+            raise web.HTTPBadRequest(reason="Неизвестная фракция.")
+        await db.admin_set_reputation(cid, faction, int(payload.get("favor", 0)), int(payload.get("wrath", 0)))
+    elif action == "sigil":
+        key = str(payload.get("key", ""))
+        if key not in SIGILS_BY_KEY:
+            raise web.HTTPBadRequest(reason="Неизвестный сигил.")
+        await db.admin_set_sigil(cid, key, bool(payload.get("known")))
+        message = "Знание сигила изменено."
+    elif action == "spell_delete":
+        if not await db.delete_spell(cid, int(payload.get("spellId", 0))):
+            raise web.HTTPNotFound(reason="Заклинание не найдено.")
+        message = "Заклинание удалено из гримуара."
+    else:
+        raise web.HTTPBadRequest(reason="Неизвестное административное действие.")
+    safe_log = {key: value for key, value in payload.items() if key not in {"token"}}
+    await db.record_admin_action(guild_id, admin_user_id, cid, action, safe_log)
+    original = await db.get_character_by_id(cid)
+    refreshed = await _dashboard(request, cid)
+    refreshed["character"]["user_id"] = str(original["user_id"])
+    refreshed["adminConfig"] = {
+        "backgrounds": list(BACKGROUNDS), "specializations": list(SPECIALIZATIONS),
+        "attributes": list(ATTRIBUTES), "skills": list(SKILLS),
+        "factions": list(REPUTATION_FACTIONS), "guildId": str(guild_id),
+    }
+    return web.json_response({"ok": True, "message": message, **refreshed})
+
+
 async def _training_character(request: web.Request, character_id: int, session: TrainingSession):
     db = request.app["db"]
     character = await db.get_character_by_id(character_id)
@@ -565,6 +701,11 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/training/start", training_start)
     app.router.add_post("/api/portal/{token}/training/action", training_action)
     app.router.add_post("/api/portal/{token}/training/reset", training_reset)
+    app.router.add_get("/api/admin/{token}", admin_home)
+    app.router.add_get("/api/admin/{token}/catalog", admin_catalog)
+    app.router.add_get("/api/admin/{token}/character/{character_id}", admin_character)
+    app.router.add_post("/api/admin/{token}/character/{character_id}", admin_mutation)
+    app.router.add_options("/api/admin/{token}/character/{character_id}", lambda _: web.Response(status=204))
     app.router.add_get("/media/portraits/{name}", portrait_media)
     app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))
     runner = web.AppRunner(app)

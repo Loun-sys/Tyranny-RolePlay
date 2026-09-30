@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ru"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070708"><title>Мастерская Тунона · Тирания</title>
+  <link rel="stylesheet" href="admin.css?v=20260930-2">
+  <style>.admin-talent-icon{width:42px;height:42px;display:grid;place-items:center;position:relative;background:#151217;border:1px solid #48353b;color:#d11a32;overflow:hidden}.admin-talent-icon>*{grid-area:1/1}.admin-talent-icon img{width:100%;height:100%;object-fit:contain;border:0;position:relative;background:#151217}.admin-talent-icon i{font:20px Georgia}</style>
+</head><body>
+  <header class="admin-top"><a href="./">ТИРАНИЯ <span>МАСТЕРСКАЯ</span></a><div><b id="connection">ЗАЩИЩЁННОЕ СОЕДИНЕНИЕ</b><button id="reload">ОБНОВИТЬ</button></div></header>
+  <main class="admin-shell">
+    <aside class="roster"><header><small>ДЕЛА СЕРВЕРА</small><h1>Персонажи</h1><input id="character-search" placeholder="Поиск по имени"></header><div id="character-list"></div></aside>
+    <section class="workspace"><div id="empty"><i>⚖</i><h2>Выберите личное дело</h2><p>Все изменения сразу сохраняются в общей базе бота и отображаются игроку.</p></div><div id="editor" hidden></div></section>
+  </main>
+  <div id="toast"></div><div id="loading">ПРОВЕРЯЕМ ПОЛНОМОЧИЯ…</div>
+  <script src="admin.js?v=20260930-2" defer></script>
+</body></html>

@@ -174,6 +174,23 @@ CREATE TABLE IF NOT EXISTS portal_tokens (
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_portal_tokens_owner ON portal_tokens(guild_id,user_id);
+CREATE TABLE IF NOT EXISTS admin_tokens (
+    token_hash TEXT PRIMARY KEY,
+    guild_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    expires_at TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_admin_tokens_owner ON admin_tokens(guild_id,user_id);
+CREATE TABLE IF NOT EXISTS admin_audit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id INTEGER NOT NULL,
+    admin_user_id INTEGER NOT NULL,
+    character_id INTEGER,
+    action TEXT NOT NULL,
+    details TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 """
 
 
@@ -332,6 +349,61 @@ class Database:
         except ValueError:
             return None
         return int(rows[0]["character_id"])
+
+    async def create_admin_token(self, guild_id: int, user_id: int, lifetime_hours: int = 8) -> str:
+        token = secrets.token_urlsafe(48)
+        digest = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        expires = datetime.now(timezone.utc) + timedelta(hours=max(1, min(24, lifetime_hours)))
+        async with self.connect() as db:
+            await db.execute("DELETE FROM admin_tokens WHERE guild_id=? AND user_id=?", (guild_id, user_id))
+            await db.execute(
+                "INSERT INTO admin_tokens(token_hash,guild_id,user_id,expires_at) VALUES(?,?,?,?)",
+                (digest, guild_id, user_id, expires.isoformat()),
+            )
+            await db.commit()
+        return token
+
+    async def admin_token_owner(self, token: str) -> tuple[int, int] | None:
+        digest = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT guild_id,user_id,expires_at FROM admin_tokens WHERE token_hash=?", (digest,)
+            )
+        if not rows:
+            return None
+        try:
+            if datetime.fromisoformat(rows[0]["expires_at"]) <= datetime.now(timezone.utc):
+                return None
+        except ValueError:
+            return None
+        return int(rows[0]["guild_id"]), int(rows[0]["user_id"])
+
+    async def admin_characters(self, guild_id: int) -> list[dict[str, Any]]:
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                """SELECT id,user_id,name,background,specialization_1,specialization_2,level,
+                          experience,health,health_max,portrait_url,updated_at
+                   FROM characters WHERE guild_id=? ORDER BY name""", (guild_id,)
+            )
+        return [dict(row) for row in rows]
+
+    async def character_belongs_to_guild(self, character_id: int, guild_id: int) -> bool:
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT 1 FROM characters WHERE id=? AND guild_id=?", (character_id, guild_id)
+            )
+        return bool(rows)
+
+    async def record_admin_action(
+        self, guild_id: int, admin_user_id: int, character_id: int | None,
+        action: str, details: dict[str, Any],
+    ) -> None:
+        async with self.connect() as db:
+            await db.execute(
+                "INSERT INTO admin_audit(guild_id,admin_user_id,character_id,action,details) VALUES(?,?,?,?,?)",
+                (guild_id, admin_user_id, character_id, action, json.dumps(details, ensure_ascii=False)[:4000]),
+            )
+            await db.commit()
 
     @staticmethod
     def _skill_base(name: str, attrs: dict[str, int]) -> int:
@@ -562,6 +634,94 @@ class Database:
                 (max(0, min(300, int(value))), character_id, name),
             )
             await db.commit()
+
+    async def admin_set_skill(self, character_id: int, name: str, value: int, experience: int) -> None:
+        async with self.connect() as db:
+            await db.execute(
+                "UPDATE skills SET value=?,experience=? WHERE character_id=? AND name=?",
+                (max(0, min(300, int(value))), max(0, int(experience)), character_id, name),
+            )
+            await db.commit()
+
+    async def admin_update_character(self, character_id: int, values: dict[str, Any]) -> None:
+        allowed = {
+            "name", "background", "specialization_1", "specialization_2", "level", "experience",
+            "health", "health_max", "wounds", "portrait_url", "notes", "attribute_points",
+            "talent_points", "active_weapon_set",
+        }
+        clean = {key: value for key, value in values.items() if key in allowed}
+        if not clean:
+            return
+        numeric_bounds = {
+            "level": (1, 99), "experience": (0, 99_000_000), "health": (0, 99_999),
+            "health_max": (1, 99_999), "wounds": (0, 999), "attribute_points": (0, 999),
+            "talent_points": (0, 999), "active_weapon_set": (1, 4),
+        }
+        for key, (minimum, maximum) in numeric_bounds.items():
+            if key in clean:
+                clean[key] = max(minimum, min(maximum, int(clean[key])))
+        for key in ("name", "background", "specialization_1", "specialization_2", "portrait_url", "notes"):
+            if key in clean:
+                clean[key] = str(clean[key]).strip()[:2000 if key == "notes" else 1000]
+        if "health" in clean and "health_max" in clean:
+            clean["health"] = min(clean["health"], clean["health_max"])
+        assignments = ",".join(f"{key}=?" for key in clean)
+        async with self.connect() as db:
+            await db.execute(
+                f"UPDATE characters SET {assignments},updated_at=CURRENT_TIMESTAMP WHERE id=?",
+                (*clean.values(), character_id),
+            )
+            await db.commit()
+
+    async def admin_level_up(self, character_id: int, amount: int = 1) -> int:
+        amount = max(1, min(20, int(amount)))
+        async with self.connect() as db:
+            rows = await db.execute_fetchall("SELECT level,experience FROM characters WHERE id=?", (character_id,))
+            if not rows:
+                return 0
+            before = int(rows[0]["level"])
+            after = min(99, before + amount)
+            gained = after - before
+            experience = max(int(rows[0]["experience"]), (after - 1) * 1000)
+            await db.execute(
+                """UPDATE characters SET level=?,experience=?,rewarded_level=MAX(rewarded_level,?),
+                   attribute_points=attribute_points+?,talent_points=talent_points+?,updated_at=CURRENT_TIMESTAMP
+                   WHERE id=?""",
+                (after, experience, after, gained, gained, character_id),
+            )
+            await self._recalculate_health(db, character_id)
+            await db.commit()
+        return gained
+
+    async def admin_set_reputation(self, character_id: int, faction: str, favor: int, wrath: int) -> None:
+        async with self.connect() as db:
+            await db.execute(
+                """INSERT INTO reputation(character_id,faction,favor,wrath) VALUES(?,?,?,?)
+                   ON CONFLICT(character_id,faction) DO UPDATE SET favor=excluded.favor,wrath=excluded.wrath""",
+                (character_id, faction, max(0, min(100, int(favor))), max(0, min(100, int(wrath)))),
+            )
+            await db.commit()
+
+    async def admin_set_sigil(self, character_id: int, sigil_key: str, known: bool) -> None:
+        async with self.connect() as db:
+            if known:
+                await db.execute(
+                    "INSERT OR IGNORE INTO character_sigils(character_id,sigil_key,learned_from) VALUES(?,?,?)",
+                    (character_id, sigil_key, "Выдано администратором"),
+                )
+            else:
+                await db.execute(
+                    "DELETE FROM character_sigils WHERE character_id=? AND sigil_key=?", (character_id, sigil_key)
+                )
+            await db.commit()
+
+    async def delete_spell(self, character_id: int, spell_id: int) -> bool:
+        async with self.connect() as db:
+            cursor = await db.execute(
+                "DELETE FROM spells WHERE id=? AND character_id=?", (spell_id, character_id)
+            )
+            await db.commit()
+            return bool(cursor.rowcount)
 
     async def add_skill_experience(self, character_id: int, name: str, amount: int = 1) -> int:
         """Начислить опыт применённому навыку и вернуть его новое значение опыта."""
@@ -811,6 +971,37 @@ class Database:
                 await db.executemany(
                     "INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,1)",
                     [(character_id, item_id) for _ in range(max(1, quantity))],
+                )
+            await db.commit()
+            return True
+
+    async def admin_give_item(self, character_id: int, item_name: str, quantity: int = 1) -> bool:
+        """Выдать предмет без проверки вместимости — мастер может исправлять состояние анкеты."""
+        quantity = max(1, min(999, int(quantity)))
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT id,category FROM item_catalog WHERE name=? COLLATE NOCASE", (item_name,)
+            )
+            if not rows:
+                return False
+            item_id, category = int(rows[0]["id"]), str(rows[0]["category"])
+            stackable = category in {"Расходуемые предметы", "Зелья", "Еда", "Материалы", "Сигилы"}
+            if stackable:
+                existing = await db.execute_fetchall(
+                    "SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL",
+                    (character_id, item_id),
+                )
+                if existing:
+                    await db.execute("UPDATE inventory SET quantity=quantity+? WHERE id=?", (quantity, existing[0]["id"]))
+                else:
+                    await db.execute(
+                        "INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,?)",
+                        (character_id, item_id, quantity),
+                    )
+            else:
+                await db.executemany(
+                    "INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,1)",
+                    [(character_id, item_id) for _ in range(quantity)],
                 )
             await db.commit()
             return True
