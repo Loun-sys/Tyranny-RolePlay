@@ -17,6 +17,7 @@ from constants import (
     SPECIALIZATION_ABILITIES, SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES,
 )
 from localization import localize_game_text, wiki_category_icon
+from sigil_data import SIGILS_BY_KEY, sigil_key_from_scroll_url, starting_sigils_and_spells
 
 
 SCHEMA = """
@@ -106,6 +107,13 @@ CREATE TABLE IF NOT EXISTS sigils (
     description TEXT NOT NULL DEFAULT '',
     image_url TEXT NOT NULL DEFAULT '',
     source_url TEXT NOT NULL DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS character_sigils (
+    character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+    sigil_key TEXT NOT NULL,
+    learned_from TEXT NOT NULL DEFAULT '',
+    learned_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(character_id, sigil_key)
 );
 CREATE TABLE IF NOT EXISTS spells (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -246,6 +254,7 @@ class Database:
                         (wiki_category_icon(row["category"]), row["id"]),
                     )
                 await db.commit()
+        await self.ensure_starting_sigils()
 
     async def create_registration_token(self, guild_id: int, user_id: int, lifetime_minutes: int = 120) -> str:
         """Создать одноразовый секрет регистрации; в БД хранится только его хеш."""
@@ -389,6 +398,8 @@ class Database:
             await db.execute("DELETE FROM attributes WHERE character_id=?", (character_id,))
             await db.execute("DELETE FROM skills WHERE character_id=?", (character_id,))
             await db.execute("DELETE FROM talents WHERE character_id=?", (character_id,))
+            await db.execute("DELETE FROM spells WHERE character_id=?", (character_id,))
+            await db.execute("DELETE FROM character_sigils WHERE character_id=?", (character_id,))
             attrs = {name: 10 for name in ATTRIBUTES}
             await db.executemany(
                 "INSERT INTO attributes(character_id,name,value) VALUES(?,?,?)",
@@ -417,9 +428,42 @@ class Database:
                     for ability in valid_abilities
                 ],
             )
+            await self._insert_starting_sigils(db, character_id, (specialization_1, specialization_2))
             await self._recalculate_health(db, character_id)
             await db.commit()
             return character_id
+
+    @staticmethod
+    async def _insert_starting_sigils(
+        db: aiosqlite.Connection, character_id: int, specializations: tuple[str, str] | list[str],
+    ) -> None:
+        known, spells = starting_sigils_and_spells(specializations)
+        await db.executemany(
+            "INSERT OR IGNORE INTO character_sigils(character_id,sigil_key,learned_from) VALUES(?,?,?)",
+            [(character_id, key, "Старт персонажа") for key in sorted(known)],
+        )
+        await db.executemany(
+            """INSERT OR IGNORE INTO spells(
+               character_id,name,core,expression,accents,enhancements,difficulty,notes)
+               VALUES(?,?,?,?,?,?,?,?)""",
+            [
+                (
+                    character_id, spell["name"], spell["core"], spell["expression"],
+                    "[]", "[]", spell["difficulty"], "Стартовая формула специализации.",
+                )
+                for spell in spells
+            ],
+        )
+
+    async def ensure_starting_sigils(self) -> None:
+        """Дополнить старые сохранения обязательным выражением и стартовой магией."""
+        async with self.connect() as db:
+            rows = await db.execute_fetchall("SELECT id,specialization_1,specialization_2 FROM characters")
+            for row in rows:
+                await self._insert_starting_sigils(
+                    db, int(row["id"]), (str(row["specialization_1"]), str(row["specialization_2"])),
+                )
+            await db.commit()
 
     async def _recalculate_health(self, db: aiosqlite.Connection, character_id: int) -> None:
         rows = await db.execute_fetchall(
@@ -861,6 +905,48 @@ class Database:
             )
             await db.commit()
             return bool(cursor.rowcount)
+
+    async def known_sigils(self, character_id: int) -> set[str]:
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT sigil_key FROM character_sigils WHERE character_id=?", (character_id,)
+            )
+        return {str(row["sigil_key"]) for row in rows if row["sigil_key"] in SIGILS_BY_KEY}
+
+    async def learn_sigil_from_scroll(self, character_id: int, inventory_id: int) -> tuple[bool, str]:
+        """Изучить сигил навсегда и израсходовать одну копию свитка атомарно."""
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                """SELECT inventory.quantity,item_catalog.name,item_catalog.category,item_catalog.source_url
+                   FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id
+                   WHERE inventory.id=? AND inventory.character_id=?""",
+                (inventory_id, character_id),
+            )
+            if not rows:
+                return False, "Свиток не найден в инвентаре."
+            row = rows[0]
+            if row["category"] != "Сигилы":
+                return False, "Этот предмет не является свитком сигила."
+            sigil_key = sigil_key_from_scroll_url(str(row["source_url"] or ""))
+            sigil = SIGILS_BY_KEY.get(sigil_key or "")
+            if not sigil:
+                return False, "Этот свиток пока нельзя распознать как сигил."
+            already = await db.execute_fetchall(
+                "SELECT 1 FROM character_sigils WHERE character_id=? AND sigil_key=?",
+                (character_id, sigil_key),
+            )
+            if already:
+                return False, f"Сигил «{sigil['name']}» уже изучен."
+            await db.execute(
+                "INSERT INTO character_sigils(character_id,sigil_key,learned_from) VALUES(?,?,?)",
+                (character_id, sigil_key, str(row["name"])),
+            )
+            if int(row["quantity"]) <= 1:
+                await db.execute("DELETE FROM inventory WHERE id=?", (inventory_id,))
+            else:
+                await db.execute("UPDATE inventory SET quantity=quantity-1 WHERE id=?", (inventory_id,))
+            await db.commit()
+            return True, f"Изучен сигил «{sigil['name']}». Свиток израсходован."
 
     async def create_spell(
         self, character_id: int, name: str, core: str, expression: str,

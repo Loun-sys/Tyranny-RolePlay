@@ -10,6 +10,7 @@ from talent_data import TALENTS
 from extended_talent_data import parse_faction_talents, parse_talent_page
 from localization import localize_game_text, seconds_to_rounds
 from training_combat import TrainingSession
+from sigil_data import SIGIL_LIBRARY, sigil_key_from_scroll_url, validate_formula
 from constants import (
     ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
     SPECIALIZATION_ABILITY_CHOICES,
@@ -94,7 +95,8 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         await self.db.create_spell(
             character_id, "Грозовая печать", "Молния", "Сосредоточенная сила", ["Дальность"], [], 35
         )
-        self.assertEqual(len(await self.db.spells(character_id)), 1)
+        spell_names = {spell["name"] for spell in await self.db.spells(character_id)}
+        self.assertEqual(spell_names, {"Заряженный кулак", "Грозовая печать"})
         self.assertEqual(await self.db.adjust_reputation(character_id, "Опальные", "favor", 25), (0, 25))
         self.assertEqual(await self.db.adjust_reputation(character_id, "Опальные", "wrath", 10), (0, 10))
         self.assertEqual(len(await self.db.reputations(character_id)), 1)
@@ -245,6 +247,36 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         faction = parse_faction_talents(reputation)
         self.assertEqual(faction[0]["faction"], "Каменные Сталкеры")
         self.assertEqual((faction[0]["axis"], faction[0]["tier"]), ("favor", 3))
+
+    async def test_sigil_scrolls_starting_spell_and_server_formula_validation(self):
+        self.assertEqual(len(SIGIL_LIBRARY), 74)
+        for sigil in SIGIL_LIBRARY:
+            self.assertTrue((Path("web") / sigil["image_url"]).is_file(), sigil["key"])
+        character_id = await self.db.create_character(
+            111, 222, "Кайрос", "Заклинатель", "Заклинания молний", "Меч и щит",
+        )
+        known = await self.db.known_sigils(character_id)
+        self.assertIn("core:Молния", known)
+        self.assertIn("expression:Сосредоточенное намерение", known)
+        self.assertIn("Заряженный кулак", {spell["name"] for spell in await self.db.spells(character_id)})
+        async with self.db.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT name,source_url FROM item_catalog WHERE source_url LIKE '%Sigil_of_Fire_%' LIMIT 1"
+            )
+        self.assertEqual(sigil_key_from_scroll_url(rows[0]["source_url"]), "core:Огонь")
+        self.assertTrue(await self.db.give_item(character_id, rows[0]["name"]))
+        scroll = next(item for item in await self.db.inventory(character_id) if item["name"] == rows[0]["name"])
+        ok, _ = await self.db.learn_sigil_from_scroll(character_id, scroll["inventory_id"])
+        self.assertTrue(ok)
+        known = await self.db.known_sigils(character_id)
+        self.assertIn("core:Огонь", known)
+        self.assertFalse(any(item["inventory_id"] == scroll["inventory_id"] for item in await self.db.inventory(character_id)))
+        formula = validate_formula(
+            "core:Огонь", "expression:Сосредоточенное намерение", [], [], known, 99,
+        )
+        self.assertEqual((formula["default_name"], formula["difficulty"]), ("Обжигающая ладонь", 15))
+        with self.assertRaisesRegex(ValueError, "Сначала изучите"):
+            validate_formula("core:Камень", "expression:Сосредоточенное намерение", [], [], known, 99)
 
 
 if __name__ == "__main__":

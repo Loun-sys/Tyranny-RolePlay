@@ -25,6 +25,7 @@ from mechanics_data import MECHANICS
 from talent_data import TALENT_BY_NAME, TALENTS
 from extended_talent_data import load_extended_talents
 from training_combat import TrainingSession
+from sigil_data import SIGIL_LIBRARY, SIGILS_BY_KEY, sigil_key_from_scroll_url, validate_formula
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -305,6 +306,17 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
     character.pop("user_id", None)
     background_talents = request.app["extended_talents"]["backgrounds"].get(character["background"], [])
     reputations = {row["faction"]: row for row in await db.reputations(character_id)}
+    known_sigils = await db.known_sigils(character_id)
+    sigil_library = [{**entry, "known": entry["key"] in known_sigils} for entry in SIGIL_LIBRARY]
+    sigil_scrolls = []
+    for item in inventory:
+        sigil_key = sigil_key_from_scroll_url(str(item.get("source_url") or ""))
+        sigil = SIGILS_BY_KEY.get(sigil_key or "")
+        if sigil:
+            sigil_scrolls.append({
+                "inventoryId": int(item["inventory_id"]), "quantity": int(item["quantity"]),
+                "itemName": item["name"], "known": sigil_key in known_sigils, "sigil": sigil,
+            })
     return {
         "character": character,
         "inventory": inventory,
@@ -316,10 +328,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "talentLibrary": [*TALENTS, *background_talents],
         "reputations": reputations,
         "factionTalents": request.app["extended_talents"]["factions"],
-        "sigils": {
-            "cores": list(CORE_SIGILS), "expressions": list(EXPRESSION_SIGILS),
-            "accents": list(ACCENT_SIGILS), "enhancements": list(ENHANCEMENT_SIGILS),
-        },
+        "sigils": {"library": sigil_library, "knownKeys": sorted(known_sigils), "scrolls": sigil_scrolls},
         "attributeDetails": ATTRIBUTE_DETAILS,
         "abilityDetails": ABILITY_DETAILS,
         "skillAttributes": {name: list(pair) for name, pair in SKILL_ATTRIBUTES.items()},
@@ -390,19 +399,34 @@ async def portal_spell(request: web.Request) -> web.Response:
     core, expression = str(payload.get("core", "")), str(payload.get("expression", ""))
     accents = [str(x) for x in payload.get("accents", [])]
     enhancements = [str(x) for x in payload.get("enhancements", [])]
-    if core not in CORE_SIGILS or expression not in EXPRESSION_SIGILS:
-        raise web.HTTPBadRequest(reason="Выберите допустимые сигилы основы и выражения.")
-    if any(x not in ACCENT_SIGILS for x in accents) or any(x not in ENHANCEMENT_SIGILS for x in enhancements):
-        raise web.HTTPBadRequest(reason="В формуле есть неизвестный сигил.")
-    difficulty = int(payload.get("difficulty", 0))
     character = await request.app["db"].get_character_by_id(cid)
-    if difficulty > character["skills"]["Знания"]["value"]:
-        raise web.HTTPConflict(reason="Знаний персонажа недостаточно для этой сложности.")
-    name = str(payload.get("name", "")).strip()
+    try:
+        formula = validate_formula(
+            core, expression, accents, enhancements,
+            await request.app["db"].known_sigils(cid), character["skills"]["Знания"]["value"],
+        )
+    except ValueError as error:
+        raise web.HTTPConflict(reason=str(error)) from error
+    name = str(payload.get("name", "")).strip() or formula["default_name"]
     if not 2 <= len(name) <= 80:
         raise web.HTTPBadRequest(reason="Введите название заклинания.")
-    await request.app["db"].create_spell(cid, name, core, expression, accents, enhancements, difficulty)
+    await request.app["db"].create_spell(
+        cid, name, formula["core"], formula["expression"], formula["accents"],
+        formula["enhancements"], formula["difficulty"],
+    )
     return web.json_response({"ok": True, "message": f"Заклинание «{name}» записано.", **await _dashboard(request, cid)})
+
+
+async def portal_learn_sigil(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    try:
+        inventory_id = int(payload.get("inventoryId", 0))
+    except (TypeError, ValueError) as error:
+        raise web.HTTPBadRequest(reason="Некорректный номер свитка.") from error
+    ok, message = await request.app["db"].learn_sigil_from_scroll(cid, inventory_id)
+    if not ok:
+        raise web.HTTPConflict(reason=message)
+    return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
 
 
 async def portal_equip(request: web.Request) -> web.Response:
@@ -534,6 +558,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/attribute", portal_attribute)
     app.router.add_post("/api/portal/{token}/talent", portal_talent)
     app.router.add_post("/api/portal/{token}/spell", portal_spell)
+    app.router.add_post("/api/portal/{token}/sigil/learn", portal_learn_sigil)
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
     app.router.add_post("/api/portal/{token}/weapon-set", portal_weapon_set)
     app.router.add_get("/api/portal/{token}/training", training_info)
