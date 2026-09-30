@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import asyncio
 import io
 import os
 import re
@@ -23,6 +24,7 @@ from constants import (
 from mechanics_data import MECHANICS
 from talent_data import TALENT_BY_NAME, TALENTS
 from extended_talent_data import load_extended_talents
+from training_combat import TrainingSession
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -427,6 +429,80 @@ async def portal_weapon_set(request: web.Request) -> web.Response:
     return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
 
 
+async def _training_character(request: web.Request, character_id: int, session: TrainingSession):
+    db = request.app["db"]
+    character = await db.get_character_by_id(character_id)
+    if not character:
+        raise web.HTTPNotFound(reason="Персонаж не найден.")
+    character["active_weapon_set"] = session.active_weapon_set
+    character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
+    inventory = _clean_inventory(await db.inventory(character_id))
+    spells = await db.spells(character_id)
+    limits = await db.equipment_limits(character_id)
+    return character, inventory, spells, limits
+
+
+async def training_info(request: web.Request) -> web.Response:
+    cid = await request.app["db"].portal_character_id(request.match_info["token"])
+    if not cid:
+        raise web.HTTPGone(reason="Личная ссылка истекла или была заменена новой.")
+    session = request.app["training_sessions"].get(cid)
+    if not session:
+        return web.json_response({
+            "ok": True, "training": {"active": False},
+            "message": "Тренировка ещё не начата. Опыт, здоровье и расходники здесь не изменяются.",
+        })
+    character, inventory, spells, limits = await _training_character(request, cid, session)
+    derived = _derived(character, inventory)
+    return web.json_response({
+        "ok": True, "training": session.view(character, derived, spells, limits["weaponSets"]),
+    })
+
+
+async def training_start(request: web.Request) -> web.Response:
+    cid, _ = await _portal_payload(request)
+    character = await request.app["db"].get_character_by_id(cid)
+    session = TrainingSession(
+        character_id=cid, active_weapon_set=max(1, min(4, int(character.get("active_weapon_set", 1))))
+    )
+    request.app["training_sessions"][cid] = session
+    character, inventory, spells, limits = await _training_character(request, cid, session)
+    derived = _derived(character, inventory)
+    return web.json_response({
+        "ok": True, "message": "Тренировочный бой начат. Награды отключены.",
+        "training": session.view(character, derived, spells, limits["weaponSets"]),
+    })
+
+
+async def training_action(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    lock = request.app["training_locks"].setdefault(cid, asyncio.Lock())
+    async with lock:
+        session = request.app["training_sessions"].get(cid)
+        if not session:
+            raise web.HTTPConflict(reason="Сначала начните тренировку.")
+        character, inventory, spells, limits = await _training_character(request, cid, session)
+        derived = _derived(character, inventory)
+        try:
+            result = session.act(payload, character, derived, spells, limits["weaponSets"])
+        except (TypeError, ValueError) as error:
+            raise web.HTTPConflict(reason=str(error)) from error
+        # Смена комплекта влияет на расчёты немедленно, но не меняет личное дело.
+        character["active_weapon_set"] = session.active_weapon_set
+        derived = _derived(character, inventory)
+        return web.json_response({
+            "ok": True, "message": result["line"],
+            "training": session.view(character, derived, spells, limits["weaponSets"]),
+        })
+
+
+async def training_reset(request: web.Request) -> web.Response:
+    cid, _ = await _portal_payload(request)
+    request.app["training_sessions"].pop(cid, None)
+    request.app["training_locks"].pop(cid, None)
+    return web.json_response({"ok": True, "message": "Тренировка завершена без опыта и наград.", "training": {"active": False}})
+
+
 async def portrait_media(request: web.Request) -> web.StreamResponse:
     name = Path(request.match_info["name"]).name
     path = (request.app["data_dir"] / "portraits" / name).resolve()
@@ -445,6 +521,8 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
         return None
     app = web.Application(middlewares=[cors_middleware], client_max_size=7 * 1024 * 1024)
     app["bot"], app["db"], app["data_dir"] = bot, db, data_dir
+    app["training_sessions"] = {}
+    app["training_locks"] = {}
     app["extended_talents"] = await load_extended_talents(data_dir)
     app.router.add_get("/health", health)
     app.router.add_get("/api/registration/{token}", registration_info)
@@ -458,6 +536,10 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/spell", portal_spell)
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
     app.router.add_post("/api/portal/{token}/weapon-set", portal_weapon_set)
+    app.router.add_get("/api/portal/{token}/training", training_info)
+    app.router.add_post("/api/portal/{token}/training/start", training_start)
+    app.router.add_post("/api/portal/{token}/training/action", training_action)
+    app.router.add_post("/api/portal/{token}/training/reset", training_reset)
     app.router.add_get("/media/portraits/{name}", portrait_media)
     app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))
     runner = web.AppRunner(app)

@@ -9,6 +9,7 @@ from registration_api import _configuration, _validate_payload
 from talent_data import TALENTS
 from extended_talent_data import parse_faction_talents, parse_talent_page
 from localization import localize_game_text, seconds_to_rounds
+from training_combat import TrainingSession
 from constants import (
     ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
     SPECIALIZATION_ABILITY_CHOICES,
@@ -36,6 +37,26 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(seconds_to_rounds(25), "2,5 раунда")
         localized = localize_game_text("Барик получает эффект на 30 секунд")
         self.assertEqual(localized, "персонаж получает эффект на 3 раунда")
+
+    async def test_training_combat_is_turn_based_and_reward_free(self):
+        character = {
+            "name": "Испытатель", "portrait_url": "", "experience": 125,
+            "attributes": {"Сила": 12, "Смекалка": 11, "Быстрота": 10},
+            "skills": {"Одноручное оружие": {"value": 42}},
+            "talents": [{"name": "Удар щитом"}],
+        }
+        derived = {
+            "attack": {"accuracy": 42, "damageMin": 8, "damageMax": 12, "skill": "Одноручное оружие"},
+            "effectiveAttributes": character["attributes"], "cooldownMultiplier": 1,
+            "armor": 3,
+        }
+        session = TrainingSession(character_id=1)
+        session.act({"kind": "ability", "name": "Удар щитом"}, character, derived, [], 2)
+        self.assertEqual(session.round_number, 2)
+        self.assertGreater(session.remaining("ability:Удар щитом"), 0)
+        self.assertEqual(character["experience"], 125)
+        view = session.view(character, derived, [], 2)
+        self.assertEqual(view["rewards"], {"experience": 0, "skillExperience": 0, "loot": []})
 
     async def test_character_inventory_equipment_spell_and_card(self):
         character_id = await self.db.create_character(

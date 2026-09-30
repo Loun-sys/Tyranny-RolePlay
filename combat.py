@@ -9,10 +9,13 @@ from __future__ import annotations
 
 import math
 import random
+import re
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
 import discord
+
+from constants import ABILITY_DETAILS
 
 
 CRIMSON = discord.Color.from_rgb(111, 27, 25)
@@ -55,9 +58,10 @@ class Combatant:
     damage_max: int = 7
     damage_type: str = "Дробящий"
     recovery: float = 3.0
-    ready_at: float = 0.0
+    ready_at: float = 1.0
     active_weapon_set: int = 1
     conditions: list[str] = field(default_factory=list)
+    cooldowns: dict[str, int] = field(default_factory=dict)
 
     @property
     def alive(self) -> bool:
@@ -90,7 +94,16 @@ class CombatSession:
     @property
     def current(self) -> Combatant | None:
         alive = [unit for unit in self.combatants.values() if unit.alive]
-        return min(alive, key=lambda unit: (unit.ready_at, unit.key)) if alive else None
+        if not alive:
+            return None
+        eligible = [unit for unit in alive if unit.ready_at <= self.round_number]
+        if not eligible and self.started:
+            self.round_number = max(self.round_number, math.ceil(min(unit.ready_at for unit in alive)))
+            eligible = [unit for unit in alive if unit.ready_at <= self.round_number]
+        return min(
+            eligible or alive,
+            key=lambda unit: (unit.ready_at, -unit.attributes.get("Быстрота", 10), unit.key),
+        )
 
     @property
     def enemies_alive(self) -> list[Combatant]:
@@ -102,11 +115,12 @@ class CombatSession:
         return next(iter(teams)) if len(teams) == 1 and self.started else None
 
     def advance(self, actor: Combatant, recovery: float) -> None:
-        old_min = min((unit.ready_at for unit in self.combatants.values() if unit.alive), default=0)
-        actor.ready_at += max(.5, recovery)
-        new_min = min((unit.ready_at for unit in self.combatants.values() if unit.alive), default=old_min)
-        if math.floor(new_min / 10) > math.floor(old_min / 10):
-            self.round_number += 1
+        # Реальное время исходной игры переводится в целые раунды: 10 секунд = 1 раунд.
+        delay = max(1, math.ceil(max(0, recovery) / 10))
+        actor.ready_at = self.round_number + delay
+        alive = [unit for unit in self.combatants.values() if unit.alive]
+        if alive and not any(unit.ready_at <= self.round_number for unit in alive):
+            self.round_number = max(self.round_number + 1, math.ceil(min(unit.ready_at for unit in alive)))
 
     def embed(self) -> discord.Embed:
         winner = self.winner()
@@ -126,9 +140,7 @@ class CombatSession:
             lines = []
             for unit in units:
                 marker = "▶" if self.started and unit is self.current and not winner else "•"
-                ready_round = unit.ready_at / 10
-                ready_text = f"{ready_round:.2f}".rstrip("0").rstrip(".").replace(".", ",")
-                state = "💀" if not unit.alive else f"❤️ {unit.health}/{unit.health_max} · готовность: {ready_text} раунд."
+                state = "💀" if not unit.alive else f"❤️ {unit.health}/{unit.health_max} · доступен с раунда {math.ceil(unit.ready_at)}"
                 lines.append(f"{marker} **{unit.name}** — {state}")
             embed.add_field(name=team, value="\n".join(lines)[:1024], inline=False)
         if self.log:
@@ -262,15 +274,32 @@ class TargetSelect(discord.ui.Select):
             if not talent:
                 await interaction.response.send_message("Способность больше недоступна.", ephemeral=True)
                 return
+            if actor.cooldowns.get(talent["name"], 0) > self.session.round_number:
+                remaining = actor.cooldowns[talent["name"]] - self.session.round_number
+                await interaction.response.send_message(
+                    f"Способность ещё восстанавливается: {remaining} раунд.", ephemeral=True
+                )
+                return
             line = resolve_attack(actor, target, accuracy=actor.accuracy + 5,
                                   damage=(actor.damage_min + 2, actor.damage_max + 4), penetration=2)
             line = f"✨ **{talent['name']}**: " + line
             recovery = actor.recovery + 1
             used_skill = weapon_skill(actor)
+            details = ABILITY_DETAILS.get(talent["name"], {})
+            base_cooldown = next(iter(re.findall(r"\d+(?:[.,]\d+)?", str(details.get("cooldown", "1")))), "1")
+            rounds = max(1, math.ceil(float(base_cooldown.replace(",", ".")) * max(.1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03)))
+            actor.cooldowns[talent["name"]] = self.session.round_number + rounds + 1
         else:
             spell = next((item for item in actor.spells if item["name"] == self.payload), None)
             if not spell:
                 await interaction.response.send_message("Заклинание больше недоступно.", ephemeral=True)
+                return
+            cooldown_key = f"заклинание:{spell['name']}"
+            if actor.cooldowns.get(cooldown_key, 0) > self.session.round_number:
+                remaining = actor.cooldowns[cooldown_key] - self.session.round_number
+                await interaction.response.send_message(
+                    f"Заклинание ещё восстанавливается: {remaining} раунд.", ephemeral=True
+                )
                 return
             skill = CORE_SKILLS.get(spell["core"], "Знания")
             accuracy = actor.skills.get(skill, actor.skills.get("Знания", 25))
@@ -281,6 +310,10 @@ class TargetSelect(discord.ui.Select):
             line = f"🔮 **{spell['name']}**: " + line
             recovery = max(2, 3 + spell["difficulty"] / 25)
             used_skill = skill
+            spell_rounds = max(1, math.ceil((1 + spell["difficulty"] / 50) * max(
+                .1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03
+            )))
+            actor.cooldowns[cooldown_key] = self.session.round_number + spell_rounds + 1
         self.session.log.append(line)
         self.session.advance(actor, recovery)
         await self.session.persist_damage(target, before)
@@ -333,18 +366,26 @@ class BattleView(discord.ui.View):
     @discord.ui.button(label="Способность", emoji="✨", style=discord.ButtonStyle.primary, row=0)
     async def ability(self, interaction: discord.Interaction, _: discord.ui.Button):
         actor = self.session.current
-        if not actor or not actor.talents:
+        available = [
+            talent for talent in (actor.talents if actor else [])
+            if talent["name"] in ABILITY_DETAILS and actor.cooldowns.get(talent["name"], 0) <= self.session.round_number
+        ]
+        if not actor or not available:
             await interaction.response.send_message("У персонажа нет доступных способностей.", ephemeral=True)
             return
-        await interaction.response.send_message("Выберите способность:", view=ChoiceView(self.session, "talent", actor.talents), ephemeral=True)
+        await interaction.response.send_message("Выберите способность:", view=ChoiceView(self.session, "talent", available), ephemeral=True)
 
     @discord.ui.button(label="Заклинание", emoji="🔮", style=discord.ButtonStyle.primary, row=0)
     async def spell(self, interaction: discord.Interaction, _: discord.ui.Button):
         actor = self.session.current
-        if not actor or not actor.spells:
+        available = [
+            spell for spell in (actor.spells if actor else [])
+            if actor.cooldowns.get(f"заклинание:{spell['name']}", 0) <= self.session.round_number
+        ]
+        if not actor or not available:
             await interaction.response.send_message("В гримуаре нет собранных заклинаний.", ephemeral=True)
             return
-        await interaction.response.send_message("Выберите заклинание:", view=ChoiceView(self.session, "spell", actor.spells), ephemeral=True)
+        await interaction.response.send_message("Выберите заклинание:", view=ChoiceView(self.session, "spell", available), ephemeral=True)
 
     @discord.ui.button(label="Предмет", emoji="🧪", style=discord.ButtonStyle.secondary, row=1)
     async def item(self, interaction: discord.Interaction, _: discord.ui.Button):
@@ -478,6 +519,8 @@ class LobbyView(discord.ui.View):
             await interaction.response.send_message("Нужен хотя бы один персонаж и один противник.", ephemeral=True)
             return
         self.session.started = True
+        for unit in self.session.combatants.values():
+            unit.ready_at = 1
         self.session.log.append("⚔️ Бой начинается.")
         await interaction.response.edit_message(embed=self.session.embed(), view=BattleView(self.session))
 
