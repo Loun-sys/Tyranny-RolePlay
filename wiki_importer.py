@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from database import Database
+from localization import localize_game_text
 
 API = "https://tyranny.fandom.com/ru/api.php"
 WIKI = "https://tyranny.fandom.com/ru/wiki/"
@@ -114,17 +115,18 @@ def _parse_page(page: dict[str, Any], category: str, image_urls: dict[str, str])
             actual_category = "Двуручное оружие"
         elif "дротик" in folded or "метатель" in folded:
             actual_category = "Метательное оружие"
+    text = localize_game_text(text)
     properties: dict[str, Any] = {}
     for label in ("Точность", "Пробивание брони", "Дальность", "Задержка", "Восстановление"):
         match = re.search(rf"{label}\s*[:—-]\s*([^\n]+)", text, re.IGNORECASE)
         if match:
-            properties[label] = match.group(1).strip()[:200]
+            properties[label] = localize_game_text(match.group(1).strip()[:200])
     return {
         "name": title,
         "category": actual_category,
         "slot": _infer_slot(actual_category, text),
         "quality": quality,
-        "description": text or f"{title} — предмет из игры Tyranny.",
+        "description": text or f"{title} — предмет из игры «Тирания».",
         "image_url": original,
         "source_url": WIKI + urllib.parse.quote(title.replace(" ", "_")),
         "value": int(_number((r"Стоимость\s*[:—-]\s*(\d+)", r"Цена\s*[:—-]\s*(\d+)"), text)),

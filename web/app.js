@@ -285,7 +285,7 @@ async function submitCharacter() {
     }
     const result = await response.json();
     $("#result-title").textContent = "Личное дело сохранено";
-    $("#result-text").textContent = `Персонаж ${result.name} уже доступен в Discord по команде /персонаж.`;
+    $("#result-text").textContent = `Персонаж ${result.name} уже доступен в Дискорде по команде /персонаж.`;
     status.textContent = "Готово. Эту одноразовую страницу можно закрыть."; button.textContent = "СОХРАНЕНО";
   } catch (error) {
     status.textContent = error.message || "Не удалось сохранить персонажа."; button.disabled = false;

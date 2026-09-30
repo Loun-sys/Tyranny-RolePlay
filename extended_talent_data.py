@@ -13,6 +13,8 @@ from urllib.parse import quote
 
 import aiohttp
 
+from localization import localize_game_text
+
 
 BACKGROUND_TALENT_PAGES = {
     "Книгочей": "Lantry talents",
@@ -166,7 +168,7 @@ def _translate_effect(value: str) -> str:
     tokens = re.split(r"(\s+|[-–:;,().'’])", result)
     words = {**TITLE_WORDS, **EFFECT_WORDS}
     result = "".join(words.get(token.casefold(), token) for token in tokens)
-    return re.sub(r"\s+", " ", result).strip(" ;") or "Описание эффекта отсутствует."
+    return localize_game_text(re.sub(r"\s+", " ", result).strip(" ;")) or "Описание эффекта отсутствует."
 
 
 def _clean_wiki(value: str) -> str:

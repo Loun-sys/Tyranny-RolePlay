@@ -16,6 +16,7 @@ from constants import (
     ATTRIBUTES, BACKGROUND_BONUSES, EQUIPMENT_SLOTS, SKILLS, SKILL_ATTRIBUTES,
     SPECIALIZATION_ABILITIES, SPECIALIZATION_ABILITY_CHOICES, SPECIALIZATION_BONUSES,
 )
+from localization import localize_game_text, wiki_category_icon
 
 
 SCHEMA = """
@@ -209,16 +210,42 @@ class Database:
             }.items():
                 await db.execute("UPDATE characters SET background=? WHERE background=?", (new, old))
             await db.commit()
-            count = int((await db.execute_fetchall("SELECT COUNT(*) AS total FROM item_catalog"))[0]["total"])
-        if count == 0:
-            bundled = Path(__file__).resolve().parent / "catalog" / "tyranny_catalog.json"
-            bundled_english = Path(__file__).resolve().parent / "catalog" / "tyranny_catalog_en_ru.json"
-            persistent = self.path.parent / "tyranny_catalog.json"
-            # Английский перевод расширяет каталог, русская Wiki имеет приоритет при совпадении названий.
-            snapshots = [bundled_english, persistent if persistent.exists() else bundled]
-            for snapshot in snapshots:
-                if snapshot.exists():
-                    await self.upsert_catalog(json.loads(snapshot.read_text(encoding="utf-8")))
+        bundled = Path(__file__).resolve().parent / "catalog" / "tyranny_catalog.json"
+        bundled_english = Path(__file__).resolve().parent / "catalog" / "tyranny_catalog_en_ru.json"
+        persistent = self.path.parent / "tyranny_catalog.json"
+        # Обновляем и уже существующую постоянную базу при каждом запуске.
+        # Полный двуязычный снимок загружается последним: в нём больше страниц,
+        # структурированных характеристик, цен и канонических изображений.
+        snapshots = [persistent if persistent.exists() else bundled, bundled_english]
+        for snapshot in snapshots:
+            if snapshot.exists():
+                await self.upsert_catalog(json.loads(snapshot.read_text(encoding="utf-8")))
+        # Старые частичные снимки русской Wiki могли создавать дубли с иным
+        # переводом названия. Полный английский снимок является каноническим;
+        # неиспользуемые старые wiki-записи безопасно убираются, предметы в
+        # инвентарях сохраняются.
+        if bundled_english.exists():
+            full_items = json.loads(bundled_english.read_text(encoding="utf-8"))
+            source_urls = [item.get("source_url", "") for item in full_items if item.get("source_url")]
+            async with self.connect() as db:
+                if source_urls:
+                    placeholders = ",".join("?" for _ in source_urls)
+                    await db.execute(
+                        f"""DELETE FROM item_catalog
+                            WHERE source_url LIKE 'https://tyranny.fandom.com/%'
+                              AND source_url NOT IN ({placeholders})
+                              AND NOT EXISTS (SELECT 1 FROM inventory WHERE inventory.item_id=item_catalog.id)""",
+                        source_urls,
+                    )
+                missing = await db.execute_fetchall(
+                    "SELECT id,category FROM item_catalog WHERE image_url='' OR image_url IS NULL"
+                )
+                for row in missing:
+                    await db.execute(
+                        "UPDATE item_catalog SET image_url=? WHERE id=?",
+                        (wiki_category_icon(row["category"]), row["id"]),
+                    )
+                await db.commit()
 
     async def create_registration_token(self, guild_id: int, user_id: int, lifetime_minutes: int = 120) -> str:
         """Создать одноразовый секрет регистрации; в БД хранится только его хеш."""
@@ -628,7 +655,15 @@ class Database:
 
     async def upsert_catalog(self, items: list[dict[str, Any]]) -> int:
         async with self.connect() as db:
-            for item in items:
+            for source_item in items:
+                item = dict(source_item)
+                item["name"] = localize_game_text(str(item.get("name", ""))).replace("Tyranny", "Тирания")
+                item["description"] = localize_game_text(str(item.get("description", ""))).replace("Tyranny", "Тирания")
+                item["properties"] = {
+                    localize_game_text(str(key)): localize_game_text(str(value)).replace("Tyranny", "Тирания")
+                    for key, value in dict(item.get("properties") or {}).items()
+                    if key not in {"Техническое исходное название", "Игровой ID", "Непереведённый исходный эффект"}
+                }
                 source_url = item.get("source_url", "")
                 if source_url:
                     source_rows = await db.execute_fetchall(
@@ -661,7 +696,8 @@ class Database:
                        damage_min,damage_max,armor,recovery,properties,wiki_page_id)
                        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                        ON CONFLICT(name) DO UPDATE SET category=excluded.category,slot=excluded.slot,
-                       quality=excluded.quality,description=excluded.description,image_url=excluded.image_url,
+                       quality=excluded.quality,description=excluded.description,
+                       image_url=CASE WHEN excluded.image_url='' THEN item_catalog.image_url ELSE excluded.image_url END,
                        source_url=excluded.source_url,value=excluded.value,weight=excluded.weight,
                        hands=excluded.hands,damage_min=excluded.damage_min,damage_max=excluded.damage_max,
                        armor=excluded.armor,recovery=excluded.recovery,properties=excluded.properties,

@@ -1,5 +1,7 @@
 """Русские справочники правил Tyranny для Discord-адаптации."""
 
+from localization import localize_game_text
+
 ATTRIBUTES = ("Сила", "Искусность", "Быстрота", "Живучесть", "Смекалка", "Стойкость")
 
 ATTRIBUTE_DESCRIPTIONS = {
@@ -50,8 +52,8 @@ BACKGROUND_DESCRIPTIONS = {
 }
 
 BACKGROUND_TALENT_SOURCES = {
-    "Книгочей": "Лантри", "Заклинатель": "Эбб", "Зверолюд": "Смерть из Тени",
-    "Певчий": "Сирин", "Танцующий": "Фуга", "Авангард": "Барик",
+    "Книгочей": "персонаж", "Заклинатель": "персонаж", "Зверолюд": "персонаж",
+    "Певчий": "персонаж", "Танцующий": "персонаж", "Авангард": "персонаж",
 }
 
 SPECIALIZATIONS = (
@@ -182,6 +184,12 @@ ABILITY_DETAILS = {
         "icon": "assets/abilities/touch-of-atrophy.webp", "source": "https://tyranny.fandom.com/wiki/Touch_of_Atrophy",
     },
 }
+
+for _details in ABILITY_DETAILS.values():
+    for _field in ("description", "type", "cooldown", "duration", "requirements"):
+        if _field in _details:
+            _details[_field] = localize_game_text(str(_details[_field]))
+    _details["effects"] = tuple(localize_game_text(str(value)) for value in _details.get("effects", ()))
 
 ABILITY_DESCRIPTIONS = {name: details["description"] for name, details in ABILITY_DETAILS.items()}
 

@@ -126,7 +126,9 @@ class CombatSession:
             lines = []
             for unit in units:
                 marker = "▶" if self.started and unit is self.current and not winner else "•"
-                state = "💀" if not unit.alive else f"❤️ {unit.health}/{unit.health_max} · ⏱ {unit.ready_at:g}"
+                ready_round = unit.ready_at / 10
+                ready_text = f"{ready_round:.2f}".rstrip("0").rstrip(".").replace(".", ",")
+                state = "💀" if not unit.alive else f"❤️ {unit.health}/{unit.health_max} · готовность: {ready_text} раунд."
                 lines.append(f"{marker} **{unit.name}** — {state}")
             embed.add_field(name=team, value="\n".join(lines)[:1024], inline=False)
         if self.log:

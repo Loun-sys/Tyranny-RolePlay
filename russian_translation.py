@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+from localization import localize_game_text
+
 EXACT_TITLES = {
     "Agate": "Агат",
     "Aquamarine": "Аквамарин",
@@ -228,6 +230,9 @@ EXACT_TITLES = {
 }
 
 PHRASES = {
+    "Two-handed": "Двуручное",
+    "One-handed": "Одноручное",
+    "Writ of Execution": "Приказ о казни",
     "Fatebinder of Tunon": "Вершитель Судеб Тунона",
     "Bronze Brotherhood": "Бронзовое Братство",
     "Blood Hound": "Кровавый Пёс",
@@ -273,6 +278,65 @@ WORDS = {
     "exquisite": "изысканное", "masterwork": "шедевр", "artifact": "артефакт",
 }
 
+# Частотные слова из полного каталога предметов. Собственные имена при отсутствии
+# канонического перевода транслитерируются, но игровые сущности всегда переводятся.
+WORDS.update({
+    "of": "", "the": "", "a": "", "an": "", "to": "к", "and": "и",
+    "two": "два", "one": "один", "handed": "ручное", "execution": "казни", "writ": "приказ",
+    "alchemy": "алхимические", "supplies": "припасы", "standard": "знамя",
+    "broken": "сломанный", "battered": "побитый", "bent": "погнутый",
+    "bound": "связанный", "guard": "стража", "lesser": "малый", "greater": "большой",
+    "recipe": "чертёж", "recipes": "чертежи", "plans": "чертёж", "scroll": "свиток",
+    "sigil": "сигил", "accent": "акцент", "core": "основа", "expression": "выражение",
+    "keystone": "ключ-камень", "torchkey": "факельный ключ", "fragment": "фрагмент",
+    "shard": "осколок", "ingot": "слиток", "research": "исследование", "tools": "инструменты",
+    "parchment": "пергамент", "missive": "послание", "note": "записка", "notes": "записки",
+    "report": "отчёт", "map": "карта", "rubbing": "оттиск", "charcoal": "угольный",
+    "incomplete": "незавершённый", "completed": "завершённый", "passphrase": "пароль",
+    "oldwalls": "Старые Стены", "spire": "Шпиль", "wound": "Рана", "bastard's": "Бастарда",
+    "light": "лёгкий", "heavy": "тяжёлый", "ridge": "гребенчатый", "crested": "с гребнем",
+    "body": "нагрудный", "breastplate": "нагрудник", "sabatons": "сабатоны",
+    "glaive": "глефа", "falx": "фалькс", "buckler": "баклер", "pilum": "пилум",
+    "greatbow": "большой лук", "shortbow": "короткий лук", "blade": "клинок",
+    "hilt": "рукоять", "pole": "шест", "rod": "жезл", "claw": "коготь", "fang": "клык",
+    "spine": "хребет", "tooth": "зуб", "teeth": "зубы", "skull": "череп",
+    "meat": "мясо", "fish": "рыба", "cheese": "сыр", "fruit": "фрукты", "water": "вода",
+    "moss": "мох", "pollen": "пыльца", "venom": "яд", "toxin": "токсин",
+    "healing": "лечения", "invisibility": "невидимости", "revival": "возрождения",
+    "insight": "прозрения", "strength": "силы", "zeal": "рвения", "magic": "магии",
+    "force": "силы", "frost": "холода", "atrophy": "истощения", "fire": "огня",
+    "action": "действия", "piercing": "пробивающий", "focused": "сосредоточенный",
+    "staggering": "ошеломляющий", "precise": "точный", "exceptional": "исключительный",
+    "remarkable": "замечательный", "wild": "дикий", "shattered": "разбитый",
+    "stalwart": "стойкий", "unbroken": "Несломленный", "reforged": "перекованный",
+    "scavenger": "мусорщик", "scout": "разведчик", "soldier's": "солдата",
+    "scholar's": "учёного", "savant's": "мудреца", "merchant's": "торговца",
+    "nobleman's": "дворянина", "lieutenant's": "лейтенанта", "sage's": "мудреца",
+    "regent": "регент", "regents": "регента", "protector": "защитник",
+    "heart": "сердце", "hand": "рука", "left": "левая", "right": "правая",
+    "first": "первый", "heroes": "героев", "hero's": "героя", "honor": "почётный",
+    "sun": "солнце", "sky": "небо", "ocean": "океан", "dusk": "сумерки",
+    "crescent": "полумесяц", "moonstone": "лунный камень", "bloodstone": "кровавый камень",
+    "garnet": "гранат", "diamond": "алмаз", "emerald": "изумруд", "opal": "опал",
+    "pearl": "жемчуг", "peridot": "перидот", "jasper": "яшма", "indigo": "индиго",
+    "reason": "разум", "circular": "круговой", "mercy": "милость", "pride": "гордость",
+    "glory": "слава", "death": "смерть", "thunder": "гром", "impact": "удар",
+    "edge": "лезвие", "grasp": "хватка", "boundaries": "границы", "limitless": "безграничный",
+    "timeless": "вечный", "cyclical": "циклический", "energies": "энергии",
+    "rending": "разрывающий", "burn": "ожог", "red": "красный", "poison": "яд",
+    "rune": "руна", "enigma": "загадка", "journal": "дневник", "dress": "платье",
+    "scale": "чешуя", "scales": "чешуя", "spaulder": "наплечник", "vial": "флакон",
+    "key": "ключ", "form": "форма", "cloak": "плащ", "pieces": "части",
+    "stained": "испачканный", "torn": "разорванный", "damp": "сырой", "burnt": "обгоревший",
+    "mysterious": "таинственный", "metal": "металл", "bucket": "ведро", "royal": "королевский",
+    "cold": "холодный", "bright": "светлый", "darkened": "потемневший", "hollow": "пустой",
+    "fused": "сплавленный", "alloy": "сплав", "extract": "экстракт", "hide": "шкура",
+    "headwrap": "головная повязка", "coif": "койф", "casque": "каска", "facewrap": "лицевая повязка",
+    "walking": "походный", "stick": "посох", "shipment": "груз", "effigy": "чучело",
+    "orders": "приказы", "directives": "указания", "belongings": "вещи", "journal": "дневник",
+    "from": "от", "with": "с", "in": "в", "on": "на", "for": "для", "twice": "дважды",
+})
+
 TRANSLIT = str.maketrans({
     "a":"а","b":"б","c":"к","d":"д","e":"е","f":"ф","g":"г","h":"х","i":"и","j":"дж",
     "k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т",
@@ -288,7 +352,7 @@ def transliterate(word: str) -> str:
         if char.isupper() and converted:
             converted = converted[0].upper() + converted[1:]
         result += converted
-    return result
+    return localize_game_text(result)
 
 
 def translate_title(title: str) -> str:
@@ -310,7 +374,10 @@ def translate_title(title: str) -> str:
             translated.append(transliterate(token))
         else:
             translated.append(token)
-    return "".join(translated).replace("  ", " ").strip()
+    result = re.sub(r"\s{2,}", " ", "".join(translated)).strip()
+    result = re.sub(r"\s+([,:)])", r"\1", result)
+    result = re.sub(r"([(])\s+", r"\1", result)
+    return result
 
 
 def translate_effect(text: str) -> str:
@@ -331,4 +398,4 @@ def translate_effect(text: str) -> str:
         result = re.sub(re.escape(source), target, result, flags=re.IGNORECASE)
     result = re.sub(r"(?<=\d)s\b", " сек.", result)
     result = re.sub(r"(?<=\d)m\b", " м", result)
-    return result
+    return localize_game_text(result)

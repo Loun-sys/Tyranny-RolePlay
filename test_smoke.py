@@ -8,6 +8,7 @@ from combat import Combatant, CombatSession, resolve_attack
 from registration_api import _configuration, _validate_payload
 from talent_data import TALENTS
 from extended_talent_data import parse_faction_talents, parse_talent_page
+from localization import localize_game_text, seconds_to_rounds
 from constants import (
     ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
     SPECIALIZATION_ABILITY_CHOICES,
@@ -22,6 +23,19 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         self.temp.cleanup()
+
+    async def test_complete_catalog_and_turn_localization(self):
+        async with self.db.connect() as db:
+            total = (await db.execute_fetchall("SELECT COUNT(*) AS total FROM item_catalog"))[0]["total"]
+            without_image = (await db.execute_fetchall(
+                "SELECT COUNT(*) AS total FROM item_catalog WHERE image_url=''"
+            ))[0]["total"]
+        self.assertEqual(total, 882)
+        self.assertEqual(without_image, 0)
+        self.assertEqual(seconds_to_rounds(10), "1 раунд")
+        self.assertEqual(seconds_to_rounds(25), "2,5 раунда")
+        localized = localize_game_text("Барик получает эффект на 30 секунд")
+        self.assertEqual(localized, "персонаж получает эффект на 3 раунда")
 
     async def test_character_inventory_equipment_spell_and_card(self):
         character_id = await self.db.create_character(

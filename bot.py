@@ -98,7 +98,7 @@ def character_embed(character: dict) -> discord.Embed:
     )
     if character.get("portrait_url", "").startswith("https://"):
         embed.set_thumbnail(url=character["portrait_url"])
-    embed.set_footer(text="Tyranny · архив Вершителей Судеб")
+    embed.set_footer(text="Тирания · архив жителей Империи")
     return embed
 
 
@@ -252,7 +252,7 @@ async def registration(interaction: discord.Interaction):
     embed = discord.Embed(title="Создание Вершителя Судеб", color=BRONZE)
     embed.description = (
         "Откройте личный конструктор, распределите характеристики и навыки, добавьте портрет и нажмите "
-        "**«Сохранить в Discord»**.\n\nСсылка одноразовая, действует **2 часа** и привязана к вашему Discord-профилю."
+        "**«Сохранить в Дискорде»**.\n\nСсылка одноразовая, действует **2 часа** и привязана к вашему профилю в Дискорде."
     )
     view = discord.ui.View(timeout=7200)
     view.add_item(discord.ui.Button(label="Открыть конструктор", emoji="⚖️", url=link))
@@ -389,7 +389,7 @@ async def item_autocomplete(_: discord.Interaction, current: str):
     return [app_commands.Choice(name=row["name"][:100], value=row["name"]) for row in rows]
 
 
-@bot.tree.command(name="предмет-поиск", description="Найти предмет в русском каталоге Tyranny")
+@bot.tree.command(name="предмет-поиск", description="Найти предмет в русском каталоге Тирании")
 @app_commands.autocomplete(название=item_autocomplete)
 async def item_search(interaction: discord.Interaction, название: str):
     rows = await bot.db.catalog_search(название, limit=10)
@@ -403,18 +403,18 @@ async def item_search(interaction: discord.Interaction, название: str):
     embed.add_field(name="Стоимость", value=str(row["value"]))
     if row["image_url"]:
         embed.set_image(url=row["image_url"])
-    embed.set_footer(text="Источник: русская Tyranny Wiki")
+    embed.set_footer(text="Источник: русская вики Тирании")
     await interaction.response.send_message(embed=embed)
 
 
-@bot.tree.command(name="справочник", description="Открыть переведённый справочник механик Tyranny Wiki")
+@bot.tree.command(name="справочник", description="Открыть переведённый справочник механик Тирании")
 @app_commands.choices(тема=[app_commands.Choice(name=name, value=name) for name in MECHANICS])
 async def mechanics_guide(interaction: discord.Interaction, тема: app_commands.Choice[str]):
     article = MECHANICS[тема.value]
     embed = discord.Embed(
         title=тема.value, description=article["text"], color=BRONZE, url=article["source"]
     )
-    embed.set_footer(text="Переведено с английской Tyranny Wiki · интерфейс полностью русский")
+    embed.set_footer(text="Переведено с англоязычной вики Тирании · интерфейс полностью русский")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
@@ -649,7 +649,7 @@ async def spellbook_command(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-@bot.tree.command(name="проверка", description="Выполнить процентную проверку навыка Tyranny")
+@bot.tree.command(name="проверка", description="Выполнить процентную проверку навыка Тирании")
 @app_commands.choices(навык=[app_commands.Choice(name=value, value=value) for value in SKILLS])
 @app_commands.describe(сложность="Модификатор порога: отрицательный усложняет, положительный облегчает")
 async def skill_check(
@@ -681,7 +681,7 @@ async def skill_check(
     await interaction.response.send_message(embed=embed)
 
 
-@bot.tree.command(name="каталог-обновить", description="Импортировать русские предметы и изображения с Tyranny Wiki")
+@bot.tree.command(name="каталог-обновить", description="Импортировать русские предметы и изображения с вики Тирании")
 async def catalog_sync(interaction: discord.Interaction):
     if not is_master(interaction):
         await interaction.response.send_message("Команда доступна мастеру игры.", ephemeral=True)

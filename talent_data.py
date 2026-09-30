@@ -11,11 +11,12 @@ from pathlib import Path
 from urllib.parse import quote
 
 from constants import TALENT_TREES
+from localization import localize_game_text
 
 
 def _rows(tree: str, rows: list[tuple[int, str, str]]) -> list[dict]:
     return [
-        {"tree": tree, "tier": points, "name": name, "description": description, "requires": ""}
+        {"tree": tree, "tier": points, "name": name, "description": localize_game_text(description), "requires": ""}
         for points, name, description in rows
     ]
 

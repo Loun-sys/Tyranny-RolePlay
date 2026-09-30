@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#050506">
-  <title>Редактор жителя Империи · Tyranny</title>
+  <title>Редактор жителя Империи · Тирания</title>
   <link rel="stylesheet" href="styles.css?v=20260929-13">
 </head>
 <body>
@@ -37,7 +37,7 @@
       </section>
 
       <section class="wizard-step" data-screen="3" hidden>
-        <div class="screen-title"><small>ИМЯ</small><h2>Личное дело</h2><p>Назовите жителя Империи и добавьте портрет для карточки Discord.</p></div>
+        <div class="screen-title"><small>ИМЯ</small><h2>Личное дело</h2><p>Назовите жителя Империи и добавьте портрет для карточки в Дискорде.</p></div>
         <div class="identity canonical-identity">
           <label>Имя персонажа<input id="name" maxlength="80" placeholder="Например, Калио" autocomplete="off"></label>
           <label class="portrait-field">Портрет PNG, JPEG или WEBP<input id="portrait" type="file" accept="image/png,image/jpeg,image/webp"><span>ВЫБРАТЬ ИЗОБРАЖЕНИЕ</span></label>
@@ -56,8 +56,8 @@
       </section>
 
       <section class="wizard-step" data-screen="6" hidden>
-        <div class="screen-title"><small>ПЕЧАТЬ СУДА</small><h2 id="result-title">Проверьте личное дело</h2><p id="result-text">Все выбранные значения будут сохранены прямо в Discord-боте.</p></div>
-        <div class="result canonical-result"><div class="result-copy"><div id="checks" class="checks"></div><button id="submit" class="submit" disabled>СОХРАНИТЬ В DISCORD</button><p id="submit-status" class="submit-status" role="status"></p></div><div id="summary" class="summary"></div></div>
+        <div class="screen-title"><small>ПЕЧАТЬ СУДА</small><h2 id="result-title">Проверьте личное дело</h2><p id="result-text">Все выбранные значения будут сохранены прямо в боте.</p></div>
+        <div class="result canonical-result"><div class="result-copy"><div id="checks" class="checks"></div><button id="submit" class="submit" disabled>СОХРАНИТЬ В ДИСКОРДЕ</button><p id="submit-status" class="submit-status" role="status"></p></div><div id="summary" class="summary"></div></div>
       </section>
 
       <div class="wizard-controls"><button id="back" class="nav-button secondary" type="button">← НАЗАД</button><span id="step-status"></span><button id="next" class="nav-button" type="button">ДАЛЕЕ →</button></div>
@@ -66,7 +66,7 @@
 
   <dialog id="tooltip" class="tooltip"><button id="tooltip-close" aria-label="Закрыть">×</button><p>АРХИВНАЯ СПРАВКА</p><h2 id="tooltip-title"></h2><div id="tooltip-text"></div></dialog>
   <div id="glossary-tooltip" class="glossary-tooltip" role="tooltip" hidden><b></b><p></p></div>
-  <footer><b>TYRANNY</b><span>Лоун был здесь</span></footer>
+  <footer><b>ТИРАНИЯ</b><span>Лоун был здесь</span></footer>
   <script src="app.js?v=20260929-13" defer></script>
 </body>
 </html>
