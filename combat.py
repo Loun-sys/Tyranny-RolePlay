@@ -161,7 +161,7 @@ class CombatSession:
         if key in self.combatants:
             return False, "Вы уже участвуете в этой сцене."
         inventory = await self.db.inventory(character["id"])
-        spells = await self.db.spells(character["id"])
+        spells = [spell for spell in await self.db.spells(character["id"]) if spell.get("equipped_slot") is not None]
         unit = Combatant(
             key=key, name=character["name"], team="Вершители Судеб",
             user_id=character["user_id"], character_id=character["id"],

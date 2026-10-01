@@ -125,6 +125,7 @@ CREATE TABLE IF NOT EXISTS spells (
     enhancements TEXT NOT NULL DEFAULT '[]',
     difficulty INTEGER NOT NULL DEFAULT 0,
     notes TEXT NOT NULL DEFAULT '',
+    equipped_slot INTEGER,
     UNIQUE(character_id, name)
 );
 CREATE TABLE IF NOT EXISTS reputation (
@@ -221,6 +222,14 @@ class Database:
             }.items():
                 if name not in columns:
                     await db.execute(f"ALTER TABLE characters ADD COLUMN {name} {definition}")
+            spell_columns = {row["name"] for row in await db.execute_fetchall("PRAGMA table_info(spells)")}
+            spell_slots_added = "equipped_slot" not in spell_columns
+            if "equipped_slot" not in spell_columns:
+                await db.execute("ALTER TABLE spells ADD COLUMN equipped_slot INTEGER")
+            await db.execute(
+                "CREATE UNIQUE INDEX IF NOT EXISTS idx_spell_equipped_slot "
+                "ON spells(character_id,equipped_slot) WHERE equipped_slot IS NOT NULL"
+            )
             # Каноническое русское название Resolve — «Стойкость»; сохраняем значения старых персонажей.
             await db.execute(
                 "INSERT OR IGNORE INTO attributes(character_id,name,value) "
@@ -272,6 +281,11 @@ class Database:
                     )
                 await db.commit()
         await self.ensure_starting_sigils()
+        if spell_slots_added:
+            async with self.connect() as db:
+                character_rows = await db.execute_fetchall("SELECT id FROM characters")
+            for row in character_rows:
+                await self.normalize_spell_slots(int(row["id"]), fill_empty=True)
 
     async def create_registration_token(self, guild_id: int, user_id: int, lifetime_minutes: int = 120) -> str:
         """Создать одноразовый секрет регистрации; в БД хранится только его хеш."""
@@ -426,15 +440,39 @@ class Database:
             weapon_sets += 1
         if "Изобилие оружия II" in names:
             weapon_sets += 2
+        spell_slots = 4
+        if "Расширенный разум II" in names:
+            spell_slots += 4
+        elif "Расширенный разум I" in names:
+            spell_slots += 2
+        if "Арбитр знаний" in names:
+            spell_slots += 2
         return {
             "weaponSets": min(4, weapon_sets),
             "quickSlots": 6 if "Патронташ" in names else 4,
+            "spellSlots": spell_slots,
         }
 
     async def equipment_limits(self, character_id: int) -> dict[str, int]:
         async with self.connect() as db:
             rows = await db.execute_fetchall("SELECT name FROM talents WHERE character_id=?", (character_id,))
-        return self._equipment_limits_from_talents({str(row["name"]) for row in rows})
+            equipped = await db.execute_fetchall(
+                """SELECT item_catalog.name,item_catalog.source_url,item_catalog.properties
+                   FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id
+                   WHERE inventory.character_id=? AND inventory.equipped_slot IS NOT NULL""", (character_id,)
+            )
+        limits = self._equipment_limits_from_talents({str(row["name"]) for row in rows})
+        for item in equipped:
+            source = str(item["source_url"] or "").casefold()
+            properties = str(item["properties"] or "").casefold()
+            name = str(item["name"] or "").casefold()
+            if (
+                "kailor" in source or "каилор" in name or "spell slot" in properties
+                or ("ячейк" in properties and "заклин" in properties)
+            ):
+                limits["spellSlots"] += 1
+        limits["spellSlots"] = min(11, limits["spellSlots"])
+        return limits
 
     async def set_active_weapon_set(self, character_id: int, number: int) -> tuple[bool, str]:
         number = int(number)
@@ -503,7 +541,8 @@ class Database:
             await self._insert_starting_sigils(db, character_id, (specialization_1, specialization_2))
             await self._recalculate_health(db, character_id)
             await db.commit()
-            return character_id
+        await self.normalize_spell_slots(character_id, fill_empty=True)
+        return character_id
 
     @staticmethod
     async def _insert_starting_sigils(
@@ -1154,9 +1193,63 @@ class Database:
             )
             await db.commit()
 
+    async def normalize_spell_slots(self, character_id: int, fill_empty: bool = False) -> None:
+        """Оставить подготовленные формулы в допустимых уникальных ячейках."""
+        limit = (await self.equipment_limits(character_id))["spellSlots"]
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT id,equipped_slot FROM spells WHERE character_id=? ORDER BY equipped_slot IS NULL,equipped_slot,id",
+                (character_id,),
+            )
+            used: set[int] = set()
+            reserve: list[int] = []
+            for row in rows:
+                slot = row["equipped_slot"]
+                if slot is not None and 1 <= int(slot) <= limit and int(slot) not in used:
+                    used.add(int(slot))
+                else:
+                    await db.execute("UPDATE spells SET equipped_slot=NULL WHERE id=?", (row["id"],))
+                    reserve.append(int(row["id"]))
+            free = [slot for slot in range(1, limit + 1) if slot not in used]
+            if fill_empty:
+                for spell_id, slot in zip(reserve, free):
+                    await db.execute("UPDATE spells SET equipped_slot=? WHERE id=?", (slot, spell_id))
+            await db.commit()
+
+    async def set_spell_equipped(self, character_id: int, spell_id: int, equipped: bool) -> tuple[bool, str]:
+        limit = (await self.equipment_limits(character_id))["spellSlots"]
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT name,equipped_slot FROM spells WHERE id=? AND character_id=?", (spell_id, character_id)
+            )
+            if not rows:
+                return False, "Заклинание не найдено."
+            if not equipped:
+                await db.execute("UPDATE spells SET equipped_slot=NULL WHERE id=?", (spell_id,))
+                await db.commit()
+                return True, f"«{rows[0]['name']}» убрано в резерв."
+            if rows[0]["equipped_slot"] is not None:
+                return True, f"«{rows[0]['name']}» уже подготовлено."
+            occupied = {
+                int(row["equipped_slot"])
+                for row in await db.execute_fetchall(
+                    "SELECT equipped_slot FROM spells WHERE character_id=? AND equipped_slot IS NOT NULL",
+                    (character_id,),
+                )
+            }
+            free = next((slot for slot in range(1, limit + 1) if slot not in occupied), None)
+            if free is None:
+                return False, f"Все ячейки заклинаний заняты: {limit}/{limit}."
+            await db.execute("UPDATE spells SET equipped_slot=? WHERE id=?", (free, spell_id))
+            await db.commit()
+            return True, f"«{rows[0]['name']}» подготовлено в ячейке {free}."
+
     async def spells(self, character_id: int) -> list[dict[str, Any]]:
         async with self.connect() as db:
-            rows = await db.execute_fetchall("SELECT * FROM spells WHERE character_id=? ORDER BY name", (character_id,))
+            rows = await db.execute_fetchall(
+                "SELECT * FROM spells WHERE character_id=? ORDER BY equipped_slot IS NULL,equipped_slot,name",
+                (character_id,),
+            )
             result = []
             for row in rows:
                 spell = dict(row)

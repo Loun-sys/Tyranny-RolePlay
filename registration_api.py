@@ -300,6 +300,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
     character = await db.get_character_by_id(character_id)
     if not character:
         raise web.HTTPNotFound(reason="Персонаж не найден.")
+    await db.normalize_spell_slots(character_id)
     inventory = _clean_inventory(await db.inventory(character_id))
     character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
     character.pop("guild_id", None)
@@ -414,7 +415,34 @@ async def portal_spell(request: web.Request) -> web.Response:
         cid, name, formula["core"], formula["expression"], formula["accents"],
         formula["enhancements"], formula["difficulty"],
     )
+    spells = await request.app["db"].spells(cid)
+    created = next((spell for spell in spells if spell["name"] == name), None)
+    if created and created.get("equipped_slot") is None:
+        await request.app["db"].set_spell_equipped(cid, int(created["id"]), True)
     return web.json_response({"ok": True, "message": f"Заклинание «{name}» записано.", **await _dashboard(request, cid)})
+
+
+async def portal_spell_equip(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    try:
+        spell_id = int(payload.get("spellId", 0))
+    except (TypeError, ValueError) as error:
+        raise web.HTTPBadRequest(reason="Некорректный номер заклинания.") from error
+    ok, message = await request.app["db"].set_spell_equipped(cid, spell_id, bool(payload.get("equipped", True)))
+    if not ok:
+        raise web.HTTPConflict(reason=message)
+    return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
+
+
+async def portal_spell_delete(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    try:
+        spell_id = int(payload.get("spellId", 0))
+    except (TypeError, ValueError) as error:
+        raise web.HTTPBadRequest(reason="Некорректный номер заклинания.") from error
+    if not await request.app["db"].delete_spell(cid, spell_id):
+        raise web.HTTPNotFound(reason="Заклинание не найдено.")
+    return web.json_response({"ok": True, "message": "Формула удалена из гримуара.", **await _dashboard(request, cid)})
 
 
 async def portal_learn_sigil(request: web.Request) -> web.Response:
@@ -574,6 +602,12 @@ async def admin_mutation(request: web.Request) -> web.Response:
         if not await db.delete_spell(cid, int(payload.get("spellId", 0))):
             raise web.HTTPNotFound(reason="Заклинание не найдено.")
         message = "Заклинание удалено из гримуара."
+    elif action == "spell_equipment":
+        ok, message = await db.set_spell_equipped(
+            cid, int(payload.get("spellId", 0)), bool(payload.get("equipped", True))
+        )
+        if not ok:
+            raise web.HTTPConflict(reason=message)
     else:
         raise web.HTTPBadRequest(reason="Неизвестное административное действие.")
     safe_log = {key: value for key, value in payload.items() if key not in {"token"}}
@@ -597,7 +631,7 @@ async def _training_character(request: web.Request, character_id: int, session: 
     character["active_weapon_set"] = session.active_weapon_set
     character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
     inventory = _clean_inventory(await db.inventory(character_id))
-    spells = await db.spells(character_id)
+    spells = [spell for spell in await db.spells(character_id) if spell.get("equipped_slot") is not None]
     limits = await db.equipment_limits(character_id)
     return character, inventory, spells, limits
 
@@ -694,6 +728,8 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/attribute", portal_attribute)
     app.router.add_post("/api/portal/{token}/talent", portal_talent)
     app.router.add_post("/api/portal/{token}/spell", portal_spell)
+    app.router.add_post("/api/portal/{token}/spell/equip", portal_spell_equip)
+    app.router.add_post("/api/portal/{token}/spell/delete", portal_spell_delete)
     app.router.add_post("/api/portal/{token}/sigil/learn", portal_learn_sigil)
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
     app.router.add_post("/api/portal/{token}/weapon-set", portal_weapon_set)

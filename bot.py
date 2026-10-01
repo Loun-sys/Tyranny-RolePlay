@@ -171,10 +171,13 @@ class CharacterView(discord.ui.View):
     async def spellbook(self, interaction: discord.Interaction, _: discord.ui.Button):
         spells = await bot.db.spells(self.character["id"])
         embed = discord.Embed(title="Гримуар", color=discord.Color.dark_purple())
+        limits = await bot.db.equipment_limits(self.character["id"])
+        prepared = [spell for spell in spells if spell.get("equipped_slot") is not None]
+        embed.description = f"Подготовлено: **{len(prepared)}/{limits['spellSlots']}**. Формулы в резерве недоступны в бою."
         for spell in spells[:25]:
             additions = spell["accents"] + spell["enhancements"]
             embed.add_field(
-                name=f'{spell["name"]} · сложность {spell["difficulty"]}',
+                name=f'{"🔮" if spell.get("equipped_slot") is not None else "▫️"} {spell["name"]} · сложность {spell["difficulty"]}',
                 value=f'**Основа:** {spell["core"]}\n**Выражение:** {spell["expression"]}\n**Дополнения:** {", ".join(additions) or "нет"}',
                 inline=False,
             )
@@ -658,7 +661,12 @@ async def create_spell(
     await bot.db.create_spell(
         character["id"], название, основа.value, выражение.value, accents, enhancements, сложность, заметки
     )
-    await interaction.response.send_message(f'Заклинание **{название}** записано в гримуар.', ephemeral=True)
+    created = next((spell for spell in await bot.db.spells(character["id"]) if spell["name"] == название), None)
+    prepared = False
+    if created and created.get("equipped_slot") is None:
+        prepared, _ = await bot.db.set_spell_equipped(character["id"], int(created["id"]), True)
+    suffix = " и подготовлено" if prepared else " в резерв"
+    await interaction.response.send_message(f'Заклинание **{название}** записано{suffix}.', ephemeral=True)
 
 
 @bot.tree.command(name="гримуар", description="Показать созданные заклинания")
@@ -668,9 +676,12 @@ async def spellbook_command(interaction: discord.Interaction):
         return
     spells = await bot.db.spells(character["id"])
     embed = discord.Embed(title=f'Гримуар · {character["name"]}', color=discord.Color.dark_purple())
+    limits = await bot.db.equipment_limits(character["id"])
+    prepared = [spell for spell in spells if spell.get("equipped_slot") is not None]
+    embed.description = f"Подготовлено: **{len(prepared)}/{limits['spellSlots']}**. Только эти формулы доступны в бою."
     for spell in spells[:25]:
         embed.add_field(
-            name=f'{spell["name"]} · сложность {spell["difficulty"]}',
+            name=f'{"🔮" if spell.get("equipped_slot") is not None else "▫️"} {spell["name"]} · сложность {spell["difficulty"]}',
             value=f'Основа: **{spell["core"]}**\nВыражение: **{spell["expression"]}**\nАкценты: {", ".join(spell["accents"]) or "нет"}\nУсиления: {", ".join(spell["enhancements"]) or "нет"}',
             inline=False,
         )

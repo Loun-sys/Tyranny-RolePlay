@@ -77,7 +77,10 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         }])
         self.assertTrue(await self.db.give_item(character_id, "Меч Вершителя"))
         inventory = await self.db.inventory(character_id)
-        self.assertEqual(await self.db.equipment_limits(character_id), {"weaponSets": 2, "quickSlots": 4})
+        self.assertEqual(
+            await self.db.equipment_limits(character_id),
+            {"weaponSets": 2, "quickSlots": 4, "spellSlots": 4},
+        )
         locked, _ = await self.db.equip(character_id, inventory[0]["inventory_id"], "Оружие III — правая рука")
         self.assertFalse(locked)
         await self.db.add_talent(character_id, {
@@ -86,7 +89,10 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         await self.db.add_talent(character_id, {
             "tree": "Лидерство", "tier": 0, "name": "Патронташ", "description": "+2 быстрых слота."
         })
-        self.assertEqual(await self.db.equipment_limits(character_id), {"weaponSets": 3, "quickSlots": 6})
+        self.assertEqual(
+            await self.db.equipment_limits(character_id),
+            {"weaponSets": 3, "quickSlots": 6, "spellSlots": 4},
+        )
         switched, _ = await self.db.set_active_weapon_set(character_id, 3)
         self.assertTrue(switched)
         self.assertEqual((await self.db.get_character_by_id(character_id))["active_weapon_set"], 3)
@@ -97,6 +103,26 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         )
         spell_names = {spell["name"] for spell in await self.db.spells(character_id)}
         self.assertEqual(spell_names, {"Заряженный кулак", "Грозовая печать"})
+        spells = await self.db.spells(character_id)
+        self.assertEqual({spell["equipped_slot"] for spell in spells}, {1, None})
+        reserve = next(spell for spell in spells if spell["equipped_slot"] is None)
+        equipped, _ = await self.db.set_spell_equipped(character_id, reserve["id"], True)
+        self.assertTrue(equipped)
+        self.assertEqual({spell["equipped_slot"] for spell in await self.db.spells(character_id)}, {1, 2})
+        unequipped, _ = await self.db.set_spell_equipped(character_id, reserve["id"], False)
+        self.assertTrue(unequipped)
+        self.assertIsNone(next(spell for spell in await self.db.spells(character_id) if spell["id"] == reserve["id"])["equipped_slot"])
+        await self.db.add_talent(character_id, {
+            "tree": "Магия", "tier": 1, "name": "Расширенный разум I", "description": "+2 ячейки."
+        })
+        self.assertEqual((await self.db.equipment_limits(character_id))["spellSlots"], 6)
+        await self.db.add_talent(character_id, {
+            "tree": "Магия", "tier": 4, "name": "Расширенный разум II", "description": "+4 ячейки."
+        })
+        await self.db.add_talent(character_id, {
+            "tree": "Лидерство", "tier": 2, "name": "Арбитр знаний", "description": "+2 ячейки."
+        })
+        self.assertEqual((await self.db.equipment_limits(character_id))["spellSlots"], 10)
         self.assertEqual(await self.db.adjust_reputation(character_id, "Опальные", "favor", 25), (0, 25))
         self.assertEqual(await self.db.adjust_reputation(character_id, "Опальные", "wrath", 10), (0, 10))
         self.assertEqual(len(await self.db.reputations(character_id)), 1)
