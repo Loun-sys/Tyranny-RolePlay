@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 from urllib.parse import unquote, urlparse
 
@@ -71,8 +72,6 @@ EXPRESSION_ROWS = (
      ("Энергия", "Сила", "Эмоции", "Камень", "Огонь", "Жизнь", "Терратус", "Истощение")),
     ("Дальний удар", "Distant_Impact", "Дальний магический снаряд с небольшой областью поражения.", "Shape-Bolt.png", 30,
      ("Иллюзия", "Холод", "Сила", "Эмоции", "Камень", "Огонь", "Молния", "Жизнь", "Терратус")),
-    ("Скрытая опасность", "Hidden_Danger", "Создаёт магическую ловушку, срабатывающую при приближении цели.", "Shape-Trap.png", 65,
-     ("Холод", "Камень", "Огонь", "Молния", "Истощение", "Терратус")),
 )
 
 EXPRESSIONS = [
@@ -81,14 +80,14 @@ EXPRESSIONS = [
 ]
 
 ACCENT_ROWS = (
-    ("Прыгающие заряды", "Bounding_Bolts", "SPELLMOD chain", ((1, 30, "+1 снаряд с рикошетом в радиусе 5 м"), (2, 50, "+2 снаряда с рикошетом в радиусе 5 м"), (3, 70, "+3 снаряда с рикошетом в радиусе 5 м"))),
-    ("Циклические энергии", "Cyclical_Energies", "SPELLMOD recovery", ((1, 10, "Перезарядка −15%"), (2, 20, "Перезарядка −25%"), (3, 30, "Перезарядка −35%"))),
+    ("Прыгающие заряды", "Bounding_Bolts", "SPELLMOD chain", ((1, 30, "+1 снаряд с рикошетом в радиусе 5 м"), (2, 50, "+2 снаряда с рикошетом в радиусе 5 м"))),
+    ("Циклические энергии", "Cyclical_Energies", "SPELLMOD recovery", ((1, 10, "Перезарядка −15%"), (2, 20, "Перезарядка −25%"), (3, 30, "Перезарядка −35%"), (4, 40, "Перезарядка −45%"))),
     ("Безграничные пределы", "Limitless_Boundaries", "SPELLMOD aoe", ((1, 25, "Область действия +1 м"), (2, 35, "Область действия +2 м"), (3, 45, "Область действия +3 м"))),
     ("Пробивающая сила", "Piercing_Strength", "SPELLMOD dt", ((1, 15, "+4 к пробиванию брони"), (2, 30, "+8 к пробиванию брони"), (3, 45, "+12 к пробиванию брони"))),
-    ("Точное действие", "Precise_Action", "SPELLMOD accuracy", ((1, 15, "Точность +15"), (2, 25, "Точность +30"), (3, 35, "Точность +45"), (4, 45, "Точность +60"), (5, 55, "Точность +75"))),
+    ("Точное действие", "Precise_Action", "SPELLMOD accuracy", ((1, 15, "Точность +15"), (2, 25, "Точность +30"), (3, 35, "Точность +45"), (4, 45, "Точность +60"))),
     ("Длинная хватка", "Reaching_Grasp", "SPELLMOD range", ((1, 10, "Дальность +2 м"), (2, 20, "Дальность +4 м"), (3, 30, "Дальность +6 м"))),
     ("Ошеломляющая сила", "Staggering_Force", "SPELLMOD interrupt", ((1, 25, "Слабое прерывание"), (2, 35, "Среднее прерывание"), (3, 45, "Сильное прерывание"))),
-    ("Мощность", "Strength", "SPELLMOD intensity", ((1, 20, "Сила эффектов +20%"), (2, 30, "Сила эффектов +30%"), (3, 40, "Сила эффектов +40%"), (4, 50, "Сила эффектов +50%"), (5, 60, "Сила эффектов +60%"))),
+    ("Мощность", "Strength", "SPELLMOD intensity", ((1, 20, "Сила эффектов +20%"), (2, 30, "Сила эффектов +30%"), (3, 40, "Сила эффектов +40%"), (4, 50, "Сила эффектов +50%"))),
     ("Вневременная форма", "Timeless_Form", "SPELLMOD duration", ((1, 15, "Длительность +25%"), (2, 25, "Длительность +35%"), (3, 35, "Длительность +45%"))),
 )
 
@@ -268,6 +267,86 @@ SPELL_NAMES = {
 
 def default_spell_name(core: str, expression: str) -> str:
     return SPELL_NAMES.get((core, expression), f"{core}: {expression}")
+
+
+EXPRESSION_RUNTIME = {
+    "Область влияния": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
+    "Направленная сила": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1},
+    "Хаотическое нисхождение": {"cooldown": 6, "defense": "Уклонение", "projectiles": 3},
+    "Сосредоточенное намерение": {"cooldown": 3, "defense": "Магия", "projectiles": 1},
+    "Проводимая сила": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1},
+    "Охранная форма": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
+    "Материальная сила": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
+    "Ближнее действие": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
+    "Дальний удар": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1},
+}
+
+_ACCENT_VALUES = {
+    "Прыгающие заряды": (1, 2),
+    "Циклические энергии": (15, 25, 35, 45),
+    "Безграничные пределы": (1, 2, 3),
+    "Пробивающая сила": (4, 8, 12),
+    "Точное действие": (15, 30, 45, 60),
+    "Длинная хватка": (2, 4, 6),
+    "Ошеломляющая сила": (1, 2, 3),
+    "Мощность": (20, 30, 40, 50),
+    "Вневременная форма": (25, 35, 45),
+}
+
+
+def _accent_value(accents: list[str], family: str) -> int:
+    """Вернуть каноническое значение выбранного уровня семейства штрихов."""
+    values = _ACCENT_VALUES[family]
+    for name in accents:
+        if name == family:
+            return values[0]
+        if name.startswith(f"{family} "):
+            match = re.search(r"(\d+)$", name)
+            if match:
+                tier = int(match.group(1))
+                return values[tier - 1] if 1 <= tier <= len(values) else 0
+    return 0
+
+
+def spell_runtime_profile(
+    spell: dict, *, skill: int, wits: int, cooldown_multiplier: float = 1,
+) -> dict:
+    """Единый пошаговый расчёт формулы для сайта, тренировки и Discord-боя."""
+    accents = list(spell.get("accents") or [])
+    enhancements = list(spell.get("enhancements") or [])
+    enhancement = enhancements[0] if enhancements else ""
+    shape = EXPRESSION_RUNTIME.get(
+        spell.get("expression"), EXPRESSION_RUNTIME["Сосредоточенное намерение"]
+    )
+    accuracy = int(skill) + _accent_value(accents, "Точное действие")
+    power_bonus = _accent_value(accents, "Мощность")
+    if enhancement == "Магия крови":
+        power_bonus += 30
+    elif enhancement in {"Магия гордыни", "Самоотверженная магия"}:
+        power_bonus += 50
+    power = max(1, round((9 + int(wits) // 2) * (1 + power_bonus / 100)))
+    recovery_cut = _accent_value(accents, "Циклические энергии")
+    cooldown = max(1, math.ceil(
+        shape["cooldown"] * (1 - recovery_cut / 100) * max(.1, float(cooldown_multiplier))
+    ))
+    projectiles = shape["projectiles"] + _accent_value(accents, "Прыгающие заряды")
+    if enhancement == "Залпы":
+        projectiles += 2
+    return {
+        "accuracy": accuracy,
+        "damage_min": max(1, power - 4),
+        "damage_max": power + 4,
+        "cooldown": cooldown,
+        "defense": shape["defense"],
+        "penetration": _accent_value(accents, "Пробивающая сила"),
+        "projectiles": projectiles,
+        "range_bonus": _accent_value(accents, "Длинная хватка"),
+        "area_bonus": _accent_value(accents, "Безграничные пределы"),
+        "duration_bonus": _accent_value(accents, "Вневременная форма"),
+        "interrupt": _accent_value(accents, "Ошеломляющая сила"),
+        "enhancement": enhancement,
+        "self_damage": 15 if enhancement == "Магия крови" else 0,
+    }
 
 
 def validate_formula(

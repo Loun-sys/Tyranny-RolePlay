@@ -16,6 +16,7 @@ from typing import Any, Callable
 import discord
 
 from constants import ABILITY_DETAILS
+from sigil_data import spell_runtime_profile
 
 
 CRIMSON = discord.Color.from_rgb(111, 27, 25)
@@ -302,17 +303,22 @@ class TargetSelect(discord.ui.Select):
                 )
                 return
             skill = CORE_SKILLS.get(spell["core"], "Знания")
-            accuracy = actor.skills.get(skill, actor.skills.get("Знания", 25))
-            power = max(3, 4 + actor.attributes.get("Смекалка", 10) // 2 + len(spell["accents"]) * 2)
-            line = resolve_attack(actor, target, accuracy=accuracy, damage=(max(1, power - 3), power + 3),
-                                  defense="Магия", damage_type=CORE_DAMAGE.get(spell["core"], "Магический"),
-                                  penetration=2 if "Пробивающая сила" in spell["accents"] else 0)
+            profile = spell_runtime_profile(
+                spell,
+                skill=actor.skills.get(skill, actor.skills.get("Знания", 25)),
+                wits=actor.attributes.get("Смекалка", 10),
+                cooldown_multiplier=max(.1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03),
+            )
+            line = resolve_attack(
+                actor, target, accuracy=profile["accuracy"],
+                damage=(profile["damage_min"], profile["damage_max"]),
+                defense=profile["defense"], damage_type=CORE_DAMAGE.get(spell["core"], "Магический"),
+                penetration=profile["penetration"],
+            )
             line = f"🔮 **{spell['name']}**: " + line
             recovery = max(2, 3 + spell["difficulty"] / 25)
             used_skill = skill
-            spell_rounds = max(1, math.ceil((1 + spell["difficulty"] / 50) * max(
-                .1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03
-            )))
+            spell_rounds = profile["cooldown"]
             actor.cooldowns[cooldown_key] = self.session.round_number + spell_rounds + 1
         self.session.log.append(line)
         self.session.advance(actor, recovery)

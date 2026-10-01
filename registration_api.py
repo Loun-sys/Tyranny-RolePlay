@@ -25,7 +25,7 @@ from mechanics_data import MECHANICS
 from talent_data import TALENT_BY_NAME, TALENTS
 from extended_talent_data import load_extended_talents
 from training_combat import TrainingSession
-from sigil_data import SIGIL_LIBRARY, SIGILS_BY_KEY, sigil_key_from_scroll_url, validate_formula
+from sigil_data import SPELL_NAMES, SIGIL_LIBRARY, SIGILS_BY_KEY, sigil_key_from_scroll_url, validate_formula
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -323,6 +323,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "inventory": inventory,
         "capacity": await db.inventory_capacity(character_id),
         "spells": await db.spells(character_id),
+        "spellNames": {f"{core}|{expression}": name for (core, expression), name in SPELL_NAMES.items()},
         "derived": _derived(character, inventory),
         "equipmentSlots": list(EQUIPMENT_SLOTS),
         "equipmentLimits": await db.equipment_limits(character_id),
@@ -411,15 +412,33 @@ async def portal_spell(request: web.Request) -> web.Response:
     name = str(payload.get("name", "")).strip() or formula["default_name"]
     if not 2 <= len(name) <= 80:
         raise web.HTTPBadRequest(reason="Введите название заклинания.")
-    await request.app["db"].create_spell(
-        cid, name, formula["core"], formula["expression"], formula["accents"],
-        formula["enhancements"], formula["difficulty"],
-    )
+    try:
+        spell_id = int(payload.get("spellId", 0) or 0)
+    except (TypeError, ValueError) as error:
+        raise web.HTTPBadRequest(reason="Некорректный номер формулы.") from error
+    if spell_id:
+        try:
+            updated = await request.app["db"].update_spell(
+                cid, spell_id, name, formula["core"], formula["expression"], formula["accents"],
+                formula["enhancements"], formula["difficulty"],
+            )
+        except ValueError as error:
+            raise web.HTTPConflict(reason=str(error)) from error
+        if not updated:
+            raise web.HTTPNotFound(reason="Формула не найдена.")
+    else:
+        await request.app["db"].create_spell(
+            cid, name, formula["core"], formula["expression"], formula["accents"],
+            formula["enhancements"], formula["difficulty"],
+        )
     spells = await request.app["db"].spells(cid)
     created = next((spell for spell in spells if spell["name"] == name), None)
-    if created and created.get("equipped_slot") is None:
+    # Новая формула сразу занимает свободную ячейку, как в игре. При правке
+    # существующей формулы её прежнее состояние (гримуар/резерв) сохраняется.
+    if not spell_id and created and created.get("equipped_slot") is None:
         await request.app["db"].set_spell_equipped(cid, int(created["id"]), True)
-    return web.json_response({"ok": True, "message": f"Заклинание «{name}» записано.", **await _dashboard(request, cid)})
+    verb = "изменено" if spell_id else "создано"
+    return web.json_response({"ok": True, "message": f"Заклинание «{name}» {verb}.", **await _dashboard(request, cid)})
 
 
 async def portal_spell_equip(request: web.Request) -> web.Response:

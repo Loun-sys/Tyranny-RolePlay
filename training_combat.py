@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from constants import ABILITY_DETAILS
+from sigil_data import spell_runtime_profile
 
 
 DUMMY = {
@@ -164,15 +165,19 @@ class TrainingSession:
             key = f"spell:{name}"
             if self.remaining(key):
                 raise ValueError(f"Заклинание будет готово через {self.remaining(key)} {_round_word(self.remaining(key))}.")
-            cooldown = self._cooldown(1 + int(spell.get("difficulty", 0)) / 50, multiplier)
-            self.cooldowns[key] = self.round_number + cooldown + 1
             skill = CORE_SKILLS.get(spell.get("core"), "Знания")
-            accuracy = int(character.get("skills", {}).get(skill, {}).get("value", 0))
-            power = max(3, 4 + int(attrs.get("Смекалка", 10)) // 2 + len(spell.get("accents", [])) * 2)
+            profile = spell_runtime_profile(
+                spell,
+                skill=int(character.get("skills", {}).get(skill, {}).get("value", 0)),
+                wits=int(attrs.get("Смекалка", 10)),
+                cooldown_multiplier=multiplier,
+            )
+            cooldown = profile["cooldown"]
+            self.cooldowns[key] = self.round_number + cooldown + 1
             result = self._roll_attack(
-                name=name, accuracy=accuracy, low=max(1, power - 3), high=power + 3,
-                defense=DUMMY["defenses"]["Магия"], armor=DUMMY["armor"],
-                penetration=2 if "Пробивающая сила" in spell.get("accents", []) else 0,
+                name=name, accuracy=profile["accuracy"], low=profile["damage_min"],
+                high=profile["damage_max"], defense=DUMMY["defenses"][profile["defense"]],
+                armor=DUMMY["armor"], penetration=profile["penetration"],
                 damage_type=CORE_DAMAGE.get(spell.get("core"), "магического"),
             )
         elif kind == "weapon_set":

@@ -10,7 +10,7 @@ from talent_data import TALENTS
 from extended_talent_data import parse_faction_talents, parse_talent_page
 from localization import localize_game_text, seconds_to_rounds
 from training_combat import TrainingSession
-from sigil_data import SIGIL_LIBRARY, sigil_key_from_scroll_url, validate_formula
+from sigil_data import SIGIL_LIBRARY, sigil_key_from_scroll_url, spell_runtime_profile, validate_formula
 from constants import (
     ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
     SPECIALIZATION_ABILITY_CHOICES,
@@ -58,6 +58,18 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(character["experience"], 125)
         view = session.view(character, derived, [], 2)
         self.assertEqual(view["rewards"], {"experience": 0, "skillExperience": 0, "loot": []})
+
+    async def test_spell_runtime_uses_real_sigil_modifiers(self):
+        profile = spell_runtime_profile({
+            "expression": "Дальний удар",
+            "accents": ["Точное действие 2", "Мощность 2", "Циклические энергии 2", "Пробивающая сила 2"],
+            "enhancements": ["Залпы"],
+        }, skill=62, wits=10, cooldown_multiplier=1)
+        self.assertEqual(profile["accuracy"], 92)
+        self.assertEqual((profile["damage_min"], profile["damage_max"]), (14, 22))
+        self.assertEqual(profile["cooldown"], 3)
+        self.assertEqual(profile["penetration"], 8)
+        self.assertEqual(profile["projectiles"], 3)
 
     async def test_character_inventory_equipment_spell_and_card(self):
         character_id = await self.db.create_character(
@@ -112,6 +124,13 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         unequipped, _ = await self.db.set_spell_equipped(character_id, reserve["id"], False)
         self.assertTrue(unequipped)
         self.assertIsNone(next(spell for spell in await self.db.spells(character_id) if spell["id"] == reserve["id"])["equipped_slot"])
+        self.assertTrue(await self.db.update_spell(
+            character_id, reserve["id"], "Исправленная печать", "Молния", "Дальний удар",
+            ["Точное действие 1"], [], 45,
+        ))
+        edited = next(spell for spell in await self.db.spells(character_id) if spell["id"] == reserve["id"])
+        self.assertEqual(edited["name"], "Исправленная печать")
+        self.assertIsNone(edited["equipped_slot"])
         await self.db.add_talent(character_id, {
             "tree": "Магия", "tier": 1, "name": "Расширенный разум I", "description": "+2 ячейки."
         })
@@ -275,7 +294,9 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((faction[0]["axis"], faction[0]["tier"]), ("favor", 3))
 
     async def test_sigil_scrolls_starting_spell_and_server_formula_validation(self):
-        self.assertEqual(len(SIGIL_LIBRARY), 74)
+        self.assertEqual(len(SIGIL_LIBRARY), 71)
+        self.assertFalse(any(s["key"] == "accent:Прыгающие заряды:3" for s in SIGIL_LIBRARY))
+        self.assertTrue(any(s["key"] == "accent:Циклические энергии:4" for s in SIGIL_LIBRARY))
         for sigil in SIGIL_LIBRARY:
             self.assertTrue((Path("web") / sigil["image_url"]).is_file(), sigil["key"])
         character_id = await self.db.create_character(

@@ -1193,6 +1193,32 @@ class Database:
             )
             await db.commit()
 
+    async def update_spell(
+        self, character_id: int, spell_id: int, name: str, core: str, expression: str,
+        accents: list[str], enhancements: list[str], difficulty: int, notes: str = "",
+    ) -> bool:
+        """Изменить существующую формулу, не сбрасывая её ячейку гримуара."""
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT id FROM spells WHERE id=? AND character_id=?", (spell_id, character_id)
+            )
+            if not rows:
+                return False
+            duplicate = await db.execute_fetchall(
+                "SELECT id FROM spells WHERE character_id=? AND name=? AND id<>?", (character_id, name, spell_id)
+            )
+            if duplicate:
+                raise ValueError(f"Формула с названием «{name}» уже существует.")
+            await db.execute(
+                """UPDATE spells SET name=?,core=?,expression=?,accents=?,enhancements=?,difficulty=?,notes=?
+                   WHERE id=? AND character_id=?""",
+                (name, core, expression, json.dumps(accents, ensure_ascii=False),
+                 json.dumps(enhancements, ensure_ascii=False), max(0, difficulty), notes,
+                 spell_id, character_id),
+            )
+            await db.commit()
+            return True
+
     async def normalize_spell_slots(self, character_id: int, fill_empty: bool = False) -> None:
         """Оставить подготовленные формулы в допустимых уникальных ячейках."""
         limit = (await self.equipment_limits(character_id))["spellSlots"]
