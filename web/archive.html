@@ -2,10 +2,10 @@
 <html lang="ru"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#080708"><title>Архив Империи · Тирания</title>
-  <link rel="stylesheet" href="archive.css?v=20261001-3">
+  <link rel="stylesheet" href="archive.css?v=20261001-4">
   <link rel="stylesheet" href="archive-icons.css?v=20260930-9">
 </head><body>
-  <header class="topbar"><a class="brand" href="./">ТИРАНИЯ <span>РОЛЕВАЯ ИГРА</span></a><nav><button data-view="archive">АРХИВ</button><button id="cabinet-nav" data-view="cabinet" hidden>ЛИЧНОЕ ДЕЛО</button></nav><i id="sync">СИНХРОНИЗАЦИЯ</i></header>
+  <header class="topbar"><a class="brand" href="./">ТИРАНИЯ <span>РОЛЕВАЯ ИГРА</span></a><nav><button data-view="archive">АРХИВ</button><button data-view="encyclopedia">ЭНЦИКЛОПЕДИЯ</button><button id="cabinet-nav" data-view="cabinet" hidden>ЛИЧНОЕ ДЕЛО</button></nav><i id="sync">СИНХРОНИЗАЦИЯ</i></header>
   <main>
     <section id="archive-view">
       <div class="banner"><div><small>АРХИВ ЖИТЕЛЕЙ ИМПЕРИИ</small><h1>Личные дела</h1><p>Все персонажи, зарегистрированные ботом в Дискорде. Данные обновляются из единой базы.</p></div></div>
@@ -17,12 +17,20 @@
       <nav id="tabs" class="tabs"><button data-tab="overview" class="active">СВОДКА</button><button data-tab="development">РАЗВИТИЕ</button><button data-tab="talents">ТАЛАНТЫ</button><button data-tab="factions">ФРАКЦИОННЫЕ ТАЛАНТЫ</button><button data-tab="spells">ЗАКЛИНАНИЯ</button><button data-tab="inventory">ИНВЕНТАРЬ</button><button data-tab="training">ТРЕНИРОВКА</button></nav>
       <div id="panel" class="panel"></div>
     </section>
+    <section id="encyclopedia-view" hidden>
+      <header class="encyclopedia-head"><div><small>АРХИВ ЗНАНИЙ ИМПЕРИИ</small><h1>Энциклопедия</h1></div><label><span>ПОИСК</span><input id="encyclopedia-search" type="search" placeholder="Навык, защита, состояние, место…"></label></header>
+      <div class="encyclopedia-shell">
+        <aside class="encyclopedia-index"><div id="encyclopedia-categories" class="encyclopedia-categories"></div><div id="encyclopedia-list" class="encyclopedia-list"></div></aside>
+        <article id="encyclopedia-article" class="encyclopedia-article"></article>
+      </div>
+    </section>
     <div id="loading" class="loading">Открываем архив…</div>
   </main>
   <dialog id="record"><button class="close">×</button><div id="record-body"></div></dialog>
   <dialog id="talent-dialog" class="talent-dialog"><button class="close">×</button><div id="talent-dialog-body"></div></dialog>
   <dialog id="item-dialog" class="item-dialog"><button class="close">×</button><div id="item-dialog-body"></div></dialog>
+  <div id="encyclopedia-popover" class="encyclopedia-popover" hidden></div>
   <div id="toast" role="status"></div>
   <footer>IMPERIUM · LEX · KYROS <span>Лоун был здесь</span></footer>
-  <script src="archive.js?v=20261001-3" defer></script>
+  <script src="archive.js?v=20261001-4" defer></script>
 </body></html>

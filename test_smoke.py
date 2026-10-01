@@ -1,3 +1,4 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -25,6 +26,16 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         self.temp.cleanup()
+
+    async def test_official_game_encyclopedia_export(self):
+        payload = json.loads((Path(__file__).parent / "web" / "data" / "encyclopedia.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(payload["entries"]), 212)
+        self.assertEqual(len(payload["categories"]), 9)
+        athletics = next(entry for entry in payload["entries"] if entry["titleEn"] == "Athletics")
+        self.assertEqual(athletics["title"], "Атлетика")
+        self.assertIn("пересеченной местности", athletics["body"])
+        self.assertEqual(len(athletics["related"]), 3)
+        self.assertFalse(any(title in {"Sage", "GL_Wardens_Key", "Тyнон"} for title in (entry["title"] for entry in payload["entries"])))
 
     async def test_complete_catalog_and_turn_localization(self):
         async with self.db.connect() as db:
