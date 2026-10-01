@@ -29,13 +29,26 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
 
     async def test_official_game_encyclopedia_export(self):
         payload = json.loads((Path(__file__).parent / "web" / "data" / "encyclopedia.json").read_text(encoding="utf-8"))
-        self.assertEqual(len(payload["entries"]), 212)
-        self.assertEqual(len(payload["categories"]), 9)
+        self.assertEqual(len(payload["entries"]), 203)
+        self.assertEqual(len(payload["categories"]), 7)
         athletics = next(entry for entry in payload["entries"] if entry["titleEn"] == "Athletics")
         self.assertEqual(athletics["title"], "Атлетика")
         self.assertIn("пересеченной местности", athletics["body"])
         self.assertEqual(len(athletics["related"]), 3)
         self.assertFalse(any(title in {"Sage", "GL_Wardens_Key", "Тyнон"} for title in (entry["title"] for entry in payload["entries"])))
+        assets = {entry["asset"] for entry in payload["entries"]}
+        self.assertFalse({"GL_Binders 2", "GL_GameMechanics_CompanionCombo", "GL_GameMechanics_Engagement", "GL_GameMechanics_Scouting", "GL_GameMechanics_DPS", "GL_GameMechanics_DisengagementDefense"} & assets)
+        self.assertFalse({4, 7} & {entry["category"] for entry in payload["entries"]})
+        mechanical = "\n".join(entry["body"] for entry in payload["entries"] if entry["category"] == 1)
+        self.assertNotIn("Сирин", mechanical)
+        self.assertNotIn("Вершител", mechanical)
+        self.assertNotIn("режиме паузы", mechanical)
+        self.assertIn("Певчий может спеть свои арии", mechanical)
+        reputation = next(entry for entry in payload["entries"] if entry["asset"] == "GL_GameMechanics_Reputation")
+        self.assertIn("к Персонажу игрока", reputation["body"])
+        alone = next(entry for entry in payload["entries"] if entry["asset"] == "GL_Boon_Quality_Alone_Time")
+        self.assertIn("с оружием", alone["body"])
+        self.assertNotIn("с одноручным оружием", alone["body"])
 
     async def test_complete_catalog_and_turn_localization(self):
         async with self.db.connect() as db:
