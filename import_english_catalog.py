@@ -12,6 +12,7 @@ from typing import Any
 
 from database import Database
 from localization import localize_game_text, neutralize_companion_names, wiki_category_icon
+from official_localization import official_entity, official_text
 from russian_translation import EXACT_TITLES, translate_effect, translate_title
 
 ITEM_CATEGORIES = {
@@ -171,7 +172,11 @@ def convert(page: dict[str, Any]) -> dict[str, Any] | None:
         return None
     title_en = page["title_en"]
     category = category_for(categories, template) if template else stub_category(title_en, categories)
-    title_ru = localize_game_text(translate_title(neutralize_companion_names(title_en)))
+    official = official_entity(title_en) or {}
+    localized_title = official.get("name_ru") or official_text(title_en, "")
+    if localized_title == title_en:
+        localized_title = translate_title(neutralize_companion_names(title_en))
+    title_ru = localize_game_text(localized_title)
     melee = plain(field(wikitext, "melee"))
     ranged = plain(field(wikitext, "ranged"))
     damage = melee or ranged or plain(field(wikitext, "damage"))
@@ -220,6 +225,7 @@ def convert(page: dict[str, Any]) -> dict[str, Any] | None:
         "slot": slot,
         "quality": quality,
         "description": description,
+        "lore": official.get("description_ru") or description,
         "image_url": (
             "https://tyranny.fandom.com/wiki/Special:Redirect/file/" + urllib.parse.quote(image_file)
             if image_file else wiki_category_icon(category)

@@ -90,7 +90,7 @@ TALENTS = [
         (0, "Шквал ударов", "Проводит две атаки по выбранной цели."),
         (0, "Финт", "«Выпад» ослепляет цель."),
         (0, "Лёгкая поступь", "+25% скорости передвижения."),
-        (1, "Режущий удар", "Атака наносит 120% урона и вызывает кровотечение."),
+        (1, "Рассечение", "Атака наносит 120% урона и вызывает кровотечение."),
         (1, "Щит от стрел", "Против дальних атак используется Парирование, если оно выше Уклонения."),
         (1, "Скрытая атака", "Атаки из скрытности получают +50% урона и +25 точности."),
         (2, "Мастер парного оружия I", "+3% шанса ударить дважды, +2% — трижды; +5% урона."),
@@ -195,6 +195,18 @@ def _attach_wiki_media() -> None:
 
 
 _attach_wiki_media()
+
+# После сопоставления с английскими именами Wiki заменяем ручные варианты на
+# официальный русский текст самой игры. Это также исправляет полные описания.
+from official_localization import official_entity  # noqa: E402
+
+for _talent in TALENTS:
+    _entity = official_entity(_talent.get("name_en", ""))
+    if not _entity:
+        continue
+    _talent["name"] = localize_game_text(_entity.get("name_ru") or _talent["name"])
+    if _entity.get("description_ru"):
+        _talent["description"] = localize_game_text(_entity["description_ru"])
 
 TALENT_BY_NAME = {talent["name"].casefold(): talent for talent in TALENTS}
 TALENTS_BY_TREE = {tree: [talent for talent in TALENTS if talent["tree"] == tree] for tree in TALENT_TREES}

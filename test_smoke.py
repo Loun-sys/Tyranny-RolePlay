@@ -10,6 +10,7 @@ from registration_api import _configuration, _validate_payload
 from talent_data import TALENTS
 from extended_talent_data import parse_faction_talents, parse_talent_page
 from localization import localize_game_text, seconds_to_rounds
+from official_localization import official_spell_details
 from training_combat import TrainingSession
 from sigil_data import SIGIL_LIBRARY, sigil_key_from_scroll_url, spell_runtime_profile, validate_formula
 from constants import (
@@ -56,8 +57,16 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             without_image = (await db.execute_fetchall(
                 "SELECT COUNT(*) AS total FROM item_catalog WHERE image_url=''"
             ))[0]["total"]
+            without_lore = (await db.execute_fetchall(
+                "SELECT COUNT(*) AS total FROM item_catalog WHERE lore=''"
+            ))[0]["total"]
         self.assertEqual(total, 882)
         self.assertEqual(without_image, 0)
+        self.assertEqual(without_lore, 0)
+        spell_details = official_spell_details()
+        self.assertEqual(len(spell_details), 64)
+        self.assertTrue(all(row["name"] and row["description"] for row in spell_details.values()))
+        self.assertEqual(spell_details[("Огонь", "Дальний удар")]["name"], "Огненный шар")
         self.assertEqual(seconds_to_rounds(10), "1 раунд")
         self.assertEqual(seconds_to_rounds(25), "2,5 раунда")
         localized = localize_game_text("Барик получает эффект на 30 секунд")
@@ -345,7 +354,7 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         formula = validate_formula(
             "core:Огонь", "expression:Сосредоточенное намерение", [], [], known, 99,
         )
-        self.assertEqual((formula["default_name"], formula["difficulty"]), ("Обжигающая ладонь", 15))
+        self.assertEqual((formula["default_name"], formula["difficulty"]), ("Горящая ладонь", 15))
         with self.assertRaisesRegex(ValueError, "Сначала изучите"):
             validate_formula("core:Камень", "expression:Сосредоточенное намерение", [], [], known, 99)
 

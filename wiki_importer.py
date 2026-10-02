@@ -127,6 +127,7 @@ def _parse_page(page: dict[str, Any], category: str, image_urls: dict[str, str])
         "slot": _infer_slot(actual_category, text),
         "quality": quality,
         "description": text or f"{title} — предмет из игры «Тирания».",
+        "lore": text or f"{title} — предмет из игры «Тирания».",
         "image_url": original,
         "source_url": WIKI + urllib.parse.quote(title.replace(" ", "_")),
         "value": int(_number((r"Стоимость\s*[:—-]\s*(\d+)", r"Цена\s*[:—-]\s*(\d+)"), text)),

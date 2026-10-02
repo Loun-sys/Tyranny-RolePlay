@@ -9,12 +9,13 @@ import json
 import re
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, unquote, urlparse
 
 import aiohttp
 
 from localization import localize_game_text
 from russian_translation import translate_title as translate_generic
+from official_localization import official_entity
 
 
 BACKGROUND_TALENT_PAGES = {
@@ -222,13 +223,16 @@ def parse_talent_page(wikitext: str, background: str, page_title: str) -> list[d
             tier_match = re.search(r"\d+", requirement)
             tier = int(tier_match.group()) if tier_match else 0
             english_name = _clean_wiki(icon.group(2))
+            entity = official_entity(english_name) or {}
             result.append({
-                "tree": tree, "tier": tier, "name": _translate_title(english_name),
-                "description": _translate_effect(effect),
+                "tree": tree, "tier": tier,
+                "name": localize_game_text(entity.get("name_ru") or _translate_title(english_name)),
+                "description": localize_game_text(entity.get("description_ru") or _translate_effect(effect)),
                 "requires": _translate_effect(requirement), "background": background,
                 "automatic_level": tier if section_en == "Songs" and tier else 0,
                 "icon_url": _icon_url(icon.group(1)),
                 "source_url": f"https://tyranny.fandom.com/wiki/{quote(english_name.replace(' ', '_'))}",
+                "name_en": english_name,
             })
     return result
 
@@ -249,15 +253,33 @@ def parse_faction_talents(wikitext: str) -> list[dict[str, Any]]:
         if not axis or not tier_match or not faction_en:
             continue
         english_name = _clean_wiki(icon.group(2))
+        entity = official_entity(english_name) or {}
         result.append({
-            "name": _translate_title(english_name),
-            "description": _translate_effect(_clean_wiki(cells[-2])),
+            "name": localize_game_text(entity.get("name_ru") or _translate_title(english_name)),
+            "description": localize_game_text(entity.get("description_ru") or _translate_effect(_clean_wiki(cells[-2]))),
             "faction": FACTION_TRANSLATIONS.get(faction_en, faction_en), "axis": axis,
             "tier": int(tier_match.group(1)),
             "icon_url": _icon_url(icon.group(1)),
             "source_url": f"https://tyranny.fandom.com/wiki/{quote(english_name.replace(' ', '_'))}",
+            "name_en": english_name,
         })
     return result
+
+
+def _canonicalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    for rows in [*payload.get("backgrounds", {}).values(), payload.get("factions", [])]:
+        for talent in rows:
+            english_name = talent.get("name_en", "")
+            if not english_name:
+                english_name = unquote(urlparse(talent.get("source_url", "")).path.rsplit("/", 1)[-1]).replace("_", " ")
+            entity = official_entity(english_name)
+            if not entity:
+                continue
+            talent["name_en"] = english_name
+            talent["name"] = localize_game_text(entity.get("name_ru") or talent.get("name", ""))
+            if entity.get("description_ru"):
+                talent["description"] = localize_game_text(entity["description_ru"])
+    return payload
 
 
 async def load_extended_talents(data_dir: Path) -> dict[str, Any]:
@@ -278,7 +300,9 @@ async def load_extended_talents(data_dir: Path) -> dict[str, Any]:
     except (aiohttp.ClientError, asyncio.TimeoutError, KeyError, ValueError):
         if cache.is_file():
             try:
-                return json.loads(cache.read_text(encoding="utf-8"))
+                payload = _canonicalize_payload(json.loads(cache.read_text(encoding="utf-8")))
+                cache.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+                return payload
             except (OSError, json.JSONDecodeError):
                 pass
         return {"backgrounds": {}, "factions": []}
@@ -286,7 +310,7 @@ async def load_extended_talents(data_dir: Path) -> dict[str, Any]:
         background: parse_talent_page(texts[page], background, page)
         for background, page in BACKGROUND_TALENT_PAGES.items()
     }
-    payload = {"backgrounds": backgrounds, "factions": parse_faction_talents(texts["Reputation"])}
+    payload = _canonicalize_payload({"backgrounds": backgrounds, "factions": parse_faction_talents(texts["Reputation"])})
     try:
         cache.parent.mkdir(parents=True, exist_ok=True)
         cache.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")

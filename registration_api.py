@@ -26,6 +26,7 @@ from talent_data import TALENT_BY_NAME, TALENTS
 from extended_talent_data import load_extended_talents
 from training_combat import TrainingSession
 from sigil_data import SPELL_NAMES, SIGIL_LIBRARY, SIGILS_BY_KEY, sigil_key_from_scroll_url, validate_formula
+from official_localization import official_spell_details
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -324,6 +325,10 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "capacity": await db.inventory_capacity(character_id),
         "spells": await db.spells(character_id),
         "spellNames": {f"{core}|{expression}": name for (core, expression), name in SPELL_NAMES.items()},
+        "spellDetails": {
+            f"{core}|{expression}": details
+            for (core, expression), details in official_spell_details().items()
+        },
         "derived": _derived(character, inventory),
         "equipmentSlots": list(EQUIPMENT_SLOTS),
         "equipmentLimits": await db.equipment_limits(character_id),

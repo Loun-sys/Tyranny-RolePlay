@@ -1,6 +1,9 @@
 """Русские справочники правил Tyranny для Discord-адаптации."""
 
+from urllib.parse import unquote
+
 from localization import localize_game_text
+from official_localization import official_entity
 
 ATTRIBUTES = ("Сила", "Искусность", "Быстрота", "Живучесть", "Смекалка", "Стойкость")
 
@@ -90,7 +93,7 @@ SPECIALIZATION_ABILITY_CHOICES = {
     "Двуручный меч": ("Раскол", "Секущий удар"),
     "Короткий лук": ("Выстрел в сердце", "Хромота"),
     "Дротик": ("Выстрел в сердце", "Хромота"),
-    "Парное оружие": ("Шквал ударов", "Режущий удар"),
+    "Парное оружие": ("Шквал ударов", "Рассечение"),
     "Безоружные атаки": ("Шквал ударов", "Удар ладонью"),
     "Заклинания молний": ("Заряженный кулак",),
     "Заклинания рвения": ("Касание титана",),
@@ -141,7 +144,7 @@ ABILITY_DETAILS = {
         "requirements": "Вершитель Судеб · парное оружие или безоружный бой",
         "icon": "assets/abilities/flurry-of-blows.webp", "source": "https://tyranny.fandom.com/wiki/Flurry_of_Blows",
     },
-    "Режущий удар": {
+    "Рассечение": {
         "description": "Точный удар вскрывает крупную артерию и оставляет цель истекать кровью.",
         "type": "Ловкость · активная", "cooldown": "20 сек.", "duration": "30 сек.",
         "effects": ("120% урона оружия", "Кровотечение"),
@@ -186,6 +189,10 @@ ABILITY_DETAILS = {
 }
 
 for _details in ABILITY_DETAILS.values():
+    _english_name = unquote(_details.get("source", "").rsplit("/", 1)[-1]).replace("_", " ")
+    _official = official_entity(_english_name)
+    if _official and _official.get("description_ru"):
+        _details["description"] = _official["description_ru"]
     for _field in ("description", "type", "cooldown", "duration", "requirements"):
         if _field in _details:
             _details[_field] = localize_game_text(str(_details[_field]))
@@ -239,10 +246,10 @@ WEAPON_SKILLS = (
 )
 SUPPORT_SKILLS = ("Атлетика", "Парирование", "Уклонение", "Знания", "Хитроумие")
 MAGIC_SKILLS = (
-    "Управление истощением", "Управление рвением", "Управление огнём",
+    "Управление истощением", "Управление эмоциями", "Управление огнём",
     "Управление силой", "Управление холодом", "Управление могильным светом",
     "Управление иллюзиями", "Управление жизнью", "Управление молниями",
-    "Управление камнем", "Управление энергией",
+    "Управление камнем", "Управление рвением",
 )
 SKILLS = WEAPON_SKILLS + SUPPORT_SKILLS + MAGIC_SKILLS
 
@@ -277,7 +284,7 @@ DAMAGE_TYPES = ("Рубящий", "Колющий", "Дробящий", "Огн�
 SIGIL_TYPES = ("Основа", "Выражение", "Акцент", "Усиление")
 CORE_SIGILS = (
     "Истощение", "Эмоции", "Огонь", "Сила", "Холод", "Иллюзия",
-    "Жизнь", "Молния", "Камень", "Терратус", "Энергия",
+    "Жизнь", "Молния", "Камень", "Терратус", "Рвение",
 )
 EXPRESSION_SIGILS = (
     "Область влияния", "Направленная сила", "Хаотическое нисхождение",

@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from localization import localize_game_text
+from official_localization import official_text, translations as official_translations
 
 EXACT_TITLES = {
     "Agate": "Агат",
@@ -356,6 +357,9 @@ def transliterate(word: str) -> str:
 
 
 def translate_title(title: str) -> str:
+    official = official_translations().get(re.sub(r"\s+", " ", re.sub(r"\[/?url(?:=[^]]+)?\]", "", title)).strip().replace("’", "'").casefold())
+    if official:
+        return localize_game_text(official)
     if title in EXACT_TITLES:
         return EXACT_TITLES[title]
     result = title
@@ -381,6 +385,9 @@ def translate_title(title: str) -> str:
 
 
 def translate_effect(text: str) -> str:
+    official = official_text(text, "")
+    if official and official != text:
+        return official
     replacements = {
         "Restores": "Восстанавливает", "Health": "здоровья", "Instant": "Мгновенно",
         "On critical hit": "При критическом попадании", "Damage": "урона",

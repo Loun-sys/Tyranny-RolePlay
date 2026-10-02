@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS item_catalog (
     slot TEXT NOT NULL DEFAULT '',
     quality TEXT NOT NULL DEFAULT 'Обычное',
     description TEXT NOT NULL DEFAULT '',
+    lore TEXT NOT NULL DEFAULT '',
     image_url TEXT NOT NULL DEFAULT '',
     source_url TEXT NOT NULL DEFAULT '',
     value INTEGER NOT NULL DEFAULT 0,
@@ -226,6 +227,9 @@ class Database:
             spell_slots_added = "equipped_slot" not in spell_columns
             if "equipped_slot" not in spell_columns:
                 await db.execute("ALTER TABLE spells ADD COLUMN equipped_slot INTEGER")
+            item_columns = {row["name"] for row in await db.execute_fetchall("PRAGMA table_info(item_catalog)")}
+            if "lore" not in item_columns:
+                await db.execute("ALTER TABLE item_catalog ADD COLUMN lore TEXT NOT NULL DEFAULT ''")
             await db.execute(
                 "CREATE UNIQUE INDEX IF NOT EXISTS idx_spell_equipped_slot "
                 "ON spells(character_id,equipped_slot) WHERE equipped_slot IS NOT NULL"
@@ -236,6 +240,34 @@ class Database:
                 "SELECT character_id,'Стойкость',value FROM attributes WHERE name='Решимость'"
             )
             await db.execute("DELETE FROM attributes WHERE name='Решимость'")
+            # Старое ручное название школы Vigor заменено официальным «Рвение».
+            await db.execute("UPDATE spells SET core='Рвение' WHERE core='Энергия'")
+            await db.execute(
+                "UPDATE character_sigils SET sigil_key='core:Рвение' WHERE sigil_key='core:Энергия' "
+                "AND NOT EXISTS (SELECT 1 FROM character_sigils newer WHERE newer.character_id=character_sigils.character_id AND newer.sigil_key='core:Рвение')"
+            )
+            await db.execute("DELETE FROM character_sigils WHERE sigil_key='core:Энергия'")
+            await db.execute(
+                "INSERT OR IGNORE INTO skills(character_id,name,value,experience) "
+                "SELECT character_id,'Управление рвением',value,experience FROM skills WHERE name='Управление энергией'"
+            )
+            await db.execute(
+                "UPDATE skills SET value=MAX(value,COALESCE((SELECT old.value FROM skills old "
+                "WHERE old.character_id=skills.character_id AND old.name='Управление энергией'),0)), "
+                "experience=MAX(experience,COALESCE((SELECT old.experience FROM skills old "
+                "WHERE old.character_id=skills.character_id AND old.name='Управление энергией'),0)) "
+                "WHERE name='Управление рвением'"
+            )
+            await db.execute("DELETE FROM skills WHERE name='Управление энергией'")
+            await db.execute(
+                "UPDATE talents SET name='Рассечение' WHERE name='Режущий удар' "
+                "AND NOT EXISTS (SELECT 1 FROM talents newer WHERE newer.character_id=talents.character_id AND newer.name='Рассечение')"
+            )
+            await db.execute("DELETE FROM talents WHERE name='Режущий удар'")
+            await db.execute(
+                "INSERT OR IGNORE INTO skills(character_id,name,value,experience) "
+                "SELECT id,?,0,0 FROM characters", ("Управление эмоциями",)
+            )
             # Старые происхождения переводятся в новые архетипы с личными деревьями развития.
             for old, new in {
                 "Боец арены": "Танцующий", "Солдат": "Авангард", "Охотник": "Зверолюд",
@@ -902,6 +934,7 @@ class Database:
                 item = dict(source_item)
                 item["name"] = localize_game_text(str(item.get("name", ""))).replace("Tyranny", "Тирания")
                 item["description"] = localize_game_text(str(item.get("description", ""))).replace("Tyranny", "Тирания")
+                item["lore"] = localize_game_text(str(item.get("lore", ""))).replace("Tyranny", "Тирания")
                 item["properties"] = {
                     localize_game_text(str(key)): localize_game_text(str(value)).replace("Tyranny", "Тирания")
                     for key, value in dict(item.get("properties") or {}).items()
@@ -920,12 +953,12 @@ class Database:
                         )
                         name = source_rows[0]["name"] if conflict else item["name"]
                         await db.execute(
-                            """UPDATE item_catalog SET name=?,category=?,slot=?,quality=?,description=?,
+                            """UPDATE item_catalog SET name=?,category=?,slot=?,quality=?,description=?,lore=?,
                                image_url=?,value=?,weight=?,hands=?,damage_min=?,damage_max=?,armor=?,
                                recovery=?,properties=?,wiki_page_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=?""",
                             (
                                 name, item.get("category", "Прочее"), item.get("slot", ""),
-                                item.get("quality", "Обычное"), item.get("description", ""), item.get("image_url", ""),
+                                item.get("quality", "Обычное"), item.get("description", ""), item.get("lore", ""), item.get("image_url", ""),
                                 int(item.get("value", 0) or 0), float(item.get("weight", 0) or 0), int(item.get("hands", 0) or 0),
                                 int(item.get("damage_min", 0) or 0), int(item.get("damage_max", 0) or 0),
                                 int(item.get("armor", 0) or 0), float(item.get("recovery", 0) or 0),
@@ -935,11 +968,11 @@ class Database:
                         continue
                 await db.execute(
                     """INSERT INTO item_catalog(
-                       name,category,slot,quality,description,image_url,source_url,value,weight,hands,
+                       name,category,slot,quality,description,lore,image_url,source_url,value,weight,hands,
                        damage_min,damage_max,armor,recovery,properties,wiki_page_id)
-                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                        ON CONFLICT(name) DO UPDATE SET category=excluded.category,slot=excluded.slot,
-                       quality=excluded.quality,description=excluded.description,
+                       quality=excluded.quality,description=excluded.description,lore=excluded.lore,
                        image_url=CASE WHEN excluded.image_url='' THEN item_catalog.image_url ELSE excluded.image_url END,
                        source_url=excluded.source_url,value=excluded.value,weight=excluded.weight,
                        hands=excluded.hands,damage_min=excluded.damage_min,damage_max=excluded.damage_max,
@@ -947,7 +980,7 @@ class Database:
                        wiki_page_id=excluded.wiki_page_id,updated_at=CURRENT_TIMESTAMP""",
                     (
                         item["name"], item.get("category", "Прочее"), item.get("slot", ""),
-                        item.get("quality", "Обычное"), item.get("description", ""), item.get("image_url", ""),
+                        item.get("quality", "Обычное"), item.get("description", ""), item.get("lore", ""), item.get("image_url", ""),
                         source_url, int(item.get("value", 0) or 0), float(item.get("weight", 0) or 0),
                         int(item.get("hands", 0) or 0), int(item.get("damage_min", 0) or 0),
                         int(item.get("damage_max", 0) or 0), int(item.get("armor", 0) or 0),
