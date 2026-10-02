@@ -99,6 +99,7 @@ class TrainingSession:
     player_health_max: int = 0
     disengaged: bool = False
     preview_cells: set[tuple[int, int]] = field(default_factory=set)
+    active_stance: str = ""
 
     def __post_init__(self) -> None:
         spec = TACTICAL_MAPS[self.map_key]
@@ -296,6 +297,17 @@ class TrainingSession:
             line = f"Раунд {self.round_number}: выбран комплект оружия {number}; основное действие не потрачено."
             self.log.append(line)
             return {"result": "Комплект сменён", "damage": 0, "line": line}
+        if kind == "stance":
+            stances = {
+                talent["name"] for talent in character.get("talents", [])
+                if str(talent.get("name", "")).startswith("Стойка:")
+            }
+            if name not in stances:
+                raise ValueError("Эта стойка не изучена персонажем.")
+            self.active_stance = name
+            line = f"Раунд {self.round_number}: персонаж принимает стойку «{name.removeprefix('Стойка:').strip()}»."
+            self.log.append(line)
+            return {"result": "Стойка изменена", "damage": 0, "line": line}
 
         result: dict[str, Any]
         if kind == "attack":
@@ -415,6 +427,12 @@ class TrainingSession:
         attack = derived.get("attack", {})
         attrs = derived.get("effectiveAttributes", character.get("attributes", {}))
         owned = {talent["name"] for talent in character.get("talents", [])}
+        stances = [
+            {"name": talent["name"], "description": talent.get("description", ""),
+             "icon": (ABILITY_DETAILS.get(talent["name"]) or {}).get("icon", "")}
+            for talent in character.get("talents", [])
+            if str(talent.get("name", "")).startswith("Стойка:")
+        ]
         distance, weapon_range = self._distance(), self._weapon_range(attack)
         selected_target = self._target()
         cover_name, cover_bonus = self.grid.cover(self.player_position, self.target_positions[self.selected_target_id])
@@ -486,13 +504,15 @@ class TrainingSession:
             "dummy": selected_target,
             "targets": [self._target(key) for key in self._alive_targets()],
             "character": {"name": character["name"], "portraitUrl": character.get("portrait_url", ""),
+                          "health": self.player_health, "healthMax": self.player_health_max,
                           "activeWeaponSet": self.active_weapon_set, "weaponSets": weapon_sets},
             "turn": {"actorId": "player", "movementRemaining": self.movement_remaining,
                      "movementMax": BASE_MOVEMENT, "actionAvailable": self.action_available,
                      "distanceToTarget": distance, "inControlZone": self.player_position in controlled,
                      "cover": cover_name, "coverBonus": cover_bonus, "disengaged": self.disengaged},
             "initiative": self.initiative, "grid": grid_payload,
-            "derived": derived, "actions": actions, "cooldowns": self.cooldowns,
+            "derived": derived, "actions": actions, "stances": stances, "activeStance": self.active_stance,
+            "cooldowns": self.cooldowns,
             "log": self.log[-40:][::-1],
             "summary": {"damage": self.damage_total, "attacks": self.attacks, "hits": self.hits,
                         "accuracy": round(self.hits / self.attacks * 100) if self.attacks else 0},

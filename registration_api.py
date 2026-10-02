@@ -324,6 +324,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "inventory": inventory,
         "capacity": await db.inventory_capacity(character_id),
         "spells": await db.spells(character_id),
+        "combatQuickbar": await db.combat_quickbar(character_id),
         "spellNames": {f"{core}|{expression}": name for (core, expression), name in SPELL_NAMES.items()},
         "spellDetails": {
             f"{core}|{expression}": details
@@ -503,6 +504,32 @@ async def portal_weapon_set(request: web.Request) -> web.Response:
     if not ok:
         raise web.HTTPConflict(reason=message)
     return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
+
+
+async def portal_combat_quickbar(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    try:
+        slot = int(payload.get("slot", 0))
+    except (TypeError, ValueError) as error:
+        raise web.HTTPBadRequest(reason="Некорректная ячейка быстрого доступа.") from error
+    kind, name = str(payload.get("kind", "")).strip(), str(payload.get("name", "")).strip()
+    if kind or name:
+        if kind not in {"attack", "ability", "spell", "disengage"} or not name:
+            raise web.HTTPBadRequest(reason="Неизвестное боевое действие.")
+        character = await request.app["db"].get_character_by_id(cid)
+        owned = {row["name"] for row in character.get("talents", [])}
+        spells = {row["name"] for row in await request.app["db"].spells(cid) if row.get("equipped_slot") is not None}
+        valid = kind == "attack" and name == "Обычная атака"
+        valid = valid or kind == "ability" and name in owned
+        valid = valid or kind == "spell" and name in spells
+        valid = valid or kind == "disengage" and name == "Осторожный отход"
+        if not valid:
+            raise web.HTTPConflict(reason="Это действие сейчас недоступно персонажу.")
+    try:
+        await request.app["db"].set_combat_quickbar(cid, slot, kind, name)
+    except ValueError as error:
+        raise web.HTTPBadRequest(reason=str(error)) from error
+    return web.json_response({"ok": True, "message": "Быстрая ячейка сохранена.", **await _dashboard(request, cid)})
 
 
 async def _admin_owner(request: web.Request) -> tuple[int, int]:
@@ -761,6 +788,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/training/start", training_start)
     app.router.add_post("/api/portal/{token}/training/action", training_action)
     app.router.add_post("/api/portal/{token}/training/reset", training_reset)
+    app.router.add_post("/api/portal/{token}/combat-quickbar", portal_combat_quickbar)
     app.router.add_get("/api/admin/{token}", admin_home)
     app.router.add_get("/api/admin/{token}/catalog", admin_catalog)
     app.router.add_get("/api/admin/{token}/character/{character_id}", admin_character)

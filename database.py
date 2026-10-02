@@ -129,6 +129,13 @@ CREATE TABLE IF NOT EXISTS spells (
     equipped_slot INTEGER,
     UNIQUE(character_id, name)
 );
+CREATE TABLE IF NOT EXISTS combat_quickbar (
+    character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+    slot INTEGER NOT NULL CHECK(slot BETWEEN 1 AND 5),
+    action_kind TEXT NOT NULL,
+    action_name TEXT NOT NULL,
+    PRIMARY KEY(character_id, slot)
+);
 CREATE TABLE IF NOT EXISTS reputation (
     character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
     faction TEXT NOT NULL,
@@ -1316,6 +1323,30 @@ class Database:
                 spell["enhancements"] = json.loads(spell["enhancements"])
                 result.append(spell)
             return result
+
+    async def combat_quickbar(self, character_id: int) -> list[dict[str, Any]]:
+        async with self.connect() as db:
+            rows = await db.execute_fetchall(
+                "SELECT slot,action_kind,action_name FROM combat_quickbar "
+                "WHERE character_id=? ORDER BY slot", (character_id,),
+            )
+            return [dict(row) for row in rows]
+
+    async def set_combat_quickbar(
+        self, character_id: int, slot: int, action_kind: str = "", action_name: str = "",
+    ) -> None:
+        if not 1 <= int(slot) <= 5:
+            raise ValueError("Номер быстрой ячейки должен быть от 1 до 5.")
+        async with self.connect() as db:
+            await db.execute(
+                "DELETE FROM combat_quickbar WHERE character_id=? AND slot=?", (character_id, int(slot)),
+            )
+            if action_kind and action_name:
+                await db.execute(
+                    "INSERT INTO combat_quickbar(character_id,slot,action_kind,action_name) VALUES(?,?,?,?)",
+                    (character_id, int(slot), action_kind, action_name),
+                )
+            await db.commit()
 
     async def adjust_reputation(
         self, character_id: int, faction: str, axis: str, delta: int,

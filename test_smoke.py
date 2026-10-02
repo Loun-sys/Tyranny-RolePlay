@@ -78,7 +78,10 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             "name": "Испытатель", "portrait_url": "", "experience": 125,
             "attributes": {"Сила": 12, "Смекалка": 11, "Быстрота": 10},
             "skills": {"Одноручное оружие": {"value": 42}},
-            "talents": [{"name": "Удар щитом"}],
+            "talents": [
+                {"name": "Удар щитом"},
+                {"name": "Стойка: Страж", "description": "+2 брони против физических атак."},
+            ],
         }
         derived = {
             "attack": {"accuracy": 42, "damageMin": 8, "damageMax": 12, "skill": "Одноручное оружие"},
@@ -86,6 +89,9 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             "armor": 3,
         }
         session = TrainingSession(character_id=1)
+        stance = session.act({"kind": "stance", "name": "Стойка: Страж"}, character, derived, [], 2)
+        self.assertEqual(session.active_stance, "Стойка: Страж")
+        self.assertIn("принимает стойку", stance["line"])
         session.act({"kind": "move", "x": 8, "y": 4}, character, derived, [], 2)
         self.assertEqual(session.movement_remaining, 0)
         session.act({"kind": "end_turn"}, character, derived, [], 2)
@@ -105,6 +111,23 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertIn("атаку по возможности", opportunity["line"])
         session.act({"kind": "select_target", "targetId": "dummy_left"}, character, derived, [], 2)
         self.assertEqual(session.selected_target_id, "dummy_left")
+
+    async def test_combat_quickbar_is_persistent_and_replaceable(self):
+        async with self.db.connect() as db:
+            await db.execute(
+                "INSERT INTO characters(guild_id,user_id,name,background,specialization_1,specialization_2) "
+                "VALUES(1,2,'Герой','Книгочей','Меч и щит','Заклинания льда')"
+            )
+            await db.commit()
+            character_id = int((await db.execute_fetchall("SELECT id FROM characters"))[0]["id"])
+        await self.db.set_combat_quickbar(character_id, 1, "attack", "Обычная атака")
+        await self.db.set_combat_quickbar(character_id, 2, "spell", "Ледяное копьё")
+        rows = await self.db.combat_quickbar(character_id)
+        self.assertEqual([(row["slot"], row["action_kind"]) for row in rows], [(1, "attack"), (2, "spell")])
+        await self.db.set_combat_quickbar(character_id, 2, "ability", "Удар щитом")
+        self.assertEqual((await self.db.combat_quickbar(character_id))[1]["action_name"], "Удар щитом")
+        await self.db.set_combat_quickbar(character_id, 1)
+        self.assertEqual([row["slot"] for row in await self.db.combat_quickbar(character_id)], [2])
 
     async def test_tactical_grid_movement_obstacles_and_initiative(self):
         grid = TacticalGrid(7, 5, {(3, 1), (3, 2), (3, 3)})
