@@ -1,0 +1,1262 @@
+{
+  "fx_spellicon_heal_aura": {
+    "file": "fx_spellicon_heal_aura.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_fire_02": {
+    "file": "fx_fire_02.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_shock_armor": {
+    "file": "fx_spellicon_shock_armor.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravity": {
+    "file": "fx_spellicon_gravity.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_flare04": {
+    "file": "fx_flare04.png",
+    "source": "resources.assets",
+    "width": 128,
+    "height": 128
+  },
+  "fx_lightning01": {
+    "file": "fx_lightning01.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_flare_beam02": {
+    "file": "fx_flare_beam02.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 64
+  },
+  "fx_fire_03": {
+    "file": "fx_fire_03.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_smoke_warp01": {
+    "file": "fx_smoke_warp01.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "spell_var_guidance_5": {
+    "file": "spell_var_guidance_5.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shock_ball": {
+    "file": "fx_spellicon_shock_ball.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shape_trap": {
+    "file": "fx_spellicon_shape_trap.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_strength_cone": {
+    "file": "fx_spellicon_strength_cone.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_strength_aura": {
+    "file": "fx_spellicon_strength_aura.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_fireround_a_01": {
+    "file": "fx_fireround_a_01.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_heal_bolt": {
+    "file": "fx_spellicon_heal_bolt.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shape_rain": {
+    "file": "fx_spellicon_shape_rain.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "tut_hud_notification": {
+    "file": "tut_hud_notification.png",
+    "source": "resources.assets",
+    "width": 364,
+    "height": 132
+  },
+  "spell_var_guidance_3": {
+    "file": "spell_var_guidance_3.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_fire01": {
+    "file": "fx_fire01.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 512
+  },
+  "spell_var_guidance_4": {
+    "file": "spell_var_guidance_4.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_flare01B": {
+    "file": "fx_flare01B.png",
+    "source": "resources.assets",
+    "width": 128,
+    "height": 128
+  },
+  "fx_flare02b": {
+    "file": "fx_flare02b.png",
+    "source": "resources.assets",
+    "width": 128,
+    "height": 128
+  },
+  "fx_flare05": {
+    "file": "fx_flare05.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_shape_wpn": {
+    "file": "fx_spellicon_shape_wpn.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravelight_bolt": {
+    "file": "fx_spellicon_gravelight_bolt.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "abl_rep_extinguish": {
+    "file": "abl_rep_extinguish.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shape_cone": {
+    "file": "fx_spellicon_shape_cone.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_warp02": {
+    "file": "fx_smoke_warp02.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 512
+  },
+  "fx_fire_04_silver_style": {
+    "file": "fx_fire_04_silver_style.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_spellicon_strength_melee": {
+    "file": "fx_spellicon_strength_melee.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "spell_var_guidance_1": {
+    "file": "spell_var_guidance_1.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_lightning_bolt04_style": {
+    "file": "fx_lightning_bolt04_style.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 512
+  },
+  "fx_spellicon_shock": {
+    "file": "fx_spellicon_shock.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-Examine": {
+    "file": "UI-HUD-Examine.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire": {
+    "file": "fx_spellicon_fire.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravelight_weapon": {
+    "file": "fx_spellicon_gravelight_weapon.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_wisp01": {
+    "file": "fx_smoke_wisp01.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 512
+  },
+  "fx_spellicon_gravelight_aura": {
+    "file": "fx_spellicon_gravelight_aura.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "field_interaction_extinguish_1": {
+    "file": "field_interaction_extinguish_1.png",
+    "source": "resources.assets",
+    "width": 140,
+    "height": 88
+  },
+  "UI-HUD-DoorClosed_64": {
+    "file": "UI-HUD-DoorClosed_64.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_lightning_arc05": {
+    "file": "fx_lightning_arc05.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 64
+  },
+  "fx_flare_beam01b": {
+    "file": "fx_flare_beam01b.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 64
+  },
+  "UI-HUD-NoGo": {
+    "file": "UI-HUD-NoGo.png",
+    "source": "resources.assets",
+    "width": 32,
+    "height": 32
+  },
+  "fx_Smoke01_C": {
+    "file": "fx_Smoke01_C.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_lightning01_style": {
+    "file": "fx_lightning01_style.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_spellicon_gravity_bolt": {
+    "file": "fx_spellicon_gravity_bolt.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shock_weapon": {
+    "file": "fx_spellicon_shock_weapon.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "poison_fatiguing_toxin_L": {
+    "file": "poison_fatiguing_toxin_L.png",
+    "source": "resources.assets",
+    "width": 72,
+    "height": 72
+  },
+  "fx_flare_beam01": {
+    "file": "fx_flare_beam01.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 64
+  },
+  "fx_spellicon_shock_bolt": {
+    "file": "fx_spellicon_shock_bolt.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shock_cone": {
+    "file": "fx_spellicon_shock_cone.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "poison_fatiguing_toxin_S": {
+    "file": "poison_fatiguing_toxin_S.png",
+    "source": "resources.assets",
+    "width": 42,
+    "height": 42
+  },
+  "fx_spellicon_strength_armor": {
+    "file": "fx_spellicon_strength_armor.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_bolt": {
+    "file": "fx_spellicon_fire_bolt.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shape_bolt": {
+    "file": "fx_spellicon_shape_bolt.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravelight_melee": {
+    "file": "fx_spellicon_gravelight_melee.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_lightning_bolt04": {
+    "file": "fx_lightning_bolt04.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 512
+  },
+  "Core-Heal": {
+    "file": "Core-Heal.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_flare_beam01b_bw": {
+    "file": "fx_flare_beam01b_bw.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 64
+  },
+  "fx_smoke_mist02": {
+    "file": "fx_smoke_mist02.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 512
+  },
+  "UI-HUD-DoorLocked": {
+    "file": "UI-HUD-DoorLocked.png",
+    "source": "resources.assets",
+    "width": 32,
+    "height": 32
+  },
+  "UI-HUD-DoorOpen": {
+    "file": "UI-HUD-DoorOpen.png",
+    "source": "resources.assets",
+    "width": 32,
+    "height": 32
+  },
+  "fx_fire_trail_silver_01": {
+    "file": "fx_fire_trail_silver_01.png",
+    "source": "resources.assets",
+    "width": 128,
+    "height": 128
+  },
+  "UI-HUD-NoGo_64": {
+    "file": "UI-HUD-NoGo_64.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-DoorLocked_64": {
+    "file": "UI-HUD-DoorLocked_64.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravelight": {
+    "file": "fx_spellicon_gravelight.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_flare_beam01_bw": {
+    "file": "fx_flare_beam01_bw.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 64
+  },
+  "UI-HUD-Examine32": {
+    "file": "UI-HUD-Examine32.png",
+    "source": "resources.assets",
+    "width": 32,
+    "height": 32
+  },
+  "fx_smoke_plume_burst_01": {
+    "file": "fx_smoke_plume_burst_01.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_spellicon_heal_armor": {
+    "file": "fx_spellicon_heal_armor.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Gravelight": {
+    "file": "Core-Gravelight.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_lightning_arc02": {
+    "file": "fx_lightning_arc02.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_smoke_cloud01": {
+    "file": "fx_smoke_cloud01.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "spell_var_guidance_2": {
+    "file": "spell_var_guidance_2.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_fireball_00": {
+    "file": "fx_fireball_00.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_smoke_cloud_thick01": {
+    "file": "fx_smoke_cloud_thick01.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_flare01": {
+    "file": "fx_flare01.png",
+    "source": "resources.assets",
+    "width": 128,
+    "height": 128
+  },
+  "fx_ice_shards01": {
+    "file": "fx_ice_shards01.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_shape_armor": {
+    "file": "fx_spellicon_shape_armor.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_cloud02": {
+    "file": "fx_smoke_cloud02.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_fire_04_style": {
+    "file": "fx_fire_04_style.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "Core-Shock": {
+    "file": "Core-Shock.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_plume_burst_02": {
+    "file": "fx_smoke_plume_burst_02.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "abl_artifact_sanguine_gift": {
+    "file": "abl_artifact_sanguine_gift.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_heat": {
+    "file": "fx_smoke_heat.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_fire_trail_01": {
+    "file": "fx_fire_trail_01.png",
+    "source": "resources.assets",
+    "width": 128,
+    "height": 128
+  },
+  "fx_lightning_arc01_90": {
+    "file": "fx_lightning_arc01_90.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "UI-HUD-DoorOpen_64": {
+    "file": "UI-HUD-DoorOpen_64.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravelight_cone": {
+    "file": "fx_spellicon_gravelight_cone.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Strength": {
+    "file": "Core-Strength.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_flare03": {
+    "file": "fx_flare03.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_smoke_burst01": {
+    "file": "fx_smoke_burst01.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 128
+  },
+  "spell_var_guidance_6": {
+    "file": "spell_var_guidance_6.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_flare_beam03": {
+    "file": "fx_flare_beam03.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 64
+  },
+  "fx_spellicon_shape_field": {
+    "file": "fx_spellicon_shape_field.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shock_rain": {
+    "file": "fx_spellicon_shock_rain.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shape_melee": {
+    "file": "fx_spellicon_shape_melee.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-DoorClosed": {
+    "file": "UI-HUD-DoorClosed.png",
+    "source": "resources.assets",
+    "width": 32,
+    "height": 32
+  },
+  "fx_fire_04": {
+    "file": "fx_fire_04.png",
+    "source": "resources.assets",
+    "width": 512,
+    "height": 256
+  },
+  "UI-HUD-AreaTransition": {
+    "file": "UI-HUD-AreaTransition.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-AreaTransition32": {
+    "file": "UI-HUD-AreaTransition32.png",
+    "source": "resources.assets",
+    "width": 32,
+    "height": 32
+  },
+  "fx_spellicon_strength_weapon": {
+    "file": "fx_spellicon_strength_weapon.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shape_aura": {
+    "file": "fx_spellicon_shape_aura.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_shock_melee": {
+    "file": "fx_spellicon_shock_melee.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_lightning02": {
+    "file": "fx_lightning02.png",
+    "source": "resources.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_strength": {
+    "file": "fx_spellicon_strength.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_heal_melee": {
+    "file": "fx_spellicon_heal_melee.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_heal_field": {
+    "file": "fx_spellicon_heal_field.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_heal": {
+    "file": "fx_spellicon_heal.png",
+    "source": "resources.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravity_armor": {
+    "file": "fx_spellicon_gravity_armor.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Gravity": {
+    "file": "Core-Gravity.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_fire_03_style": {
+    "file": "fx_fire_03_style.png",
+    "source": "sharedassets1.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_spellicon_fire_rain": {
+    "file": "fx_spellicon_fire_rain.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_stone_aura": {
+    "file": "fx_spellicon_stone_aura.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_cloud03": {
+    "file": "fx_smoke_cloud03.png",
+    "source": "sharedassets1.assets",
+    "width": 256,
+    "height": 256
+  },
+  "UI-HUD-Rest": {
+    "file": "UI-HUD-Rest.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_gravity_cone": {
+    "file": "fx_spellicon_gravity_cone.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_mist01": {
+    "file": "fx_smoke_mist01.png",
+    "source": "sharedassets1.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_gravity_aura": {
+    "file": "fx_spellicon_gravity_aura.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_stone_melee": {
+    "file": "fx_spellicon_stone_melee.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_stone_armor": {
+    "file": "fx_spellicon_stone_armor.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-MAPTransition": {
+    "file": "UI-HUD-MAPTransition.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_stone_bolt": {
+    "file": "fx_spellicon_stone_bolt.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Stone": {
+    "file": "Core-Stone.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_stone_rain": {
+    "file": "fx_spellicon_stone_rain.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_stone": {
+    "file": "fx_spellicon_stone.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-EdictMachine": {
+    "file": "UI-HUD-EdictMachine.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-MAPTransition_active": {
+    "file": "UI-HUD-MAPTransition_active.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_04": {
+    "file": "fx_smoke_04.png",
+    "source": "sharedassets1.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_stone_wpn": {
+    "file": "fx_spellicon_stone_wpn.png",
+    "source": "sharedassets1.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_cloud_burst01": {
+    "file": "fx_smoke_cloud_burst01.png",
+    "source": "sharedassets1.assets",
+    "width": 256,
+    "height": 256
+  },
+  "UI-HUD-DoorTransition_active": {
+    "file": "UI-HUD-DoorTransition_active.png",
+    "source": "sharedassets13.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-DoorTransition": {
+    "file": "UI-HUD-DoorTransition.png",
+    "source": "sharedassets13.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-TeleportTransition": {
+    "file": "UI-HUD-TeleportTransition.png",
+    "source": "sharedassets14.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-StairsTransition_active": {
+    "file": "UI-HUD-StairsTransition_active.png",
+    "source": "sharedassets15.assets",
+    "width": 78,
+    "height": 80
+  },
+  "UI-HUD-StairsTransition": {
+    "file": "UI-HUD-StairsTransition.png",
+    "source": "sharedassets15.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-Interact": {
+    "file": "UI-HUD-Interact.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost_melee": {
+    "file": "fx_spellicon_frost_melee.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_cone": {
+    "file": "fx_spellicon_fire_cone.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_wpn": {
+    "file": "fx_spellicon_fire_wpn.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost_bolt": {
+    "file": "fx_spellicon_frost_bolt.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost": {
+    "file": "fx_spellicon_frost.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost_field": {
+    "file": "fx_spellicon_frost_field.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Fire": {
+    "file": "Core-Fire.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_melee": {
+    "file": "fx_spellicon_fire_melee.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost_weapon": {
+    "file": "fx_spellicon_frost_weapon.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost_ball": {
+    "file": "fx_spellicon_frost_ball.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_armor": {
+    "file": "fx_spellicon_fire_armor.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-Interact_active": {
+    "file": "UI-HUD-Interact_active.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_trap": {
+    "file": "fx_spellicon_fire_trap.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost_armor": {
+    "file": "fx_spellicon_frost_armor.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Frost": {
+    "file": "Core-Frost.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-Interact_persist": {
+    "file": "UI-HUD-Interact_persist.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_frost_cone": {
+    "file": "fx_spellicon_frost_cone.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_field": {
+    "file": "fx_spellicon_fire_field.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_aura": {
+    "file": "fx_spellicon_fire_aura.png",
+    "source": "sharedassets2.assets",
+    "width": 64,
+    "height": 64
+  },
+  "SpriteAtlasTexture-ParadoxUI-512x512-fmt5": {
+    "file": "SpriteAtlasTexture-ParadoxUI-512x512-fmt5.png",
+    "source": "sharedassets20.assets",
+    "width": 512,
+    "height": 512
+  },
+  "ACC_SanguineScroll": {
+    "file": "ACC_SanguineScroll.png",
+    "source": "sharedassets20.assets",
+    "width": 72,
+    "height": 72
+  },
+  "MenuFrame_Horizontal_Top": {
+    "file": "MenuFrame_Horizontal_Top.png",
+    "source": "sharedassets20.assets",
+    "width": 88,
+    "height": 16
+  },
+  "MenuFrame_Bottom_Right": {
+    "file": "MenuFrame_Bottom_Right.png",
+    "source": "sharedassets20.assets",
+    "width": 32,
+    "height": 32
+  },
+  "ui_button_square_frame_colored": {
+    "file": "ui_button_square_frame_colored.png",
+    "source": "sharedassets20.assets",
+    "width": 12,
+    "height": 12
+  },
+  "MenuFrame_Bottom_Left": {
+    "file": "MenuFrame_Bottom_Left.png",
+    "source": "sharedassets20.assets",
+    "width": 32,
+    "height": 32
+  },
+  "MenuFrame_Left_Vertical": {
+    "file": "MenuFrame_Left_Vertical.png",
+    "source": "sharedassets20.assets",
+    "width": 16,
+    "height": 512
+  },
+  "MenuFrame_TopLeft": {
+    "file": "MenuFrame_TopLeft.png",
+    "source": "sharedassets20.assets",
+    "width": 28,
+    "height": 16
+  },
+  "MenuFrame_Horizontal_Bottom": {
+    "file": "MenuFrame_Horizontal_Bottom.png",
+    "source": "sharedassets20.assets",
+    "width": 256,
+    "height": 16
+  },
+  "MenuFrame_TopRight": {
+    "file": "MenuFrame_TopRight.png",
+    "source": "sharedassets20.assets",
+    "width": 28,
+    "height": 16
+  },
+  "fx_spellicon_weaken_melee": {
+    "file": "fx_spellicon_weaken_melee.png",
+    "source": "sharedassets21.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_weaken_bolt": {
+    "file": "fx_spellicon_weaken_bolt.png",
+    "source": "sharedassets21.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_weaken_rain": {
+    "file": "fx_spellicon_weaken_rain.png",
+    "source": "sharedassets21.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Weaken": {
+    "file": "Core-Weaken.png",
+    "source": "sharedassets21.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_weaken_aura": {
+    "file": "fx_spellicon_weaken_aura.png",
+    "source": "sharedassets21.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_weaken_cone": {
+    "file": "fx_spellicon_weaken_cone.png",
+    "source": "sharedassets21.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_weaken": {
+    "file": "fx_spellicon_weaken.png",
+    "source": "sharedassets21.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_fire_ring01": {
+    "file": "fx_fire_ring01.png",
+    "source": "sharedassets27.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_spellicon_illusion": {
+    "file": "fx_spellicon_illusion.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_lightning_arc04": {
+    "file": "fx_lightning_arc04.png",
+    "source": "sharedassets3.assets",
+    "width": 512,
+    "height": 64
+  },
+  "fx_spellicon_illusion_armor": {
+    "file": "fx_spellicon_illusion_armor.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Illusion": {
+    "file": "Core-Illusion.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_illusion_melee": {
+    "file": "fx_spellicon_illusion_melee.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_illusion_cone": {
+    "file": "fx_spellicon_illusion_cone.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "ICO_stealth_full": {
+    "file": "ICO_stealth_full.png",
+    "source": "sharedassets3.assets",
+    "width": 128,
+    "height": 128
+  },
+  "Journal-MenuParty": {
+    "file": "Journal-MenuParty.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "hud_selection_portrait_frame": {
+    "file": "hud_selection_portrait_frame.png",
+    "source": "sharedassets3.assets",
+    "width": 100,
+    "height": 140
+  },
+  "StealthAtlas": {
+    "file": "StealthAtlas.png",
+    "source": "sharedassets3.assets",
+    "width": 128,
+    "height": 128
+  },
+  "ICO_stealth_half": {
+    "file": "ICO_stealth_half.png",
+    "source": "sharedassets3.assets",
+    "width": 128,
+    "height": 128
+  },
+  "fx_spellicon_illusion_bolt": {
+    "file": "fx_spellicon_illusion_bolt.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_illusion_line": {
+    "file": "fx_spellicon_illusion_line.png",
+    "source": "sharedassets3.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_stone_field": {
+    "file": "fx_spellicon_stone_field.png",
+    "source": "sharedassets30.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_lightning_bolt01": {
+    "file": "fx_lightning_bolt01.png",
+    "source": "sharedassets33.assets",
+    "width": 512,
+    "height": 512
+  },
+  "fx_spellicon_arcane": {
+    "file": "fx_spellicon_arcane.png",
+    "source": "sharedassets35.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_fire_scorch": {
+    "file": "fx_spellicon_fire_scorch.png",
+    "source": "sharedassets35.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_smoke_burst03": {
+    "file": "fx_smoke_burst03.png",
+    "source": "sharedassets35.assets",
+    "width": 256,
+    "height": 256
+  },
+  "UI-HUD-TeleportTransition_active": {
+    "file": "UI-HUD-TeleportTransition_active.png",
+    "source": "sharedassets388.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_passion_melee": {
+    "file": "fx_spellicon_passion_melee.png",
+    "source": "sharedassets4.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_passion_field": {
+    "file": "fx_spellicon_passion_field.png",
+    "source": "sharedassets4.assets",
+    "width": 64,
+    "height": 64
+  },
+  "Core-Passion": {
+    "file": "Core-Passion.png",
+    "source": "sharedassets4.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_passion_cone": {
+    "file": "fx_spellicon_passion_cone.png",
+    "source": "sharedassets4.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_passion": {
+    "file": "fx_spellicon_passion.png",
+    "source": "sharedassets4.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_passion_bolt": {
+    "file": "fx_spellicon_passion_bolt.png",
+    "source": "sharedassets4.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_passion_aura": {
+    "file": "fx_spellicon_passion_aura.png",
+    "source": "sharedassets4.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_flare05a": {
+    "file": "fx_flare05a.png",
+    "source": "sharedassets64.assets",
+    "width": 256,
+    "height": 256
+  },
+  "UI-HUD-Forge": {
+    "file": "UI-HUD-Forge.png",
+    "source": "sharedassets66.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-Infirmary": {
+    "file": "UI-HUD-Infirmary.png",
+    "source": "sharedassets68.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_spellicon_heal_skypillar": {
+    "file": "fx_spellicon_heal_skypillar.png",
+    "source": "sharedassets68.assets",
+    "width": 64,
+    "height": 64
+  },
+  "UI-HUD-AreaTransition_active": {
+    "file": "UI-HUD-AreaTransition_active.png",
+    "source": "sharedassets8.assets",
+    "width": 64,
+    "height": 64
+  },
+  "fx_fire_04_silver": {
+    "file": "fx_fire_04_silver.png",
+    "source": "sharedassets8.assets",
+    "width": 512,
+    "height": 256
+  },
+  "fx_smoke_cloud03b": {
+    "file": "fx_smoke_cloud03b.png",
+    "source": "sharedassets8.assets",
+    "width": 256,
+    "height": 256
+  },
+  "fx_smoke_mist03": {
+    "file": "fx_smoke_mist03.png",
+    "source": "sharedassets9.assets",
+    "width": 256,
+    "height": 256
+  },
+  "field_interaction_extinguish_2": {
+    "file": "field_interaction_extinguish_2.png",
+    "source": "sharedassets96.assets",
+    "width": 140,
+    "height": 88
+  }
+}

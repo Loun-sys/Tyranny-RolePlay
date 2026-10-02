@@ -100,6 +100,7 @@ class TrainingSession:
     disengaged: bool = False
     preview_cells: set[tuple[int, int]] = field(default_factory=set)
     active_stance: str = ""
+    aim_point: tuple[int, int] | None = None
 
     def __post_init__(self) -> None:
         spec = TACTICAL_MAPS[self.map_key]
@@ -156,10 +157,11 @@ class TrainingSession:
             raise ValueError("Основное действие в этом ходу уже потрачено.")
         if distance == 0:
             return
-        actual = self._distance()
+        target = self.aim_point or self.target_positions[self.selected_target_id]
+        actual = self.grid.distance(self.player_position, target)
         if actual > distance:
             raise ValueError(f"Цель в {actual} м, а дальность действия — {distance} м.")
-        if distance > 1 and not self.grid.line_of_sight(self.player_position, self.dummy_position):
+        if distance > 1 and not self.grid.line_of_sight(self.player_position, target):
             raise ValueError("Линию обзора перекрывает препятствие.")
 
     def _roll_attack(
@@ -211,7 +213,7 @@ class TrainingSession:
         return {"result": "Новый раунд", "damage": 0, "line": line}
 
     def _spell_cells(self, profile: dict[str, Any]) -> set[tuple[int, int]]:
-        target = self.target_positions[self.selected_target_id]
+        target = self.aim_point or self.target_positions[self.selected_target_id]
         targeting = profile.get("targeting", "unit")
         if targeting == "area":
             return self.grid.radius_cells(target, int(profile.get("area", 0)))
@@ -232,6 +234,30 @@ class TrainingSession:
         return [key for key in self._alive_targets() if self.target_positions[key] in cells]
 
     def act(
+        self, payload: dict[str, Any], character: dict[str, Any], derived: dict[str, Any],
+        spells: list[dict[str, Any]], weapon_sets: int,
+    ) -> dict[str, Any]:
+        previous_target = self.selected_target_id
+        kind = str(payload.get("kind", ""))
+        target_id = payload.get("targetId")
+        try:
+            if kind in {"attack", "ability", "spell"} and target_id:
+                if target_id not in self._alive_targets():
+                    raise ValueError("Эта цель недоступна.")
+                self.selected_target_id = str(target_id)
+            if kind == "spell" and "x" in payload and "y" in payload:
+                point = (int(payload["x"]), int(payload["y"]))
+                if not self.grid.inside(point) or point in self.grid.blocked:
+                    raise ValueError("Нельзя применить заклинание в этой клетке.")
+                self.aim_point = point
+            return self._act(payload, character, derived, spells, weapon_sets)
+        except Exception:
+            self.selected_target_id = previous_target
+            raise
+        finally:
+            self.aim_point = None
+
+    def _act(
         self, payload: dict[str, Any], character: dict[str, Any], derived: dict[str, Any],
         spells: list[dict[str, Any]], weapon_sets: int,
     ) -> dict[str, Any]:
@@ -384,14 +410,25 @@ class TrainingSession:
                 spell, skill=int(character.get("skills", {}).get(skill, {}).get("value", 0)),
                 wits=int(attrs.get("Смекалка", 10)), cooldown_multiplier=multiplier,
             )
+            if profile["targeting"] == "unit" and self.aim_point is not None:
+                target_id = next((key for key in self._alive_targets() if self.target_positions[key] == self.aim_point), None)
+                if not target_id:
+                    raise ValueError("Выберите вражеский токен для этого заклинания.")
+                self.selected_target_id = target_id
+            if profile["targeting"] in {"self", "aura"}:
+                self.aim_point = self.player_position
             self._require_action(profile["range"])
-            self.cooldowns[key] = self.round_number + profile["cooldown"] + 1
             if profile["targeting"] == "self":
+                self.cooldowns[key] = self.round_number + profile["cooldown"] + 1
                 line = f"Раунд {self.round_number}: персонаж применяет на себя «{name}»."
                 self.log.append(line)
                 self.action_available = False
                 return {"result": "Заклинание применено", "damage": 0, "line": line}
-            affected = self._spell_targets(profile)
+            affected = [target_id for target_id in self._spell_targets(profile)
+                        if self.grid.cover(self.player_position, self.target_positions[target_id])[0] != "полное"]
+            if not affected:
+                raise ValueError("В области заклинания нет доступных целей.")
+            self.cooldowns[key] = self.round_number + profile["cooldown"] + 1
             results = []
             for target_id in affected:
                 cover_name, cover_bonus = self.grid.cover(self.player_position, self.target_positions[target_id])
@@ -453,6 +490,7 @@ class TrainingSession:
             if name in owned:
                 action_range = RANGED_ABILITIES.get(name, 1 if name in ATTACKING_ABILITIES else 0)
                 actions.append({"kind": "ability", "name": name, "description": details.get("description", ""),
+                                "targeting": "unit" if action_range else "self",
                                 "icon": details.get("icon", ""), "remaining": self.remaining(f"ability:{name}"),
                                 "cooldown": details.get("cooldown", "Не указана"), "range": action_range,
                                 "disabledReason": reason(action_range),
@@ -464,10 +502,13 @@ class TrainingSession:
                 wits=int(attrs.get("Смекалка", 10)), cooldown_multiplier=float(derived.get("cooldownMultiplier", 1)),
             )
             actions.append({"kind": "spell", "name": spell["name"],
+                            "core": spell["core"], "angle": profile.get("angle", 90),
+                            "cooldown": profile["cooldown"], "damageMin": profile["damage_min"],
+                            "damageMax": profile["damage_max"], "defense": profile["defense"],
                             "description": f"{spell['core']} + {spell['expression']}",
                             "remaining": self.remaining(f"spell:{spell['name']}"), "range": profile["range"],
                             "area": profile["area"], "targeting": profile["targeting"],
-                            "disabledReason": reason(profile["range"]),
+                            "disabledReason": "Основное действие потрачено" if not self.action_available else "",
                             "cells": [{"x": x, "y": y} for x, y in self._spell_cells(profile)]})
 
         controlled = self.grid.control_zone(self.target_positions[key] for key in self._alive_targets())
@@ -476,7 +517,30 @@ class TrainingSession:
                                "description": "Отключает атаки по возможности до конца текущего хода.",
                                "remaining": 0, "range": 0,
                                "disabledReason": "Основное действие потрачено" if not self.action_available else "",
-                               "cells": []})
+                                "cells": []})
+
+        # The client previews these server-computed shapes without spending an action.
+        for action in actions:
+            action["aims"] = {}
+            for y in range(self.grid.height):
+                for x in range(self.grid.width):
+                    point = (x, y)
+                    self.aim_point = point
+                    targeting = action.get("targeting", "unit")
+                    shape = self._spell_cells(action) if action["kind"] == "spell" else {point}
+                    effective_point = self.player_position if targeting in {"self", "aura"} else point
+                    valid = self.grid.distance(self.player_position, effective_point) <= action.get("range", 0)
+                    valid = valid and point not in self.grid.blocked and self.grid.line_of_sight(self.player_position, effective_point)
+                    if targeting == "unit":
+                        valid = valid and any(self.target_positions[key] == point for key in self._alive_targets())
+                    if targeting in {"self", "aura"}:
+                        valid = valid and point == self.player_position
+                    if action["kind"] == "spell" and targeting != "self":
+                        valid = valid and any(self.target_positions[key] in shape and
+                            self.grid.cover(self.player_position, self.target_positions[key])[0] != "полное"
+                            for key in self._alive_targets())
+                    action["aims"][f"{x}:{y}"] = {"valid": valid, "cells": [{"x": cx, "y": cy} for cx, cy in sorted(shape)]}
+            self.aim_point = None
 
         map_spec = TACTICAL_MAPS[self.map_key]
         occupied = {self.target_positions[key] for key in self._alive_targets()}

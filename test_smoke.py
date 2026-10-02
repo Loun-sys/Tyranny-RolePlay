@@ -1,6 +1,7 @@
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from card_renderer import render_character_card
@@ -128,6 +129,34 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.db.combat_quickbar(character_id))[1]["action_name"], "Удар щитом")
         await self.db.set_combat_quickbar(character_id, 1)
         self.assertEqual([row["slot"] for row in await self.db.combat_quickbar(character_id)], [2])
+
+    async def test_spell_ground_targeting_preview_and_failure_do_not_spend_action(self):
+        character = {"name": "Маг", "health": 100, "health_max": 100,
+                     "attributes": {"Смекалка": 12, "Быстрота": 10},
+                     "skills": {"Управление огнём": {"value": 60}}, "talents": []}
+        derived = {"attack": {"accuracy": 30}, "effectiveAttributes": character["attributes"]}
+        spells = [{"name": "Огненная область", "core": "Огонь", "expression": "Область влияния",
+                   "accents": [], "enhancements": []}]
+        session = TrainingSession(character_id=1, player_position=(8, 4))
+        view = session.view(character, derived, spells, 2)
+        action = next(row for row in view["actions"] if row["kind"] == "spell")
+        self.assertTrue(action["aims"]["10:2"]["valid"])
+        self.assertFalse(action["aims"]["7:3"]["valid"])
+        self.assertIn({"x": 10, "y": 4}, action["aims"]["10:2"]["cells"])
+        self.assertTrue(session.action_available)
+        self.assertFalse(session.cooldowns)
+        with self.assertRaises(ValueError):
+            session.act({"kind": "spell", "name": spells[0]["name"], "x": 3, "y": 4}, character, derived, spells, 2)
+        self.assertTrue(session.action_available)
+        self.assertFalse(session.cooldowns)
+        self.assertIsNone(session.aim_point)
+        with patch('training_combat.random.randint', side_effect=lambda lo, hi: hi):
+            result = session.act({"kind": "spell", "name": spells[0]["name"], "x": 10, "y": 2}, character, derived, spells, 2)
+        self.assertGreater(result["damage"], 0)
+        self.assertEqual(session.attacks, 2)
+        self.assertEqual(session.target_healths["dummy_right"], 100)
+        self.assertFalse(session.action_available)
+        self.assertIsNone(session.aim_point)
 
     async def test_tactical_grid_movement_obstacles_and_initiative(self):
         grid = TacticalGrid(7, 5, {(3, 1), (3, 2), (3, 3)})
