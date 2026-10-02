@@ -510,7 +510,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
     cid, payload = await _portal_payload(request)
     if 'bindings' in payload:
         bindings = payload['bindings']
-        if not isinstance(bindings, list) or len(bindings) != 5 or not all(isinstance(row, dict) for row in bindings):
+        if not isinstance(bindings, list) or len(bindings) != 9 or not all(isinstance(row, dict) for row in bindings):
             raise web.HTTPBadRequest(reason='Некорректный список быстрых ячеек.')
         character = await request.app['db'].get_character_by_id(cid)
         owned = {row['name'] for row in character.get('talents', [])}

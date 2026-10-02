@@ -494,7 +494,7 @@ class TrainingSession:
             return f"Цель вне дальности: {distance}/{action_range} м" if distance > action_range else ""
 
         actions = [{"kind": "attack", "name": "Обычная атака", "description": "Атака активным оружейным комплектом.",
-                    "remaining": 0, "range": weapon_range, "disabledReason": reason(weapon_range),
+                    "remaining": 0, "range": weapon_range, "weaponSkill": attack.get("skill", ""), "disabledReason": reason(weapon_range),
                     "cells": [{"x": selected_target["x"], "y": selected_target["y"]}]}]
         for name, details in {**ABILITY_DETAILS, **MOBILITY_ABILITIES}.items():
             if name in owned:

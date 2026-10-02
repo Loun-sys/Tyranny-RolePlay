@@ -1,0 +1,1231 @@
+{
+  "source": "Installed game: bundles/spells.unity3d",
+  "note": "Raw component fields. IntervalRate and AuraIntervalSpeed are enums, not seconds. Nested status durations are not area lifetimes.",
+  "records": [
+    {
+      "prefab": "Shock_Aura",
+      "component_path_id": -9156646522049805355,
+      "fields": [
+        {
+          "field": "Duration",
+          "value": 45.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Field",
+      "component_path_id": -8561956727046483282,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Weaken_Rain",
+      "component_path_id": -8369998823576712115,
+      "fields": [
+        {
+          "field": "NumberOfProjectiles",
+          "value": 18
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Weaken_Rain",
+      "component_path_id": -8187580981693771101,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Weaken_Aura",
+      "component_path_id": -8003464119583789628,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[0].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 3.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Strengthen_Aura_AOE",
+      "component_path_id": -7665488396104442553,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 3.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 3.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 3.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[1].Duration",
+          "value": 3.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Passion_Aura",
+      "component_path_id": -6554759392615243654,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[8].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[9].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 3.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Rain",
+      "component_path_id": -6524297871734739204,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Mod_Duration_I",
+      "component_path_id": -6493911162137855304,
+      "fields": [],
+      "duration_modifiers": [
+        {
+          "tag": "Status Effect Duration Attack Components",
+          "type": 19,
+          "multiplier": 1.25
+        },
+        {
+          "tag": "Pulsed AOE Durations",
+          "type": 18,
+          "multiplier": 1.25
+        }
+      ]
+    },
+    {
+      "prefab": "Weaken_Rain_AOE",
+      "component_path_id": -6449538231857514989,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 12.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Mod_Duration_III",
+      "component_path_id": -6316754415102219255,
+      "fields": [],
+      "duration_modifiers": [
+        {
+          "tag": "Status Effect Duration Attack Components",
+          "type": 19,
+          "multiplier": 1.6
+        },
+        {
+          "tag": "Pulsed AOE Durations",
+          "type": 18,
+          "multiplier": 1.75
+        }
+      ]
+    },
+    {
+      "prefab": "Fire_Aura_AOE_Friendly",
+      "component_path_id": -5684200608696889466,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 0.1
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fire_Rain",
+      "component_path_id": -5270151898220989855,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fear_Aura_AOE",
+      "component_path_id": -4807889251001218834,
+      "fields": [
+        {
+          "field": "Afflictions[0].Duration",
+          "value": 4.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Aura_AOE",
+      "component_path_id": -4743930536189947300,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 4.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 4.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Field",
+      "component_path_id": -4619024404813791858,
+      "fields": [
+        {
+          "field": "Duration",
+          "value": 12.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Rain",
+      "component_path_id": -4358017911118789452,
+      "fields": [
+        {
+          "field": "NumberOfProjectiles",
+          "value": 12
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Heal_Aura_AOE",
+      "component_path_id": -3918998481256412394,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 0.01
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Passion_Aura_AOE",
+      "component_path_id": -3881384021442515502,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 6.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Weaken_Aura_AOE",
+      "component_path_id": -3479746803304628855,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 12.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 12.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[1].Duration",
+          "value": 30.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Aura",
+      "component_path_id": -3205987630443060450,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[0].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[8].Duration",
+          "value": 0.1
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Heal_Aura",
+      "component_path_id": -3069519005044890248,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Stone_Rain",
+      "component_path_id": -2718943918516323371,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Aura",
+      "component_path_id": -2700634230280830052,
+      "fields": [
+        {
+          "field": "Duration",
+          "value": 45.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Shock_Rain",
+      "component_path_id": -2570870104066493956,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "NumberOfProjectiles",
+          "value": 10
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fire_Field_AOE",
+      "component_path_id": -2472444139458195449,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 10.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 20.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fire_Aura",
+      "component_path_id": -2316927080370317990,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Field_AOE",
+      "component_path_id": -2054364377162585261,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 10.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 1.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 20.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[1].Duration",
+          "value": 3.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Aura_AOE",
+      "component_path_id": -1644499659426062970,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 3.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 3.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Earth_Aura_AOE",
+      "component_path_id": -1321426253940710920,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 3.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 6.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Field",
+      "component_path_id": -718206660915645238,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fire_Aura",
+      "component_path_id": -467117530180657008,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[0].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[8].Duration",
+          "value": 0.1
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Rain",
+      "component_path_id": -331663366911167269,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Passion_Field",
+      "component_path_id": 164735751265059448,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Heal_Field_AOE",
+      "component_path_id": 668662877846547586,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 45.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 45.0
+        },
+        {
+          "field": "CleanedUpStatusEffects[1].Duration",
+          "value": 0.1
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Mod_Duration_II",
+      "component_path_id": 935271724327076320,
+      "fields": [],
+      "duration_modifiers": [
+        {
+          "tag": "Status Effect Duration Attack Components",
+          "type": 19,
+          "multiplier": 1.4
+        },
+        {
+          "tag": "Pulsed AOE Durations",
+          "type": 18,
+          "multiplier": 1.5
+        }
+      ]
+    },
+    {
+      "prefab": "Shock_Rain",
+      "component_path_id": 1140803480272808074,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Aura",
+      "component_path_id": 1433879752888612431,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Strengthen_Aura",
+      "component_path_id": 1552920848418905107,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Stone_Rain_AOE",
+      "component_path_id": 1782721915670484772,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 9.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Heal_Field",
+      "component_path_id": 2115447596058770634,
+      "fields": [
+        {
+          "field": "Duration",
+          "value": 14.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Shock_Field",
+      "component_path_id": 2262447633001572723,
+      "fields": [
+        {
+          "field": "Duration",
+          "value": 20.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Strengthen_Aura",
+      "component_path_id": 2409798364081626199,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[8].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[9].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "CleanedUpStatusEffects[0].Duration",
+          "value": 3.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Earth_Aura",
+      "component_path_id": 2720317955871148780,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[0].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[8].Duration",
+          "value": 0.1
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Passion_Field",
+      "component_path_id": 2843488865840699861,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 12.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fire_Rain",
+      "component_path_id": 3304249410480639803,
+      "fields": [
+        {
+          "field": "NumberOfProjectiles",
+          "value": 9
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Stone_Aura",
+      "component_path_id": 3408214067286285819,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Field_AOE",
+      "component_path_id": 4031463934550252465,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 20.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Heal_Field",
+      "component_path_id": 4103474245002601440,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Earth_Aura",
+      "component_path_id": 4234341701336534741,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Weaken_Aura",
+      "component_path_id": 4361603153804691318,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Shock_Field",
+      "component_path_id": 4901848946354330310,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Passion_Aura",
+      "component_path_id": 5216318053675637530,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Field",
+      "component_path_id": 5222261787582417667,
+      "fields": [
+        {
+          "field": "Duration",
+          "value": 9.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fire_Field",
+      "component_path_id": 5251113039892572783,
+      "fields": [
+        {
+          "field": "Duration",
+          "value": 20.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Heal_Aura",
+      "component_path_id": 5511226680670951225,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[1].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[8].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[9].Duration",
+          "value": 0.1
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Shock_Aura",
+      "component_path_id": 5661182876505204037,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Rain",
+      "component_path_id": 6176505038277191780,
+      "fields": [
+        {
+          "field": "NumberOfProjectiles",
+          "value": 24
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Stone_Aura",
+      "component_path_id": 6376227053440858192,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "StatusEffects[0].IntervalRate",
+          "value": 1
+        },
+        {
+          "field": "StatusEffects[1].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[2].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[3].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[4].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[5].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[6].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[7].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "StatusEffects[8].Duration",
+          "value": 0.1
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Stone_Rain",
+      "component_path_id": 6432965068504234719,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 0.1
+        },
+        {
+          "field": "NumberOfProjectiles",
+          "value": 10
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Frost_Rain_AOE",
+      "component_path_id": 6618529901537058854,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 1.5
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Mod_Secondary_FocusedRain",
+      "component_path_id": 7581562956321872209,
+      "fields": [
+        {
+          "field": "Effects[0].StatusEffect.Duration",
+          "value": 30.0
+        },
+        {
+          "field": "Effects[1].StatusEffect.Duration",
+          "value": 30.0
+        },
+        {
+          "field": "Effects[2].StatusEffect.Duration",
+          "value": 30.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fire_Field",
+      "component_path_id": 7732900569139909604,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Fear_Aura",
+      "component_path_id": 8552170206591769111,
+      "fields": [
+        {
+          "field": "StatusEffects[0].Duration",
+          "value": 30.0
+        },
+        {
+          "field": "Duration",
+          "value": 60.0
+        }
+      ],
+      "duration_modifiers": []
+    },
+    {
+      "prefab": "Gravelight_Aura",
+      "component_path_id": 9181181715954058122,
+      "fields": [
+        {
+          "field": "CooldownTimerDuration",
+          "value": 3.0
+        },
+        {
+          "field": "AuraIntervalSpeed",
+          "value": 4
+        }
+      ],
+      "duration_modifiers": []
+    }
+  ]
+}

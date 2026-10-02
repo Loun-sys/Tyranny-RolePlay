@@ -3,7 +3,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const handlers={},messages=[],requests=[],bindings=[];
 const context=vm.createContext({
  document:{addEventListener(type,handler){(handlers[type]??=[]).push(handler)},querySelector(){return null},querySelectorAll(){return []}},
- renderTraining(){},combatPickerPanel(){return ''},statsBox(){return ''},localTalentIcon:url=>'assets/talent-icons/'+url,sigilIcon(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
+ renderTraining(){},combatPickerPanel(){return ''},combatActionButton:x=>x.name,statsBox(){return ''},localTalentIcon:url=>'assets/talent-icons/'+url,sigilIcon(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
  data:{character:{name:'QA'}},token:'isolated-qa',encodeURIComponent,
  toast(message){messages.push(message)},$:()=>({}),
  esc:value=>String(value),mutate(path,body){bindings.push(body)},quickbarAction(slot,actions){return actions[slot-1]},
@@ -16,6 +16,16 @@ context.testAction=action;
 vm.runInContext('training.actions=[testAction];renderTraining=()=>{};showCombatAim=()=>{};playCombatEffect=()=>{};',context);
 function click(target){const event={target,preventDefault(){this.prevented=true},stopImmediatePropagation(){this.stopped=true}};handlers.click[0](event);return event}
 async function main(){
+ context.pickerActions={actions:[{kind:'spell',name:'ONLY SPELL'},{kind:'ability',name:'ONLY ABILITY'}]};
+ vm.runInContext('combatPicker="ability"',context);
+ const abilities=vm.runInContext('combatPickerPanel(pickerActions)',context);
+ assert(abilities.includes('ONLY ABILITY'));assert(!abilities.includes('ONLY SPELL'));
+ assert(!abilities.includes('В ячейку:'));
+ vm.runInContext('combatPicker="spell"',context);
+ const spells=vm.runInContext('combatPickerPanel(pickerActions)',context);
+ assert(spells.includes('ONLY SPELL'));assert(!spells.includes('ONLY ABILITY'));
+ const inner={closest:selector=>selector==='[data-training-kind]'?'ACTION':'ICON'};
+ context.inner=inner;assert.equal(vm.runInContext('combatTooltipTarget(inner)',context),'ACTION','Nested icons must use the same action tooltip');
  assert.equal(vm.runInContext('localTalentIcon("assets/abilities/hobble.webp")',context),'assets/abilities/hobble.webp?v=20261002-game');
  const button={disabled:false,dataset:{trainingKind:'spell',trainingName:action.name},matches(){return false}};
  const event=click({closest(selector){return selector==='[data-training-kind]'?button:null}});
@@ -39,11 +49,11 @@ async function main(){
  context.training={active:true,turn:{actionAvailable:true},actions:[action,{kind:'attack',name:'Обычная атака'}]};
  vm.runInContext('saveQuickbarBinding(2,testAction.kind,testAction.name,1)',context);
  assert.equal(bindings.length,1,'Swap must use one atomic update');
- assert.equal(bindings[0].bindings.length,5);
+ assert.equal(bindings[0].bindings.length,9);
  assert.equal(bindings[0].bindings[0].name,'Обычная атака');
  assert.equal(bindings[0].bindings[1].name,action.name);
  assert.equal(bindings[0].bindings[4].kind,'','Empty slots must remain intentionally empty');
- vm.runInContext('saveQuickbarBinding(5,testAction.kind,testAction.name)',context);
+ vm.runInContext('saveQuickbarBinding(9,testAction.kind,testAction.name)',context);
  assert.equal(bindings[1].bindings[0].name,action.name,'Assigning one slot preserves the other defaults');
  console.log('Combat UI: selection, invalid aim, explicit confirmation, target ID, Esc and right-click OK');
 }

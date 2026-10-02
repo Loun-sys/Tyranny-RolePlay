@@ -131,17 +131,33 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.db.combat_quickbar(character_id))[1]["action_name"], "Удар щитом")
         await self.db.set_combat_quickbar(character_id, 1)
         self.assertEqual([row["slot"] for row in await self.db.combat_quickbar(character_id)], [2])
-        bindings = [{'slot': i, 'kind': '', 'name': ''} for i in range(1, 6)]
+        bindings = [{'slot': i, 'kind': '', 'name': ''} for i in range(1, 10)]
         bindings[0].update(kind='spell', name='Ледяное копьё')
         bindings[1].update(kind='attack', name='Обычная атака')
         await self.db.replace_combat_quickbar(character_id, bindings)
         saved = await self.db.combat_quickbar(character_id)
-        self.assertEqual(len(saved), 5)
+        self.assertEqual(len(saved), 9)
         self.assertEqual(saved[0]['action_name'], 'Ледяное копьё')
         self.assertEqual(saved[4]['action_kind'], '')
         with self.assertRaises(ValueError):
             await self.db.replace_combat_quickbar(character_id, bindings[:2])
         self.assertEqual(await self.db.combat_quickbar(character_id), saved)
+
+    async def test_legacy_quickbar_migration_preserves_bindings(self):
+        async with self.db.connect() as db:
+            await db.execute("INSERT INTO characters(guild_id,user_id,name,background,specialization_1,specialization_2) VALUES(1,2,'Герой','Книгочей','Меч и щит','Заклинания льда')")
+            cid = int((await db.execute_fetchall('SELECT id FROM characters'))[0]['id'])
+            await db.execute('DROP TABLE combat_quickbar')
+            await db.execute('CREATE TABLE combat_quickbar (character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE, slot INTEGER NOT NULL CHECK(slot BETWEEN 1 AND 5), action_kind TEXT NOT NULL, action_name TEXT NOT NULL, PRIMARY KEY(character_id,slot))')
+            await db.execute("INSERT INTO combat_quickbar VALUES(?,5,'attack','Обычная атака')", (cid,))
+            await db.commit()
+        await self.db.initialize()
+        await self.db.set_combat_quickbar(cid, 9, 'spell', 'Ледяное копьё')
+        self.assertEqual([row['slot'] for row in await self.db.combat_quickbar(cid)], [5, 9])
+        await self.db.initialize()
+        self.assertEqual([row['slot'] for row in await self.db.combat_quickbar(cid)], [5, 9])
+        with self.assertRaises(ValueError):
+            await self.db.set_combat_quickbar(cid, 10, 'attack', 'Обычная атака')
 
     async def test_spell_ground_targeting_preview_and_failure_do_not_spend_action(self):
         character = {"name": "Маг", "health": 100, "health_max": 100,

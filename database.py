@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS spells (
 );
 CREATE TABLE IF NOT EXISTS combat_quickbar (
     character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
-    slot INTEGER NOT NULL CHECK(slot BETWEEN 1 AND 5),
+    slot INTEGER NOT NULL CHECK(slot BETWEEN 1 AND 9),
     action_kind TEXT NOT NULL,
     action_name TEXT NOT NULL,
     PRIMARY KEY(character_id, slot)
@@ -221,6 +221,14 @@ class Database:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         async with self.connect() as db:
             await db.executescript(SCHEMA)
+            quickbar_schema = await db.execute_fetchall("SELECT sql FROM sqlite_master WHERE name='combat_quickbar'")
+            if quickbar_schema and 'BETWEEN 1 AND 5' in quickbar_schema[0]['sql']:
+                # Preserve every binding while widening the legacy SQLite constraint.
+                await db.execute('BEGIN')
+                await db.execute('ALTER TABLE combat_quickbar RENAME TO combat_quickbar_legacy')
+                await db.execute('CREATE TABLE combat_quickbar (character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE, slot INTEGER NOT NULL CHECK(slot BETWEEN 1 AND 9), action_kind TEXT NOT NULL, action_name TEXT NOT NULL, PRIMARY KEY(character_id,slot))')
+                await db.execute('INSERT INTO combat_quickbar SELECT * FROM combat_quickbar_legacy')
+                await db.execute('DROP TABLE combat_quickbar_legacy')
             columns = {row["name"] for row in await db.execute_fetchall("PRAGMA table_info(characters)")}
             for name, definition in {
                 "attribute_points": "INTEGER NOT NULL DEFAULT 0",
@@ -1335,8 +1343,8 @@ class Database:
     async def set_combat_quickbar(
         self, character_id: int, slot: int, action_kind: str = "", action_name: str = "",
     ) -> None:
-        if not 1 <= int(slot) <= 5:
-            raise ValueError("Номер быстрой ячейки должен быть от 1 до 5.")
+        if not 1 <= int(slot) <= 9:
+            raise ValueError("Номер быстрой ячейки должен быть от 1 до 9.")
         async with self.connect() as db:
             await db.execute(
                 "DELETE FROM combat_quickbar WHERE character_id=? AND slot=?", (character_id, int(slot)),
@@ -1349,9 +1357,9 @@ class Database:
             await db.commit()
 
     async def replace_combat_quickbar(self, character_id: int, bindings: list[dict[str, Any]]) -> None:
-        """Save all five slots atomically, including intentionally empty slots."""
-        if len(bindings) != 5 or {int(row['slot']) for row in bindings} != set(range(1, 6)):
-            raise ValueError('Передайте ровно пять разных быстрых ячеек.')
+        """Save all nine slots atomically, including intentionally empty slots."""
+        if len(bindings) != 9 or {int(row['slot']) for row in bindings} != set(range(1, 10)):
+            raise ValueError('Передайте ровно девять разных быстрых ячеек.')
         async with self.connect() as db:
             await db.execute('DELETE FROM combat_quickbar WHERE character_id=?', (character_id,))
             await db.executemany('INSERT INTO combat_quickbar(character_id,slot,action_kind,action_name) VALUES(?,?,?,?)',
