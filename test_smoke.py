@@ -100,6 +100,11 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(view["grid"]["cellMeters"], 1)
         self.assertEqual(view["turn"]["movementMax"], BASE_MOVEMENT)
         self.assertEqual(len(view["initiative"]), 2)
+        self.assertEqual(len(view["targets"]), 3)
+        opportunity = session.act({"kind": "move", "x": 8, "y": 4}, character, derived, [], 2)
+        self.assertIn("атаку по возможности", opportunity["line"])
+        session.act({"kind": "select_target", "targetId": "dummy_left"}, character, derived, [], 2)
+        self.assertEqual(session.selected_target_id, "dummy_left")
 
     async def test_tactical_grid_movement_obstacles_and_initiative(self):
         grid = TacticalGrid(7, 5, {(3, 1), (3, 2), (3, 3)})
@@ -110,6 +115,16 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(grid.line_of_sight((1, 2), (5, 2)))
         self.assertEqual(grid.distance((1, 1), (4, 4)), 3)
         self.assertEqual(initiative_bonus(14), 2)
+        self.assertIn((2, 2), grid.control_zone({(3, 2)}))
+        self.assertIn((5, 2), grid.radius_cells((4, 2), 1))
+        cone = grid.cone_cells((1, 2), (6, 2), 4, 90)
+        self.assertIn((2, 2), cone)
+        self.assertNotIn((4, 2), cone)  # конус не проходит сквозь стену
+        self.assertNotIn((0, 2), cone)
+        self.assertEqual(grid.cover((1, 2), (5, 2))[0], "полное")
+        self.assertEqual(grid.displace((1, 2), (2, 2), 4), (2, 2))  # сразу упирается в стену
+        self.assertTrue(grid.can_teleport((1, 2), (2, 4), 3, {(2, 2)}))
+        self.assertFalse(grid.can_teleport((1, 2), (2, 2), 3, {(2, 2)}))
 
     async def test_spell_runtime_uses_real_sigil_modifiers(self):
         profile = spell_runtime_profile({
@@ -223,6 +238,11 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(session.current.name, "Вершитель")
         session.advance(attacker, 3)
         self.assertEqual(session.current.name, "Страж")
+        attacker.x, attacker.y = 1, 2
+        target.x, target.y = 2, 2
+        ally = Combatant(key="c", name="Союзник", team="Герои", health=20, health_max=20, x=3, y=2)
+        session.combatants["c"] = ally
+        self.assertEqual(session.flanking_bonus(attacker, target), 15)
 
     async def test_private_web_registration_token_and_payload(self):
         token = await self.db.create_registration_token(55, 77)

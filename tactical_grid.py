@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass, field
+import math
 from typing import Iterable
 
 
@@ -27,7 +28,7 @@ TACTICAL_MAPS = {
         "source": "https://tyranny.fandom.com/wiki/Category:Location_images",
         "width": DEFAULT_WIDTH,
         "height": DEFAULT_HEIGHT,
-        "blocked": ((6, 0), (6, 1), (6, 7), (6, 8)),
+        "blocked": ((6, 0), (6, 1), (6, 7), (6, 8), (7, 3), (7, 5)),
     },
     "burning_library": {
         "name": "Руины Горящей библиотеки",
@@ -107,6 +108,99 @@ class TacticalGrid:
             if (x0, y0) != end and (x0, y0) in self.blocked:
                 return False
         return True
+
+    def line_cells(
+        self, start: tuple[int, int], end: tuple[int, int], maximum: int | None = None,
+    ) -> list[tuple[int, int]]:
+        """Клетки луча от источника к цели, без клетки источника."""
+        x0, y0 = start
+        x1, y1 = end
+        dx, sx = abs(x1 - x0), 1 if x0 < x1 else -1
+        dy, sy = -abs(y1 - y0), 1 if y0 < y1 else -1
+        error, cells = dx + dy, []
+        while (x0, y0) != (x1, y1):
+            doubled = 2 * error
+            if doubled >= dy:
+                error += dy
+                x0 += sx
+            if doubled <= dx:
+                error += dx
+                y0 += sy
+            point = (x0, y0)
+            if not self.inside(point) or point in self.blocked:
+                break
+            cells.append(point)
+            if maximum is not None and len(cells) >= maximum:
+                break
+        return cells
+
+    def radius_cells(self, center: tuple[int, int], radius: int) -> set[tuple[int, int]]:
+        return {
+            (x, y) for y in range(self.height) for x in range(self.width)
+            if self.distance(center, (x, y)) <= max(0, radius)
+        }
+
+    def cone_cells(
+        self, origin: tuple[int, int], toward: tuple[int, int], length: int, angle: float = 90,
+    ) -> set[tuple[int, int]]:
+        """Конус задан направлением на выбранную клетку и углом в градусах."""
+        ox, oy = origin
+        vx, vy = toward[0] - ox, toward[1] - oy
+        magnitude = math.hypot(vx, vy)
+        if not magnitude:
+            return set()
+        threshold = math.cos(math.radians(angle / 2))
+        result: set[tuple[int, int]] = set()
+        for y in range(self.height):
+            for x in range(self.width):
+                dx, dy = x - ox, y - oy
+                distance = math.hypot(dx, dy)
+                if not distance or distance > length:
+                    continue
+                cosine = (dx * vx + dy * vy) / (distance * magnitude)
+                if cosine >= threshold and self.line_of_sight(origin, (x, y)):
+                    result.add((x, y))
+        return result
+
+    def control_zone(self, positions: Iterable[tuple[int, int]]) -> set[tuple[int, int]]:
+        """Все свободные соседние клетки, контролируемые в ближнем бою."""
+        occupied = set(positions)
+        return {cell for point in occupied for cell in self.neighbors(point) if cell not in occupied}
+
+    def cover(self, start: tuple[int, int], end: tuple[int, int]) -> tuple[str, int]:
+        """Вернуть вид укрытия и бонус защиты дальнего боя."""
+        if not self.line_of_sight(start, end):
+            return "полное", 10_000
+        ray = self.line_cells(start, end)
+        adjacent = 0
+        for x, y in ray[:-1]:
+            adjacent += sum((x + dx, y + dy) in self.blocked for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+        return ("частичное", 15) if adjacent else ("нет", 0)
+
+    def displace(
+        self, source: tuple[int, int], target: tuple[int, int], meters: int,
+        occupied: set[tuple[int, int]] | None = None, *, pull: bool = False,
+    ) -> tuple[int, int]:
+        """Оттолкнуть цель от источника либо притянуть к нему до препятствия."""
+        occupied = set(occupied or ()) - {target}
+        dx = (source[0] > target[0]) - (source[0] < target[0]) if pull else (target[0] > source[0]) - (target[0] < source[0])
+        dy = (source[1] > target[1]) - (source[1] < target[1]) if pull else (target[1] > source[1]) - (target[1] < source[1])
+        current = target
+        for _ in range(max(0, meters)):
+            candidate = (current[0] + dx, current[1] + dy)
+            if not self.inside(candidate) or candidate in self.blocked or candidate in occupied or candidate == source:
+                break
+            current = candidate
+        return current
+
+    def can_teleport(
+        self, origin: tuple[int, int], destination: tuple[int, int], maximum: int,
+        occupied: set[tuple[int, int]] | None = None,
+    ) -> bool:
+        return (
+            self.inside(destination) and destination not in self.blocked
+            and destination not in set(occupied or ()) and self.distance(origin, destination) <= maximum
+        )
 
     def payload(self) -> dict:
         return {

@@ -39,7 +39,12 @@ CORE_DAMAGE = {
     "Рвение": "Магический", "Жизнь": "Магический",
 }
 
-RANGED_TALENT_RANGES = {"Выстрел в сердце": 12, "Хромота": 10}
+RANGED_TALENT_RANGES = {"Выстрел в сердце": 12, "Хромота": 10, "Рывок": 10, "Удар в прыжке": 6}
+FORCED_TALENT_MOVEMENT = {"Удар ладонью": ("push", 3), "Заряженный кулак": ("push", 2), "Ледяная хватка": ("pull", 2)}
+EXTRA_ACTIVE_TALENTS = {
+    "Рывок": {"description": "Перемещение к цели на дистанции до 10 м и атака.", "cooldown": "3 раунда"},
+    "Удар в прыжке": {"description": "Телепортация на свободную клетку рядом с целью и атака.", "cooldown": "4 раунда"},
+}
 
 
 @dataclass
@@ -71,6 +76,7 @@ class Combatant:
     initiative_roll: int = 0
     initiative_total: int = 0
     movement_remaining: int = BASE_MOVEMENT
+    disengaged: bool = False
 
     @property
     def alive(self) -> bool:
@@ -144,10 +150,24 @@ class CombatSession:
                 if candidate <= previous:
                     self.round_number += 1
                 unit.movement_remaining = BASE_MOVEMENT
+                unit.disengaged = False
                 return
 
     def distance(self, first: Combatant, second: Combatant) -> int:
         return self.grid.distance((first.x, first.y), (second.x, second.y))
+
+    def flanking_bonus(self, attacker: Combatant, target: Combatant) -> int:
+        """Окружение: союзники на противоположных сторонах дают +15 точности."""
+        if self.distance(attacker, target) > 1:
+            return 0
+        ax, ay = attacker.x - target.x, attacker.y - target.y
+        for ally in self.combatants.values():
+            if ally is attacker or not ally.alive or ally.team != attacker.team or self.distance(ally, target) > 1:
+                continue
+            bx, by = ally.x - target.x, ally.y - target.y
+            if ax == -bx and ay == -by:
+                return 15
+        return 0
 
     def embed(self) -> discord.Embed:
         winner = self.winner()
@@ -168,6 +188,9 @@ class CombatSession:
             for unit in units:
                 marker = "▶" if self.started and unit is self.current and not winner else "•"
                 state = "💀" if not unit.alive else f"❤️ {unit.health}/{unit.health_max} · клетка {unit.x + 1}:{unit.y + 1}"
+                if unit.alive and any(other.alive and other.team != unit.team and self.distance(unit, other) <= 1
+                                      for other in self.combatants.values()):
+                    state += " · ⚠️ в зоне контроля"
                 initiative = f" · инициатива {unit.initiative_total}" if self.started else ""
                 lines.append(f"{marker} **{unit.name}** — {state}{initiative}")
             embed.add_field(name=team, value="\n".join(lines)[:1024], inline=False)
@@ -253,12 +276,26 @@ def weapon_range(unit: Combatant) -> int:
     return {"Луки": 12, "Дротики": 6, "Волшебный посох": 10}.get(weapon_skill(unit), 1)
 
 
+def spell_effect_cells(grid: TacticalGrid, origin: tuple[int, int], target: tuple[int, int], profile: dict[str, Any]) -> set[tuple[int, int]]:
+    targeting = profile.get("targeting", "unit")
+    if targeting == "area":
+        return grid.radius_cells(target, int(profile.get("area", 0)))
+    if targeting == "line":
+        return set(grid.line_cells(origin, target, int(profile.get("range", 1))))
+    if targeting == "cone":
+        return grid.cone_cells(origin, target, int(profile.get("range", 1)), float(profile.get("angle", 90) or 90))
+    if targeting == "aura":
+        return grid.radius_cells(origin, max(1, int(profile.get("area", 1))))
+    return {target}
+
+
 def resolve_attack(attacker: Combatant, target: Combatant, *, accuracy: int | None = None,
                    damage: tuple[int, int] | None = None, defense: str = "Парирование",
-                   damage_type: str | None = None, penetration: int = 0) -> str:
+                   damage_type: str | None = None, penetration: int = 0, defense_bonus: int = 0) -> str:
     roll = random.randint(1, 100)
     attack_accuracy = attacker.accuracy if accuracy is None else accuracy
-    score = roll + attack_accuracy - target.defense(defense)
+    target_defense = target.defense(defense) + defense_bonus
+    score = roll + attack_accuracy - target_defense
     if score <= 15:
         quality, multiplier = "промах", 0
     elif score <= 50:
@@ -268,7 +305,7 @@ def resolve_attack(attacker: Combatant, target: Combatant, *, accuracy: int | No
     else:
         quality, multiplier = "критическое попадание", 1.5
     if multiplier == 0:
-        return f"**{attacker.name}** → **{target.name}**: промах ({roll} + {attack_accuracy} − {target.defense(defense)})."
+        return f"**{attacker.name}** → **{target.name}**: промах ({roll} + {attack_accuracy} − {target_defense})."
     low, high = damage or (attacker.damage_min, attacker.damage_max)
     raw = max(1, round(random.randint(low, high) * multiplier))
     armor = max(0, target.armor - penetration)
@@ -319,9 +356,14 @@ class TargetSelect(discord.ui.Select):
         if action_range > 1 and not self.session.grid.line_of_sight((actor.x, actor.y), (target.x, target.y)):
             await interaction.response.send_message("Между токенами нет прямой видимости.", ephemeral=True)
             return
+        cover_name, cover_bonus = self.session.grid.cover((actor.x, actor.y), (target.x, target.y))
+        if action_range <= 1:
+            cover_name, cover_bonus = "нет", 0
+        flank_bonus = self.session.flanking_bonus(actor, target)
         before = target.health
+        extra_damage: list[tuple[Combatant, int]] = []
         if self.action == "attack":
-            line = resolve_attack(actor, target)
+            line = resolve_attack(actor, target, accuracy=actor.accuracy + flank_bonus, defense_bonus=cover_bonus)
             recovery = actor.recovery
             used_skill = weapon_skill(actor)
         elif self.action == "talent":
@@ -335,15 +377,37 @@ class TargetSelect(discord.ui.Select):
                     f"Способность ещё восстанавливается: {remaining} раунд.", ephemeral=True
                 )
                 return
-            line = resolve_attack(actor, target, accuracy=actor.accuracy + 5,
-                                  damage=(actor.damage_min + 2, actor.damage_max + 4), penetration=2)
+            if talent["name"] in EXTRA_ACTIVE_TALENTS:
+                occupied = {(unit.x, unit.y) for unit in self.session.combatants.values() if unit.alive}
+                destination = min(
+                    (cell for cell in self.session.grid.neighbors((target.x, target.y)) if cell not in occupied),
+                    key=lambda cell: self.session.grid.distance((actor.x, actor.y), cell), default=None,
+                )
+                if destination is None or not self.session.grid.can_teleport(
+                    (actor.x, actor.y), destination, action_range, occupied - {(actor.x, actor.y)},
+                ):
+                    await interaction.response.send_message("Рядом с целью нет свободной клетки.", ephemeral=True)
+                    return
+                actor.x, actor.y = destination
+            line = resolve_attack(actor, target, accuracy=actor.accuracy + 5 + flank_bonus,
+                                  damage=(actor.damage_min + 2, actor.damage_max + 4), penetration=2,
+                                  defense_bonus=cover_bonus)
             line = f"✨ **{talent['name']}**: " + line
             recovery = actor.recovery + 1
             used_skill = weapon_skill(actor)
-            details = ABILITY_DETAILS.get(talent["name"], {})
+            details = ABILITY_DETAILS.get(talent["name"], {}) or EXTRA_ACTIVE_TALENTS.get(talent["name"], {})
             base_cooldown = next(iter(re.findall(r"\d+(?:[.,]\d+)?", str(details.get("cooldown", "1")))), "1")
             rounds = max(1, math.ceil(float(base_cooldown.replace(",", ".")) * max(.1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03)))
             actor.cooldowns[talent["name"]] = self.session.round_number + rounds + 1
+            forced = FORCED_TALENT_MOVEMENT.get(talent["name"])
+            if forced and target.alive:
+                occupied = {(unit.x, unit.y) for unit in self.session.combatants.values() if unit.alive and unit is not target}
+                old = (target.x, target.y)
+                new = self.session.grid.displace((actor.x, actor.y), old, forced[1], occupied, pull=forced[0] == "pull")
+                target.x, target.y = new
+                moved = self.session.grid.distance(old, new)
+                if moved:
+                    line += f" Цель {'притянута' if forced[0] == 'pull' else 'отброшена'} на {moved} м."
         else:
             spell = next((item for item in actor.spells if item["name"] == self.payload), None)
             if not spell:
@@ -363,20 +427,49 @@ class TargetSelect(discord.ui.Select):
                 wits=actor.attributes.get("Смекалка", 10),
                 cooldown_multiplier=max(.1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03),
             )
-            line = resolve_attack(
-                actor, target, accuracy=profile["accuracy"],
-                damage=(profile["damage_min"], profile["damage_max"]),
-                defense=profile["defense"], damage_type=CORE_DAMAGE.get(spell["core"], "Магический"),
-                penetration=profile["penetration"],
-            )
-            line = f"🔮 **{spell['name']}**: " + line
+            cells = spell_effect_cells(self.session.grid, (actor.x, actor.y), (target.x, target.y), profile)
+            affected = [unit for unit in self.session.combatants.values()
+                        if unit.alive and unit.team != actor.team and (unit.x, unit.y) in cells]
+            affected = affected or [target]
+            spell_lines = []
+            for victim in affected:
+                victim_before = victim.health
+                victim_cover, victim_cover_bonus = self.session.grid.cover((actor.x, actor.y), (victim.x, victim.y))
+                if victim_cover == "полное":
+                    continue
+                spell_lines.append(resolve_attack(
+                    actor, victim, accuracy=profile["accuracy"],
+                    damage=(profile["damage_min"], profile["damage_max"]),
+                    defense=profile["defense"], damage_type=CORE_DAMAGE.get(spell["core"], "Магический"),
+                    penetration=profile["penetration"],
+                    defense_bonus=victim_cover_bonus if profile["targeting"] in {"unit", "line"} else 0,
+                ))
+                if victim is not target:
+                    extra_damage.append((victim, victim_before))
+            if profile.get("enhancement") == "Столкновение":
+                for victim in affected:
+                    occupied = {(unit.x, unit.y) for unit in self.session.combatants.values()
+                                if unit.alive and unit is not victim}
+                    victim.x, victim.y = self.session.grid.displace(
+                        (actor.x, actor.y), (victim.x, victim.y), 4, occupied,
+                    )
+            line = f"🔮 **{spell['name']}**: " + " ".join(spell_lines)
             recovery = max(2, 3 + spell["difficulty"] / 25)
             used_skill = skill
             spell_rounds = profile["cooldown"]
             actor.cooldowns[cooldown_key] = self.session.round_number + spell_rounds + 1
+        notes = []
+        if flank_bonus:
+            notes.append("окружение +15 к точности")
+        if cover_bonus:
+            notes.append(f"{cover_name} укрытие +{cover_bonus} к защите")
+        if notes:
+            line += " Тактика: " + ", ".join(notes) + "."
         self.session.log.append(line)
         self.session.advance(actor, recovery)
         await self.session.persist_damage(target, before)
+        for victim, victim_before in extra_damage:
+            await self.session.persist_damage(victim, victim_before)
         if actor.character_id is not None:
             await self.session.db.add_skill_experience(actor.character_id, used_skill, 1)
         await interaction.response.send_message(line, ephemeral=True)
@@ -425,9 +518,23 @@ class DirectionButton(discord.ui.Button):
         if not self.session.grid.inside(target) or target in self.session.grid.blocked or target in occupied:
             await interaction.response.send_message("Эта клетка занята или недоступна.", ephemeral=True)
             return
+        old = (actor.x, actor.y)
+        controllers = [unit for unit in self.session.combatants.values()
+                       if unit.alive and unit.team != actor.team
+                       and self.session.grid.distance(old, (unit.x, unit.y)) <= 1
+                       and self.session.grid.distance(target, (unit.x, unit.y)) > 1]
         actor.x, actor.y = target
         actor.movement_remaining -= 1
         self.session.log.append(f"👣 **{actor.name}** перемещается в клетку {actor.x + 1}:{actor.y + 1}.")
+        if controllers and not actor.disengaged:
+            before = actor.health
+            for enemy in controllers:
+                line = "⚡ Атака по возможности: " + resolve_attack(enemy, actor, defense="Уклонение")
+                self.session.log.append(line)
+                if not actor.alive:
+                    break
+            await self.session.persist_damage(actor, before)
+        actor.disengaged = False
         await interaction.response.edit_message(
             content=f"Позиция **{actor.x + 1}:{actor.y + 1}** · осталось движения: **{actor.movement_remaining} м**.",
             view=MoveView(self.session),
@@ -465,7 +572,8 @@ class BattleView(discord.ui.View):
         actor = self.session.current
         available = [
             talent for talent in (actor.talents if actor else [])
-            if talent["name"] in ABILITY_DETAILS and actor.cooldowns.get(talent["name"], 0) <= self.session.round_number
+            if talent["name"] in {**ABILITY_DETAILS, **EXTRA_ACTIVE_TALENTS}
+            and actor.cooldowns.get(talent["name"], 0) <= self.session.round_number
         ]
         if not actor or not available:
             await interaction.response.send_message("У персонажа нет доступных способностей.", ephemeral=True)
