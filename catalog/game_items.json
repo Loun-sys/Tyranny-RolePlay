@@ -17330,6 +17330,38 @@
     "lore": "\"Весы Милосердия\" – выражение роли, дарованной Судом Вершителю судеб.\n\nДве чаши, на которых выгравированы слова \"Справедливость\" и \"Противоречие\", прекрасно уравновешены и отклоняются незримой силой, когда вы не обращаете на это внимание. Тунон любил дарить такие весы перспективным ученикам, не объясняя, зачем или для чего нужен этот подарок. Для измерения вещественного они бесполезны, но, кажется, что-то они все же взвешивают, поскольку чаши постоянно колеблются. Самый развернутый ответ, на который когда-либо мог рассчитывать ученик, звучал так: \"Обдумай, для чего они нужны и кто ты в них. Ты – судия, молоток, что поколеблет их, или основание, на котором они стоят?\"\n\nВершители прошлого считали, что ответа у загадки нет, а Тунон просто хочет, чтобы каждый из его учеников пришел к собственным выводам. Иные же задавались вопросом, а не ищет ли ответа и сам Тунон, не наблюдает ли он за своими Вершителями, дабы познать самого себя?"
   },
   {
+    "name": "Шлем разбойника",
+    "category": "Броня",
+    "slot": "Голова",
+    "source_url": "game://Bronze_Enemy_HELM_HoBR_Reaver",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Такие шлемы изготавливаются для солдат, которые хотят воспроизвести стойкость элитных Опальных, несмотря на любые недостатки, из-за которых они не подходят для несения службы в легионе Севера.",
+    "image_url": "assets/item-icons/helm_bronze_01_S_R.png",
+    "value": 370,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 1,
+    "recovery": 0.3,
+    "properties": {
+      "gameData": {
+        "prefab": "Bronze_Enemy_HELM_HoBR_Reaver",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 1.100000023841858,
+          "RecoveryModifier": 0.30000001192092896,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
     "name": "Одеяние иерархов",
     "category": "Броня",
     "slot": "Торс",
@@ -69531,6 +69563,34 @@
     "lore": "Эта печать изготовлена аккуратно и со вниманием к деталям. \nВы узнаете сигил торгового дома \"Рука с пером\"."
   },
   {
+    "name": "Травяное чучело",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://Lore_FM_Grass_Effigy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Зверолюды из отрядов Клинков-Мародеров носят при себе крохотных куколок из травы и веток. Хотя они никому не объясняют, что означают эти фигурки, с каждым новым убитым в бою врагом они добавляют к куколке еще одну травинку или сучок. Самые старые и успешные зверолюды, у которых фигурки превратились в шипастые бесформенные шары, гордо носят их на шее.",
+    "image_url": "assets/item-icons/twig_doll_S.png",
+    "value": 150,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Lore_FM_Grass_Effigy",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
     "name": "Шлем Багровых Копий (вариант 2)",
     "category": "Броня",
     "slot": "Голова",
@@ -103634,6 +103694,34 @@
     }
   },
   {
+    "name": "Страницы «Обличения»",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://Lore_HH_Expedition_Report",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Эти тонкие, надорванные пергаментные страницы, судя по всему, скопированы из «Обличения» - философского трактата, популярного среди бедноты на Ярусах. «Обличение» всячески осуждает знать за алчность и утверждает, что своего положения и влияния они достигли случайно; они хуже честных преступников и должны быть уничтожены. «Обличение» целиком читали лишь единицы, все прочие пересказывают избранные места, насколько позволяет память, в том виде, в котором они слышали их от кого-то еще. Существуют десятки вариаций этого текста, в каждом из которых делается акцент на то, что особенно досаждало конкретному пересказчику.",
+    "image_url": "assets/item-icons/expedition_report_p1_S.png",
+    "value": 150,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Lore_HH_Expedition_Report",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
     "name": "Инструменты Скованных Горном",
     "category": "Расходуемые предметы",
     "slot": "",
@@ -109843,6 +109931,34 @@
     },
     "wiki_page_id": 3908,
     "lore": "На этом свитке нарисована часть неизвестного сигила. Оттиск углем сделан грубо и не закончен, из-за чего полный вид сигила пока что остается непонятным."
+  },
+  {
+    "name": "Рецепт: выжимка колосса",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Recipe_Scroll_Infirmary_Colossus_Seed",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этот рецепт позволяет изготовить \"выжимку колосса\", если у вас есть доступ к лазарету Шпиля и нужным ингредиентам.",
+    "image_url": "assets/item-icons/Research_Scroll_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Recipe_Scroll_Infirmary_Colossus_Seed",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
   },
   {
     "name": "Доспех подмастерья Скованных Горном (вариант 3)",
@@ -134409,6 +134525,307 @@
     "lore": "Алмаз — предмет из игры «Тирания».\n\nТип: Джунк\nЦена: 32 бронз."
   },
   {
+    "name": "Янтарная брошь с хризалидой",
+    "category": "Аксессуары",
+    "slot": "Аксессуар",
+    "source_url": "game://ACC_UNIQUE_Chrysalis_Amber_Brooch",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Эта крупная брошь украшена поразительно прозрачным куском янтаря, запечатавшим в себе яркокрылую хризалиду – насекомое, часто встречающееся на Ярусах. Вглядевшись, можно разглядеть выцарапанные на поверхности сигилы исцеления.",
+    "image_url": "assets/item-icons/acc_unique_chrysalis_amber_brooch_S.png",
+    "value": 5000,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "ACC_UNIQUE_Chrysalis_Amber_Brooch",
+        "archive": "items",
+        "statusEffects": [
+          {
+            "Tag": "Heal 10% on Kill",
+            "Persistent": 1,
+            "IsHostile": 0,
+            "HideFromPortrait": 1,
+            "HideFromUI": 0,
+            "HideFromUIInspect": 0,
+            "Apply": 0,
+            "Value": 0.0,
+            "ExtraValue": 0.0,
+            "Duration": 0.0,
+            "ExtraObject": "",
+            "LastsUntilCombatEnds": 0,
+            "LastsUntilRest": 0,
+            "MaxRestCycles": 0,
+            "IntervalRate": 0,
+            "OneHitUse": 0,
+            "OnStartVisualEffect": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "OnAppliedVisualEffect": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "OnStopVisualEffect": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "OnAuraVisualEffect": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "OnTriggerVisualEffect": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "ExtraVisualEffect": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "VFXList": [],
+            "Icon": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "Keyword": "",
+            "DontHideFromLog": 0,
+            "IgnoreAbilityDeactivation": 0,
+            "m_deserializeInitialized": 1,
+            "ApplicationPrerequisites": [],
+            "AffectsStat": 116,
+            "DmgType": 9,
+            "DefType": 5,
+            "Companion": 0,
+            "OnlyIfNotCompanion": 0,
+            "ContinuousApplicationAura": 0,
+            "ChecksReligion": 0,
+            "VisualEffectAttach": 0,
+            "TrapPrefab": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "EquippablePrefab": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "AttackPrefab": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "AfflictionPrefab": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "AfflictionPrefabTag": "",
+            "AbilityPrefab": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "RaceType": 0,
+            "Skill": 1,
+            "TriggerAdjustment": {
+              "Type": 7,
+              "TriggerValue": 0.0,
+              "ValueAdjustment": 0.15000000596046448,
+              "DurationAdjustment": 0.0,
+              "RadiusAdjustment": 0.0,
+              "MaxTriggerCount": 1,
+              "RemoveEffectAtMax": 0,
+              "ResetTriggerOnEffectPulse": 0,
+              "ResetTriggerOnEffectEnd": 0,
+              "DisplayType": 1,
+              "ShouldShowActivation": 0
+            },
+            "SwapToInstructionSet": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "ShowInLog": 0,
+            "Stackable": 0,
+            "UsePassiveStackingRules": 1,
+            "ClearOnOwnerDeath": 0,
+            "UseTargetAsLaunchAttackOwner": 0,
+            "AttackTypeTriggerForLaunchAttack": 2,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 0,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "UseTargetReputation": 0,
+              "ValueAdjustment": 0.0,
+              "ExtraValueAdjustment": 0.0,
+              "DurationAdjustment": 0.0
+            }
+          }
+        ],
+        "mods": [
+          {
+            "m_Enabled": 1,
+            "m_Name": "",
+            "DisplayName": {
+              "StringTable": 16,
+              "StringID": 173,
+              "Package": 0
+            },
+            "ModEnchantCategory": 0,
+            "Cost": 2,
+            "FriendlyRadius": 0.0,
+            "StatusEffectsOnEquip": [
+              {
+                "Tag": "Heal 10% on Kill",
+                "Persistent": 1,
+                "IsHostile": 0,
+                "HideFromPortrait": 1,
+                "HideFromUI": 0,
+                "HideFromUIInspect": 0,
+                "Apply": 0,
+                "Value": 0.0,
+                "ExtraValue": 0.0,
+                "Duration": 0.0,
+                "ExtraObject": "",
+                "LastsUntilCombatEnds": 0,
+                "LastsUntilRest": 0,
+                "MaxRestCycles": 0,
+                "IntervalRate": 0,
+                "OneHitUse": 0,
+                "OnStartVisualEffect": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "OnAppliedVisualEffect": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "OnStopVisualEffect": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "OnAuraVisualEffect": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "OnTriggerVisualEffect": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "ExtraVisualEffect": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "VFXList": [],
+                "Icon": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "Keyword": "",
+                "DontHideFromLog": 0,
+                "IgnoreAbilityDeactivation": 0,
+                "m_deserializeInitialized": 1,
+                "ApplicationPrerequisites": [],
+                "AffectsStat": 116,
+                "DmgType": 9,
+                "DefType": 5,
+                "Companion": 0,
+                "OnlyIfNotCompanion": 0,
+                "ContinuousApplicationAura": 0,
+                "ChecksReligion": 0,
+                "VisualEffectAttach": 0,
+                "TrapPrefab": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "EquippablePrefab": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "AttackPrefab": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "AfflictionPrefab": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "AfflictionPrefabTag": "",
+                "AbilityPrefab": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "RaceType": 0,
+                "Skill": 1,
+                "TriggerAdjustment": {
+                  "Type": 7,
+                  "TriggerValue": 0.0,
+                  "ValueAdjustment": 0.15000000596046448,
+                  "DurationAdjustment": 0.0,
+                  "RadiusAdjustment": 0.0,
+                  "MaxTriggerCount": 1,
+                  "RemoveEffectAtMax": 0,
+                  "ResetTriggerOnEffectPulse": 0,
+                  "ResetTriggerOnEffectEnd": 0,
+                  "DisplayType": 1,
+                  "ShouldShowActivation": 0
+                },
+                "SwapToInstructionSet": {
+                  "m_FileID": 0,
+                  "m_PathID": 0
+                },
+                "ShowInLog": 0,
+                "Stackable": 0,
+                "UsePassiveStackingRules": 1,
+                "ClearOnOwnerDeath": 0,
+                "UseTargetAsLaunchAttackOwner": 0,
+                "AttackTypeTriggerForLaunchAttack": 2,
+                "LevelScaling": {
+                  "BaseLevel": 0,
+                  "LevelIncrement": 0,
+                  "MaxLevel": 0,
+                  "UseProgressionIndexForScaling": 0,
+                  "Faction": 0,
+                  "Axis": 0,
+                  "UseTargetReputation": 0,
+                  "ValueAdjustment": 0.0,
+                  "ExtraValueAdjustment": 0.0,
+                  "DurationAdjustment": 0.0
+                }
+              }
+            ],
+            "AbilitiesToModOnEquip": [],
+            "AbilityModsOnEquip": [],
+            "OnEquipVisualEffect": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "StatusEffectsOnLaunch": [],
+            "StatusEffectsOnAttack": [],
+            "StatusEffectsOnCrit": [],
+            "DamageProcs": [],
+            "AbilityPrefab": {
+              "m_FileID": 0,
+              "m_PathID": 0
+            },
+            "AbilityTriggeredOn": 0,
+            "AbilityTarget": 0
+          }
+        ],
+        "modReferences": [
+          {
+            "m_FileID": 0,
+            "m_PathID": -4439912375562068634
+          }
+        ],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
     "name": "Железный слиток",
     "category": "Расходуемые предметы",
     "slot": "",
@@ -139577,6 +139994,34 @@
     }
   },
   {
+    "name": "Железная лампа",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://Lore_BR_Iron_Lamp",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Дом Сломленных Регентов обирает побежденных врагов догола, не оставляя ровным счетом ничего. То, что наемники не могут продать или использовать, они расплавляют и изготавливают что-то полезное. В Старых Стенах это чаще всего лампы, разгоняющие тьму. Цветом эти темные железные светильники подозрительно напоминают доспехи Опальных.",
+    "image_url": "assets/item-icons/obsidian_lamp_S.png",
+    "value": 150,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Lore_BR_Iron_Lamp",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
     "name": "Свиток: сигил \"Фазирования\" (штрих)",
     "category": "Сигилы",
     "slot": "",
@@ -144222,6 +144667,34 @@
     "properties": {
       "gameData": {
         "prefab": "Junk_Unbroken_Bronze_HELM",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Серебряный ключ",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://Lore_BR_Silver_Key",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Дом Сломленных Регентов взял себе такое название после успешно выполненного контракта против одного из регентов Оплота. Наемники любят хвалиться, что одолели знаменитых воинов этой державы в честном бою, но те истории, которые они не рассказывают посторонним, рисуют совсем иную картину мрачного предательства и измены. Каждый из членов Дома носит небольшой медальон из серебра, олова или жести в форме ключа. Они утверждают, что это точная копия ключа от покоев регента. Хитроумие помогло им одержать победу над королевской гвардией, когда прямой, грубый натиск провалился.",
+    "image_url": "assets/item-icons/key_gleaming_silver_S.png",
+    "value": 150,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Lore_BR_Silver_Key",
         "archive": "items",
         "statusEffects": [],
         "mods": [],
@@ -153835,6 +154308,34 @@
     "lore": "Этот доспех покрыт множеством царапин и, похоже, побывал далеко не в одном бою. Судя по бледным подпалинам с красными краями, предыдущий владелец имел дело с погибелями... и, скорее всего, уступил им. Доспех изношен, но должен выдержать обратный путь из Старых Стен."
   },
   {
+    "name": "Спасенные припасы",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://Lore_HH_Supplies",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Гражданская война, похоже, не особо затронула владельца этого мешка с припасами... пока он не попался вам на пути. Внутри чего только нет: столовая посуда, ткань, пеньковая веревка, статуэтки, игровая доска, рыболовный крючок с насадкой, маленькая флейта, медные украшения, свечи, ламповое масло и прочие вещи, необходимые для выживания на Ярусах. Во время войны все это можно дорого продать, и от колец не откажется ни нищий, ни Архонт.",
+    "image_url": "assets/item-icons/tribute_to_ondra_S.png",
+    "value": 150,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Lore_HH_Supplies",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
     "name": "Послание от Голосов Нерата",
     "category": "Расходуемые предметы",
     "slot": "",
@@ -155470,6 +155971,34 @@
     "lore": "Яшма — предмет из игры «Тирания».\n\nТип: Джунк\nЦена: 4 бронз. 80 медн."
   },
   {
+    "name": "Бронзовый рог",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://Lore_FM_Bronze_Horn",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Излюбленная тактика Клинков-Мародеров – засады – как нельзя лучше дает им представление о том, как опасно оказаться застигнутым врасплох, без подкрепления. Ни один отряд Клинков не отправляется в путь без рога, с помощью которого призывают на подмогу собратьев по оружию. Острые уши их союзников-зверолюдов позволяют увеличить дальность сигнала, хотя подкрепления от этого, конечно, быстрее не прибегают.",
+    "image_url": "assets/item-icons/bronze_horn_S.png",
+    "value": 150,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Lore_FM_Bronze_Horn",
+        "archive": "items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
     "name": "Горькое лекарство",
     "category": "Расходуемые предметы",
     "slot": "",
@@ -155658,6 +156187,3033 @@
             "WeaponDamageMult": 0.0
           }
         },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Бис Певчей Птички",
+    "category": "Броня",
+    "slot": "Голова",
+    "source_url": "game://vx1_art_Cloth_HELM_Songbirds_Encore",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Хотя сложнейший и изящнейший головной убор персонаж остается столь же непроницаемым, как обычно, теперь она носит его с легкостью, как будто он давит уже не столь сильно. Самоцвет на лбу улавливает и усиливает свет, а затем отражает, пульсируя в такт пению Архонта.",
+    "image_url": "assets/item-icons/SongbirdsEncore_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 1,
+    "recovery": 0.1,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_art_Cloth_HELM_Songbirds_Encore",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -1896793038575588693
+          }
+        ],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 1.2000000476837158,
+          "RecoveryModifier": 0.10000000149011612,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Укрытие Сентурома",
+    "category": "Щиты",
+    "slot": "",
+    "source_url": "game://vx1_WPN_SHLD_IR_Senturoms_Bulwark",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Хотя об Опальных Грэйвена Аше ходят легенды, будто в бою они превыше всего стремятся к славной гибели, Скаловержец Сентор умирать совсем не хотел. Он заказал для себя этот железный осадный щит и вплел в него мощные заклинания, которые в момент смертельной опасности вдыхают магию в сигилы и освещают весь бастион.\n\nЩит и вправду уберег Сентора от фальксов ярусников и когтей зверолюдов, но, увы, не сумел спасти от сердечного приступа, от которого он и скончался, сидя в нужнике где-то в Лазури.",
+    "image_url": "assets/item-icons/shield_senturoms_bulwark_S.png",
+    "value": 800,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_WPN_SHLD_IR_Senturoms_Bulwark",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -774107515536097739
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": 3519100646159087492
+          }
+        ],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Шлем разведчика Лезвий",
+    "category": "Броня",
+    "slot": "Голова",
+    "quality": "Обычное",
+    "description": "Разор Разведчик шлем — предмет из игры «Тирания».\n\nОтражение: +3%\nВосстановление: +0,02 раунда\nМатериал: Кожаный\nТип: Лёгкий брони, Хеадгеар\nЭффект: точности: 2\nЦена: 60 медн.",
+    "image_url": "assets/item-icons/helm_leather_unbroken_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Razor_Scout_helm",
+    "value": 25,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.25,
+    "properties": {
+      "Отражение": "+3%",
+      "Восстановление": "+0,02 раунда",
+      "Материал": "Кожаный",
+      "Тип": "Лёгкий брони, Хеадгеар",
+      "Эффект": "точности: 2",
+      "Цена": "60 медн.",
+      "gameData": {
+        "prefab": "vx1_Leather_ENEMY_HELM_HoBR_Razor_Scout",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.25,
+          "DeflectionBonus": 0
+        }
+      }
+    },
+    "wiki_page_id": 14231,
+    "lore": "Разор Разведчик шлем — предмет из игры «Тирания».\n\nОтражение: +3%\nВосстановление: +0,02 раунда\nМатериал: Кожаный\nТип: Лёгкий брони, Хеадгеар\nЭффект: точности: 2\nЦена: 60 медн."
+  },
+  {
+    "name": "Полутень",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://vx1_WPN_1H_BR_Sword_Penumbra",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Ваша тень хаотически мечется в тускло-лиловом свете, источаемом этим острым, как бритва, бронзовым лезвием. Свечение то обволакивает рукоять клинка, то вытягивается прочь от него, точно пытаясь сбежать. Вы не слышали ни единой легенды об этом оружии, но металл источает магическую энергию, которую он явно не в силах удержать. Возможно, кузнец использовал секреты давно забытых времен, и мощь этого клинка вполне может оказаться старше самих Архонтов, Владыки и даже Старых Стен, где вы его обнаружили.",
+    "image_url": "assets/item-icons/wpn_sword_runeedge_S.png",
+    "value": 520,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 12,
+    "damage_max": 15,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_WPN_1H_BR_Sword_Penumbra",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -5093055636509221075
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": 4118167356812800481
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 6,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 12.0,
+            "Maximum": 15.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 2,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Свиток: большой сигил \"Сковывающих выстрелов\" (штрих)",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Chain3",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "В этом свитке содержится магический штрих, позволяющий заклинанию перескакивать на дополнительные цели.",
+    "image_url": "assets/item-icons/paper_03_S.png",
+    "value": 7000,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Chain3",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Сувенир Певчей Птички",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_IT_Memento_Sirin",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Маленькая статуэтка из полированного тиса, изображающая птицу. По слухам, она высвобождает песнь даже тех, кто заперт в самой глухой клетке.\n\nПриобретение этого предмета улучшает шлем персонаж, но не меняет ее историю и прохождение ее задания. Это действие невозможно отменить.",
+    "image_url": "assets/item-icons/Memento_Songbird_S.png",
+    "value": 10000,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_Memento_Sirin",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Колотушка Эдикта",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://VX1_WPN_Art_Hammer_1H_IR_Edicts_Mallet_Legacy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Лоара выковала этот молот из покореженного железа и бронзы Могилы Клинков. Оружие украшено сигилами грома и молнии, взывающими к ярости магической бури, подарившей жизнь сплаву, из которого был изготовлен молот; из него торчат заостренные Эдиктом шипы. Он издает непрекращающийся, едва слышный стон, от которого у вас шевелятся волосы и доспехи гудят в ответ.",
+    "image_url": "assets/item-icons/Edicts_Mallet_S.png",
+    "value": 300,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 24,
+    "damage_max": 29,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "VX1_WPN_Art_Hammer_1H_IR_Edicts_Mallet_Legacy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 587958187958275712
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 24.0,
+            "Maximum": 29.0,
+            "LevelScaling": {
+              "BaseLevel": 1,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Шлем ветерана",
+    "category": "Броня",
+    "slot": "Голова",
+    "quality": "Обычное",
+    "description": "Ветеран Шлем — предмет из игры «Тирания».\n\nОтражение: 1%\nМатериал: Тканевый\nТип: Лёгкий брони, Хеадгеар\nЭффект: точности +1\nЦена: 40 медн.",
+    "image_url": "assets/item-icons/Leather_Helm_Start_Mage_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Veteran_Helm",
+    "value": 100,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.1,
+    "properties": {
+      "Отражение": "1%",
+      "Материал": "Тканевый",
+      "Тип": "Лёгкий брони, Хеадгеар",
+      "Эффект": "точности +1",
+      "Цена": "40 медн.",
+      "gameData": {
+        "prefab": "vx1_Leather_Enemy_HELM_FM_Veteran",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.10000000149011612,
+          "DeflectionBonus": 1
+        }
+      }
+    },
+    "wiki_page_id": 13454,
+    "lore": "Ветеран Шлем — предмет из игры «Тирания».\n\nОтражение: 1%\nМатериал: Тканевый\nТип: Лёгкий брони, Хеадгеар\nЭффект: точности +1\nЦена: 40 медн."
+  },
+  {
+    "name": "Древний пергамент из Старых Стен",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Ancient_Parchment",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Вы обнаружили этот древний пергамент в глубине Старых Стен, в Ране Бастарда, но что там написано – не можете разобрать. Возможно, надо нанять расшифровщика, чтобы докопаться до сути.",
+    "image_url": "assets/item-icons/Quest_Edict_Fragment_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Ancient_Parchment",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Посох Звездобоя",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_WPN_STF_WD_Staff_Starsmite",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Всем известно, что Каирн никогда особо не сближался со своими последователями. Говорят, он не столько обучал Скаловержцев, сколько позволял гильдии изучать себя и свои труды. Архонт-исполин тем не менее выделял кое-кого из учеников, в частности Рагналл, необычайно талантливую женщину, которая пришла к нему в северных горах.\n\nРагналл изготовила посох Звездобоя из сосны, росшей на скальном уступе, где она впервые повстречала Архонта Камня. Посох этот, напоенный мощью лавины, швыряет камни в любого, кто угрожает владельцу.",
+    "image_url": "assets/item-icons/wpn_starsmite_staff_S.png",
+    "value": 1000,
+    "weight": 1,
+    "hands": 2,
+    "damage_min": 25,
+    "damage_max": 30,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_WPN_STF_WD_Staff_Starsmite",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 3358792837244421207
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 10.0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 25.0,
+            "Maximum": 30.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 0.6000000238418579
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Свиток: внушительный сигил \"Точного действия\" (штрих)",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Accuracy5",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "В этом свитке содержится магический штрих, существенно повышающий точность заклинания.",
+    "image_url": "assets/item-icons/paper_03_S.png",
+    "value": 9500,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Accuracy5",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Светоключ Джадис",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Crystal_Green",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этот камень размером с кулак отражает полосы оливкового света, когда вы вертите его в руках.",
+    "image_url": "assets/item-icons/GreenCrystal_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Crystal_Green",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Ключ Надзирателя",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Wardens_Key",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Ключи Надзирателя были созданы Яспосом и Махальником, ими пользуются люди и зверолюды из Раны Бастарда, чтобы проще проходить через Старые Стены. Они позволяют владельцу на расстоянии использовать маячки и переключатели.",
+    "image_url": "assets/item-icons/Wardens_Key_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Wardens_Key",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Полутень (вариант 2)",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://vx1_WPN_1H_BR_Sword_Penumbra_Legacy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Ваша тень хаотически мечется в тускло-лиловом свете, источаемом этим острым, как бритва, бронзовым лезвием. Свечение то обволакивает рукоять клинка, то вытягивается прочь от него, точно пытаясь сбежать. Вы не слышали ни единой легенды об этом оружии, но металл источает магическую энергию, которую он явно не в силах удержать. Возможно, кузнец использовал секреты давно забытых времен, и мощь этого клинка вполне может оказаться старше самих Архонтов, Владыки и даже Старых Стен, где вы его обнаружили.",
+    "image_url": "assets/item-icons/wpn_sword_runeedge_S.png",
+    "value": 520,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 12,
+    "damage_max": 15,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_WPN_1H_BR_Sword_Penumbra_Legacy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -5093055636509221075
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": 4118167356812800481
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 6,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 12.0,
+            "Maximum": 15.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 2,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Ляжка Артикса",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://vx1_wpn_1h_meat_mace_artyxs_haunch",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Сколько ни пытайся держать эту кость неведомого происхождения в огне, мясу ничего не сделается. Что кажется еще более странным, в ляжке теплится какая-то жизнь. Сколько бы с нее ни было съедено мяса, оно появляется вновь, такое же жесткое и жилистое, как прежде. Хотя весом кость не уступает палице, ее затруднительно использовать как оружие: она плохо сбалансирована и расколота так, что неудобно держать.\n\nЕсли кто-то ухитрится применить ее в бою, это будет подвиг, достойный занесения в анналы.",
+    "image_url": "assets/item-icons/wpn_1h_artyx_haunch_S.png",
+    "value": 300,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 24,
+    "damage_max": 29,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_wpn_1h_meat_mace_artyxs_haunch",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -509568893933589682
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": 8853717434329229072
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 24.0,
+            "Maximum": 29.0,
+            "LevelScaling": {
+              "BaseLevel": 1,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Кивер следопыта",
+    "category": "Броня",
+    "slot": "Голова",
+    "source_url": "game://vx1_Leather_HELM_Stalkers_Shako",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Ярусники очень суеверны и этого не скрывают. Многие верят, что охотник способен укрыться от внимания добычи, если закроет лицо маской, изображающей хищное животное. Как ни странно, зачастую это срабатывает. Возможно, маска на самом деле приглушает запах охотника или его дыхание. Либо тут и вправду работает некая магия.",
+    "image_url": "assets/item-icons/helm_stalkers_shako_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 2,
+    "recovery": 0.15,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Leather_HELM_Stalkers_Shako",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -4661176560489592006
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": -2401507992294851050
+          }
+        ],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 1.5,
+          "RecoveryModifier": 0.15000000596046448,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Сердце опустошителя",
+    "category": "Аксессуары",
+    "slot": "Аксессуар",
+    "quality": "Обычное",
+    "description": "Сердце Хавок — предмет из игры «Тирания».\n\nТип: Аккессорй\nЭффект: Курсед +10% урона -1% здоровья вхиле здоровья абове 35% еверй 0,3 раунда Аркане Бласт 14-28 Аркане урона вс. Магии на оружие крит Аннихилатион +25% к критикал урона мултиплиер\nЦена: 0 медных колец",
+    "image_url": "assets/item-icons/acc_unique_heart_of_a_malice_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Heart_of_Havoc",
+    "value": 5000,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "Тип": "Аккессорй",
+      "Эффект": "Курсед +10% урона -1% здоровья вхиле здоровья абове 35% еверй 0,3 раунда Аркане Бласт 14-28 Аркане урона вс. Магии на оружие крит Аннихилатион +25% к критикал урона мултиплиер",
+      "Цена": "0 медных колец",
+      "gameData": {
+        "prefab": "vx1_ACC_Heart_of_a_Malice",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -212589424572899749
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": -4869708284889036465
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": -3928575231079242648
+          }
+        ],
+        "attack": {},
+        "armor": {}
+      }
+    },
+    "wiki_page_id": 13378,
+    "lore": "Сущность погибели, собранная из останков опустошителей, мерцает бледным светом. Флакон надежно закрыт пробкой, но сущность внутри кружится, словно от легкого ветерка."
+  },
+  {
+    "name": "Свиток: внушительный сигил \"Силы\" (штрих)",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Intensity5",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "В этом свитке содержится магический штрих, существенно повышающий силу заклинания.",
+    "image_url": "assets/item-icons/paper_03_S.png",
+    "value": 9500,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Intensity5",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Церемониальные сапоги Вершителя судеб Тунона (вариант 5)",
+    "category": "Броня",
+    "slot": "Ноги",
+    "source_url": "game://vx1_Leather_Enemy_BOOTS_FM_Skirmisher",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Эти ботинки обычно носят в залах суда Тунона. Они рассчитаны на несколько лет носки. \n\nОни настолько износились в длинных походах за время продолжительной военной кампании, что уважаемые офицеры Суда не снизошли бы до того, чтобы их надеть.",
+    "image_url": "assets/item-icons/Leather_Boots_Start_Soldier_S.png",
+    "value": 100,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.4,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Leather_Enemy_BOOTS_FM_Skirmisher",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.4000000059604645,
+          "DeflectionBonus": 4
+        }
+      }
+    }
+  },
+  {
+    "name": "Одеяние Заклинателя Приливов (вариант 2)",
+    "category": "Броня",
+    "slot": "Торс",
+    "source_url": "game://vx1_Cloth_Armor_Tidecaster_Male",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Традиционное облачение последователей Школы Приливов не включает одежды в традиционном смысле, а состоит из длинного отрезка веревки, обернутого вокруг тела и образующего подобие портупеи, – эти прагматичные заклинатели считают моду, которая не приносит пользы, бесполезной. Чтобы соответствовать социальным стандартам приличия, большинство Заклинателей Приливов предпочитает простую, свободную одежду. Учитывая, что большую часть своего времени они проводят в пути, тяжелые доспехи и ниспадающие одеяния, которые могут запутаться в веслах, недопустимы. Атли одевается в минималистичном стиле – под традиционной веревочной портупеей она носит плотно сидящий жилет, который оставляет большую часть ее разрисованной кожи открытой.",
+    "image_url": "assets/item-icons/Cloth_Armor_Eb_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 4,
+    "recovery": 0.3,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Cloth_Armor_Tidecaster_Male",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 3.5999999046325684,
+          "RecoveryModifier": 0.30000001192092896,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Бронзовый двуручный меч (вариант 6)",
+    "category": "Двуручное оружие",
+    "slot": "",
+    "source_url": "game://vx1_WPN__ENEMY_2H_BR_Sword_FM",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/w_2H_Sword01_S.png",
+    "value": 800,
+    "weight": 1,
+    "hands": 2,
+    "damage_min": 14,
+    "damage_max": 19,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_WPN__ENEMY_2H_BR_Sword_FM",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {
+          "AccuracyBonus": 6,
+          "DTBypass": 0.0,
+          "AttackDistance": 1.25,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 14.0,
+            "Maximum": 19.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 2,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Талисман Пресной Клички",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "quality": "Обычное",
+    "description": "Инсипид Моникер'с Талисман — предмет из игры «Тирания».\n\nТип: Куест итем\nЭффект: Опенс уп  барриер\nЦена: 0 медных колец",
+    "image_url": "assets/item-icons/Insipid_Monikers_Talisman_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Insipid_Moniker%27s_Talisman",
+    "value": 0,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "Тип": "Куест итем",
+      "Эффект": "Опенс уп  барриер",
+      "Цена": "0 медных колец",
+      "gameData": {
+        "prefab": "vx1_Quest_Insipids_Talisman",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    },
+    "wiki_page_id": 14044,
+    "lore": "Небольшой самоцвет покрыт символами Певчих Крови."
+  },
+  {
+    "name": "Инструменты могильного cвета",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Gravelight_Tools",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Это часть набора инструментов каменщиков Скованных Горном, сделанных из руды могильного cвета.",
+    "image_url": "assets/item-icons/ACC_Gravelight_Tools_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Gravelight_Tools",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Ключ-камень Расколотых Глубин",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Keystone_Fractured",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этим ключ-камнем можно включать телепорты в Старых Стенах Раны Бастарда.",
+    "image_url": "assets/item-icons/ACC_Keystone_Yellow_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Keystone_Fractured",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Лишение",
+    "category": "Аксессуары",
+    "slot": "Аксессуар",
+    "quality": "Обычное",
+    "description": "Деприватион — предмет из игры «Тирания».\n\nТип: Аккессорй\nЭффект: Инкессант Мелодй Иммунитй к Аслееп Волатиле Повер +25% урона Каусес  Рана еакх тиме йоу реакх белов 75%, 50%, и 25% здоровья\nЦена: 56 бронз.",
+    "image_url": "assets/item-icons/lullabys_core_s.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Deprivation",
+    "value": 10000,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "Тип": "Аккессорй",
+      "Эффект": "Инкессант Мелодй Иммунитй к Аслееп Волатиле Повер +25% урона Каусес  Рана еакх тиме йоу реакх белов 75%, 50%, и 25% здоровья",
+      "Цена": "56 бронз.",
+      "gameData": {
+        "prefab": "vx1_ACC_Lullabys_Core",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -8995181573025216639
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": -9130847707144251965
+          }
+        ],
+        "attack": {},
+        "armor": {}
+      }
+    },
+    "wiki_page_id": 14200,
+    "lore": "Вы собрали эту пульсирующую и почти эфемерную пыльцу выкристаллизовавшейся энергии из останков опустошителя в Ране Бастарда. Если поднести ее к уху, то на грани слышимого можно уловить шепот песни погибелей. Звук заставляет вас сфокусироваться, собраться, но отвлекаясь на него, вы можете пропустить атаки, которые иначе предугадали бы."
+  },
+  {
+    "name": "Фрагмент доспеха Скованных Горном",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "quality": "Обычное",
+    "description": "Кузнец Судьбы броня фрагмент — предмет из игры «Тирания».\n\nТип: Куест итем\nЦена: 0 медных колец",
+    "image_url": "assets/item-icons/Forge-Bound_Armor_Fragment_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Forge-Bound_armor_fragment",
+    "value": 0,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "Тип": "Куест итем",
+      "Цена": "0 медных колец",
+      "gameData": {
+        "prefab": "vx1_Quest_ForgeBound_Armor_Fragment",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    },
+    "wiki_page_id": 14042,
+    "lore": "Небольшой фрагмент перепачканного кровью доспеха Скованных Горном. Похоже, оторван когтями зверолюда."
+  },
+  {
+    "name": "Ключ-камень Бездны",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Keystone_Abyss",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этим ключ-камнем можно включать телепорты в Старых Стенах Раны Бастарда.",
+    "image_url": "assets/item-icons/ACC_Keystone_Orange_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Keystone_Abyss",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Башмаки ученого чародея",
+    "category": "Броня",
+    "slot": "Ноги",
+    "source_url": "game://vx1_Cloth_ENEMY_BOOTS_HoBR_Sorcerer_Savant",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/cloth_boots_binder_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.05,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Cloth_ENEMY_BOOTS_HoBR_Sorcerer_Savant",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.05000000074505806,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Жалобный Шепот",
+    "category": "Броня",
+    "slot": "Руки",
+    "source_url": "game://vx1_Leather_GLOVE_Weeping_Whispers_Legacy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Три Шепота никогда и никуда не выходила безоружной. Эти перчатки несут в себе всего шесть лезвий из ее коллекции, зато кровь они пили чаще всех прочих. Шипы, торчащие по бокам, кажутся декоративными, но они закреплены на скрытых между слоями кожи длинных железных стяжках, что позволяет опытному бойцу применять их как для нападения, так и для защиты.",
+    "image_url": "assets/item-icons/Weeping_Whispers_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 4,
+    "damage_max": 8,
+    "armor": 1,
+    "recovery": 0.075,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Leather_GLOVE_Weeping_Whispers_Legacy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 4807106324710552961
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 4.0,
+            "Maximum": 8.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 0,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {
+          "DamageThreshold": 0.75,
+          "RecoveryModifier": 0.07500000298023224,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Перчатки Заклинателя Приливов (вариант 2)",
+    "category": "Броня",
+    "slot": "Руки",
+    "source_url": "game://vx1_Cloth_GLOVE_Tidecaster_Male",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Перчатки Атли сшиты очень просто – это полоса из легкой хлопковой ткани без пальцев, закрепленная веревкой, замысловато затянутой на предплечье. Большинство заклинателей считают одежду бесполезной помехой – обузой, которая набирает воду и позволяет врагу найти за что схватиться. Заклинатели Приливов проводят большую часть жизни в доках и на лодках, а это значит, что им часто нужны веревки, чтобы подтянуть что-то или закрепить. Вместо того чтобы носить на себе тяжелые мотки каната, большинство представителей гильдии предпочитает носить веревки в качестве стильного аксессуара, чтобы она была всегда под рукой.",
+    "image_url": "assets/item-icons/Cloth_GLOVE_Eb_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 6,
+    "damage_max": 10,
+    "armor": 1,
+    "recovery": 0.05,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Cloth_GLOVE_Tidecaster_Male",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 6.0,
+            "Maximum": 10.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {
+          "DamageThreshold": 0.6000000238418579,
+          "RecoveryModifier": 0.05000000074505806,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Полумесяц Эдикта",
+    "category": "Двуручное оружие",
+    "slot": "",
+    "source_url": "game://Vx1_Wpn_Art_Axe_2H_Ir_Edicts_Crescent",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этот топор был выкован Лицентией из покореженного железа и бронзы Могилы Клинков. У него имеется длинное изогнутое лезвие и обух, испещренный сигилами уничтожения, взывающими к магической ярости Владыки, поразившей Оплот.\n\nТакже маг-кузнец нанесла на оружие сигил, о котором сказала лишь то, что «давно хотела попробовать одну штуку». И добавила, что, скорее всего, «штука» вас не убьет.",
+    "image_url": "assets/item-icons/Edicts_Crescent_S.png",
+    "value": 750,
+    "weight": 1,
+    "hands": 2,
+    "damage_min": 27,
+    "damage_max": 32,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Vx1_Wpn_Art_Axe_2H_Ir_Edicts_Crescent",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 4332264712290781153
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 4.0,
+          "AttackDistance": 1.25,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 27.0,
+            "Maximum": 32.0,
+            "LevelScaling": {
+              "BaseLevel": 1,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Океанский огонь",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Ocean_Fire",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Сосуд с кружащейся синей жидкостью, через которую словно течет огонь.",
+    "image_url": "assets/item-icons/Quest_Ocean_Fire_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Ocean_Fire",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Рукавицы Багровых Копий (вариант 3)",
+    "category": "Броня",
+    "slot": "Руки",
+    "source_url": "game://vx1_Bronze_GLOVE_HoBR_Reaver",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/bronze_glove_sc_crimsonspears_S.png",
+    "value": 100,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 9,
+    "damage_max": 12,
+    "armor": 1,
+    "recovery": 0.175,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Bronze_GLOVE_HoBR_Reaver",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 9.0,
+            "Maximum": 12.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {
+          "DamageThreshold": 1.2000000476837158,
+          "RecoveryModifier": 0.17499999701976776,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Ключ-камень от Старых Стен Раны Бастарда",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Keystone_Main",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Такими ключ-камнями пользуются жители и зверолюды из Раны Бастарда, чтобы заходить в глубины Старых Стен.",
+    "image_url": "assets/item-icons/ACC_Keystone_Orange_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Keystone_Main",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Ведро королевской крови",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Royal_Blood",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Наглухо закупоренное деревянной крышкой, это большое ведро – почти бак – содержит заботливо собранные слезы плачущей статуи королевы Ликарии с развалин Эджеринга. Жидкость слабо пульсирует энергией, напоминающей вам магическое напряжение, висевшее в воздухе после провозглашения Эдиктов Кайроса.",
+    "image_url": "assets/item-icons/Barrel_of_royal_blood_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Royal_Blood",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Светоключ Танцы",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Crystal_Purple",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Ослепительный фиолетовый свет отражается от множества поверхностей камня.",
+    "image_url": "assets/item-icons/PurpleCrystal_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Crystal_Purple",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Колотушка Эдикта (вариант 2)",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://VX1_WPN_Art_Hammer_1H_IR_Edicts_Mallet",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Лоара выковала этот молот из покореженного железа и бронзы Могилы Клинков. Оружие украшено сигилами грома и молнии, взывающими к ярости магической бури, подарившей жизнь сплаву, из которого был изготовлен молот; из него торчат заостренные Эдиктом шипы. Он издает непрекращающийся, едва слышный стон, от которого у вас шевелятся волосы и доспехи гудят в ответ.",
+    "image_url": "assets/item-icons/Edicts_Mallet_S.png",
+    "value": 300,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 24,
+    "damage_max": 29,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "VX1_WPN_Art_Hammer_1H_IR_Edicts_Mallet",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 587958187958275712
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 24.0,
+            "Maximum": 29.0,
+            "LevelScaling": {
+              "BaseLevel": 1,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Милость Риноксы",
+    "category": "Броня",
+    "slot": "Ноги",
+    "source_url": "game://vx1_Bronze_BOOTS_Rinoxas_Grace",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Печально знаменитая капитан-торговец Ринокса ушла в пираты примерно сто лет назад, возмущенная монополизмом торговых домов Города-Бастарда. Она прославилась как хитроумием, так и боевыми подвигами, сделавшись фигурой почти легендарной. Этому немало способствовали биографы, состязавшиеся между собой в том, кто представит эту легенду максимально героическим образом или, напротив, развенчает ее. Особенно Риноксу обожествляют романтически настроенные юные дворяне воинственного склада.",
+    "image_url": "assets/item-icons/boots_rinoxas_grace_S.png",
+    "value": 180,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 1,
+    "recovery": 0.15,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Bronze_BOOTS_Rinoxas_Grace",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -1438654988689173765
+          }
+        ],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 1.0499999523162842,
+          "RecoveryModifier": 0.15000000596046448,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Насыщенные тени",
+    "category": "Броня",
+    "slot": "Торс",
+    "source_url": "game://vx1_kills-in-shadow_armor_infused_shadows",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Покров ночи словно бы скрывает все движения Охотницы Тени... или, возможно, это ее движения источают тьму. Алые глаза еще ярче светятся в темноте, тень скользит и вытягивается, как заскучавшая кошка.",
+    "image_url": "assets/item-icons/Infused_Shadows_S.png",
+    "value": 270,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_kills-in-shadow_armor_infused_shadows",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 3466705495195735632
+          }
+        ],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.0,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Шлем мародера Свободных Клинков",
+    "category": "Броня",
+    "slot": "Голова",
+    "source_url": "game://vx1_Bronze_ENEMY_HELM_FM_Juggernaut",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/Bronze_HELM_BronzeBrotherhood_S.png",
+    "value": 370,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 2,
+    "recovery": 0.35,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Bronze_ENEMY_HELM_FM_Juggernaut",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 2.0,
+          "RecoveryModifier": 0.3499999940395355,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Пожитки Фойби",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Phoibes_Stuff",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Это пожитки Книгочейки по имени Фойби. В основном здесь свитки, письменные принадлежности и собрание листов пергамента, исписанных какими-то текстами.",
+    "image_url": "assets/item-icons/ACC_Phoibes_Belongings_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Phoibes_Stuff",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Обеззараживающий салад",
+    "category": "Броня",
+    "slot": "Голова",
+    "source_url": "game://vx1_Bronze_HELM_Sterile_Sallet",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Хотя причины этого до конца не ясны, но как лекари, так и металлурги на Ярусах и на севере признают, что медь и бронза как ее сплав обладают способностью противодействовать слизи и плесени лучше, чем все прочие материалы, поэтому те, кто могут себе это позволить, хранят в таких сосудах воду и пищу.\n\nПохоже, о том помнил и мастер, изготовивший этот бронзовый шлем, украшенный медными сигилами исцеления и защиты. Он блистает сверхъестественной чистотой.",
+    "image_url": "assets/item-icons/helm_sterile_sallet_S.png",
+    "value": 370,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 1,
+    "recovery": 0.3,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Bronze_HELM_Sterile_Sallet",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 2070586324724231679
+          }
+        ],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 1.100000023841858,
+          "RecoveryModifier": 0.30000001192092896,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Перчатки разведчика Лезвий",
+    "category": "Броня",
+    "slot": "Руки",
+    "quality": "Изысканное",
+    "description": "Разор Разведчик перчатки — предмет из игры «Тирания».\n\nУрон: 15-18 дробящий против Парирования\nОтражение: +4%\nВосстановление: +0,01 раунда\nМатериал: Кожаный\nТип: Лёгкий брони, Перчатки\nЭффект: Точности: +3%\nЦена: 12 бронз. 30 медн.",
+    "image_url": "assets/item-icons/glove_leather_unbroken_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Razor_Scout_gloves",
+    "value": 40,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 8,
+    "damage_max": 12,
+    "armor": 0,
+    "recovery": 0.125,
+    "properties": {
+      "Отражение": "+4%",
+      "Восстановление": "+0,01 раунда",
+      "Материал": "Кожаный",
+      "Тип": "Лёгкий брони, Перчатки",
+      "Эффект": "Точности: +3%",
+      "Цена": "12 бронз. 30 медн.",
+      "gameData": {
+        "prefab": "vx1_Leather_ENEMY_GLOVE_HoBR_Razor_Scout",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 8.0,
+            "Maximum": 12.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.125,
+          "DeflectionBonus": 0
+        }
+      }
+    },
+    "wiki_page_id": 14068,
+    "lore": "Разор Разведчик перчатки — предмет из игры «Тирания».\n\nУрон: 15-18 дробящий против Парирования\nОтражение: +4%\nВосстановление: +0,01 раунда\nМатериал: Кожаный\nТип: Лёгкий брони, Перчатки\nЭффект: Точности: +3%\nЦена: 12 бронз. 30 медн."
+  },
+  {
+    "name": "Наручи Полекса",
+    "category": "Броня",
+    "slot": "Руки",
+    "source_url": "game://vx1_Bronze_GLOVE_Paulex_Bracers",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Ученик Архонта Тысячи Углей, основатель Школы Дикой Ярости, безумный Полекс примерно пять столетий тому назад досаждал юго-западной части Ярусов лесными пожарами. Известный своей нерешительностью Яроносец заказал себе легкие, тонкие наручи, которые позволяли бы ему мгновенно выхватывать оружие. Хотя те наручи, которые носил сам Полекс, давно затерялись, с них было сделано немало точных копий.",
+    "image_url": "assets/item-icons/glove_paulex_bracer_S.png",
+    "value": 100,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 9,
+    "damage_max": 12,
+    "armor": 1,
+    "recovery": 0.15,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Bronze_GLOVE_Paulex_Bracers",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -6421122960675258019
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 9.0,
+            "Maximum": 12.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {
+          "DamageThreshold": 1.0499999523162842,
+          "RecoveryModifier": 0.15000000596046448,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Доспех Яспоса",
+    "category": "Броня",
+    "slot": "Торс",
+    "source_url": "game://vx1_Iron_Armor_ForgeBound_Jaspos",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/Iron_Armor_Forgebound_Apprentace_S.png",
+    "value": 700,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 8,
+    "recovery": 1.6,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Iron_Armor_ForgeBound_Jaspos",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 8.100000381469727,
+          "RecoveryModifier": 1.600000023841858,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Лазурная чешуя",
+    "category": "Аксессуары",
+    "slot": "Аксессуар",
+    "source_url": "game://vx1_ACC_UNIQUE_Cerulean_Scales",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "В бурных морях близ берегов Ярусов водятся гигантские змеи. Одна дворянка из Последней Гавани, которая кичилась своим богатством, вдохновилась историями о подводных чудовищах и заказала себе браслет с сапфировой чешуей. Застежка была искусно спрятана под двумя перекрывающимися камнями, так что весь браслет выглядел, как бесконечная змея, обмотавшаяся вокруг запястья. Прошли годы, и у Лазурной чешуи появилась собственная репутация. Говорили, что обладателю браслета не страшен никакой шторм – и даже что он сам способен призвать бурю.",
+    "image_url": "assets/item-icons/acc_unique_cerulean_scales_L.png",
+    "value": 9000,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_ACC_UNIQUE_Cerulean_Scales",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -5971101407162189351
+          }
+        ],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Легкие кожаные сапоги (вариант 3)",
+    "category": "Броня",
+    "slot": "Ноги",
+    "source_url": "game://vx1_Bronze_ENEMY_BOOTS_HoBR_Reaver",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/bronze_boots_sc_crimsonspears_S.png",
+    "value": 180,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.175,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Bronze_ENEMY_BOOTS_HoBR_Reaver",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.17499999701976776,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Сувенир Охотницы Тени",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_IT_Memento_Killsy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Обломок закаменевшей древесины с выцарапанными древними зверолюдскими рунами. По легенде, этот материал такой же древний, как Старые Стены, и его сродство с древней магией способно пробуждать нерастраченный потенциал тех, в ком течет схожая кровь. Вещица кажется неестественно темной, детали трудно разглядеть, даже поднеся ее к свету.\n\nПриобретение этого предмета предоставляет Смерти-из-Тени улучшение «Насыщенные тени», но не меняет ее историю и прохождение ее задания. Это действие невозможно отменить.",
+    "image_url": "assets/item-icons/Memento_Shadowhunter_S.png",
+    "value": 10000,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_Memento_Killsy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Железобронза",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Fused_Alloy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этот металл не является в полном смысле ни сплавом, ни соединением. Он был рожден колдовской яростью Эдикт Бурь Кайроса.",
+    "image_url": "assets/item-icons/Fused_Allow_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Fused_Alloy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Сапоги Заклинателя Приливов (вариант 2)",
+    "category": "Броня",
+    "slot": "Ноги",
+    "source_url": "game://vx1_Cloth_BOOTS_Tidecaster_Male",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Атли носит легкие сандалии, высоко обвивающие ноги вычурными веревками. Открытость ее обуви предназначена для работы на море, где закрытые ботинки быстро бы промокли и стали вонять. Правильно завязать эти сандалии совсем непросто, но так и задумано – это возможность изо дня в день практиковаться в скорости и мастерстве завязывания узлов.",
+    "image_url": "assets/item-icons/Cloth_BOOTS_Eb_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 1,
+    "recovery": 0.05,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Cloth_BOOTS_Tidecaster_Male",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.6000000238418579,
+          "RecoveryModifier": 0.05000000074505806,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Свиток: превосходный сигил \"Энергетического цикла\" (штрих)",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Recovery4",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "В этом свитке содержится магический штрих, значительно сокращающий перезарядку заклинания.",
+    "image_url": "assets/item-icons/paper_03_S.png",
+    "value": 9500,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_CONS_Scroll_LibraryUpgrade_Mod_Recovery4",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Ключ-камень Мелла",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Keystone_SQ_Fractured",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Такими ключ-камнями пользуются жители и зверолюды из Раны Бастарда, чтобы заходить в глубины Старых Стен.",
+    "image_url": "assets/item-icons/ACC_Keystone_Yellow_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Keystone_SQ_Fractured",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Дротик разведчика Лезвий",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "quality": "Обычное",
+    "description": "Разор Разведчик дротик — предмет из игры «Тирания».\n\nУрон: 7-11 колющий против Парирования\nТочность: +2\nПробивание брони: 2\nВосстановление: +0.75 (нормал) 1.25 (рангед)с\nДальность: 8\nТип: Одноручное оружие Тхровн оружие\nЦена: 1 бронз.",
+    "image_url": "assets/item-icons/WPN_1H_BR_javelin_unbroken_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Razor_Scout_javelin",
+    "value": 250,
+    "weight": 0,
+    "hands": 1,
+    "damage_min": 3,
+    "damage_max": 8,
+    "armor": 0,
+    "recovery": 0.75,
+    "properties": {
+      "Точность": "+2",
+      "Пробивание брони": "2",
+      "Восстановление": "+0.75 (нормал) 1.25 (рангед)с",
+      "Дальность": "8",
+      "Тип": "Одноручное оружие Тхровн оружие",
+      "Цена": "1 бронз.",
+      "gameData": {
+        "prefab": "vx1_WPN_ENEMY_1H_BR_Javelin_HoBR_Razor_Scout",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 2,
+            "Minimum": 3.0,
+            "Maximum": 8.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    },
+    "wiki_page_id": 14207,
+    "lore": "Разор Разведчик дротик — предмет из игры «Тирания».\n\nУрон: 7-11 колющий против Парирования\nТочность: +2\nПробивание брони: 2\nВосстановление: +0.75 (нормал) 1.25 (рангед)с\nДальность: 8\nТип: Одноручное оружие Тхровн оружие\nЦена: 1 бронз."
+  },
+  {
+    "name": "Склянка с необъяснимо тяжелой водой",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Eb_Heavy_Water",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Эта склянка с кристально-чистой водой намного тяжелее, чем ей, по всей логике, полагается быть.",
+    "image_url": "assets/item-icons/Heavy_Water_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Eb_Heavy_Water",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Ключ-камень Каскада Источника",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Keystone_Water",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Судя по виду, этот ключ-камень может подойти к одному из телепортов в Старых Стенах Раны Бастарда.",
+    "image_url": "assets/item-icons/ACC_Keystone_Red_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Keystone_Water",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Доспех разведчика Лезвий",
+    "category": "Броня",
+    "slot": "Торс",
+    "quality": "Обычное",
+    "description": "Разор Разведчик броня — предмет из игры «Тирания».\n\nБроня: 1\nОтражение: +6%\nВосстановление: +0,05 раунда\nМатериал: Кожаный\nТип: Лёгкий брони, Нагрудный брони\nЦена: 1 бронз. 20 медн.",
+    "image_url": "assets/item-icons/armor_leather_unbroken_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Razor_Scout_armor",
+    "value": 175,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 2,
+    "recovery": 0.75,
+    "properties": {
+      "Броня": "1",
+      "Отражение": "+6%",
+      "Восстановление": "+0,05 раунда",
+      "Материал": "Кожаный",
+      "Тип": "Лёгкий брони, Нагрудный брони",
+      "Цена": "1 бронз. 20 медн.",
+      "gameData": {
+        "prefab": "vx1_Leather_ENEMY_Armor_HoBR_Razor_Scout",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 2.0,
+          "RecoveryModifier": 0.75,
+          "DeflectionBonus": 0
+        }
+      }
+    },
+    "wiki_page_id": 14228,
+    "lore": "Разор Разведчик броня — предмет из игры «Тирания».\n\nБроня: 1\nОтражение: +6%\nВосстановление: +0,05 раунда\nМатериал: Кожаный\nТип: Лёгкий брони, Нагрудный брони\nЦена: 1 бронз. 20 медн."
+  },
+  {
+    "name": "Трактат об акваметаллургии",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Tome_of_Aqueous_Metallurgy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "В этой книге содержится подробное описание методов совместного использования магии Скованных Горном и Заклинателей Приливов.",
+    "image_url": "assets/item-icons/Tome_of_Aqueous_Metallurgy_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Tome_of_Aqueous_Metallurgy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Черный оберег",
+    "category": "Аксессуары",
+    "slot": "Аксессуар",
+    "quality": "Добротное",
+    "description": "Джет Периапт — предмет из игры «Тирания».\n\nТип: Аккессорй\nЭффект: Коверт (Пассиве) -10% восстановления Тиме для 2 раунда, Рекуирес Стеалтх\nЦена: 24 бронз.",
+    "image_url": "assets/item-icons/acc_unique_jet_periapt_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Jet_Periapt",
+    "value": 5000,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "Тип": "Аккессорй",
+      "Эффект": "Коверт (Пассиве) -10% восстановления Тиме для 2 раунда, Рекуирес Стеалтх",
+      "Цена": "24 бронз.",
+      "gameData": {
+        "prefab": "vx1_ACC_UNIQUE_Jet_Periapt",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -3602554691637754392
+          }
+        ],
+        "attack": {},
+        "armor": {}
+      }
+    },
+    "wiki_page_id": 14217,
+    "lore": "Хотя черный самоцвет на тонкой бронзовой цепочке и кажется очевидным источником силы этого украшения, на самом деле заклинание вплетено в само ожерелье: крохотные сигилы высечены на каждом металлическом звене. И, точно так же как форма ожерелья скрывает его силу, его действие усиливает скрытность.\n\nПодобные артефакты некогда были популярны в Оплоте среди членов тайного ордена шпионов и убийц: они придавали им скорости после первого нанесенного удара. Успех ордена в конечном счете и погубил его. Регент Стрейдус Малия сперва наняла его для убийства своего предшественника, а затем полностью уничтожила. То, что это украшение дожило до наших дней, делает честь скрытности и хитроумию древнего ордена."
+  },
+  {
+    "name": "Круговой Аргумент",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://VX1_WPN_1H_BR_Dagger_Wraithblade",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этот отлично сбалансированный клинок, помимо прочего, обладает способностью возвращаться к владельцу: потенциально опасное зачарование для тех, кто рассчитывает, что метательный нож обратно не полетит. Двести лет оружие переходило от одного Книгочея к другому, но никто в точности не знает, откуда оно взялось. Есть немало легенд о любовниках, чьи имена давно забыты, о мести и трагедии... кто-то утверждает, что нож привезли из Старых Стен, из далеких краев.\n\nперсонаж утверждает, что все это полная чушь и, скорее всего, нож изготовили для нелепого самоубийства, либо в дар «возлюбленному» врагу. Ведь клинок идеально возвращается к тому, кто его метнул, но далеко не столь точно поражает врагов.",
+    "image_url": "assets/item-icons/Wraithblade_S.png",
+    "value": 100,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 5,
+    "damage_max": 7,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "VX1_WPN_1H_BR_Dagger_Wraithblade",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -3898667350177464125
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 5.0,
+            "Maximum": 7.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Кожаные сапоги искателей (вариант 3)",
+    "category": "Броня",
+    "slot": "Ноги",
+    "source_url": "game://vx1_Leather_ENEMY_BOOTS_HoBR_Razor_Scout",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/feet_leather_unbroken_S.png",
+    "value": 50,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.125,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Leather_ENEMY_BOOTS_HoBR_Razor_Scout",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.125,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Полутень (вариант 3)",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://vx1_WPN_1H_BR_Sword_Penumbra_Non_Artifact",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Ваша тень хаотически мечется в тускло-лиловом свете, источаемом этим острым, как бритва, бронзовым лезвием. Свечение то обволакивает рукоять клинка, то вытягивается прочь от него, точно пытаясь сбежать. Вы не слышали ни единой легенды об этом оружии, но металл источает магическую энергию, которую он явно не в силах удержать. Возможно, кузнец использовал секреты давно забытых времен, и мощь этого клинка вполне может оказаться старше самих Архонтов, Владыки и даже Старых Стен, где вы его обнаружили.",
+    "image_url": "assets/item-icons/wpn_sword_runeedge_S.png",
+    "value": 520,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 12,
+    "damage_max": 15,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_WPN_1H_BR_Sword_Penumbra_Non_Artifact",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -5093055636509221075
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": 4118167356812800481
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 6,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 12.0,
+            "Maximum": 15.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 2,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Светоключ Кимо",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Crystal_Yellow",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Золотой свет переливается по многочисленным граням этого камня.",
+    "image_url": "assets/item-icons/YellowCrystal_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Crystal_Yellow",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Доспех ратника",
+    "category": "Броня",
+    "slot": "Торс",
+    "quality": "Обычное",
+    "description": "Скирмисхер Броня — предмет из игры «Тирания».\n\nБроня: 1\nОтражение: 6%\nМатериал: Кожаный\nТип: Лёгкий брони\nЦена: 1 бронз. 20 медн.",
+    "image_url": "assets/item-icons/Leather_Armor_Mercenary_Scout_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Skirmisher_Armor",
+    "value": 270,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 4,
+    "recovery": 0.45,
+    "properties": {
+      "Броня": "1",
+      "Отражение": "6%",
+      "Материал": "Кожаный",
+      "Тип": "Лёгкий брони",
+      "Цена": "1 бронз. 20 медн.",
+      "gameData": {
+        "prefab": "vx1_Leather_ENEMY_Armor_FM_Skirmisher",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 4.5,
+          "RecoveryModifier": 0.44999998807907104,
+          "DeflectionBonus": 0
+        }
+      }
+    },
+    "wiki_page_id": 13438,
+    "lore": "Скирмисхер Броня — предмет из игры «Тирания».\n\nБроня: 1\nОтражение: 6%\nМатериал: Кожаный\nТип: Лёгкий брони\nЦена: 1 бронз. 20 медн."
+  },
+  {
+    "name": "Светоключ Лазу",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Crystal_Blue",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Сквозь этот острый на сколах кусок камня проходят мерцающие полосы.",
+    "image_url": "assets/item-icons/BlueCrystal_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Crystal_Blue",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Императорская регалия Старых Стен",
+    "category": "Броня",
+    "slot": "Торс",
+    "source_url": "game://vx1_Imperators_Old_Walls_Regalia",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "В популярной на Ярусах легенде высмеивается император Тезанакс – мифический, вероятнее всего, северный воитель, который клялся, что его доспех, добытый в Старых Стенах каким-то искателем приключений, способен защитить от любого зла. Любого, кто пытался намекнуть, что императора обдурили, публично скармливали акулам.\n\nИ хотя такого императора, скорее всего, никогда не было на свете, его доспех очень даже существует. Вероятно.",
+    "image_url": "assets/item-icons/armor_imperators_oldwalls_regalia_L.png",
+    "value": 270,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0.0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Imperators_Old_Walls_Regalia",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 5249236601272986650
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": 8695191378125301515
+          }
+        ],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.0,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Посох Махальника",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_WPN_STF_BR_Staff_Wagstaff",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/WPN_STF_BR_Staff_02_S.png",
+    "value": 1000,
+    "weight": 1,
+    "hands": 2,
+    "damage_min": 35,
+    "damage_max": 38,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_WPN_STF_BR_Staff_Wagstaff",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [
+          {}
+        ],
+        "modReferences": [
+          {
+            "m_FileID": 0,
+            "m_PathID": 0
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 8.0,
+          "DamageData": {
+            "Type": 13,
+            "Minimum": 35.0,
+            "Maximum": 38.0,
+            "LevelScaling": {
+              "BaseLevel": 1,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Ключ-камень Пресной Клички",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Keystone_SQ_Hollow",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Такими ключ-камнями пользуются жители и зверолюды из Раны Бастарда, чтобы заходить в глубины Старых Стен.",
+    "image_url": "assets/item-icons/ACC_Keystone_Red_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Keystone_SQ_Hollow",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Полумесяц Эдикта (вариант 2)",
+    "category": "Двуручное оружие",
+    "slot": "",
+    "source_url": "game://Vx1_Wpn_Art_Axe_2H_Ir_Edicts_Crescent_Legacy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этот топор был выкован Лицентией из покореженного железа и бронзы Могилы Клинков. У него имеется длинное изогнутое лезвие и обух, испещренный сигилами уничтожения, взывающими к магической ярости Владыки, поразившей Оплот.\n\nТакже маг-кузнец нанесла на оружие сигил, о котором сказала лишь то, что «давно хотела попробовать одну штуку». И добавила, что, скорее всего, «штука» вас не убьет.",
+    "image_url": "assets/item-icons/Edicts_Crescent_S.png",
+    "value": 9562,
+    "weight": 1,
+    "hands": 2,
+    "damage_min": 29,
+    "damage_max": 36,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "Vx1_Wpn_Art_Axe_2H_Ir_Edicts_Crescent_Legacy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 4332264712290781153
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 9.0,
+          "AttackDistance": 1.25,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 29.0,
+            "Maximum": 36.0,
+            "LevelScaling": {
+              "BaseLevel": 1,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Обесцвеченная зола",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Discolored_Ash",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Эта зола на ощупь кажется слегка теплой. Ее цвет слегка изменен, скорее всего, с помощью магии.",
+    "image_url": "assets/item-icons/discolored_ash_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Discolored_Ash",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Вкусное мясо",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Tasty_Meat",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Кусок сочного сырого мяса. Оно будет отменным на вкус, если его правильно приготовить, но даже сырое выглядит так аппетитно, что просится в рот.",
+    "image_url": "assets/item-icons/BeastMeat_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Tasty_Meat",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Жалобный Шепот (вариант 2)",
+    "category": "Броня",
+    "slot": "Руки",
+    "source_url": "game://vx1_Leather_GLOVE_Weeping_Whispers",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Три Шепота никогда и никуда не выходила безоружной. Эти перчатки несут в себе всего шесть лезвий из ее коллекции, зато кровь они пили чаще всех прочих. Шипы, торчащие по бокам, кажутся декоративными, но они закреплены на скрытых между слоями кожи длинных железных стяжках, что позволяет опытному бойцу применять их как для нападения, так и для защиты.",
+    "image_url": "assets/item-icons/Weeping_Whispers_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 4,
+    "damage_max": 8,
+    "armor": 1,
+    "recovery": 0.075,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Leather_GLOVE_Weeping_Whispers",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 4807106324710552961
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 4.0,
+            "Maximum": 8.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 0,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {
+          "DamageThreshold": 0.75,
+          "RecoveryModifier": 0.07500000298023224,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Круговой Аргумент (вариант 2)",
+    "category": "Одноручное оружие",
+    "slot": "",
+    "source_url": "game://VX1_WPN_1H_BR_Dagger_Wraithblade_Legacy",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этот отлично сбалансированный клинок, помимо прочего, обладает способностью возвращаться к владельцу: потенциально опасное зачарование для тех, кто рассчитывает, что метательный нож обратно не полетит. Двести лет оружие переходило от одного Книгочея к другому, но никто в точности не знает, откуда оно взялось. Есть немало легенд о любовниках, чьи имена давно забыты, о мести и трагедии... кто-то утверждает, что нож привезли из Старых Стен, из далеких краев.\n\nперсонаж утверждает, что все это полная чушь и, скорее всего, нож изготовили для нелепого самоубийства, либо в дар «возлюбленному» врагу. Ведь клинок идеально возвращается к тому, кто его метнул, но далеко не столь точно поражает врагов.",
+    "image_url": "assets/item-icons/Wraithblade_S.png",
+    "value": 100,
+    "weight": 1,
+    "hands": 1,
+    "damage_min": 5,
+    "damage_max": 7,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "VX1_WPN_1H_BR_Dagger_Wraithblade_Legacy",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -3898667350177464125
+          }
+        ],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DTBypass": 0.0,
+          "AttackDistance": 0.5,
+          "DamageData": {
+            "Type": 0,
+            "Minimum": 5.0,
+            "Maximum": 7.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Клобук Ризатрикс",
+    "category": "Броня",
+    "slot": "Голова",
+    "quality": "Обычное",
+    "description": "Капюшон риксатрикс — предмет из игры «Тирания».\n\nОтражение: 1%\nМатериал: Тканевый\nТип: Шлем\nЭффект: точности +1 Риксатрикс'с Пиглет На усе, суммон один пиг\nЦена: 4 бронз. 40 медн.",
+    "image_url": "assets/item-icons/cloth_helm_hood_of_the_rixatrix_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Hood_of_the_rixatrix",
+    "value": 10,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 1,
+    "recovery": 0.1,
+    "properties": {
+      "Отражение": "1%",
+      "Материал": "Тканевый",
+      "Тип": "Шлем",
+      "Эффект": "точности +1 Риксатрикс'с Пиглет На усе, суммон один пиг",
+      "Цена": "4 бронз. 40 медн.",
+      "gameData": {
+        "prefab": "vx1_Cloth_HELM_Hood_of_the_Rixatrix",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": -2209906633842074458
+          }
+        ],
+        "attack": {},
+        "armor": {
+          "DamageThreshold": 1.2000000476837158,
+          "RecoveryModifier": 0.10000000149011612,
+          "DeflectionBonus": 0
+        }
+      }
+    },
+    "wiki_page_id": 14215,
+    "lore": "Этот клобук принадлежал колдунье, жившей сто лет назад на Бастардовом Ярусе и обвиненной в том, что она являлась ризатрикс, – ведьмой, преследующей и мучающей магов. Это понятие отсутствует в законодательстве Кайроса. Когда за женщиной пришли, оказалось, что она хорошо подготовилась: на голову стражникам обрушилась гора свиного навоза. Придя в себя, они обнаружили вместо ведьмы лишь этот клобук."
+  },
+  {
+    "name": "Обезвоженный мох",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "source_url": "game://vx1_Quest_Dehydrated_Moss",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Из этого мха магией была удалена вся жидкость. При малейшем прикосновении он обращается в пыль.",
+    "image_url": "assets/item-icons/dehydrated_moss_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Quest_Dehydrated_Moss",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Перчатки ученого чародея",
+    "category": "Броня",
+    "slot": "Руки",
+    "source_url": "game://vx1_Cloth_ENEMY_GLOVE_HoBR_Sorcerer_Savant",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "",
+    "image_url": "assets/item-icons/cloth_glove_binder_S.png",
+    "value": 10,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 6,
+    "damage_max": 10,
+    "armor": 0,
+    "recovery": 0.05,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_Cloth_ENEMY_GLOVE_HoBR_Sorcerer_Savant",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {
+          "AccuracyBonus": 0,
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 6.0,
+            "Maximum": 10.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          }
+        },
+        "armor": {
+          "DamageThreshold": 0.0,
+          "RecoveryModifier": 0.05000000074505806,
+          "DeflectionBonus": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "Токсин завязной розы",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "quality": "Обычное",
+    "description": "Буддинг Росе токсин — предмет из игры «Тирания».\n\nТип: Яд\nДлительность: 3 раунда\nЭффект: -30 Лоре и -4 Витс на цель\nЦена: 70 медн.",
+    "image_url": "assets/item-icons/consumable_budding_rose_toxin_S.png",
+    "source_url": "https://tyranny.fandom.com/wiki/Budding_Rose_toxin",
+    "value": 175,
+    "weight": 0,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "Тип": "Яд",
+      "Длительность": "3 раунда",
+      "Эффект": "-30 Лоре и -4 Витс на цель",
+      "Цена": "70 медн.",
+      "gameData": {
+        "prefab": "vx1_IT_CONS_Budding_Rose_Toxin",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    },
+    "wiki_page_id": 14214,
+    "lore": "Токсин завязной розы туманит рассудок жертвы.\n\nЭту вязкую пахучую жидкость даже не приготавливают, а просто собирают из давленых перезревших ягод завязной розы. В подробностях воздействие токсина вы не изучали, но предполагаете, что он сильно отвлекает внимание."
+  },
+  {
+    "name": "Ключ-камень Темной Пустоты",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_BW_Oldwall_Keystone_Hollow",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Этим ключ-камнем можно включать телепорты в Старых Стенах Раны Бастарда.",
+    "image_url": "assets/item-icons/ACC_Keystone_Red_S.png",
+    "value": 0,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_BW_Oldwall_Keystone_Hollow",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Призрачная Мгла",
+    "category": "Аксессуары",
+    "slot": "Аксессуар",
+    "source_url": "game://vx1_ACC_UNIQUE_Phantomshade",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Хотя кошки в большинстве своем спят днем и охотятся ночью, этот черный котенок не делает ни того, ни другого. Он съедает любую еду, которую перед ним поставят, но чаще всего бессмысленно таращится куда-то перед собой и лишь изредка зевает.\n\nКогда Призрачная Мгла спит рядышком, вы особо остро ощущаете любую опасность.",
+    "image_url": "assets/item-icons/pet_black_cat_S.png",
+    "value": 5000,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_ACC_UNIQUE_Phantomshade",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [
+          {
+            "m_FileID": 1,
+            "m_PathID": 2604070249693122787
+          },
+          {
+            "m_FileID": 1,
+            "m_PathID": -5934794736507343832
+          }
+        ],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Выжимка колосса",
+    "category": "Расходуемые предметы",
+    "slot": "",
+    "source_url": "game://vx1_IT_CONS_Colossus_Seed",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Это густое, дурно пахнущее варево напоминает цветом выбеленную кость, а на вкус отдает маринованной рыбой. Любой, кто его выпьет, непременно вырастет и укрепится.",
+    "image_url": "assets/item-icons/milk_S.png",
+    "value": 175,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_CONS_Colossus_Seed",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
+        "armor": {}
+      }
+    }
+  },
+  {
+    "name": "Сувенир Каменных Щитов",
+    "category": "Прочее",
+    "slot": "",
+    "source_url": "game://vx1_IT_Memento_Barik",
+    "quality": "Обычное",
+    "description": "",
+    "lore": "Выгравированное изображение легендарного бойца Легиона Опальных. По слухам, это истинный вид плененного солдата, но лишь для тех, чье зрение способно отличить факты от лжи.\n\nПриобретение этого предмета позволяет извлечь персонаж из доспеха и одеть его иначе, но окружающие по-прежнему будут видеть (и обонять) персонаж закованным в броню. Это действие невозможно отменить.",
+    "image_url": "assets/item-icons/Memento_Stone_Shield_S.png",
+    "value": 10000,
+    "weight": 1,
+    "hands": 0,
+    "damage_min": 0,
+    "damage_max": 0,
+    "armor": 0,
+    "recovery": 0,
+    "properties": {
+      "gameData": {
+        "prefab": "vx1_IT_Memento_Barik",
+        "archive": "vx1_items",
+        "statusEffects": [],
+        "mods": [],
+        "modReferences": [],
+        "attack": {},
         "armor": {}
       }
     }

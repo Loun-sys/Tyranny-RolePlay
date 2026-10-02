@@ -9,6 +9,7 @@ import re
 import sys
 from pathlib import Path
 import UnityPy
+from game_asset_index import localized_tables
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -17,17 +18,17 @@ from localization import localize_game_text
 
 def main():
     loc = json.loads((ROOT/'catalog/official_game_localization.json').read_text(encoding='utf-8'))
-    tables = {name: {r['id']: r for r in rows} for name, rows in loc['tables'].items()}
+    tables = localized_tables()
     enum_tables = {5: 'items', 6: 'abilities', 16: 'itemmods'}
     def text(ref):
-        row = tables.get(enum_tables.get(ref.get('StringTable')), {}).get(ref.get('StringID'), {})
-        return localize_game_text(re.sub(r'\[/?url(?:=[^]]+)?\]', '', row.get('ru', '')))
+        row = tables.get(enum_tables.get(ref.get('StringTable')), {}).get(ref.get('StringID'), '')
+        return localize_game_text(re.sub(r'\[/?url(?:=[^]]+)?\]', '', row))
     base = json.loads((ROOT/'catalog/tyranny_catalog_en_ru.json').read_text(encoding='utf-8'))
     by_name = {i['name'].casefold(): i for i in base}
     out, audit, used, textures_done = [], [], set(), set()
     destination = ROOT/'web/assets/item-icons'
     destination.mkdir(exist_ok=True, parents=True)
-    for archive in ['items', 'dlc00', 'dlc01', 'dlc02', 'dlc03']:
+    for archive in ['items', 'dlc00', 'dlc01', 'dlc02', 'dlc03','vx1_items']:
         env = UnityPy.load(f'C:/Games/Tyranny/Data/bundles/{archive}.unity3d')
         groups, names, objects, components = collections.defaultdict(list), {}, {o.path_id: o for o in env.objects}, {}
         for obj in env.objects:

@@ -1,0 +1,903 @@
+{
+  "scanned": [
+    {
+      "archive": "abilities.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "afflictions.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "animation.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "audio_common.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "cameras.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "char_tex_hd.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "character_art.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "characters.unity3d",
+      "actors": 910
+    },
+    {
+      "archive": "distrib_g.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "dlc00.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "dlc01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "dlc02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "dlc03.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "edicts.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "items.unity3d",
+      "actors": 11
+    },
+    {
+      "archive": "lists.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "missions.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "music.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "progression_tables.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "recipes.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "regions.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "shaders.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "skirmishes.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "spells.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0001_stronghold_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0001_stronghold_inhabited_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0002_skypillar_empty_bg.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0002_skypillar_empty_lc.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0002_skypillar_empty_ss1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0002_skypillar_empty_ss2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0003_skypillar_library_bg.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0003_skypillar_library_lc.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0003_skypillar_library_ss1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0003_skypillar_library_ss2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0004_skypillar_forge_bg.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0004_skypillar_forge_lc.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0004_skypillar_forge_ss1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0004_skypillar_forge_ss2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0005_skypillar_weaponstraining_bg.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0005_skypillar_weaponstraining_lc.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0005_skypillar_weaponstraining_ss1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0005_skypillar_weaponstraining_ss2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0006_skypillar_infirmary_bg.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0006_skypillar_infirmary_lc.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0006_skypillar_infirmary_ss1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0006_skypillar_infirmary_ss2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0007_skypillar_barracks_bg.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0007_skypillar_barracks_lc.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0007_skypillar_barracks_ss1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0007_skypillar_barracks_ss2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0008_skypillar_prison_bg.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0008_skypillar_prison_lc.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0008_skypillar_prison_ss1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0008_skypillar_prison_ss2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0101_rustcanyons.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0102_sentinelstand_outerwalls.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0103_sentinelstand_innerkeep.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0103_sentinelstand_innerkeep_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0104_sentinelstand_intro.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0105_duskwatch.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0106_ashmountain_oldwall_ext.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0107_ashmountain_int_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0108_ashmountain_int_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0109_ashmountain_int_03.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0110_ashmountain_skypillar.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0111_bladegrave_bledenmark_ambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0113_trappersjunction.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0115_sentinelstand_keep_int.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0116_infested_oldwall.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0118_beastcompambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0119_conqueststash.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0201_lethianscrossing.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0203_ironhaul_trail.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0206_twinrivers_oldwall_ent.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0207_twinrivers_oldwall_int_1.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0208_twinrivers_oldwall_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0209_twinrivers_oldwall_03.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0223_sq_remnants.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0224_ac_bledenmark_ambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0225_beastcompambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0226_conqueststash.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0301_burninglibrary_exterior.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0301_burninglibrary_exterior_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0302_effigy.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0304_burninglibrary_ruins01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0305_burninglibrary_ruins02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0306_burninglibrary_silentarchive.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0308_fq_ac_bledenmark_ambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0310_conquest_stash.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0501_plainsgate.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0502_halfgate.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0503_jaggedmawshrine.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0504_stonedown.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0505_gulfglowentrance.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0506_skypillar_base.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0507_oceanoftowers.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0509_beastcompambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0514_sq_divideandconquer.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0515_passage_of_culling.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0516_fq_ac_bledenmark_ambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0517_conqueststash.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0518_planesgate_int_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0601_tunonthroneroom.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0604_ashescastle.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0605_neratsfort.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0607_sq_brokenspear_village.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0608_sq_sc_trailofblood.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0609_sq_sc_foesbefriended.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0611_sq_leavenoone.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0612_ashweald.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0612_ashweald_bledenmark.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0704a_01_wildernesscaravan.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0706a_01_village.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0707a_01_theburn.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0707a_01_wildernessbattle.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0708a_01_militaryfort2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0801_edgeringruins.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0802_disfavored_camp.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0803_scarletchorus_camp.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0804_tripnettlewilderness.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0805_echocallcrossing.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0806_supplycache_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0807_vendrienswell_citadel.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0808_vendrienswell_citadel_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0808_vendrienswell_citadel_02_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0809_vendrienswell_keep.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0810_skypillar.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0810_skypillar_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0811_supplycache_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0814_rebel_ambush.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0816_ashestent_interior.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0817_echocallcrossing_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0819_missingearthshakers_clearing.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0820_sq_uncommonground.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_0822_sq_horderecruitment_village.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_burning_library_village.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_prototype_visual_target.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_0101_blade_grave_ruins.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_a_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_b.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_b_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_c.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_d.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_d_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_d_flip_small.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_d_nospikes.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_blade_grave_ruins_d_nospikes_small.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_ec_river2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_lc_bridge.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_lc_river.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_lc_rivercrossing.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_military_fort_a.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_ss_bridges.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_ss_fort_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_ss_islands2.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_ss_village.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_village_bladegrave.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_w_caravan_h_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_w_caravan_nocaravan.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_w_caravan_nocaravan_h_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_w_desertersmarch.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_w_desertersmarch_c_h_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_w_desertersmarch_c_h_flip_v02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_wcaravan_fewer_props.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_sk_wcaravan_hflip_circle.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_ss_wilderness.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_ss_wilderness_b.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wildernessbattle_hflip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wildernessbattle_hflip_noprops.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_bladegrave_ruins.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_bladegrave_wilderness.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_bladegrave_wilds.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_burninglibrary_townruins.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_burninglibrary_villageruins.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_burninglibrary_wilderness.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_burninglibrary_wilds.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_lethianscrossing_camp.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_lethianscrossing_oldwallexterior01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_lethianscrossing_wilderness.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_stonesea_cliffs.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_stonesea_village.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_stonesea_wilderness.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_ar_wme_stonesea_wilds.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_01_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_01_v02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_03.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_04.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_05.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_lc_int_05_flip.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_life_path.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_life_path_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0901_bastardswound_ent_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0902_bastardswound_ent_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0903_bastardswound_central_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0904_bastardswound_farm_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0905_bastardswound_water_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0906_bastardswound_interior_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0907_bastardswound_interior_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0908_bastardswound_oldwall_int_01.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0909_bastardswound_oldwall_int_02.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0910_bastardswound_oldwall_int_03.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0911_southhaven.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_0912_burnedvillage.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1001_merchant_cart.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1002_wilderness_camp.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1003_torn_strand.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1004_wilderness_home.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1005_burned_home.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1006_military_fort.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1007_merchant_nocart.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1101_sentinel_stand_outskirts.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1102_edgering_ruins_revisit.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1103_workshop.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1201_berry_field.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1202_lantry_house.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "st_vx1_ar_1203_lantry_house_int.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "teams.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "vfx.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "vo_assets.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "vo_wavs.unity3d",
+      "actors": 0
+    },
+    {
+      "archive": "vx1_characters.unity3d",
+      "actors": 102
+    },
+    {
+      "archive": "vx1_items.unity3d",
+      "actors": 0
+    }
+  ],
+  "actors": 1023,
+  "service": 32,
+  "unnamed": 28
+}

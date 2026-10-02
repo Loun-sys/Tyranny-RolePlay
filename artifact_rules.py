@@ -3,6 +3,7 @@ import json
 from functools import lru_cache
 from pathlib import Path
 from item_effects import passive_descriptions
+from special_effects import adapted_effects,artifact_shape
 
 
 @lru_cache(maxsize=1)
@@ -16,8 +17,9 @@ def equipped_artifacts(items):
         base=item['name'].split(' (вариант ')[0]
         ability=library().get(base)
         if not ability: continue
-        supported=bool(ability['damageMax'] or ability.get('weaponMultiplier')) and not ability['passive']
-        result.append({**ability,'description':ability['description']+'\nОригинальное ограничение: '+ability['cooldownMode']+('\nТренировка: разовые способности доступны один раз до перезапуска; пока рассчитывается только урон, вторичные особые эффекты не применяются.' if supported else ''),'item':item['name'],'passives':passive_descriptions(item),
+        effects=adapted_effects(ability)
+        supported=bool(ability['damageMax'] or ability.get('weaponMultiplier') or effects or 'Redeploy' in ability['prefab']) and not ability['passive']
+        result.append({**ability,**artifact_shape(ability),'effects':effects,'description':ability['description']+'\nОригинальное ограничение: '+ability['cooldownMode']+'\nПошаговая версия: реализованы базовый урон и перечисленные временные эффекты; условные срабатывания, рикошеты и рост от известности пока не рассчитаны.','item':item['name'],'passives':passive_descriptions(item),
                        'supported':supported,
                        'limitation':'' if supported else 'Особый эффект пока доступен для просмотра, но не реализован в тренировочном бою.'})
     return result

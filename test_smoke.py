@@ -94,7 +94,7 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         stance = session.act({"kind": "stance", "name": "Стойка: Страж"}, character, derived, [], 2)
         self.assertEqual(session.active_stance, "Стойка: Страж")
         self.assertIn("принимает стойку", stance["line"])
-        session.act({"kind": "move", "x": 8, "y": 4}, character, derived, [], 2)
+        session.act({"kind": "move", "x": 7, "y": 4}, character, derived, [], 2)
         self.assertEqual(session.movement_remaining, 0)
         session.act({"kind": "end_turn"}, character, derived, [], 2)
         session.act({"kind": "move", "x": 9, "y": 4}, character, derived, [], 2)

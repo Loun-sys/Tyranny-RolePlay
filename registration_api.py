@@ -749,7 +749,21 @@ async def training_start(request: web.Request) -> web.Response:
         choices = await _player_maps(request,cid)
         selected = next((row for row in choices if row['id']==int(payload['mapId'])),None)
         if not selected: raise web.HTTPNotFound(reason='Карта недоступна.')
-        custom_map = selected['spec']
+        from npc_store import NPCStore
+        spec = selected['spec']
+        placements = spec.get('tokens', spec.get('npcs', []))
+        resolved = await NPCStore(request.app['db']).resolve_map(character['guild_id'],selected['owner_id'],
+            [p for p in placements if p.get('kind','npc')=='npc'])
+        for p in placements:
+            if p.get('kind')!='player': continue
+            actor = await request.app['db'].get_character_by_id(p['id'])
+            if not actor or actor['guild_id']!=character['guild_id']:
+                raise web.HTTPConflict(reason='Персонаж на карте больше недоступен.')
+            resolved.append({'id':p['id'],'kind':'player','name':actor['name'],'portrait':actor.get('portrait_url',''),
+                'healthMax':actor['health_max'],'armor':0,'defenses':{},'attributes':actor['attributes'],**p})
+        if not spec.get('spawns') and not any(p.get('kind')=='player' and p['id']==cid for p in placements):
+            raise web.HTTPConflict(reason='Мастер должен разместить токен вашего персонажа на этой карте.')
+        custom_map = {**spec,'resolvedTokens':resolved}
     session = TrainingSession(
         character_id=cid, active_weapon_set=max(1, min(4, int(character.get("active_weapon_set", 1)))), custom_map=custom_map
     )
@@ -807,6 +821,27 @@ async def health(_: web.Request) -> web.Response:
 async def _player_maps(request,cid):
     character=await request.app['db'].get_character_by_id(cid)
     return await CampaignStore(request.app['db']).maps(character['guild_id'])
+
+
+async def admin_npcs(request):
+    from npc_store import NPCStore,template_page
+    guild,owner=await _admin_owner(request);store=NPCStore(request.app['db']);ident=None
+    if request.method=='POST':
+        try:
+            payload=await request.json()
+            if not isinstance(payload,dict):raise ValueError('Нужен объект НПС.')
+            ident=await store.save(guild,owner,payload)
+            await request.app['db'].record_admin_action(guild,owner,None,'npc',{'id':ident})
+        except (ValueError,TypeError,KeyError) as error:raise web.HTTPBadRequest(reason=str(error)) from error
+    try:offset=max(0,int(request.query.get('offset',0)))
+    except ValueError:raise web.HTTPBadRequest(reason='Некорректная страница.')
+    return web.json_response({'ok':True,'id':ident,'npcs':await store.list(guild,owner),
+        'templates':template_page(str(request.query.get('q',''))[:150],str(request.query.get('category',''))[:100],offset)})
+
+
+async def public_npcs(request):
+    from npc_store import NPCStore
+    return web.json_response({'ok':True,'npcs':await NPCStore(request.app['db']).list(public=True)})
 
 
 async def admin_maps(request):
@@ -889,6 +924,9 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_get("/api/admin/{token}", admin_home)
     app.router.add_get("/api/admin/{token}/catalog", admin_catalog)
     app.router.add_get('/api/admin/{token}/maps',admin_maps)
+    app.router.add_get('/api/admin/{token}/npcs',admin_npcs)
+    app.router.add_post('/api/admin/{token}/npcs',admin_npcs)
+    app.router.add_get('/api/archive/npcs',public_npcs)
     app.router.add_post('/api/admin/{token}/maps',admin_maps)
     app.router.add_get('/api/admin/{token}/shop',admin_shop)
     app.router.add_post('/api/admin/{token}/shop',admin_shop)

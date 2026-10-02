@@ -41,10 +41,9 @@ def validate_map(payload):
         return [{'x':x,'y':y} for x,y in sorted(result)]
     blocked, sight, cover = cells('blocked'), cells('sightBlocked'), cells('cover')
     occupied = {(p['x'],p['y']) for p in blocked}
-    spawns = payload.get('spawns') or {'player': {'x':1,'y':height//2},
-        'dummy': {'x':width-2,'y':height//2}, 'dummy_left': {'x':width-2,'y':1}, 'dummy_right': {'x':width-2,'y':height-2}}
-    if set(spawns) != {'player','dummy','dummy_left','dummy_right'}:
-        raise ValueError('Укажите старт персонажа и три стартовые позиции целей.')
+    spawns = dict(payload.get('spawns') or {})
+    if not set(spawns).issubset({'player','dummy','dummy_left','dummy_right'}):
+        raise ValueError('Неизвестный старый тип стартовой позиции.')
     points = []
     for name, row in spawns.items():
         point = (int(row['x']),int(row['y']))
@@ -52,9 +51,24 @@ def validate_map(payload):
             raise ValueError('Стартовые клетки должны быть свободными и различными.')
         points.append(point)
         spawns[name] = {'x': point[0], 'y': point[1]}
+    placements=[]
+    tokens=payload.get('tokens',payload.get('npcs',[]))
+    if not isinstance(tokens,list) or len(tokens)>100:raise ValueError('Не более 100 токенов на карту.')
+    for row in tokens:
+        if not isinstance(row,dict):raise ValueError('Некорректный токен.')
+        x,y=int(row['x']),int(row['y'])
+        if not 0<=x<width or not 0<=y<height or (x,y) in occupied or (x,y) in points:
+            raise ValueError('Токен должен стоять в отдельной свободной клетке.')
+        kind=row.get('kind','npc')
+        if kind not in {'npc','player'}:raise ValueError('Неизвестный тип токена.')
+        team=row.get('team','enemy' if kind=='npc' else 'ally')
+        if team not in {'enemy','ally','neutral'}:raise ValueError('Неизвестная сторона токена.')
+        if kind=='player' and any(p['kind']=='player' and p['id']==int(row['id']) for p in placements):
+            raise ValueError('Персонаж игрока уже размещён на карте.')
+        points.append((x,y));placements.append({'id':int(row['id']),'kind':kind,'x':x,'y':y,'team':team})
     return {'name': str(payload.get('name','Новая карта')).strip()[:100] or 'Новая карта',
             'width':width,'height':height,'cellSize':cell,'image':image,'blocked':blocked,
-            'sightBlocked':sight,'cover':cover,'spawns':spawns,
+            'sightBlocked':sight,'cover':cover,'spawns':spawns,'tokens':placements,
             'offsetX': max(-2000,min(2000,int(payload.get('offsetX',0)))),
             'offsetY': max(-2000,min(2000,int(payload.get('offsetY',0)))),
             'imageScale': max(.1,min(5,float(payload.get('imageScale',1)))),
@@ -83,7 +97,12 @@ class CampaignStore:
     async def save_map(self,guild,owner,payload):
         if not isinstance(payload,dict): raise ValueError('Некорректная карта.')
         spec=validate_map(payload.get('spec',{})); ident=int(payload.get('id',0))
+        from npc_store import NPCStore
+        await NPCStore(self.db).resolve_map(guild,owner,[p for p in spec['tokens'] if p['kind']=='npc'])
         async with self.db.connect() as conn:
+            for placement in spec['tokens']:
+                if placement['kind']=='player' and not await conn.execute_fetchall('SELECT id FROM characters WHERE id=? AND guild_id=?',(placement['id'],guild)):
+                    raise ValueError('Персонаж игрока не принадлежит этому серверу.')
             if ident:
                 cursor=await conn.execute('UPDATE battle_maps SET name=?,spec=?,published=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND guild_id=? AND owner_id=?',(spec['name'],json.dumps(spec),int(bool(payload.get('published'))),ident,guild,owner))
                 if cursor.rowcount!=1: raise ValueError('Карта не принадлежит этому администратору.')

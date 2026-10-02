@@ -14,7 +14,7 @@ from typing import Iterable
 
 
 CELL_METERS = 1
-BASE_MOVEMENT = 6
+BASE_MOVEMENT = 5
 DEFAULT_WIDTH = 13
 DEFAULT_HEIGHT = 9
 

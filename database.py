@@ -332,6 +332,9 @@ class Database:
         game_items = Path(__file__).resolve().parent / 'catalog' / 'game_items.json'
         if game_items.exists():
             await self.upsert_catalog(json.loads(game_items.read_text(encoding='utf-8')))
+        from npc_store import SCHEMA as NPC_SCHEMA
+        async with self.connect() as db:
+            await db.executescript(NPC_SCHEMA)
         await self.ensure_starting_sigils()
         if spell_slots_added:
             async with self.connect() as db:

@@ -1,7 +1,7 @@
 {
-  "prefabs": 1251,
-  "imported": 1143,
-  "icons": 705,
+  "prefabs": 1333,
+  "imported": 1232,
+  "icons": 754,
   "excluded": [
     {
       "archive": "items",
@@ -84,12 +84,6 @@
     {
       "archive": "items",
       "prefab": "Natural_Beastman_Hide",
-      "name": "",
-      "excluded": "Нет русского названия"
-    },
-    {
-      "archive": "items",
-      "prefab": "Bronze_Enemy_HELM_HoBR_Reaver",
       "name": "",
       "excluded": "Нет русского названия"
     },
@@ -305,12 +299,6 @@
     },
     {
       "archive": "items",
-      "prefab": "Lore_FM_Grass_Effigy",
-      "name": "",
-      "excluded": "Нет русского названия"
-    },
-    {
-      "archive": "items",
       "prefab": "BurningLibrary_FirstSage_Note",
       "name": "",
       "excluded": "Нет русского названия"
@@ -437,12 +425,6 @@
     },
     {
       "archive": "items",
-      "prefab": "Lore_HH_Expedition_Report",
-      "name": "",
-      "excluded": "Нет русского названия"
-    },
-    {
-      "archive": "items",
       "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Shock",
       "name": "",
       "excluded": "Нет русского названия"
@@ -468,12 +450,6 @@
     {
       "archive": "items",
       "prefab": "WPN_BOW_SP_Gravebow_OLD",
-      "name": "",
-      "excluded": "Нет русского названия"
-    },
-    {
-      "archive": "items",
-      "prefab": "vx1_Recipe_Scroll_Infirmary_Colossus_Seed",
       "name": "",
       "excluded": "Нет русского названия"
     },
@@ -557,12 +533,6 @@
     },
     {
       "archive": "items",
-      "prefab": "ACC_UNIQUE_Chrysalis_Amber_Brooch",
-      "name": "",
-      "excluded": "Нет русского названия"
-    },
-    {
-      "archive": "items",
       "prefab": "Prop_d20",
       "name": "Имперская железная фальката",
       "excluded": "Служебный объект"
@@ -581,12 +551,6 @@
     },
     {
       "archive": "items",
-      "prefab": "Lore_BR_Iron_Lamp",
-      "name": "",
-      "excluded": "Нет русского названия"
-    },
-    {
-      "archive": "items",
       "prefab": "PROP_1H_IR_Javelin_01",
       "name": "",
       "excluded": "Служебный объект"
@@ -596,12 +560,6 @@
       "prefab": "PROP_ENEMY_BOW_WD_Fury_Bow",
       "name": "Могильный лук",
       "excluded": "Служебный объект"
-    },
-    {
-      "archive": "items",
-      "prefab": "Lore_BR_Silver_Key",
-      "name": "",
-      "excluded": "Нет русского названия"
     },
     {
       "archive": "items",
@@ -640,14 +598,14 @@
       "excluded": "Нет русского названия"
     },
     {
-      "archive": "items",
-      "prefab": "Lore_HH_Supplies",
+      "archive": "vx1_items",
+      "prefab": "vx1_WPN_ART_2H_SP_STF_EbsStaff",
       "name": "",
       "excluded": "Нет русского названия"
     },
     {
-      "archive": "items",
-      "prefab": "Lore_FM_Bronze_Horn",
+      "archive": "vx1_items",
+      "prefab": "vx1_WPN_ART_2H_SP_STF_EbsStaff_Legacy",
       "name": "",
       "excluded": "Нет русского названия"
     }
