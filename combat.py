@@ -17,6 +17,7 @@ import discord
 
 from constants import ABILITY_DETAILS
 from sigil_data import spell_runtime_profile
+from tactical_grid import BASE_MOVEMENT, TACTICAL_MAPS, TacticalGrid, initiative_bonus
 
 
 CRIMSON = discord.Color.from_rgb(111, 27, 25)
@@ -37,6 +38,8 @@ CORE_DAMAGE = {
     "Иллюзия": "Магический", "Камень": "Дробящий", "Терратус": "Магический",
     "Рвение": "Магический", "Жизнь": "Магический",
 }
+
+RANGED_TALENT_RANGES = {"Выстрел в сердце": 12, "Хромота": 10}
 
 
 @dataclass
@@ -63,6 +66,11 @@ class Combatant:
     active_weapon_set: int = 1
     conditions: list[str] = field(default_factory=list)
     cooldowns: dict[str, int] = field(default_factory=dict)
+    x: int = 0
+    y: int = 0
+    initiative_roll: int = 0
+    initiative_total: int = 0
+    movement_remaining: int = BASE_MOVEMENT
 
     @property
     def alive(self) -> bool:
@@ -91,20 +99,28 @@ class CombatSession:
     round_number: int = 1
     log: list[str] = field(default_factory=list)
     message: discord.Message | None = None
+    turn_order: list[str] = field(default_factory=list)
+    turn_index: int = 0
+
+    def __post_init__(self) -> None:
+        spec = TACTICAL_MAPS["training_grounds"]
+        self.grid = TacticalGrid(spec["width"], spec["height"], set(spec["blocked"]))
+        if self.started and self.combatants and not self.turn_order:
+            self.turn_order = list(self.combatants)
 
     @property
     def current(self) -> Combatant | None:
-        alive = [unit for unit in self.combatants.values() if unit.alive]
-        if not alive:
+        if not self.started:
+            return next((unit for unit in self.combatants.values() if unit.alive), None)
+        if not self.turn_order:
             return None
-        eligible = [unit for unit in alive if unit.ready_at <= self.round_number]
-        if not eligible and self.started:
-            self.round_number = max(self.round_number, math.ceil(min(unit.ready_at for unit in alive)))
-            eligible = [unit for unit in alive if unit.ready_at <= self.round_number]
-        return min(
-            eligible or alive,
-            key=lambda unit: (unit.ready_at, -unit.attributes.get("Быстрота", 10), unit.key),
-        )
+        for offset in range(len(self.turn_order)):
+            index = (self.turn_index + offset) % len(self.turn_order)
+            unit = self.combatants.get(self.turn_order[index])
+            if unit and unit.alive:
+                self.turn_index = index
+                return unit
+        return None
 
     @property
     def enemies_alive(self) -> list[Combatant]:
@@ -116,12 +132,22 @@ class CombatSession:
         return next(iter(teams)) if len(teams) == 1 and self.started else None
 
     def advance(self, actor: Combatant, recovery: float) -> None:
-        # Реальное время исходной игры переводится в целые раунды: 10 секунд = 1 раунд.
-        delay = max(1, math.ceil(max(0, recovery) / 10))
-        actor.ready_at = self.round_number + delay
-        alive = [unit for unit in self.combatants.values() if unit.alive]
-        if alive and not any(unit.ready_at <= self.round_number for unit in alive):
-            self.round_number = max(self.round_number + 1, math.ceil(min(unit.ready_at for unit in alive)))
+        """Основное действие завершает ход; recovery оставлен для совместимости вызовов."""
+        if not self.turn_order:
+            return
+        previous = self.turn_index
+        for step in range(1, len(self.turn_order) + 1):
+            candidate = (previous + step) % len(self.turn_order)
+            unit = self.combatants.get(self.turn_order[candidate])
+            if unit and unit.alive:
+                self.turn_index = candidate
+                if candidate <= previous:
+                    self.round_number += 1
+                unit.movement_remaining = BASE_MOVEMENT
+                return
+
+    def distance(self, first: Combatant, second: Combatant) -> int:
+        return self.grid.distance((first.x, first.y), (second.x, second.y))
 
     def embed(self) -> discord.Embed:
         winner = self.winner()
@@ -141,12 +167,13 @@ class CombatSession:
             lines = []
             for unit in units:
                 marker = "▶" if self.started and unit is self.current and not winner else "•"
-                state = "💀" if not unit.alive else f"❤️ {unit.health}/{unit.health_max} · доступен с раунда {math.ceil(unit.ready_at)}"
-                lines.append(f"{marker} **{unit.name}** — {state}")
+                state = "💀" if not unit.alive else f"❤️ {unit.health}/{unit.health_max} · клетка {unit.x + 1}:{unit.y + 1}"
+                initiative = f" · инициатива {unit.initiative_total}" if self.started else ""
+                lines.append(f"{marker} **{unit.name}** — {state}{initiative}")
             embed.add_field(name=team, value="\n".join(lines)[:1024], inline=False)
         if self.log:
             embed.add_field(name="Последние события", value="\n".join(self.log[-6:])[-1024:], inline=False)
-        embed.set_footer(text="Выберите действие кнопкой — все расчёты выполняет бот")
+        embed.set_footer(text="1 клетка = 1 метр · 6 м движения за ход · действия выбираются кнопками")
         return embed
 
     async def refresh(self) -> None:
@@ -171,6 +198,8 @@ class CombatSession:
             skills={name: data["value"] for name, data in character["skills"].items()},
             talents=character["talents"], spells=spells, inventory=inventory,
         )
+        player_count = sum(1 for row in self.combatants.values() if row.team == "Вершители Судеб")
+        unit.x, unit.y = 1, min(self.grid.height - 1, 2 + player_count * 2)
         apply_equipment(unit)
         self.combatants[key] = unit
         return True, f"**{unit.name}** присоединяется к сцене."
@@ -220,6 +249,10 @@ def weapon_skill(unit: Combatant) -> str:
     }.get(weapon.get("category", ""), "Одноручное оружие")
 
 
+def weapon_range(unit: Combatant) -> int:
+    return {"Луки": 12, "Дротики": 6, "Волшебный посох": 10}.get(weapon_skill(unit), 1)
+
+
 def resolve_attack(attacker: Combatant, target: Combatant, *, accuracy: int | None = None,
                    damage: tuple[int, int] | None = None, defense: str = "Парирование",
                    damage_type: str | None = None, penetration: int = 0) -> str:
@@ -252,7 +285,7 @@ class TargetSelect(discord.ui.Select):
         actor = session.current
         targets = [unit for unit in session.combatants.values() if unit.alive and actor and unit.team != actor.team]
         super().__init__(placeholder="Выберите цель", min_values=1, max_values=1, options=[
-            discord.SelectOption(label=unit.name[:100], value=unit.key, description=f"Здоровье {unit.health}/{unit.health_max} · броня {unit.armor}")
+            discord.SelectOption(label=unit.name[:100], value=unit.key, description=f"{session.distance(actor, unit)} м · здоровье {unit.health}/{unit.health_max}")
             for unit in targets[:25]
         ])
 
@@ -264,6 +297,27 @@ class TargetSelect(discord.ui.Select):
             return
         if actor.user_id != interaction.user.id and interaction.user.id != self.session.owner_id:
             await interaction.response.send_message("Сейчас ход другого участника.", ephemeral=True)
+            return
+        if self.action == "attack":
+            action_range = weapon_range(actor)
+        elif self.action == "talent":
+            action_range = RANGED_TALENT_RANGES.get(self.payload, 1)
+        else:
+            selected_spell = next((item for item in actor.spells if item["name"] == self.payload), None)
+            skill_name = CORE_SKILLS.get((selected_spell or {}).get("core"), "Знания")
+            action_range = spell_runtime_profile(
+                selected_spell or {}, skill=actor.skills.get(skill_name, 25),
+                wits=actor.attributes.get("Смекалка", 10), cooldown_multiplier=1,
+            )["range"]
+        distance = self.session.distance(actor, target)
+        if distance > action_range:
+            await interaction.response.send_message(
+                f"Цель находится в {distance} м, дальность действия — {action_range} м. Сначала переместитесь.",
+                ephemeral=True,
+            )
+            return
+        if action_range > 1 and not self.session.grid.line_of_sight((actor.x, actor.y), (target.x, target.y)):
+            await interaction.response.send_message("Между токенами нет прямой видимости.", ephemeral=True)
             return
         before = target.health
         if self.action == "attack":
@@ -353,6 +407,43 @@ class ChoiceView(discord.ui.View):
         self.add_item(ChoiceSelect(session, kind, rows))
 
 
+class DirectionButton(discord.ui.Button):
+    def __init__(self, session: CombatSession, dx: int, dy: int, label: str):
+        super().__init__(label=label, style=discord.ButtonStyle.secondary)
+        self.session, self.dx, self.dy = session, dx, dy
+
+    async def callback(self, interaction: discord.Interaction):
+        actor = self.session.current
+        if not actor or interaction.user.id not in {actor.user_id, self.session.owner_id}:
+            await interaction.response.send_message("Сейчас ход другого участника.", ephemeral=True)
+            return
+        if actor.movement_remaining <= 0:
+            await interaction.response.send_message("Перемещение в этом ходу исчерпано.", ephemeral=True)
+            return
+        target = (actor.x + self.dx, actor.y + self.dy)
+        occupied = {(unit.x, unit.y) for unit in self.session.combatants.values() if unit.alive and unit is not actor}
+        if not self.session.grid.inside(target) or target in self.session.grid.blocked or target in occupied:
+            await interaction.response.send_message("Эта клетка занята или недоступна.", ephemeral=True)
+            return
+        actor.x, actor.y = target
+        actor.movement_remaining -= 1
+        self.session.log.append(f"👣 **{actor.name}** перемещается в клетку {actor.x + 1}:{actor.y + 1}.")
+        await interaction.response.edit_message(
+            content=f"Позиция **{actor.x + 1}:{actor.y + 1}** · осталось движения: **{actor.movement_remaining} м**.",
+            view=MoveView(self.session),
+        )
+        await self.session.refresh()
+
+
+class MoveView(discord.ui.View):
+    def __init__(self, session: CombatSession):
+        super().__init__(timeout=180)
+        for dx, dy, label in ((-1, -1, "↖"), (0, -1, "↑"), (1, -1, "↗"),
+                              (-1, 0, "←"), (1, 0, "→"),
+                              (-1, 1, "↙"), (0, 1, "↓"), (1, 1, "↘")):
+            self.add_item(DirectionButton(session, dx, dy, label))
+
+
 class BattleView(discord.ui.View):
     def __init__(self, session: CombatSession):
         super().__init__(timeout=3600)
@@ -402,14 +493,22 @@ class BattleView(discord.ui.View):
             return
         await interaction.response.send_message("Выберите предмет:", view=ItemView(self.session, usable), ephemeral=True)
 
+    @discord.ui.button(label="Перемещение", emoji="👣", style=discord.ButtonStyle.secondary, row=1)
+    async def move(self, interaction: discord.Interaction, _: discord.ui.Button):
+        actor = self.session.current
+        await interaction.response.send_message(
+            f"Позиция **{actor.x + 1}:{actor.y + 1}**. Осталось **{actor.movement_remaining} м**. "
+            "Каждое нажатие перемещает токен на одну клетку.",
+            view=MoveView(self.session), ephemeral=True,
+        )
+
     @discord.ui.button(label="Смена оружия", emoji="🔁", style=discord.ButtonStyle.secondary, row=1)
     async def weapon(self, interaction: discord.Interaction, _: discord.ui.Button):
         actor = self.session.current
         actor.active_weapon_set = actor.active_weapon_set % 4 + 1
         apply_equipment(actor)
-        self.session.log.append(f"🔁 **{actor.name}** переключается на комплект оружия {actor.active_weapon_set}.")
-        self.session.advance(actor, 1)
-        await interaction.response.send_message(f"Выбран комплект оружия {actor.active_weapon_set}.", ephemeral=True)
+        self.session.log.append(f"🔁 **{actor.name}** переключается на комплект оружия {actor.active_weapon_set} без траты действия.")
+        await interaction.response.send_message(f"Выбран комплект оружия {actor.active_weapon_set}. Ход продолжается.", ephemeral=True)
         await self.session.refresh()
 
     @discord.ui.button(label="Пропустить", emoji="⏭️", style=discord.ButtonStyle.secondary, row=1)
@@ -488,6 +587,9 @@ class EnemyModal(discord.ui.Modal, title="Добавить противника"
             skills={"Парирование": defense, "Уклонение": defense},
             attributes={"Живучесть": defense // 2, "Стойкость": defense // 2, "Смекалка": defense // 2},
         )
+        unit = self.session.combatants[key]
+        enemy_count = sum(1 for row in self.session.combatants.values() if row.team == "Противники") - 1
+        unit.x, unit.y = self.session.grid.width - 2, min(self.session.grid.height - 1, 2 + enemy_count * 2)
         await interaction.response.send_message(f"Добавлен противник **{self.name.value}**.", ephemeral=True)
         await self.session.refresh()
 
@@ -526,8 +628,17 @@ class LobbyView(discord.ui.View):
             return
         self.session.started = True
         for unit in self.session.combatants.values():
-            unit.ready_at = 1
-        self.session.log.append("⚔️ Бой начинается.")
+            unit.initiative_roll = random.randint(1, 20)
+            unit.initiative_total = unit.initiative_roll + initiative_bonus(unit.attributes.get("Быстрота", 10))
+            unit.movement_remaining = BASE_MOVEMENT
+        ordered = sorted(
+            self.session.combatants.values(),
+            key=lambda unit: (-unit.initiative_total, -unit.attributes.get("Быстрота", 10), unit.key),
+        )
+        self.session.turn_order = [unit.key for unit in ordered]
+        self.session.turn_index = 0
+        initiative_line = " → ".join(f"{unit.name} ({unit.initiative_total})" for unit in ordered)
+        self.session.log.append(f"⚔️ Бой начинается. Инициатива: {initiative_line}.")
         await interaction.response.edit_message(embed=self.session.embed(), view=BattleView(self.session))
 
     @discord.ui.button(label="Отменить", emoji="🗑️", style=discord.ButtonStyle.secondary)

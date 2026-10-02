@@ -12,6 +12,7 @@ from extended_talent_data import parse_faction_talents, parse_talent_page
 from localization import localize_game_text, seconds_to_rounds
 from official_localization import official_spell_details
 from training_combat import TrainingSession
+from tactical_grid import BASE_MOVEMENT, TacticalGrid, initiative_bonus
 from sigil_data import SIGIL_LIBRARY, sigil_key_from_scroll_url, spell_runtime_profile, validate_formula
 from constants import (
     ABILITY_DETAILS, ATTRIBUTES, BACKGROUNDS, SKILLS, SPECIALIZATIONS,
@@ -85,12 +86,30 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             "armor": 3,
         }
         session = TrainingSession(character_id=1)
+        session.act({"kind": "move", "x": 8, "y": 4}, character, derived, [], 2)
+        self.assertEqual(session.movement_remaining, 0)
+        session.act({"kind": "end_turn"}, character, derived, [], 2)
+        session.act({"kind": "move", "x": 9, "y": 4}, character, derived, [], 2)
         session.act({"kind": "ability", "name": "Удар щитом"}, character, derived, [], 2)
         self.assertEqual(session.round_number, 2)
+        self.assertFalse(session.action_available)
         self.assertGreater(session.remaining("ability:Удар щитом"), 0)
         self.assertEqual(character["experience"], 125)
         view = session.view(character, derived, [], 2)
         self.assertEqual(view["rewards"], {"experience": 0, "skillExperience": 0, "loot": []})
+        self.assertEqual(view["grid"]["cellMeters"], 1)
+        self.assertEqual(view["turn"]["movementMax"], BASE_MOVEMENT)
+        self.assertEqual(len(view["initiative"]), 2)
+
+    async def test_tactical_grid_movement_obstacles_and_initiative(self):
+        grid = TacticalGrid(7, 5, {(3, 1), (3, 2), (3, 3)})
+        cells = grid.reachable((1, 2), 3, {(2, 2)})
+        self.assertNotIn((2, 2), cells)
+        self.assertNotIn((4, 2), cells)
+        self.assertIn((2, 1), cells)
+        self.assertFalse(grid.line_of_sight((1, 2), (5, 2)))
+        self.assertEqual(grid.distance((1, 1), (4, 4)), 3)
+        self.assertEqual(initiative_bonus(14), 2)
 
     async def test_spell_runtime_uses_real_sigil_modifiers(self):
         profile = spell_runtime_profile({

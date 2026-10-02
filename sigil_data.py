@@ -276,15 +276,16 @@ def default_spell_name(core: str, expression: str) -> str:
 
 
 EXPRESSION_RUNTIME = {
-    "Область влияния": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
-    "Направленная сила": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1},
-    "Хаотическое нисхождение": {"cooldown": 6, "defense": "Уклонение", "projectiles": 3},
-    "Сосредоточенное намерение": {"cooldown": 3, "defense": "Магия", "projectiles": 1},
-    "Проводимая сила": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1},
-    "Охранная форма": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
-    "Материальная сила": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
-    "Ближнее действие": {"cooldown": 5, "defense": "Магия", "projectiles": 1},
-    "Дальний удар": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1},
+    # range/area измеряются клетками; одна клетка равна одному метру.
+    "Область влияния": {"cooldown": 5, "defense": "Магия", "projectiles": 1, "range": 10, "area": 2, "targeting": "area"},
+    "Направленная сила": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1, "range": 8, "area": 0, "targeting": "line"},
+    "Хаотическое нисхождение": {"cooldown": 6, "defense": "Уклонение", "projectiles": 3, "range": 10, "area": 2, "targeting": "area"},
+    "Сосредоточенное намерение": {"cooldown": 3, "defense": "Магия", "projectiles": 1, "range": 1, "area": 0, "targeting": "unit"},
+    "Проводимая сила": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1, "range": 5, "area": 2, "targeting": "cone"},
+    "Охранная форма": {"cooldown": 5, "defense": "Магия", "projectiles": 1, "range": 0, "area": 0, "targeting": "self"},
+    "Материальная сила": {"cooldown": 5, "defense": "Магия", "projectiles": 1, "range": 0, "area": 0, "targeting": "self"},
+    "Ближнее действие": {"cooldown": 5, "defense": "Магия", "projectiles": 1, "range": 1, "area": 1, "targeting": "aura"},
+    "Дальний удар": {"cooldown": 4, "defense": "Уклонение", "projectiles": 1, "range": 12, "area": 1, "targeting": "unit"},
 }
 
 _ACCENT_VALUES = {
@@ -346,6 +347,9 @@ def spell_runtime_profile(
         "defense": shape["defense"],
         "penetration": _accent_value(accents, "Пробивающая сила"),
         "projectiles": projectiles,
+        "range": shape["range"] + _accent_value(accents, "Длинная хватка"),
+        "area": shape["area"] + _accent_value(accents, "Безграничные пределы"),
+        "targeting": shape["targeting"],
         "range_bonus": _accent_value(accents, "Длинная хватка"),
         "area_bonus": _accent_value(accents, "Безграничные пределы"),
         "duration_bonus": _accent_value(accents, "Вневременная форма"),
