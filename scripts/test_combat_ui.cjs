@@ -3,7 +3,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const handlers={},messages=[],requests=[],bindings=[];
 const context=vm.createContext({
  document:{addEventListener(type,handler){(handlers[type]??=[]).push(handler)},querySelector(){return null},querySelectorAll(){return []}},
- renderTraining(){},combatPickerPanel(){return ''},combatActionButton:x=>x.name,statsBox(){return ''},localTalentIcon:url=>'assets/talent-icons/'+url,sigilIcon(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
+ renderTraining(){},loadTraining(){},combatPickerPanel(){return ''},combatActionButton:x=>x.name,statsBox(){return ''},localTalentIcon:url=>'assets/talent-icons/'+url,sigilIcon(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
  data:{character:{name:'QA'}},token:'isolated-qa',encodeURIComponent,
  toast(message){messages.push(message)},$:()=>({}),
  esc:value=>String(value),mutate(path,body){bindings.push(body)},quickbarAction(slot,actions){return actions[slot-1]},

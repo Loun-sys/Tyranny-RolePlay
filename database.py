@@ -221,6 +221,8 @@ class Database:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         async with self.connect() as db:
             await db.executescript(SCHEMA)
+            from campaign_store import SCHEMA as CAMPAIGN_SCHEMA
+            await db.executescript(CAMPAIGN_SCHEMA)
             quickbar_schema = await db.execute_fetchall("SELECT sql FROM sqlite_master WHERE name='combat_quickbar'")
             if quickbar_schema and 'BETWEEN 1 AND 5' in quickbar_schema[0]['sql']:
                 # Preserve every binding while widening the legacy SQLite constraint.
@@ -327,6 +329,9 @@ class Database:
                         (wiki_category_icon(row["category"]), row["id"]),
                     )
                 await db.commit()
+        game_items = Path(__file__).resolve().parent / 'catalog' / 'game_items.json'
+        if game_items.exists():
+            await self.upsert_catalog(json.loads(game_items.read_text(encoding='utf-8')))
         await self.ensure_starting_sigils()
         if spell_slots_added:
             async with self.connect() as db:
@@ -951,7 +956,7 @@ class Database:
                 item["description"] = localize_game_text(str(item.get("description", ""))).replace("Tyranny", "Тирания")
                 item["lore"] = localize_game_text(str(item.get("lore", ""))).replace("Tyranny", "Тирания")
                 item["properties"] = {
-                    localize_game_text(str(key)): localize_game_text(str(value)).replace("Tyranny", "Тирания")
+                    localize_game_text(str(key)): value if key == 'gameData' else localize_game_text(str(value)).replace("Tyranny", "Тирания")
                     for key, value in dict(item.get("properties") or {}).items()
                     if key not in {"Техническое исходное название", "Игровой ID", "Непереведённый исходный эффект"}
                 }

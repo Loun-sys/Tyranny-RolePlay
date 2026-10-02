@@ -54,6 +54,8 @@ class TacticalGrid:
     width: int = DEFAULT_WIDTH
     height: int = DEFAULT_HEIGHT
     blocked: set[tuple[int, int]] = field(default_factory=set)
+    sight_blocked: set[tuple[int, int]] | None = None
+    cover_cells: set[tuple[int,int]] = field(default_factory=set)
 
     def inside(self, point: tuple[int, int]) -> bool:
         x, y = point
@@ -69,6 +71,8 @@ class TacticalGrid:
         for dy in (-1, 0, 1):
             for dx in (-1, 0, 1):
                 candidate = (x + dx, y + dy)
+                if dx and dy and ((x + dx,y) in self.blocked or (x,y + dy) in self.blocked):
+                    continue
                 if (dx or dy) and self.inside(candidate) and candidate not in self.blocked:
                     yield candidate
 
@@ -90,6 +94,24 @@ class TacticalGrid:
                 queue.append(candidate)
         return distance
 
+    def path(self, origin, destination, occupied=None):
+        parents = {origin: None}
+        queue = deque([origin])
+        occupied = set(occupied or ()) - {origin}
+        while queue:
+            point = queue.popleft()
+            if point == destination:
+                result = []
+                while point is not None:
+                    result.append(point)
+                    point = parents[point]
+                return result[::-1]
+            for neighbor in sorted(self.neighbors(point),key=lambda p:abs(p[0]-destination[0])+abs(p[1]-destination[1])):
+                if neighbor not in occupied and neighbor not in parents:
+                    parents[neighbor] = point
+                    queue.append(neighbor)
+        return []
+
     def line_of_sight(self, start: tuple[int, int], end: tuple[int, int]) -> bool:
         """Проверка прямой видимости по клеткам алгоритмом Брезенхэма."""
         x0, y0 = start
@@ -105,7 +127,7 @@ class TacticalGrid:
             if doubled <= dx:
                 error += dx
                 y0 += sy
-            if (x0, y0) != end and (x0, y0) in self.blocked:
+            if (x0, y0) != end and (x0, y0) in (self.blocked if self.sight_blocked is None else self.sight_blocked):
                 return False
         return True
 
@@ -127,7 +149,7 @@ class TacticalGrid:
                 error += dx
                 y0 += sy
             point = (x0, y0)
-            if not self.inside(point) or point in self.blocked:
+            if not self.inside(point) or point in (self.blocked if self.sight_blocked is None else self.sight_blocked):
                 break
             cells.append(point)
             if maximum is not None and len(cells) >= maximum:
@@ -135,9 +157,10 @@ class TacticalGrid:
         return cells
 
     def radius_cells(self, center: tuple[int, int], radius: int) -> set[tuple[int, int]]:
+        radius=max(0,radius)
         return {
-            (x, y) for y in range(self.height) for x in range(self.width)
-            if self.distance(center, (x, y)) <= max(0, radius)
+            (x,y) for y in range(max(0,center[1]-radius),min(self.height,center[1]+radius+1))
+            for x in range(max(0,center[0]-radius),min(self.width,center[0]+radius+1))
         }
 
     def cone_cells(
@@ -172,6 +195,8 @@ class TacticalGrid:
         if not self.line_of_sight(start, end):
             return "полное", 10_000
         ray = self.line_cells(start, end)
+        if end in self.cover_cells or any(point in self.cover_cells for point in ray):
+            return 'частичное', 15
         adjacent = 0
         for x, y in ray[:-1]:
             adjacent += sum((x + dx, y + dy) in self.blocked for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
@@ -208,6 +233,8 @@ class TacticalGrid:
             "height": self.height,
             "cellMeters": CELL_METERS,
             "blocked": [{"x": x, "y": y} for x, y in sorted(self.blocked, key=lambda p: (p[1], p[0]))],
+            "sightBlocked": [{"x": x, "y": y} for x,y in sorted(self.blocked if self.sight_blocked is None else self.sight_blocked)],
+            "cover": [{'x':x,'y':y} for x,y in sorted(self.cover_cells)],
         }
 
 

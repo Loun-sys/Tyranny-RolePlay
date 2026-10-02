@@ -10,6 +10,7 @@ from typing import Any
 
 from constants import ABILITY_DETAILS
 from sigil_data import spell_runtime_profile
+from persistent_spells import persistent_profile
 from tactical_grid import BASE_MOVEMENT, TACTICAL_MAPS, TacticalGrid, initiative_bonus
 
 
@@ -97,14 +98,26 @@ class TrainingSession:
     })
     player_health: int = 0
     player_health_max: int = 0
+    player_base_health_max: int = 0
     disengaged: bool = False
     preview_cells: set[tuple[int, int]] = field(default_factory=set)
     active_stance: str = ""
     aim_point: tuple[int, int] | None = None
+    areas: list[dict[str, Any]] = field(default_factory=list)
+    conditions: dict[str, dict[str, Any]] = field(default_factory=dict)
+    movement_path: list[tuple[int, int]] = field(default_factory=list)
+    custom_map: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
-        spec = TACTICAL_MAPS[self.map_key]
-        self.grid = TacticalGrid(spec["width"], spec["height"], set(spec["blocked"]))
+        spec = self.custom_map or TACTICAL_MAPS[self.map_key]
+        coordinates = lambda rows: {(int(p['x']),int(p['y'])) if isinstance(p,dict) else tuple(p) for p in rows}
+        self.grid = TacticalGrid(spec["width"], spec["height"], coordinates(spec['blocked']),
+                                 coordinates(spec['sightBlocked']) if 'sightBlocked' in spec else None,
+                                 coordinates(spec.get('cover',[])))
+        if self.custom_map:
+            spawns = spec['spawns']
+            self.player_position = (spawns['player']['x'],spawns['player']['y'])
+            self.target_positions = {key:(spawns[key]['x'],spawns[key]['y']) for key in TRAINING_TARGETS}
 
     @property
     def finished(self) -> bool:
@@ -115,6 +128,7 @@ class TrainingSession:
             return
         quickness = int(character.get("attributes", {}).get("Быстрота", 10))
         self.player_health_max = int(character.get("health_max", character.get("health", 1)))
+        self.player_base_health_max = self.player_health_max
         self.player_health = int(character.get("health", self.player_health_max))
         bonus = initiative_bonus(quickness)
         player_roll = random.randint(1, 20)
@@ -175,6 +189,13 @@ class TrainingSession:
         target_id: str | None = None, cover_bonus: int = 0,
     ) -> dict[str, Any]:
         target_id = target_id or self.selected_target_id
+        statuses = self.conditions.get(target_id, {})
+        defense = max(0, defense - statuses.get('decay', {}).get('stacks', 0) * 2)
+        armor = max(0, armor - statuses.get('decay', {}).get('stacks', 0))
+        if statuses.get('prone') and defense == DUMMY['defenses']['Парирование']:
+            defense = max(0,defense-10)
+        accuracy += 10 if self.conditions.get('player', {}).get('guidance') else 0
+        self.conditions.get(target_id, {}).pop('sleep', None)
         target_name = TRAINING_TARGETS[target_id]["name"]
         roll = random.randint(1, 100)
         score = roll + accuracy - defense - cover_bonus
@@ -217,10 +238,53 @@ class TrainingSession:
             if entry['id'] in self._alive_targets():
                 self.log.append(f"{entry['name']}: тренировочная цель пропускает ход.")
         self.round_number += 1
+        for area in list(self.areas):
+            self._pulse_area(area)
+            area['remaining'] -= 1
+        self.areas = [area for area in self.areas if area['remaining'] > 0]
+        for target, states in list(self.conditions.items()):
+            self.conditions[target] = {key: value for key, value in states.items() if value['until'] >= self.round_number}
+        if not self.conditions.get('player',{}).get('restore'):
+            self.player_health_max = self.player_base_health_max
+            self.player_health = min(self.player_health,self.player_health_max)
+        self.log.append('Новый раунд: оставшиеся области обновили свои эффекты.')
         self.movement_remaining = BASE_MOVEMENT
         self.action_available = True
         self.disengaged = False
         return {"result": "Новый раунд", "damage": 0, "line": line}
+
+    def _pulse_area(self, area):
+        if area['aura']:
+            area['center'] = self.player_position
+        cells = self.grid.radius_cells(tuple(area['center']), area['radius'])
+        effect = area['effect']
+        friendly = effect in {'heal', 'restore', 'guidance', 'stance', 'magic'}
+        targets = ['player'] if friendly and self.player_position in cells else []
+        if not friendly:
+            targets = [key for key in self._alive_targets() if self.target_positions[key] in cells
+                       and self.grid.line_of_sight(tuple(area['center']), self.target_positions[key])]
+        for target in targets:
+            if effect == 'heal':
+                amount = math.ceil(self.player_health_max * .1)
+                self.player_health = min(self.player_health_max, self.player_health + amount)
+            elif effect == 'restore':
+                states=self.conditions.setdefault('player',{})
+                negative=next((key for key in states if key in {'fatigue','fear','decay','frost','prone','sleep'}),None)
+                if negative: states.pop(negative)
+                states['restore']={'name':area['description'],'stacks':1,'until':self.round_number}
+                self.player_health_max=math.ceil(self.player_base_health_max*1.2)
+            elif effect in {'fire', 'stone'}:
+                self._roll_attack(name=area['name'], accuracy=area['accuracy'], low=area['damageMin'],
+                                  high=area['damageMax'], defense=DUMMY['defenses']['Магия'],
+                                  armor=DUMMY['armor'], target_id=target,
+                                  damage_type='огненного' if effect == 'fire' else 'дробящего')
+            else:
+                states = self.conditions.setdefault(target, {})
+                stacks = min(5, states.get(effect, {}).get('stacks', 0) + 1) if effect in {'decay','frost'} else 1
+                states[effect] = {'name': area['description'], 'stacks': stacks, 'until': self.round_number}
+                if effect == 'frost' and random.randint(1,100) + area['accuracy'] > DUMMY['defenses']['Выносливость'] + 50:
+                    states['prone'] = {'name': 'Сбит с ног: Парирование −10', 'stacks': 1, 'until': self.round_number}
+        self.log.append(f"Раунд {self.round_number}: «{area['name']}» повторяет эффект в области; целей: {len(targets)}.")
 
     def _spell_cells(self, profile: dict[str, Any]) -> set[tuple[int, int]]:
         target = self.aim_point or self.target_positions[self.selected_target_id]
@@ -248,14 +312,15 @@ class TrainingSession:
         spells: list[dict[str, Any]], weapon_sets: int,
     ) -> dict[str, Any]:
         previous_target = self.selected_target_id
+        self.movement_path = []
         kind = str(payload.get("kind", ""))
         target_id = payload.get("targetId")
         try:
-            if kind in {"attack", "ability", "spell"} and target_id:
+            if kind in {"attack", "ability", "spell", "artifact"} and target_id:
                 if target_id not in self._alive_targets():
                     raise ValueError("Эта цель недоступна.")
                 self.selected_target_id = str(target_id)
-            if kind == "spell" and "x" in payload and "y" in payload:
+            if kind in {"spell", "artifact"} and "x" in payload and "y" in payload:
                 point = (int(payload["x"]), int(payload["y"]))
                 if not self.grid.inside(point) or point in self.grid.blocked:
                     raise ValueError("Нельзя применить заклинание в этой клетке.")
@@ -271,7 +336,7 @@ class TrainingSession:
         self, payload: dict[str, Any], character: dict[str, Any], derived: dict[str, Any],
         spells: list[dict[str, Any]], weapon_sets: int,
     ) -> dict[str, Any]:
-        self._initialize(character)
+        self._initialize({**character,'health_max':derived.get('healthMax',character.get('health_max',character.get('health',20)))})
         if self.finished:
             raise ValueError("Манекен уже разрушен. Начните новую тренировку.")
         kind, name = str(payload.get("kind", "")), str(payload.get("name", ""))
@@ -294,6 +359,7 @@ class TrainingSession:
                 raise ValueError("Эта клетка недостижима в текущем ходу.")
             spent = reachable[target]
             old_position = self.player_position
+            self.movement_path = self.grid.path(old_position, target, occupied)
             self.player_position = target
             self.movement_remaining -= spent
             line = f"Раунд {self.round_number}: персонаж перемещается на {spent} м."
@@ -301,12 +367,15 @@ class TrainingSession:
                 key for key in self._alive_targets()
                 if self.grid.distance(old_position, self.target_positions[key]) <= 1
                 and self.grid.distance(target, self.target_positions[key]) > 1
+                and not any(self.conditions.get(key,{}).get(state) for state in ('sleep','prone'))
             ]
             if controllers and not self.disengaged:
                 attacker = TRAINING_TARGETS[controllers[0]]["name"]
                 roll = random.randint(1, 100)
                 dodge = int(derived.get("defenses", {}).get("Уклонение", 20))
-                if roll + 35 > dodge:
+                states=self.conditions.get(controllers[0],{})
+                penalty=(5 if states.get('fatigue') else 0)+(10 if states.get('fear') else 0)
+                if roll + 35 - penalty > dodge:
                     damage = max(1, random.randint(4, 8) - int(derived.get("armor", 0)))
                     self.player_health = max(0, self.player_health - damage)
                     line += f" {attacker} проводит атаку по возможности и наносит {damage} урона."
@@ -408,6 +477,24 @@ class TrainingSession:
                 line = f"Раунд {self.round_number}: применена способность «{name}»."
                 self.log.append(line)
                 result = {"result": "Способность применена", "damage": 0, "line": line}
+        elif kind == "artifact":
+            ability=next((a for a in derived.get('artifactAbilities',[]) if a['name']==name),None)
+            if not ability: raise ValueError('Артефакт не экипирован в активном комплекте.')
+            if not ability['supported']: raise ValueError(ability['limitation'])
+            key='artifact:'+name
+            if self.remaining(key): raise ValueError('Способность артефакта уже использована или перезаряжается.')
+            self._require_action(ability['range'])
+            center=self.aim_point or self.target_positions[self.selected_target_id]
+            cells=self.grid.radius_cells(center,ability['area']) if ability['area'] else {center}
+            targets=[key for key in self._alive_targets() if self.target_positions[key] in cells and self.grid.line_of_sight(center,self.target_positions[key])]
+            if not targets: raise ValueError('Выберите доступную цель.')
+            weapon=ability.get('weaponMultiplier',0)
+            low=ability['damageMin'] or round(attack.get('damageMin',2)*weapon)
+            high=ability['damageMax'] or round(attack.get('damageMax',4)*weapon)
+            results=[self._roll_attack(name=name,accuracy=attack.get('accuracy',20),low=low,high=high,
+                defense=DUMMY['defenses']['Магия'],armor=DUMMY['armor'],penetration=ability['penetration'],target_id=target) for target in targets]
+            self.cooldowns[key]=999999 if ability['oncePerBattle'] else self.round_number+ability['cooldown']+1
+            result={'result':'Артефакт применён','damage':sum(r['damage'] for r in results),'line':' '.join(r['line'] for r in results)}
         elif kind == "spell":
             spell = next((row for row in spells if row["name"] == name), None)
             if not spell:
@@ -428,6 +515,19 @@ class TrainingSession:
             if profile["targeting"] in {"self", "aura"}:
                 self.aim_point = self.player_position
             self._require_action(profile["range"])
+            persistent = persistent_profile(spell)
+            if persistent:
+                center = self.player_position if persistent['aura'] else self.aim_point or self.target_positions[self.selected_target_id]
+                area = {**persistent, 'id': f'{self.round_number}:{len(self.areas)}:{name}', 'name': name,
+                        'core': spell['core'], 'center': center, 'radius': max(1, profile['area']),
+                        'remaining': persistent['rounds'] - 1, 'accuracy': profile['accuracy'],
+                        'damageMin': profile['damage_min'], 'damageMax': profile['damage_max']}
+                self._pulse_area(area)
+                if area['remaining']:
+                    self.areas.append(area)
+                self.cooldowns[key] = self.round_number + profile['cooldown'] + 1
+                self.action_available = False
+                return {'result': 'Область создана', 'damage': 0, 'line': f"«{name}»: {persistent['rounds']} раунда, первый эффект применён."}
             if profile["targeting"] == "self":
                 self.cooldowns[key] = self.round_number + profile["cooldown"] + 1
                 line = f"Раунд {self.round_number}: персонаж применяет на себя «{name}»."
@@ -470,7 +570,7 @@ class TrainingSession:
         self, character: dict[str, Any], derived: dict[str, Any], spells: list[dict[str, Any]],
         weapon_sets: int,
     ) -> dict[str, Any]:
-        self._initialize(character)
+        self._initialize({**character,'health_max':derived.get('healthMax',character.get('health_max',character.get('health',20)))})
         attack = derived.get("attack", {})
         attrs = derived.get("effectiveAttributes", character.get("attributes", {}))
         owned = {talent["name"] for talent in character.get("talents", [])}
@@ -496,6 +596,11 @@ class TrainingSession:
         actions = [{"kind": "attack", "name": "Обычная атака", "description": "Атака активным оружейным комплектом.",
                     "remaining": 0, "range": weapon_range, "weaponSkill": attack.get("skill", ""), "disabledReason": reason(weapon_range),
                     "cells": [{"x": selected_target["x"], "y": selected_target["y"]}]}]
+        for ability in derived.get('artifactAbilities',[]):
+            actions.append({**ability,'kind':'artifact','targeting':'area' if ability['area'] else 'unit',
+                'remaining':self.remaining('artifact:'+ability['name']),
+                'disabledReason':ability['limitation'] or reason(ability['range']),
+                'description':ability['description']+'\n'+ability['limitation']+'\n'+'; '.join(ability['passives'])})
         for name, details in {**ABILITY_DETAILS, **MOBILITY_ABILITIES}.items():
             if name in owned:
                 action_range = RANGED_ABILITIES.get(name, 1 if name in ATTACKING_ABILITIES else 0)
@@ -515,7 +620,9 @@ class TrainingSession:
                             "core": spell["core"], "angle": profile.get("angle", 90),
                             "cooldown": profile["cooldown"], "damageMin": profile["damage_min"],
                             "damageMax": profile["damage_max"], "defense": profile["defense"],
-                            "description": f"{spell['core']} + {spell['expression']}",
+                            "description": f"{spell['core']} + {spell['expression']}" +
+                                (f" · {persistent_profile(spell)['description']} · {persistent_profile(spell)['rounds']} раунда" if persistent_profile(spell) else ''),
+                            "persistent": persistent_profile(spell),
                             "remaining": self.remaining(f"spell:{spell['name']}"), "range": profile["range"],
                             "area": profile["area"], "targeting": profile["targeting"],
                             "disabledReason": "Основное действие потрачено" if not self.action_available else "",
@@ -537,27 +644,29 @@ class TrainingSession:
                     point = (x, y)
                     self.aim_point = point
                     targeting = action.get("targeting", "unit")
-                    shape = self._spell_cells(action) if action["kind"] == "spell" else {point}
+                    shape = self._spell_cells(action) if action["kind"] in {"spell","artifact"} else {point}
                     effective_point = self.player_position if targeting in {"self", "aura"} else point
                     valid = self.grid.distance(self.player_position, effective_point) <= action.get("range", 0)
                     valid = valid and point not in self.grid.blocked and self.grid.line_of_sight(self.player_position, effective_point)
+                    if action['kind']=='artifact' and not action['supported']: valid=False
                     if targeting == "unit":
                         valid = valid and any(self.target_positions[key] == point for key in self._alive_targets())
                     if targeting in {"self", "aura"}:
                         valid = valid and point == self.player_position
-                    if action["kind"] == "spell" and targeting != "self":
+                    if action["kind"] == "spell" and targeting != "self" and not action.get('persistent'):
                         valid = valid and any(self.target_positions[key] in shape and
                             self.grid.cover(self.player_position, self.target_positions[key])[0] != "полное"
                             for key in self._alive_targets())
                     action["aims"][f"{x}:{y}"] = {"valid": valid, "cells": [{"x": cx, "y": cy} for cx, cy in sorted(shape)]}
             self.aim_point = None
 
-        map_spec = TACTICAL_MAPS[self.map_key]
+        map_spec = self.custom_map or TACTICAL_MAPS[self.map_key]
         occupied = {self.target_positions[key] for key in self._alive_targets()}
         reachable = self.grid.reachable(self.player_position, self.movement_remaining, occupied)
         grid_payload = self.grid.payload()
         grid_payload.update({
-            "name": map_spec["name"], "image": map_spec["image"], "source": map_spec["source"],
+            "name": map_spec["name"], "image": map_spec["image"], "source": map_spec.get("source", "Карта мастера"),
+            "layout": {key:map_spec.get(key,default) for key,default in [('cellSize',48),('offsetX',0),('offsetY',0),('imageScale',1),('gridOpacity',.3)]},
             "movementPerTurn": BASE_MOVEMENT,
             "reachable": [{"x": x, "y": y, "cost": cost} for (x, y), cost in reachable.items() if cost],
             "controlZones": [{"x": x, "y": y} for x, y in controlled],
@@ -587,6 +696,11 @@ class TrainingSession:
             "initiative": self.initiative, "grid": grid_payload,
             "derived": derived, "actions": actions, "stances": stances, "activeStance": self.active_stance,
             "cooldowns": self.cooldowns,
+            "areas": [{**area, 'center':{'x':area['center'][0],'y':area['center'][1]},
+                       'cells':[{'x':x,'y':y} for x,y in self.grid.radius_cells(tuple(area['center']),area['radius'])]}
+                      for area in self.areas],
+            "conditions": self.conditions,
+            "movementPath": [{'x':x,'y':y} for x,y in self.movement_path],
             "log": self.log[-40:][::-1],
             "summary": {"damage": self.damage_total, "attacks": self.attacks, "hits": self.hits,
                         "accuracy": round(self.hits / self.attacks * 100) if self.attacks else 0},

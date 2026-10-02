@@ -3,7 +3,7 @@ const events=[],nodes=[];
 const layer={isConnected:true,style:{setProperty(){}},append(node){nodes.push(node);events.push(node.className)},getBoundingClientRect(){return {width:800,height:600}}};
 const context=vm.createContext({
  document:{addEventListener(){},querySelector:s=>s==='.combat-vfx-layer'?layer:null,createElement(){return {style:{},animate(){return {finished:Promise.resolve()}},remove(){this.removed=true}}}},
- renderTraining(){},combatPickerPanel(){},statsBox(){},localTalentIcon(){},sigilIcon(){},
+ renderTraining(){},loadTraining(){},combatPickerPanel(){},statsBox(){},localTalentIcon(){},sigilIcon(){},
  matchMedia:()=>({matches:false}),
 });
 vm.runInContext(fs.readFileSync('web/combat-ui.js','utf8'),context);

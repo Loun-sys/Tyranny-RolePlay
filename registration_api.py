@@ -27,6 +27,7 @@ from extended_talent_data import load_extended_talents
 from training_combat import TrainingSession
 from sigil_data import SPELL_NAMES, SIGIL_LIBRARY, SIGILS_BY_KEY, sigil_key_from_scroll_url, validate_formula
 from official_localization import official_spell_details
+from campaign_store import CampaignStore
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -212,9 +213,12 @@ def _property_number(properties: dict[str, Any], *names: str) -> tuple[float, bo
 
 
 def _apply_property(base: float, items: list[dict[str, Any]], *names: str) -> float:
+    from item_effects import equip_bonuses
     flat = percent = 0.0
     for item in items:
-        value, is_percent = _property_number(item.get("properties") or {}, *names)
+        original=equip_bonuses(item)
+        key=next((key for key in original if key.casefold() in {name.casefold() for name in names}),None)
+        value, is_percent = (original[key],False) if key else _property_number(item.get("properties") or {}, *names)
         if is_percent:
             percent += value
         else:
@@ -259,7 +263,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     }
     attack_skill = skill_by_category.get((primary or {}).get("category"), "Безоружный бой")
     accuracy = character["skills"].get(attack_skill, {}).get("value", 0)
-    accuracy = round(_apply_property(accuracy, active_items, "Точность", "Accuracy"))
+    accuracy = round(_apply_property(_apply_property(accuracy, active_items, attack_skill), active_items, "Точность", "Accuracy"))
     might_multiplier = max(.1, 1 + (attrs.get("Сила", 10) - 10) * .03)
     damage_min = round(sum(int(item.get("damage_min") or 0) for item in weapons) * might_multiplier)
     damage_max = round(sum(int(item.get("damage_max") or 0) for item in weapons) * might_multiplier)
@@ -273,6 +277,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     recovery = _apply_property(recovery, active_items, "Восстановление", "Recovery")
     return {
         "defenses": defenses,
+        "artifactAbilities": __import__('artifact_rules').equipped_artifacts(active_items),
         "effectiveAttributes": attrs,
         "attack": {"accuracy": accuracy, "damageMin": damage_min, "damageMax": damage_max,
                    "recovery": round(recovery, 2), "criticalChance": max(1, attrs.get("Искусность", 10) - 9),
@@ -281,6 +286,8 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "cooldownMultiplier": round(max(.1, 1 - (quickness - 10) * .03), 3),
         "cooldownPercent": round((1 - max(.1, 1 - (quickness - 10) * .03)) * 100),
         "equipmentRecovery": round(recovery, 2),
+        "healthMax": max(1, round(_apply_property(character.get('health_max',20) + attrs.get('Живучесть',10)-character['attributes'].get('Живучесть',10),active_items,'Максимум здоровья'))),
+        "equipmentBonuses": [{"item":item['name'],"bonuses":__import__('item_effects').equip_bonuses(item)} for item in active_items],
     }
 
 
@@ -321,6 +328,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
             })
     return {
         "character": character,
+        "wallet": await CampaignStore(db).wallet(character_id),
         "inventory": inventory,
         "capacity": await db.inventory_capacity(character_id),
         "spells": await db.spells(character_id),
@@ -513,6 +521,8 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         if not isinstance(bindings, list) or len(bindings) != 9 or not all(isinstance(row, dict) for row in bindings):
             raise web.HTTPBadRequest(reason='Некорректный список быстрых ячеек.')
         character = await request.app['db'].get_character_by_id(cid)
+        inventory=_clean_inventory(await request.app['db'].inventory(cid))
+        artifacts={a['name'] for a in _derived(character,inventory)['artifactAbilities'] if a['supported']}
         owned = {row['name'] for row in character.get('talents', [])}
         spells = {row['name'] for row in await request.app['db'].spells(cid) if row.get('equipped_slot') is not None}
         cleaned = []
@@ -520,6 +530,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
             kind, name = str(row.get('kind', '')), str(row.get('name', ''))
             valid = (not kind and not name) or (kind == 'attack' and name == 'Обычная атака')
             valid = valid or (kind == 'ability' and name in owned) or (kind == 'spell' and name in spells)
+            valid = valid or (kind == 'artifact' and name in artifacts)
             valid = valid or (kind == 'disengage' and name == 'Осторожный отход')
             if not valid:
                 raise web.HTTPConflict(reason='Это действие сейчас недоступно персонажу.')
@@ -538,7 +549,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         raise web.HTTPBadRequest(reason="Некорректная ячейка быстрого доступа.") from error
     kind, name = str(payload.get("kind", "")).strip(), str(payload.get("name", "")).strip()
     if kind or name:
-        if kind not in {"attack", "ability", "spell", "disengage"} or not name:
+        if kind not in {"attack", "ability", "spell", "disengage", "artifact"} or not name:
             raise web.HTTPBadRequest(reason="Неизвестное боевое действие.")
         character = await request.app["db"].get_character_by_id(cid)
         owned = {row["name"] for row in character.get("talents", [])}
@@ -547,6 +558,8 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         valid = valid or kind == "ability" and name in owned
         valid = valid or kind == "spell" and name in spells
         valid = valid or kind == "disengage" and name == "Осторожный отход"
+        inventory=_clean_inventory(await request.app['db'].inventory(cid))
+        valid = valid or kind == 'artifact' and any(a['name']==name and a['supported'] for a in _derived(character,inventory)['artifactAbilities'])
         if not valid:
             raise web.HTTPConflict(reason="Это действие сейчас недоступно персонажу.")
     try:
@@ -718,7 +731,7 @@ async def training_info(request: web.Request) -> web.Response:
     session = request.app["training_sessions"].get(cid)
     if not session:
         return web.json_response({
-            "ok": True, "training": {"active": False},
+            "ok": True, "training": {"active": False}, "maps": await _player_maps(request,cid),
             "message": "Тренировка ещё не начата. Опыт, здоровье и расходники здесь не изменяются.",
         })
     character, inventory, spells, limits = await _training_character(request, cid, session)
@@ -729,10 +742,16 @@ async def training_info(request: web.Request) -> web.Response:
 
 
 async def training_start(request: web.Request) -> web.Response:
-    cid, _ = await _portal_payload(request)
+    cid, payload = await _portal_payload(request)
     character = await request.app["db"].get_character_by_id(cid)
+    custom_map = None
+    if payload.get('mapId'):
+        choices = await _player_maps(request,cid)
+        selected = next((row for row in choices if row['id']==int(payload['mapId'])),None)
+        if not selected: raise web.HTTPNotFound(reason='Карта недоступна.')
+        custom_map = selected['spec']
     session = TrainingSession(
-        character_id=cid, active_weapon_set=max(1, min(4, int(character.get("active_weapon_set", 1))))
+        character_id=cid, active_weapon_set=max(1, min(4, int(character.get("active_weapon_set", 1)))), custom_map=custom_map
     )
     request.app["training_sessions"][cid] = session
     character, inventory, spells, limits = await _training_character(request, cid, session)
@@ -785,6 +804,60 @@ async def health(_: web.Request) -> web.Response:
     return web.json_response({"ok": True, "service": "tyranny-registration"})
 
 
+async def _player_maps(request,cid):
+    character=await request.app['db'].get_character_by_id(cid)
+    return await CampaignStore(request.app['db']).maps(character['guild_id'])
+
+
+async def admin_maps(request):
+    guild,owner=await _admin_owner(request)
+    store=CampaignStore(request.app['db'])
+    ident=None
+    if request.method=='POST':
+        try:
+            payload=await request.json()
+            if payload.get('action')=='delete': await store.delete_map(guild,owner,int(payload['id']))
+            else: ident=await store.save_map(guild,owner,payload)
+        except (ValueError,TypeError,KeyError) as error: raise web.HTTPBadRequest(reason=str(error)) from error
+    return web.json_response({'ok':True,'id':ident,'maps':await store.maps(guild,owner)})
+
+
+async def admin_shop(request):
+    guild,owner=await _admin_owner(request)
+    store=CampaignStore(request.app['db'])
+    if request.method=='POST':
+        try: await store.edit_shop(guild,await request.json())
+        except (ValueError,TypeError) as error: raise web.HTTPBadRequest(reason=str(error)) from error
+    shop=await store.shop(guild,str(request.query.get('q',''))[:100],True)
+    shop['items']=_clean_inventory(shop['items'])
+    return web.json_response({'ok':True,**shop})
+
+
+async def admin_wallet(request):
+    guild,owner,cid=await _admin_character(request)
+    try:
+        payload=await request.json()
+        total=int(payload.get('copper',0))+100*int(payload.get('bronze',0))+10000*int(payload.get('iron',0))
+        if any(int(payload.get(k,0))<0 for k in ('copper','bronze','iron')): raise ValueError('Количество колец не может быть отрицательным.')
+        await CampaignStore(request.app['db']).set_wallet(cid,total)
+        await request.app['db'].record_admin_action(guild,owner,cid,'wallet',{'totalCopper':total})
+    except (ValueError,TypeError) as error: raise web.HTTPBadRequest(reason=str(error)) from error
+    return web.json_response({'ok':True,'wallet':await CampaignStore(request.app['db']).wallet(cid)})
+
+
+async def portal_shop(request):
+    cid=await request.app['db'].portal_character_id(request.match_info['token'])
+    if not cid: raise web.HTTPGone(reason='Личная ссылка недоступна.')
+    store=CampaignStore(request.app['db']);message=''
+    if request.method=='POST':
+        try: message=await store.trade(cid,await request.json())
+        except (ValueError,TypeError) as error: raise web.HTTPConflict(reason=str(error)) from error
+    character=await request.app['db'].get_character_by_id(cid)
+    shop=await store.shop(character['guild_id'],str(request.query.get('q',''))[:100])
+    shop['items']=_clean_inventory(shop['items'])
+    return web.json_response({'ok':True,**shop,'saleOffers':await store.sale_offers(cid,character['guild_id']),'wallet':await store.wallet(cid),'message':message})
+
+
 async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRunner | None:
     if os.getenv("TYRANNY_ENABLE_WEB", "1").strip().casefold() in {"0", "false", "no"}:
         return None
@@ -815,6 +888,13 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/combat-quickbar", portal_combat_quickbar)
     app.router.add_get("/api/admin/{token}", admin_home)
     app.router.add_get("/api/admin/{token}/catalog", admin_catalog)
+    app.router.add_get('/api/admin/{token}/maps',admin_maps)
+    app.router.add_post('/api/admin/{token}/maps',admin_maps)
+    app.router.add_get('/api/admin/{token}/shop',admin_shop)
+    app.router.add_post('/api/admin/{token}/shop',admin_shop)
+    app.router.add_post('/api/admin/{token}/character/{character_id}/wallet',admin_wallet)
+    app.router.add_get('/api/portal/{token}/shop',portal_shop)
+    app.router.add_post('/api/portal/{token}/shop',portal_shop)
     app.router.add_get("/api/admin/{token}/character/{character_id}", admin_character)
     app.router.add_post("/api/admin/{token}/character/{character_id}", admin_mutation)
     app.router.add_options("/api/admin/{token}/character/{character_id}", lambda _: web.Response(status=204))

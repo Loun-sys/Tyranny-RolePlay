@@ -1,0 +1,657 @@
+{
+  "prefabs": 1251,
+  "imported": 1143,
+  "icons": 705,
+  "excluded": [
+    {
+      "archive": "items",
+      "prefab": "IT_CONS_Scroll_LibraryUpgrade_Symbol_Fear",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Stone",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SCROLL_SCROLL_V01",
+      "name": "Охотничий лук ярусника",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Armor_Dead_Scourge",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_2H_War_Hammer01_test",
+      "name": "",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_Bucket01",
+      "name": "Имперская железная фальката",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_broom",
+      "name": "Бронзовый меч",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_ENEMY_BOW_WD_VendrienGuard_Bow",
+      "name": "Лук Вендриенов",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Test_Armor",
+      "name": "Тяжелый бронзовый доспех",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_ENEMY_STF_IR_Bloodchanter_Staff",
+      "name": "Посох Певчих Крови",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_2H_BR_Spear_CrimsonSpear",
+      "name": "Пика Багровых Копий",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "DEBUG_Bow_Of_Assuring_Quality",
+      "name": "",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_Echocall_FoodSupplies",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Natural_Beastman_Hide",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Bronze_Enemy_HELM_HoBR_Reaver",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Stone",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_Hammer01",
+      "name": "Бронзовый кинжал",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Natural_Beastwoman_Hide",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_Symbol_of_Resistance",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Test_Helmet",
+      "name": "Железный шлем с шипами",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Test_Boots",
+      "name": "Сандалии из плотной ткани",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_cup01_wine",
+      "name": "Имперская железная фальката",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PORP_2H_BR_Axe_01",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Bronze_ENEMY_Armor_BronzeBrotherhood_Raider",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Cape",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_FQ_Dis_Item_TIG_Distillates",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Frost",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_Lorebook_Artifact",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SHLD_IR_Heater",
+      "name": "Железный тарч",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_MLC_Claws",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_ENEMY_SHLD_BR_Unbroken_Buckler",
+      "name": "Щит Несломленных",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "TR_Oldwall_Crystal_White",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_cup02_beer",
+      "name": "Имперская железная фальката",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_BR_Sword_prop",
+      "name": "Бронзовый меч",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Armor_Dead_Malice",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_1H_BR_Scepter_Nerat",
+      "name": "Последний крик",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_scr_claws_dark",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "IT_CONS_Scroll_Testing",
+      "name": "",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SHLD_BR_Tower_02",
+      "name": "Бронзовый осадный щит",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_ENEMY_SHLD_LE_Chorus_DamagedBuckler",
+      "name": "Поврежденный кожаный щит",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_Welby_Note",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Natural_BeastwomanMage_Hide",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_ART_SHLD_TheBaneward",
+      "name": "Гроза погибелей",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_1H_BR_Axe_02",
+      "name": "Бронзовый табар",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_BR_Sword_prop_Nerat",
+      "name": "Бронзовый меч",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Fire",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "prop_1H_IR_Sword_Disfavored",
+      "name": "Железный меч Опальных",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_Wisp_claws",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_1H_BR_Javelin_02",
+      "name": "Бронзовый дротик",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Kills-In-Shadow_Legacy_Hide",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Lore_FM_Grass_Effigy",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "BurningLibrary_FirstSage_Note",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "DEBUG_Blade_of_Assuring_Quality",
+      "name": "",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SCROLL_open",
+      "name": "Охотничий лук ярусника",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SHLD_IR_Disfavored_Buckler",
+      "name": "Щит Опальных",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_1H_IR_Spear_Disfavored",
+      "name": "Железное копье Опальных",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_Disfavored_FB",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Research_Scroll_Library_Mindless_Fury_Decrypted",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_bag_small",
+      "name": "Бронзовый меч",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_Weighted_Dagger",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_SK_Dagger_BledenMark",
+      "name": "Сгущающаяся тьма",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_BR_Mace_BronzeBrotherhood",
+      "name": "Булава Бронзового Братства",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "IT_CONS_Scroll_LibraryUpgrade_Mod_SuddenDeath",
+      "name": "Свиток: сигил \"Внезапной смерти\" (штрих)",
+      "excluded": "Вырезан из игры"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SCROLL_open_in_hand",
+      "name": "Охотничий лук ярусника",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_bag_bst",
+      "name": "Имперская железная фальката",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_BR_Dagger",
+      "name": "Бронзовый кинжал",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "prop_1H_IR_Dagger_BloodBound_Melee",
+      "name": "Метательный нож Скованных Клятвой",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_IR_Sword_Chorus",
+      "name": "Сломанный железный меч",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_WPN_ENEMY_1H_BR_Sword_03",
+      "name": "Бронзовый меч из Оплота",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "IT_CONS_Scroll_LibraryUpgrade_Symbol_Frenzy",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Frost",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Shock",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Lore_HH_Expedition_Report",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Shock",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_HNT_RockCharge",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SHLD_BR_VendrienGuard_LargeShield",
+      "name": "Щит Солдат Солнца",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_WPN_ENEMY_2H_IR_Spear_01",
+      "name": "Железная пика",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_BOW_SP_Gravebow_OLD",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "vx1_Recipe_Scroll_Infirmary_Colossus_Seed",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Bronze_ENEMY_Armor_BronzeBrotherhood_Bruiser",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SHLD_LE_Chorus_DamagedBuckler",
+      "name": "Поврежденный кожаный щит",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Test_Gloves",
+      "name": "Легкие кожаные рукавицы",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_scr_claws",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "prop_Dagger_BloodBound_Thrown",
+      "name": "Метательный нож Скованных Клятвой",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "prop_SHLD_IR_Disfavored_StoneShield",
+      "name": "Осадный щит Каменных Щитов",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_HarchiandBronze_WorkOrders",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_Item_EdictOfShadow",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_BR_Axe_BronzeBrotherhood",
+      "name": "Топор Бронзового Братства",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_2H_BR_Hammer_BronzeBrotherhood",
+      "name": "Боевой молот Бронзового Братства",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_LC_Artifact",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_Drumstick",
+      "name": "Бронзовый кинжал",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_IR_Hammer_Blacksmith",
+      "name": "",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "ACC_UNIQUE_Chrysalis_Amber_Brooch",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_d20",
+      "name": "Имперская железная фальката",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_STF_WD_Staff_Starting_Weakness_paperdoll",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_ART_SHLD_AzureShield",
+      "name": "Лазурный Щит",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Lore_BR_Iron_Lamp",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_1H_IR_Javelin_01",
+      "name": "",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_ENEMY_BOW_WD_Fury_Bow",
+      "name": "Могильный лук",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Lore_BR_Silver_Key",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Bronze_ENEMY_Armor_SC_CrimsonSpears",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "PROP_SHLD_BR_Tower",
+      "name": "Бронзовый осадный щит",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "Armor_Dead_Wisp",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Quest_ArtifactLoction_Document",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Prop_1H_IR_Sword_01",
+      "name": "Имперская железная фальката",
+      "excluded": "Служебный объект"
+    },
+    {
+      "archive": "items",
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Fire",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Lore_HH_Supplies",
+      "name": "",
+      "excluded": "Нет русского названия"
+    },
+    {
+      "archive": "items",
+      "prefab": "Lore_FM_Bronze_Horn",
+      "name": "",
+      "excluded": "Нет русского названия"
+    }
+  ],
+  "missingIcons": [],
+  "note": "Conditional item mods and quality scaling are preserved as source data; not all are executable combat rules."
+}

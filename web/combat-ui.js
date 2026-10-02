@@ -1,5 +1,5 @@
 /* Targeting and original-game HUD. All highlighted cells come from the server. */
-let armedCombatAction=null,combatAim=null,combatBusy=false;
+let armedCombatAction=null,combatAim=null,combatBusy=false,trainingMaps=[];
 const gameCombatRoot='assets/game-combat/';
 const coreTexture={Огонь:'Core-Fire',Холод:'Core-Frost',Молния:'Core-Shock',Жизнь:'Core-Heal',Истощение:'Core-Weaken',Эмоции:'Core-Passion',Рвение:'Core-Strength',Сила:'Core-Gravity',Камень:'Core-Stone',Терратус:'Core-Gravelight',Иллюзия:'Core-Illusion'};
 const originalLocalTalentIcon=localTalentIcon;
@@ -12,8 +12,8 @@ const originalCombatPickerPanel=combatPickerPanel;
 combatPickerPanel=function(t){
  if(!combatPicker||combatPicker==='initiative')return '';
  if(combatPicker==='stance')return originalCombatPickerPanel(t);
- const actions=(t.actions||[]).filter(x=>combatPicker==='spell'?x.kind==='spell':['ability','disengage'].includes(x.kind));
- return `<div class="combat-picker"><header><b>${combatPicker==='spell'?'ГРИМУАР':'УМЕНИЯ'}</b><button data-combat-picker-close aria-label="Закрыть">×</button></header><nav class="combat-picker-tabs"><button data-combat-picker="ability">Умения</button><button data-combat-picker="spell">Заклинания</button></nav><p>${quickbarEditing?`Выберите действие для ячейки ${quickbarEditing} или перетащите его.`:'Нажмите для прицеливания. Перетащите в быстрые ячейки 1–9.'}</p><div class="combat-picker-list">${actions.map(x=>`<div class="combat-choice">${combatActionButton(x,'data-picker-action="1"')}</div>`).join('')||'<p>Нет доступных действий.</p>'}</div></div>`;
+ const actions=(t.actions||[]).filter(x=>combatPicker==='spell'?x.kind==='spell':combatPicker==='artifact'?x.kind==='artifact':['ability','disengage'].includes(x.kind));
+ return `<div class="combat-picker"><header><b>${combatPicker==='spell'?'ГРИМУАР':combatPicker==='artifact'?'СПОСОБНОСТИ АРТЕФАКТОВ':'УМЕНИЯ'}</b><button data-combat-picker-close aria-label="Закрыть">×</button></header><nav class="combat-picker-tabs"><button data-combat-picker="ability">Умения</button><button data-combat-picker="spell">Заклинания</button></nav><p>${quickbarEditing?`Выберите действие для ячейки ${quickbarEditing} или перетащите его.`:'Нажмите для прицеливания. Перетащите в быстрые ячейки 1–9.'}</p><div class="combat-picker-list">${actions.map(x=>`<div class="combat-choice">${combatActionButton(x,'data-picker-action="1"')}</div>`).join('')||'<p>Нет доступных действий.</p>'}</div></div>`;
 };
 const statNames={health:'Здоровье',critical:'Критический шанс',accuracy:'Точность',damage:'Урон оружия',recovery:'Восстановление',endurance:'Защита Выносливостью',will:'Защита Волей',magic:'Защита Магией',dodge:'Уклонение',parry:'Парирование',armor:'Поглощение брони',deflection:'Отражение'};
 function hudStat(icon,value,label=statNames[icon]){return `<span tabindex="0" data-ui-tip="${esc(label)}: ${esc(value)}" aria-label="${esc(label)}: ${esc(value)}"><img src="assets/stat-icons/${icon}.png?v=20261002-atlas" alt="${esc(label)}">${esc(value)}</span>`}
@@ -35,14 +35,15 @@ function combatGlyph(action){
 }
 renderTraining=function(panel,character){
  existingRenderTraining(panel,character);
- if(!training?.active)return;
+ if(!training?.active){if(training&&trainingMaps.length)panel.querySelector('.training-start')?.insertAdjacentHTML('beforebegin',`<label class="training-map-select">Карта <select id="training-map"><option value="">Стандартная площадка</option>${trainingMaps.map(map=>`<option value="${map.id}">${esc(map.name)}</option>`).join('')}</select></label>`);return}
  const t=training,d=t.derived||{},a=d.attack||{},turn=t.turn||{},player=(t.grid.tokens||[]).find(x=>x.id==='player'),hud=panel.querySelector('.tyranny-combat-hud');
  const stat=hudStat;
  const slots=Array.from({length:9},(_,i)=>{const x=quickbarAction(i+1,t.actions||[]);return `<button draggable="${!!x}" class="original-quick ${x?.remaining?'cooling':''}" data-quick-slot="${i+1}" data-ui-tip="${esc(x?.name||'Назначить действие')}\nНажатие — прицелиться. ПКМ — заменить. Перетащите на другую ячейку для обмена." ${x?`data-training-kind="${esc(x.kind)}" data-training-name="${esc(x.name)}"`:''} aria-label="Ячейка ${i+1}: ${esc(x?.name||'пусто')}" ${t.finished?'disabled':''}>${x?combatGlyph(x):'<span>+</span>'}<kbd>${i+1}</kbd>${x?.remaining?`<i>${x.remaining}</i>`:''}</button>`}).join('');
  const portrait=t.character.portraitUrl?`<img src="${esc(t.character.portraitUrl)}" alt="${esc(character.name)}">`:`<span>${esc(character.name[0])}</span>`;
  const menu=(key,icon,label)=>`<button data-combat-picker="${key}" title="${label}" aria-label="${label}"><img src="${icon}" alt=""></button>`;
- hud.innerHTML=`<div class="original-hud-name">${esc(character.name)}</div><div class="original-hotkeys">${slots}<button class="edit-hotkeys" data-combat-picker="ability" title="Назначить быстрые действия">+</button></div><div class="original-hud-body"><div class="original-portrait">${portrait}<div class="original-hp" style="--hp:${Math.max(0,(player?.health||0)/Math.max(1,player?.healthMax||1)*100)}%"></div><i>${character.level||1}</i></div><div class="original-hud-values"><div class="original-stat-row">${stat('health',player?.health||0,'Здоровье')}${stat('accuracy',a.accuracy||0,'Точность')}${stat('damage',`${a.damageMin}–${a.damageMax}`,'Урон оружия')}</div><div class="original-stat-row">${stat('endurance',d.defenses?.Выносливость||0,'Защита Выносливостью')}${stat('will',d.defenses?.Воля||0,'Защита Волей')}${stat('magic',d.defenses?.Магия||0,'Защита Магией')}</div><div class="original-stat-row">${stat('dodge',d.defenses?.Уклонение||0,'Уклонение')}${stat('parry',d.defenses?.Парирование||0,'Парирование')}${stat('armor',d.armor||0,'Броня')}</div><div class="original-turn">${turn.movementRemaining} / ${turn.movementMax} м · ${turn.actionAvailable?'Действие готово':'Действие потрачено'}</div><div class="original-menus"><button data-training-kind="attack" data-training-name="Обычная атака" title="Атаковать"><img src="assets/stat-icons/damage.png" alt=""></button>${menu('ability','assets/stat-icons/accuracy.png','Умения')}${menu('spell',gameCombatRoot+'Core-Shock.png','Заклинания')}${menu('stance','assets/stat-icons/parry.png','Стойки')}${menu('initiative','assets/stat-icons/will.png','Инициатива и журнал')}<button data-training-kind="end_turn" title="Завершить ход"><img src="assets/stat-icons/recovery.png" alt=""></button></div></div></div><div class="original-sets">${Array.from({length:t.character.weaponSets||2},(_,i)=>`<button class="${t.character.activeWeaponSet===i+1?'active':''}" data-training-set="${i+1}">${['I','II','III','IV'][i]}</button>`).join('')}<small>${t.activeStance?esc(t.activeStance):'Стойка не выбрана'}</small></div>`;
+ hud.innerHTML=`<div class="original-hud-name">${esc(character.name)}</div><div class="original-hotkeys">${slots}<button class="edit-hotkeys" data-combat-picker="ability" title="Назначить быстрые действия">+</button></div><div class="original-hud-body"><div class="original-portrait">${portrait}<div class="original-hp" style="--hp:${Math.max(0,(player?.health||0)/Math.max(1,player?.healthMax||1)*100)}%"></div><i>${character.level||1}</i></div><div class="original-hud-values"><div class="original-stat-row">${stat('health',player?.health||0,'Здоровье')}${stat('accuracy',a.accuracy||0,'Точность')}${stat('damage',`${a.damageMin}–${a.damageMax}`,'Урон оружия')}</div><div class="original-stat-row">${stat('endurance',d.defenses?.Выносливость||0,'Защита Выносливостью')}${stat('will',d.defenses?.Воля||0,'Защита Волей')}${stat('magic',d.defenses?.Магия||0,'Защита Магией')}</div><div class="original-stat-row">${stat('dodge',d.defenses?.Уклонение||0,'Уклонение')}${stat('parry',d.defenses?.Парирование||0,'Парирование')}${stat('armor',d.armor||0,'Броня')}</div><div class="original-turn">${turn.movementRemaining} / ${turn.movementMax} м · ${turn.actionAvailable?'Действие готово':'Действие потрачено'}</div><div class="original-menus"><button data-training-kind="attack" data-training-name="Обычная атака" title="Атаковать"><img src="assets/stat-icons/damage.png" alt=""></button>${menu('ability','assets/stat-icons/accuracy.png','Умения')}${menu('spell',gameCombatRoot+'Core-Shock.png','Заклинания')}${menu('artifact',gameCombatRoot+'icon_option_reputation.png','Способности артефактов')}${menu('stance','assets/stat-icons/parry.png','Стойки')}${menu('initiative','assets/stat-icons/will.png','Инициатива и журнал')}<button data-training-kind="end_turn" title="Завершить ход"><img src="assets/stat-icons/recovery.png" alt=""></button></div></div></div><div class="original-sets">${Array.from({length:t.character.weaponSets||2},(_,i)=>`<button class="${t.character.activeWeaponSet===i+1?'active':''}" data-training-set="${i+1}">${['I','II','III','IV'][i]}</button>`).join('')}<small>${t.activeStance?esc(t.activeStance):'Стойка не выбрана'}</small></div>`;
  panel.querySelector('.tactical-map').insertAdjacentHTML('beforeend','<div class="combat-targeting-banner" hidden></div><div class="combat-vfx-layer" aria-hidden="true"></div>');
+ renderPersistentAreas(panel,t);
  hud.querySelector('.original-stat-row').insertAdjacentHTML('beforeend',stat('critical',`${a.criticalChance||0}%`)+stat('recovery',roundText(a.recovery||0)));
  hud.querySelectorAll('.original-stat-row')[2]?.insertAdjacentHTML('beforeend',stat('deflection',`${d.deflection||0}%`));
  const end=hud.querySelector('[data-training-kind="end_turn"]');end.className='combat-end-turn';end.textContent='ЗАВЕРШИТЬ ХОД';end.disabled=!!t.finished;
@@ -50,7 +51,7 @@ renderTraining=function(panel,character){
  const edit=hud.querySelector('.edit-hotkeys');edit.textContent='⚙';edit.dataset.uiTip='Перетащите умение или заклинание из отдельного списка в ячейку 1–9';edit.setAttribute('aria-label','Настроить быстрые ячейки');edit.removeAttribute('title');
  panel.querySelector('.tactical-map-wrap').insertAdjacentHTML('beforebegin',combatOrderPanel(t));
  panel.querySelectorAll('.original-menus button').forEach(button=>{button.dataset.uiTip=button.title||button.textContent;button.querySelector('img')?.setAttribute('alt',button.title);button.removeAttribute('title');});
- const menus={ability:'icon_option_skilltree',spell:'icon_option_spell_creation',stance:'icon_hud_stance',initiative:'icon_option_formation'};
+ const menus={ability:'icon_option_skilltree',spell:'icon_option_spell_creation',stance:'icon_hud_stance',initiative:'icon_option_formation',artifact:'icon_option_reputation'};
  hud.querySelectorAll('.original-menus [data-combat-picker]').forEach(button=>{button.querySelector('img').src=gameCombatRoot+menus[button.dataset.combatPicker]+'.png'});
  hud.querySelector('.original-menus [data-training-kind="attack"] img').src=gameCombatRoot+'icon_option_attack.png';
  hud.querySelectorAll('[data-training-set]').forEach(button=>{button.dataset.uiTip=`Комплект оружия ${button.dataset.trainingSet}`;button.innerHTML=`<img src="${gameCombatRoot}icon_weaponset_${button.dataset.trainingSet}.png" alt="Комплект ${button.dataset.trainingSet}">`});
@@ -60,6 +61,32 @@ renderTraining=function(panel,character){
  if(armedCombatAction){armedCombatAction=(t.actions||[]).find(x=>x.kind===armedCombatAction.kind&&x.name===armedCombatAction.name)||null;if(!turn.actionAvailable||armedCombatAction?.remaining)clearCombatAim();else showCombatAim(combatAim||{x:player.x,y:player.y})}
 };
 function clearCombatAim(){armedCombatAction=null;combatAim=null;document.querySelectorAll('.aim-range,.aim-effect,.aim-target,.aim-invalid').forEach(e=>e.classList.remove('aim-range','aim-effect','aim-target','aim-invalid'));document.querySelectorAll('[data-aim-enabled]').forEach(cell=>{cell.disabled=true;delete cell.dataset.aimEnabled});document.querySelector('.tactical-map')?.classList.remove('targeting');const banner=document.querySelector('.combat-targeting-banner');if(banner)banner.hidden=true;document.querySelector('.spell-trajectory')?.classList.remove('visible')}
+function renderPersistentAreas(panel,t){
+ const map=panel.querySelector('.tactical-map'),layout=t.grid.layout||{};
+ if(t.grid.source==='Карта мастера'){
+  map.style.width=`${t.grid.width*(layout.cellSize||48)}px`;map.style.minHeight=`${t.grid.height*(layout.cellSize||48)}px`;
+  map.style.setProperty('--grid-opacity',layout.gridOpacity??.3);map.closest('.tactical-map-wrap')?.querySelector('footer a')?.remove();map.style.backgroundSize=`${(layout.imageScale||1)*100}% auto`;map.style.backgroundPosition=`calc(50% + ${layout.offsetX||0}px) calc(50% + ${layout.offsetY||0}px)`;
+ }
+ const colors={Холод:'#80c6dc',Огонь:'#ce6841',Жизнь:'#7eb877',Истощение:'#a47ec4',Эмоции:'#bc83a5'};
+ for(const [key,cls] of [['sightBlocked','map-sight'],['cover','map-cover']])for(const p of t.grid[key]||[])map.querySelector(`[data-cell="${p.x}:${p.y}"]`)?.classList.add(cls);
+ for(const area of t.areas||[]){const color=colors[area.core]||'#8999b1';for(const p of area.cells){map.insertAdjacentHTML('beforeend',`<div class="persistent-area-cell" style="left:${p.x/t.grid.width*100}%;top:${p.y/t.grid.height*100}%;width:${100/t.grid.width}%;height:${100/t.grid.height}%;--area-color:${color}"></div>`)}map.insertAdjacentHTML('beforeend',`<small class="persistent-area-label" style="left:${(area.center.x+.5)/t.grid.width*100}%;top:${(area.center.y+.5)/t.grid.height*100}%">${esc(area.name)} · ещё ${area.remaining} срабатыв.</small>`)}
+ for(const token of t.grid.tokens){const element=map.querySelector(`[data-cell="${token.x}:${token.y}"] .combat-token`);if(element){element.removeAttribute('title');element.dataset.uiTip=`${token.name}\n${Object.values(t.conditions?.[token.id]||{}).map(s=>`${s.name}${s.stacks>1?' ×'+s.stacks:''}`).join('\n')}`}}
+}
+async function animateTokenMovement(oldGrid,newGrid,path=[]){
+ if(!oldGrid||!newGrid||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const map=document.querySelector('.tactical-map');if(!map)return;
+ const rect=map.getBoundingClientRect(),cw=rect.width/newGrid.width,ch=rect.height/newGrid.height;
+ await Promise.all((newGrid.tokens||[]).map(async token=>{const old=oldGrid.tokens.find(p=>p.id===token.id);if(!old||(old.x===token.x&&old.y===token.y))return;const element=map.querySelector(`[data-cell="${token.x}:${token.y}"] .combat-token`);if(!element)return;
+ const points=token.id==='player'&&path?.length>1?path:[old,token],frames=points.map(p=>({transform:`translate(calc(-50% + ${(p.x-token.x)*cw}px),calc(-50% + ${(p.y-token.y)*ch}px))`}));element.style.zIndex='15';try{await element.animate(frames,{duration:Math.min(1200,Math.max(220,(points.length-1)*120)),easing:'linear'}).finished}catch{}finally{element.style.zIndex=''}
+ }));
+}
+trainingMutate=async function(path,body={}){
+ if(combatBusy)return;combatBusy=true;const oldGrid=training?.grid;
+ if(path==='start'){const selected=document.querySelector('#training-map')?.value;if(selected)body.mapId=Number(selected)}
+ try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/${path}`,{method:'POST',body:JSON.stringify(body)});training=j.training||{active:false};if(tab==='training')renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);toast(j.message)}catch(error){toast(error.message)}finally{combatBusy=false}
+};
+const originalLoadTraining=loadTraining;
+loadTraining=async function(){await originalLoadTraining();try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training`);trainingMaps=j.maps||[];if(tab==='training'&&!training?.active)renderTraining($('#panel'),data.character)}catch{}};
 function showCombatAim(point){
  if(!armedCombatAction||!training?.active)return;
  combatAim=point;const action=armedCombatAction,aim=action.aims?.[`${point.x}:${point.y}`],player=training.grid.tokens.find(t=>t.id==='player'),map=document.querySelector('.tactical-map');
@@ -71,12 +98,12 @@ function showCombatAim(point){
  const banner=document.querySelector('.combat-targeting-banner');banner.hidden=false;banner.classList.toggle('invalid',!aim?.valid);banner.textContent=`${action.name} · ${aim?.valid?'Нажмите для применения':'Недоступная цель или клетка'} · Esc / ПКМ — отмена`;
  const line=document.querySelector('.spell-trajectory line');if(line){line.setAttribute('x2',point.x+.5);line.setAttribute('y2',point.y+.5);line.parentElement.classList.add('visible')}
 }
-function armCombatAction(action){if(combatBusy)return;if(action.remaining||!training.turn.actionAvailable){toast(action.remaining?`Перезарядка: ${action.remaining} раунд.`:'Основное действие потрачено');return}armedCombatAction=action;combatPicker='';quickbarEditing=0;renderTraining($('#panel'),data.character);const player=training.grid.tokens.find(t=>t.id==='player');showCombatAim(action.targeting==='self'||action.targeting==='aura'?player:training.grid.tokens.find(t=>t.selected)||player)}
+function armCombatAction(action){if(combatBusy)return;if(action.limitation){toast(action.limitation);return}if(action.remaining||!training.turn.actionAvailable){toast(action.remaining?`Перезарядка: ${action.remaining} раунд.`:'Основное действие потрачено');return}armedCombatAction=action;combatPicker='';quickbarEditing=0;renderTraining($('#panel'),data.character);const player=training.grid.tokens.find(t=>t.id==='player');showCombatAim(action.targeting==='self'||action.targeting==='aura'?player:training.grid.tokens.find(t=>t.selected)||player)}
 async function confirmCombatAim(point){
  if(combatBusy||!armedCombatAction)return;const action=armedCombatAction,aim=action.aims?.[`${point.x}:${point.y}`];if(!aim?.valid){toast('Выберите доступную цель или клетку.');return}
  const target=training.grid.tokens.find(t=>t.x===point.x&&t.y===point.y&&t.team==='enemy');
  const oldGrid=training.grid;combatBusy=true;
- try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id})});training=j.training;clearCombatAim();renderTraining($('#panel'),data.character);playCombatEffect(action,point,oldGrid,aim.cells||[]);toast(j.message)}catch(error){toast(error.message)}finally{combatBusy=false}
+ try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id})});training=j.training;clearCombatAim();renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);await playCombatEffect(action,point,oldGrid,aim.cells||[]);toast(j.message)}catch(error){toast(error.message)}finally{combatBusy=false}
 }
 async function playCombatEffect(action,point,grid,cells){
  const layer=document.querySelector('.combat-vfx-layer');if(!layer)return;
@@ -129,7 +156,7 @@ document.addEventListener('click',e=>{
  const button=e.target.closest('[data-training-kind]');if(!button||button.disabled)return;
  if(['end_turn','wait','disengage'].includes(button.dataset.trainingKind))clearCombatAim();
  if(button.matches('[data-picker-action]')&&quickbarEditing)return;
- if(!['attack','ability','spell'].includes(button.dataset.trainingKind))return;
+ if(!['attack','ability','spell','artifact'].includes(button.dataset.trainingKind))return;
  const action=training.actions.find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(action){e.preventDefault();e.stopImmediatePropagation();armCombatAction(action)}
 },true);
 document.addEventListener('pointerover',e=>{if(!armedCombatAction)return;const cell=e.target.closest('[data-cell]');if(cell){const [x,y]=cell.dataset.cell.split(':').map(Number);showCombatAim({x,y})}},true);

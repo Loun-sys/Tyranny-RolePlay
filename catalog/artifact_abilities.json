@@ -1,0 +1,1953 @@
+{
+  "items": {
+    "Смертоносец": {
+      "name": "Серп веков",
+      "description": "Наносит урон всем врагам в конусе поражения, игнорируя их доспехи. Также снимаются все полезные воздействия на цели. Урон увеличивается вместе с известностью \"Смертоносца\".",
+      "icon": "assets/artifact-icons/abl_artifact_scythe_of_years.png",
+      "prefab": "ABL_ART_WPN_Deathbringer_ScytheOfYears_Axe",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 2,
+      "weaponMultiplier": 1.2000000476837158,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 100,
+      "push": 0,
+      "statuses": [
+        {
+          "Tag": "Remove Beneficial Effects",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 1,
+          "HideFromUI": 1,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": -999.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.10000000149011612,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 0,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 124,
+          "DmgType": 9,
+          "DefType": 1,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 0,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        },
+        {
+          "Tag": "String Display",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 1,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": 4143.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.10000000149011612,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 0,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 184,
+          "DmgType": 9,
+          "DefType": 1,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 0,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        }
+      ],
+      "cooldown": 1
+    },
+    "Бесстрашный": {
+      "name": "Воин Оплота",
+      "description": "Высоко поднимите \"Бесстрашный\", выпустив волну энергии, которая оглушает всех ближайших врагов. Урон растет вместе с известностью \"Бесстрашного\".",
+      "icon": "assets/artifact-icons/abl_artifact_stalwart_surge.png",
+      "prefab": "ABL_ART_WPN_1H_Sword_Dauntless_StalwartSurge",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 5,
+      "area": 5,
+      "weaponMultiplier": 1.0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Последний крик": {
+      "name": "Взрыв путаницы",
+      "description": "Боец оглушает окрестности \"Последним криком\" и выпускает хаотический взрыв энергии. Все враги поблизости отбрасываются назад и оказываются в состоянии ошеломления и дезориентации. Длительность воздействия растет вместе с известностью \"Последнего крика\".",
+      "icon": "assets/artifact-icons/abl_artifact_blast_of_confusion.png",
+      "prefab": "ABL_ART_WPN_FinalScream_BlastOfConfusion",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 5,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Кровь сердца": {
+      "name": "Прицел на сердце",
+      "description": "Выстреливает рикошетящим энергетическим разрядом. Каждый враг, по которому попадает разряд, получает колющий урон и передает здоровье обладателю. Кроме того, у этих врагов до конца боя уменьшаются [url=glossary:сила]Сила[/url], [url=glossary:быстрота]Быстрота[/url] и [url=glossary:живучесть]Живучесть[/url]. Количество перекачанного здоровья зависит от известности \"Крови сердца\".",
+      "icon": "assets/artifact-icons/abl_artifact_heartseeker.png",
+      "prefab": "ABL_ART_WPN_HeartsBlood_Heartseeker",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 12,
+      "area": 0,
+      "weaponMultiplier": 1.0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [
+        {
+          "Tag": "Transfer Health",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": 12.0,
+          "ExtraValue": 1.0,
+          "Duration": 0.10000000149011612,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 0,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 61,
+          "DmgType": 2,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 1,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 51,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 6.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        },
+        {
+          "Tag": "Might Penalty",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": -2.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.0,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 1,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 57,
+          "DmgType": 2,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 1,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        },
+        {
+          "Tag": "Quickness Penalty",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": -2.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.0,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 1,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 59,
+          "DmgType": 2,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        },
+        {
+          "Tag": "Vitality Penalty",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": -2.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.0,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 1,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 100,
+          "DmgType": 2,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        }
+      ],
+      "cooldown": 1
+    },
+    "Солнечное копье": {
+      "name": "[url=glossary:ярость]Ярость[/url] солнца",
+      "description": "Выпускает шлейфы блуждающего огня, которые ищут случайных врагов в области. Когда шлейф достигает цели, он превращается в столб огня и света, который наносит огненный урон. Урон увеличивается вместе с известностью \"Солнечного копья\".",
+      "icon": "assets/artifact-icons/abl_artifact_suns_rage.png",
+      "prefab": "ABL_ART_WPN_Sunlance_SunsRage",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 8,
+      "weaponMultiplier": 0.0,
+      "damageMin": 12,
+      "damageMax": 22,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Ураган": {
+      "name": "Колесо бури",
+      "description": "В небесах собираются грозовые тучи, из которых вырываются разряды молний, поражающие врагов в выбранной области. Урон увеличивается вместе с известностью \"Урагана\".",
+      "icon": "assets/artifact-icons/abl_artifact_stormwheel.png",
+      "prefab": "ABL_ART_WPN_Stormcaller_Stormwheel",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 12,
+      "area": 5,
+      "weaponMultiplier": 0.0,
+      "damageMin": 9,
+      "damageMax": 18,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Миротворец": {
+      "name": "Буря клинков",
+      "description": "",
+      "icon": "assets/artifact-icons/abl_artifact_iron_storm.png",
+      "prefab": "ABL_SK_GravenAshe_IronStorm_Act1_Cutscene",
+      "passive": false,
+      "oncePerBattle": false,
+      "cooldownMode": "Перезарядка",
+      "range": 1,
+      "area": 5,
+      "weaponMultiplier": 0.0,
+      "damageMin": 54,
+      "damageMax": 62,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Могильный лук": {
+      "name": "Радужная стрела",
+      "description": "Выпускает стрелу. Все враги на ее пути получают урон и ослепляются. При попадании в погибель происходит небольшой взрыв, который наносит магический урон всем погибелям поблизости. [url=glossary:сила]Сила[/url] этого воздействия возрастает с известностью \"Могильного лука\".",
+      "icon": "assets/artifact-icons/abl_artifact_chromatic_arrow.png",
+      "prefab": "ABL_ART_WPN_Gravebow_ChromaticArrow",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 20,
+      "area": 0,
+      "weaponMultiplier": 1.0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [
+        {
+          "Tag": "launch attack on hit scourge",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": 0.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.10000000149011612,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 0,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [
+            {
+              "Type": 22,
+              "Tag": "",
+              "Value": 0.0,
+              "BoolValue": 0,
+              "RaceValue": 3,
+              "IsConsumed": 0,
+              "Companion": 0
+            }
+          ],
+          "AffectsStat": 178,
+          "DmgType": 9,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": -7779841868571738310
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 0,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        },
+        {
+          "Tag": "launch attack on hit malice",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 1,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": 0.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.10000000149011612,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 0,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [
+            {
+              "Type": 22,
+              "Tag": "",
+              "Value": 0.0,
+              "BoolValue": 0,
+              "RaceValue": 5,
+              "IsConsumed": 0,
+              "Companion": 0
+            }
+          ],
+          "AffectsStat": 178,
+          "DmgType": 9,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": -7779841868571738310
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 0,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        },
+        {
+          "Tag": "launch attack on hit havoc",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 1,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": 0.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.10000000149011612,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 0,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [
+            {
+              "Type": 22,
+              "Tag": "",
+              "Value": 0.0,
+              "BoolValue": 0,
+              "RaceValue": 4,
+              "IsConsumed": 0,
+              "Companion": 0
+            }
+          ],
+          "AffectsStat": 178,
+          "DmgType": 9,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": -7779841868571738310
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 0,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        }
+      ],
+      "cooldown": 1
+    },
+    "Посох часов": {
+      "name": "Замедление песков",
+      "description": "Значительно замедляет врагов в выбранной области. [url=glossary:сила]Сила[/url] этого воздействия возрастает с известностью \"Посоха Часов\".",
+      "icon": "assets/artifact-icons/abl_artifact_slowing_the_sands.png",
+      "prefab": "ABL_ART_WPN_STF_StaffOfHours_SlowingTheSands",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 2,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Посох Каирна": {
+      "name": "Пробуждение Каирна",
+      "description": "Враги в области действия получают дробящий урон и подвергаются окаменению. В то же время, союзники в этой области получают бонусы к Силе, Живучести и Стойкости, а также дополнительную защиту от дробящего урона. [url=glossary:сила]Сила[/url] этих воздействий растет вместе с известностью Посоха Каирна.",
+      "icon": "assets/artifact-icons/abl_artifact_evocation_of_cairn.png",
+      "prefab": "ABL_ART_WPN_StaffOfCairn_EvocationOfCairn_AOE",
+      "passive": false,
+      "oncePerBattle": false,
+      "cooldownMode": "Перезарядка",
+      "range": 1,
+      "area": 5,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Молот Раскола": {
+      "name": "Ударная волна",
+      "description": "Поражает всех врагов на линии огромной ударной волной энергии. Каждый враг, в которого она попадает, получает дробящий урон и подбрасывается в воздух. Кроме того, его доспех повреждается до конца боя. Урон растет вместе с известностью Молота Раскола.",
+      "icon": "assets/artifact-icons/abl_artifact_sunder.png",
+      "prefab": "ABL_ART_WPN_HammerOfSunder_Sunder",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 10,
+      "area": 0,
+      "weaponMultiplier": 0.0,
+      "damageMin": 30,
+      "damageMax": 38,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [
+        {
+          "Tag": "Reduce Armor",
+          "Persistent": 1,
+          "IsHostile": 1,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": -6.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.0,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 1,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 14,
+          "DmgType": 10,
+          "DefType": 0,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 0,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 0.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        }
+      ],
+      "cooldown": 1
+    },
+    "Снежный клык": {
+      "name": "Клык зимы",
+      "description": "Замораживает врага и, тем самым, предрешает его судьбу. Когда воздействие заканчивается, лед перестраивается и наносит большой ледяной урон. Урон увеличивается вместе с известностью \"Снежного клыка\".",
+      "icon": "assets/artifact-icons/abl_artifact_winters_fang.png",
+      "prefab": "ABL_ART_WPN_Snowfang_WintersFang",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "\"Гребень волны\"": {
+      "name": "Кровавый дар",
+      "description": "",
+      "icon": "assets/artifact-icons/abl_artifact_sanguine_gift.png",
+      "prefab": "ABL_ART_WPN_STF_SP_Staff_Eb_SanguineGift",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Инсигния Непоколебимости": {
+      "name": "Непоколебимая стойка",
+      "description": "Увеличивает у ближайших союзников [url=glossary:стойкость]Стойкость[/url], а также сопротивление сбиванию с ног и отбрасыванию назад. [url=glossary:сила]Сила[/url] этих воздействий возрастает вместе с известностью Инсигнии Непоколебимости.",
+      "icon": "assets/artifact-icons/abl_artifact_steadfast_stand.png",
+      "prefab": "ABL_ART_ACC_FirstRegentsRegalia_SteadfastStand",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 12,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Весы милосердия": {
+      "name": "Решающий фактор",
+      "description": "Создает пульсирующее воздействие вокруг обладателя, которое уменьшает [url=glossary:точность]Точность[/url] врагов и случайным образом накладывает на них различные негативные эффекты. [url=glossary:воздействие]Воздействие[/url] на [url=glossary:точность]Точность[/url] увеличивается с известностью \"Весов милосердия\".",
+      "icon": "assets/artifact-icons/abl_artifact_tipping_the_scales.png",
+      "prefab": "ABL_ART_ACC_ScalesOfMercy_TippingTheScales",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Знамя Ардента": {
+      "name": "[url=glossary:сила]Сила[/url] мира",
+      "description": "При активации носитель Знамени Ардента получает щит, поглощающий урон, а любой напавший враг оказывается парализован. [url=glossary:сила]Сила[/url] этих воздействий увеличивается с известностью Знамени Ардента.",
+      "icon": "assets/artifact-icons/abl_artifact_force_of_peace.png",
+      "prefab": "ABL_ART_ACC_BannerOfArdent_ForceofPeace",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Нагрудник Командира": {
+      "name": "Перегруппировка",
+      "description": "Мгновенно меняет персонаж со спутником местами. Вы и ваш союзник получаете бонус к Живучести и Искусности до конца боя. [url=glossary:сила]Сила[/url] этого воздействия увеличивается с известностью \"Нагрудника Командира\".",
+      "icon": "assets/artifact-icons/abl_artifact_redeploy.png",
+      "prefab": "ABL_ART_WPN_CommandersPlate_Redeploy",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [
+        {
+          "Tag": "Vitality Bonus",
+          "Persistent": 1,
+          "IsHostile": 0,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": 1.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.0,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 1,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 100,
+          "DmgType": 9,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 54,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 1.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        },
+        {
+          "Tag": "Finesse Bonus",
+          "Persistent": 1,
+          "IsHostile": 0,
+          "HideFromPortrait": 0,
+          "HideFromUI": 0,
+          "HideFromUIInspect": 0,
+          "Apply": 0,
+          "Value": 1.0,
+          "ExtraValue": 0.0,
+          "Duration": 0.0,
+          "ExtraObject": "",
+          "LastsUntilCombatEnds": 1,
+          "LastsUntilRest": 0,
+          "MaxRestCycles": 0,
+          "IntervalRate": 0,
+          "OneHitUse": 0,
+          "OnStartVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAppliedVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnStopVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnAuraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "OnTriggerVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ExtraVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "VFXList": [],
+          "Icon": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "Keyword": "",
+          "DontHideFromLog": 0,
+          "IgnoreAbilityDeactivation": 0,
+          "m_deserializeInitialized": 1,
+          "ApplicationPrerequisites": [],
+          "AffectsStat": 58,
+          "DmgType": 9,
+          "DefType": 5,
+          "Companion": 0,
+          "OnlyIfNotCompanion": 0,
+          "ContinuousApplicationAura": 0,
+          "ChecksReligion": 0,
+          "VisualEffectAttach": 0,
+          "TrapPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "EquippablePrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AttackPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AfflictionPrefabTag": "",
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "RaceType": 0,
+          "Skill": 0,
+          "TriggerAdjustment": {
+            "Type": 0,
+            "TriggerValue": 0.0,
+            "ValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0,
+            "RadiusAdjustment": 0.0,
+            "MaxTriggerCount": 0,
+            "RemoveEffectAtMax": 0,
+            "ResetTriggerOnEffectPulse": 0,
+            "ResetTriggerOnEffectEnd": 0,
+            "DisplayType": 1,
+            "ShouldShowActivation": 0
+          },
+          "SwapToInstructionSet": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ShowInLog": 0,
+          "Stackable": 0,
+          "UsePassiveStackingRules": 1,
+          "ClearOnOwnerDeath": 0,
+          "UseTargetAsLaunchAttackOwner": 0,
+          "AttackTypeTriggerForLaunchAttack": 2,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 54,
+            "Axis": 0,
+            "UseTargetReputation": 0,
+            "ValueAdjustment": 1.0,
+            "ExtraValueAdjustment": 0.0,
+            "DurationAdjustment": 0.0
+          }
+        }
+      ],
+      "cooldown": 1
+    },
+    "Одеяние иерархов": {
+      "name": "Аспект кошмаров",
+      "description": "Призывает ужасающую маску энергии. Все враги в конусе поражения приходят в ужас. Длительность воздействия ужаса растет с известностью \"Одеяния иерархов\".",
+      "icon": "assets/artifact-icons/abl_artifact_aspect_of_nightmares.png",
+      "prefab": "ABL_ART_ARM_HeriarchsRobes_VisageOfTerror",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 5,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Ботинки Ночного Ходока": {
+      "name": "Скрытная поступь",
+      "description": "Боец телепортируется за спину врага и атакует, нанося значительный дополнительный урон. Урон увеличивается вместе с известностью \"Ботинков Ночного Ходока\".",
+      "icon": "assets/artifact-icons/abl_artifact_shadow_stride.png",
+      "prefab": "ABL_ART_ARM_NightwalkersBoots_ShadowStride",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Оковы теней": {
+      "name": "Объятья тени",
+      "description": "Превращает бойца в его собственную тень. В этой форме боец наносит дополнительный магический урон с каждой атакой и получает дополнительный вычет урона. [url=glossary:сила]Сила[/url] этих воздействий возрастает с известностью \"Оков теней\".",
+      "icon": "assets/artifact-icons/abl_artifact_shadows_embrace.png",
+      "prefab": "ABL_ART_ARM_BindingOfShadows_ShadowsEmbrace",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Перчатки алхимика": {
+      "name": "Сфера жизни",
+      "description": "Запускает сферы целительной энергии в определенную точку. При столкновении сфера раскрывается в область восстановительной энергии, которая периодически лечит находящихся в ней членов отряда. Целительное воздействие усиливается с ростом известности \"Перчаток алхимика\".",
+      "icon": "assets/artifact-icons/abl_artifact_orb_of_life.png",
+      "prefab": "ABL_ART_ARM_AlchemistsGloves_OrbOfLife",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 2,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Шлем Первого регента": {
+      "name": "Преклонение",
+      "description": "Выпускает в область вокруг вас волну энергии, которая уменьшает Выносливость и Волю всех врагов, подвергшихся воздействию. [url=glossary:сила]Сила[/url] этих воздействий возрастает вместе с известностью Шлема Первого Регента.",
+      "icon": "assets/artifact-icons/abl_artifact_bend_the_knee.png",
+      "prefab": "ABL_ART_ARM_HelmOfTheFirstRegent_BendTheKnee",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 3,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Лик Правосудия": {
+      "name": "Суждение Архонта",
+      "description": "Приговаривает врага, замораживая его в цельной глыбе льда. В этом состоянии противник не может предпринимать никаких действий. [url=glossary:сила]Сила[/url] этого воздействия возрастает с известностью \"Лика Правосудия\".",
+      "icon": "assets/artifact-icons/abl_artifact_archons_judgement.png",
+      "prefab": "ABL_ART_ARM_FaceOfJudgment_ArchonsJudgment",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Шлем Магоборца": {
+      "name": "Магическое высвобождение",
+      "description": "Выпускает разряд энергии, который взрывается при столкновении с целью, вызывает ослабление и усталость у всех погибелей в радиусе поражения. Длительность этих воздействий увеличивается с известностью Шлема Магоборца.",
+      "icon": "assets/artifact-icons/abl_artifact_arcane_entropy.png",
+      "prefab": "ABL_ART_ARM_MagebaneHelm_ArcaneEntropy",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 8,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Лазурный Щит": {
+      "name": "Благодеяние заступника",
+      "description": "При активации Лазурный Щит дает владельцу бонус к Быстроте, скорости перемещения и точности. Длительность этих воздействий увеличивается с известностью Лазурного Щита.",
+      "icon": "assets/artifact-icons/abl_artifact_champions_boon.png",
+      "prefab": "ABL_ART_SHLD_AzureShield_ChampionsBoon",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 0,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    },
+    "Гроза погибелей": {
+      "name": "Выкачивание энергии",
+      "description": "Выкачивает здоровье из ближайших противников. За каждого подвергшегося воздействию врага обладатель \"Грозы погибелей\" получает суммирующийся бонус к магическому урону от своих атак. [url=glossary:сила]Сила[/url] этих воздействий увеличивается с известностью \"Грозы погибелей\". (Эффективней всего в бою против погибелей)",
+      "icon": "assets/artifact-icons/abl_artifact_leech_energy.png",
+      "prefab": "ABL_ART_SHLD_TheBaneward_LeechEnergy",
+      "passive": false,
+      "oncePerBattle": true,
+      "cooldownMode": "Раз до отдыха",
+      "range": 1,
+      "area": 5,
+      "weaponMultiplier": 0,
+      "damageMin": 0,
+      "damageMax": 0,
+      "penetration": 0,
+      "push": 0,
+      "statuses": [],
+      "cooldown": 1
+    }
+  },
+  "missing": [
+    [
+      "Penumbra",
+      "Shadow's Treachery"
+    ],
+    [
+      "Edict's Crescent",
+      "Echoes of the Storm"
+    ],
+    [
+      "Edict's Mallet",
+      "Echoes of the Storm"
+    ],
+    [
+      "Circular Reason",
+      "Rebounding Blade"
+    ],
+    [
+      "Infused Shadows",
+      "Drowned in Darkness"
+    ],
+    [
+      "Songbird's Encore",
+      "Resounding Crescendo"
+    ],
+    [
+      "Weeping Whispers",
+      "The Quick and the Dead"
+    ]
+  ]
+}
