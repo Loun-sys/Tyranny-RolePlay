@@ -117,17 +117,22 @@ class TrainingSession:
         self.player_health_max = int(character.get("health_max", character.get("health", 1)))
         self.player_health = int(character.get("health", self.player_health_max))
         bonus = initiative_bonus(quickness)
-        player_roll, dummy_roll = random.randint(1, 20), random.randint(1, 20)
+        player_roll = random.randint(1, 20)
         self.initiative = [
             {"id": "player", "name": character.get("name", "Персонаж"), "roll": player_roll,
              "bonus": bonus, "total": player_roll + bonus},
-            {"id": "dummy", "name": DUMMY["name"], "roll": dummy_roll, "bonus": 0, "total": dummy_roll},
         ]
+        for target_id in self._alive_targets():
+            roll = random.randint(1, 20)
+            self.initiative.append({"id": target_id, "name": TRAINING_TARGETS[target_id]["name"],
+                                    "roll": roll, "bonus": 0, "total": roll})
         self.initiative.sort(key=lambda row: (-row["total"], row["id"] != "player"))
         self.initialized = True
         self.log.append("Инициатива: " + " → ".join(row["name"] for row in self.initiative) + ".")
-        if self.initiative[0]["id"] == "dummy":
-            self.log.append("Раунд 1: манекен неподвижен и пропускает ход.")
+        for entry in self.initiative:
+            if entry['id'] == 'player':
+                break
+            self.log.append(f"Раунд 1: {entry['name']} неподвижен и пропускает ход.")
         self.log.append("Тренировка началась. Перед атакой приблизьтесь к цели, если она вне дальности.")
 
     def remaining(self, key: str) -> int:
@@ -204,8 +209,13 @@ class TrainingSession:
         return {"result": result, "damage": damage, "roll": roll, "line": line}
 
     def _end_turn(self) -> dict[str, Any]:
-        line = f"Раунд {self.round_number}: ход завершён. Манекен остаётся неподвижен."
+        line = f"Раунд {self.round_number}: ход персонажа завершён."
         self.log.append(line)
+        player_index = next(i for i, entry in enumerate(self.initiative) if entry['id'] == 'player')
+        next_entries = self.initiative[player_index + 1:] + self.initiative[:player_index]
+        for entry in next_entries:
+            if entry['id'] in self._alive_targets():
+                self.log.append(f"{entry['name']}: тренировочная цель пропускает ход.")
         self.round_number += 1
         self.movement_remaining = BASE_MOVEMENT
         self.action_available = True

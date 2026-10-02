@@ -80,6 +80,9 @@ async def main() -> None:
         raise SystemExit(1)
 
     stat_target = ROOT / "web" / "assets" / "stat-icons"
+    if (stat_target / 'manifest.json').is_file():
+        print('Иконки показателей: оригинальный атлас Fallen_UI; не заменяем иконками талантов.')
+        return
     stat_target.mkdir(parents=True, exist_ok=True)
 
     def fetch_stat_icon(alias: str, filename: str) -> None:

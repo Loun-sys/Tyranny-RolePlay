@@ -1348,6 +1348,16 @@ class Database:
                 )
             await db.commit()
 
+    async def replace_combat_quickbar(self, character_id: int, bindings: list[dict[str, Any]]) -> None:
+        """Save all five slots atomically, including intentionally empty slots."""
+        if len(bindings) != 5 or {int(row['slot']) for row in bindings} != set(range(1, 6)):
+            raise ValueError('Передайте ровно пять разных быстрых ячеек.')
+        async with self.connect() as db:
+            await db.execute('DELETE FROM combat_quickbar WHERE character_id=?', (character_id,))
+            await db.executemany('INSERT INTO combat_quickbar(character_id,slot,action_kind,action_name) VALUES(?,?,?,?)',
+                [(character_id, int(row['slot']), row['kind'], row['name']) for row in bindings])
+            await db.commit()
+
     async def adjust_reputation(
         self, character_id: int, faction: str, axis: str, delta: int,
     ) -> tuple[int, int]:

@@ -106,7 +106,9 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(view["rewards"], {"experience": 0, "skillExperience": 0, "loot": []})
         self.assertEqual(view["grid"]["cellMeters"], 1)
         self.assertEqual(view["turn"]["movementMax"], BASE_MOVEMENT)
-        self.assertEqual(len(view["initiative"]), 2)
+        self.assertEqual(len(view["initiative"]), 4)
+        self.assertEqual({row['id'] for row in view['initiative']}, {'player', 'dummy', 'dummy_left', 'dummy_right'})
+        self.assertEqual([row['total'] for row in view['initiative']], sorted((row['total'] for row in view['initiative']), reverse=True))
         self.assertEqual(len(view["targets"]), 3)
         opportunity = session.act({"kind": "move", "x": 8, "y": 4}, character, derived, [], 2)
         self.assertIn("атаку по возможности", opportunity["line"])
@@ -129,6 +131,17 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.db.combat_quickbar(character_id))[1]["action_name"], "Удар щитом")
         await self.db.set_combat_quickbar(character_id, 1)
         self.assertEqual([row["slot"] for row in await self.db.combat_quickbar(character_id)], [2])
+        bindings = [{'slot': i, 'kind': '', 'name': ''} for i in range(1, 6)]
+        bindings[0].update(kind='spell', name='Ледяное копьё')
+        bindings[1].update(kind='attack', name='Обычная атака')
+        await self.db.replace_combat_quickbar(character_id, bindings)
+        saved = await self.db.combat_quickbar(character_id)
+        self.assertEqual(len(saved), 5)
+        self.assertEqual(saved[0]['action_name'], 'Ледяное копьё')
+        self.assertEqual(saved[4]['action_kind'], '')
+        with self.assertRaises(ValueError):
+            await self.db.replace_combat_quickbar(character_id, bindings[:2])
+        self.assertEqual(await self.db.combat_quickbar(character_id), saved)
 
     async def test_spell_ground_targeting_preview_and_failure_do_not_spend_action(self):
         character = {"name": "Маг", "health": 100, "health_max": 100,

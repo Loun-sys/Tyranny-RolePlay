@@ -1,0 +1,661 @@
+{
+  "source": "resources.assets/Fallen_UI",
+  "symbols": {
+    "health": "icon_attribute_health",
+    "critical": "icon_attribute_accuracy",
+    "accuracy": "icon_attribute_weapon_skill",
+    "damage": "icon_attribute_weapon",
+    "recovery": "icon_attribute_recovery",
+    "endurance": "icon_attribute_endurance",
+    "will": "icon_attribute_will",
+    "magic": "icon_attribute_spirit",
+    "dodge": "icon_attribute_dodge",
+    "parry": "icon_attribute_parry",
+    "armor": "icon_attribute_dmg_threshold",
+    "deflection": "icon_attribute_deflection"
+  },
+  "rectangles": {
+    "icon_hud_stance": [
+      209,
+      11,
+      262,
+      61
+    ],
+    "icon_hud_quickitem": [
+      371,
+      626,
+      405,
+      676
+    ],
+    "icon_attribute_weapon": [
+      378,
+      590,
+      413,
+      625
+    ],
+    "icon_inventory_weapons": [
+      378,
+      54,
+      412,
+      86
+    ],
+    "icon_attribute_will": [
+      144,
+      1,
+      179,
+      27
+    ],
+    "icon_attribute_interrupt": [
+      414,
+      89,
+      438,
+      126
+    ],
+    "icon_inventory_all": [
+      889,
+      912,
+      927,
+      947
+    ],
+    "icon_attribute_quickness": [
+      821,
+      640,
+      856,
+      676
+    ],
+    "icon_inventory_armor": [
+      378,
+      268,
+      409,
+      305
+    ],
+    "icon_attribute_dmg_threshold": [
+      101,
+      310,
+      127,
+      347
+    ],
+    "icon_inventory_consumables": [
+      414,
+      203,
+      438,
+      240
+    ],
+    "icon_attribute_resolve": [
+      857,
+      640,
+      892,
+      676
+    ],
+    "icon_attribute_accuracy": [
+      925,
+      641,
+      960,
+      676
+    ],
+    "icon_inventory_other": [
+      893,
+      636,
+      924,
+      676
+    ],
+    "icon_inventory_quest": [
+      414,
+      275,
+      440,
+      310
+    ],
+    "icon_attribute_endurance": [
+      378,
+      306,
+      413,
+      339
+    ],
+    "icon_attribute_spirit": [
+      964,
+      784,
+      999,
+      816
+    ],
+    "icon_inventory_ingredients": [
+      746,
+      640,
+      783,
+      676
+    ],
+    "icon_attribute_finesse": [
+      961,
+      641,
+      996,
+      676
+    ],
+    "icon_attribute_health": [
+      510,
+      595,
+      545,
+      625
+    ],
+    "icon_attribute_concentration": [
+      414,
+      127,
+      438,
+      164
+    ],
+    "icon_attribute_parry": [
+      378,
+      553,
+      412,
+      589
+    ],
+    "icon_inventory_clothing": [
+      378,
+      375,
+      411,
+      411
+    ],
+    "icon_attribute_wits": [
+      414,
+      165,
+      438,
+      202
+    ],
+    "icon_attribute_recovery": [
+      316,
+      288,
+      340,
+      327
+    ],
+    "icon_attribute_might": [
+      414,
+      551,
+      442,
+      588
+    ],
+    "icon_tab_combat": [
+      1001,
+      601,
+      1023,
+      625
+    ],
+    "icon_tab_conversation": [
+      316,
+      266,
+      338,
+      287
+    ],
+    "icon_tab_minimap": [
+      685,
+      721,
+      707,
+      743
+    ],
+    "icon_option_skilltree": [
+      209,
+      505,
+      261,
+      563
+    ],
+    "icon_option_crafting": [
+      209,
+      564,
+      261,
+      622
+    ],
+    "icon_option_inventory": [
+      153,
+      276,
+      207,
+      334
+    ],
+    "icon_option_character": [
+      282,
+      721,
+      324,
+      783
+    ],
+    "icon_option_stealth": [
+      477,
+      743,
+      539,
+      783
+    ],
+    "icon_option_missive": [
+      144,
+      547,
+      202,
+      605
+    ],
+    "icon_option_reputation": [
+      282,
+      266,
+      315,
+      327
+    ],
+    "icon_option_journal": [
+      209,
+      335,
+      259,
+      393
+    ],
+    "icon_option_camp": [
+      153,
+      215,
+      205,
+      275
+    ],
+    "icon_option_spell_creation": [
+      69,
+      235,
+      127,
+      295
+    ],
+    "icon_option_stronghold": [
+      894,
+      725,
+      933,
+      783
+    ],
+    "icon_option_ai": [
+      153,
+      335,
+      203,
+      398
+    ],
+    "icon_option_formation": [
+      209,
+      282,
+      264,
+      334
+    ],
+    "icon_option_attack": [
+      153,
+      158,
+      208,
+      214
+    ],
+    "icon_option_settings": [
+      209,
+      623,
+      265,
+      677
+    ],
+    "icon_rep_up": [
+      1000,
+      788,
+      1023,
+      816
+    ],
+    "icon_rep_down": [
+      633,
+      915,
+      656,
+      943
+    ],
+    "icon_option_message": [
+      889,
+      948,
+      965,
+      1024
+    ],
+    "icon_option_worldmap_small": [
+      144,
+      660,
+      203,
+      718
+    ],
+    "icon_equipped": [
+      378,
+      448,
+      413,
+      482
+    ],
+    "icon_inventory_skypillar": [
+      419,
+      515,
+      442,
+      550
+    ],
+    "icon_weaponset_2": [
+      727,
+      680,
+      767,
+      720
+    ],
+    "icon_weaponset_3": [
+      850,
+      680,
+      889,
+      720
+    ],
+    "icon_weaponset_1": [
+      768,
+      680,
+      808,
+      720
+    ],
+    "icon_weaponset_4": [
+      809,
+      680,
+      849,
+      720
+    ],
+    "icon_inventory_inventory": [
+      378,
+      483,
+      413,
+      517
+    ],
+    "icon_respect": [
+      443,
+      494,
+      469,
+      525
+    ],
+    "icon_fear": [
+      443,
+      526,
+      469,
+      557
+    ],
+    "icon_customizer_button": [
+      645,
+      680,
+      685,
+      720
+    ],
+    "icon_customizer_portrait": [
+      378,
+      122,
+      409,
+      158
+    ],
+    "icon_customizer_voice": [
+      378,
+      412,
+      412,
+      447
+    ],
+    "icon_customizer_banner": [
+      546,
+      590,
+      576,
+      625
+    ],
+    "icon_treasure": [
+      609,
+      533,
+      633,
+      557
+    ],
+    "icon_poi": [
+      634,
+      533,
+      658,
+      557
+    ],
+    "icon_npc": [
+      659,
+      533,
+      683,
+      557
+    ],
+    "icon_party": [
+      443,
+      200,
+      467,
+      224
+    ],
+    "icon_transition": [
+      443,
+      125,
+      467,
+      149
+    ],
+    "icon_enemy": [
+      443,
+      100,
+      467,
+      124
+    ],
+    "icon_hud_tutorial": [
+      633,
+      558,
+      663,
+      588
+    ],
+    "icon_takeall": [
+      0,
+      783,
+      127,
+      911
+    ],
+    "icon_rep_small": [
+      419,
+      479,
+      442,
+      514
+    ],
+    "icon_edict": [
+      75,
+      353,
+      122,
+      422
+    ],
+    "icon_companionmission": [
+      0,
+      154,
+      66,
+      222
+    ],
+    "icon_lock": [
+      304,
+      471,
+      339,
+      527
+    ],
+    "icon_category_combo": [
+      282,
+      682,
+      340,
+      720
+    ],
+    "icon_category_artifacts": [
+      341,
+      613,
+      370,
+      676
+    ],
+    "icon_skypillarupgrade": [
+      0,
+      85,
+      63,
+      153
+    ],
+    "icon_npc_ally": [
+      378,
+      159,
+      409,
+      195
+    ],
+    "icon_npc_enemy": [
+      905,
+      593,
+      936,
+      625
+    ],
+    "icon_tooltip_engaged_by": [
+      470,
+      533,
+      502,
+      557
+    ],
+    "icon_tooltip_engaging": [
+      960,
+      889,
+      992,
+      911
+    ],
+    "icon_npc_neutral": [
+      378,
+      17,
+      408,
+      53
+    ],
+    "icon_exit_area": [
+      144,
+      606,
+      208,
+      659
+    ],
+    "icon_skypillar_selection": [
+      67,
+      160,
+      127,
+      222
+    ],
+    "icon_scroll": [
+      260,
+      260,
+      280,
+      281
+    ],
+    "icon_skypillar_container": [
+      559,
+      533,
+      583,
+      557
+    ],
+    "icon_ingot_iron": [
+      993,
+      888,
+      1016,
+      911
+    ],
+    "icon_hide": [
+      419,
+      405,
+      441,
+      428
+    ],
+    "icon_ingot_bronze": [
+      659,
+      784,
+      682,
+      807
+    ],
+    "icon_option_weaponset": [
+      589,
+      732,
+      637,
+      783
+    ],
+    "icon_attribute_arcane": [
+      968,
+      682,
+      1006,
+      720
+    ],
+    "icon_attribute_dodge": [
+      414,
+      589,
+      444,
+      625
+    ],
+    "icon_damage_arcane": [
+      775,
+      593,
+      807,
+      625
+    ],
+    "icon_damage_shock": [
+      414,
+      56,
+      441,
+      88
+    ],
+    "icon_damage_burn": [
+      443,
+      461,
+      467,
+      493
+    ],
+    "icon_damage_crush": [
+      742,
+      593,
+      774,
+      625
+    ],
+    "icon_damage_pierce": [
+      808,
+      593,
+      840,
+      625
+    ],
+    "icon_damage_slash": [
+      507,
+      559,
+      539,
+      588
+    ],
+    "icon_damage_freeze": [
+      676,
+      593,
+      708,
+      625
+    ],
+    "icon_damage_corrode": [
+      873,
+      593,
+      904,
+      625
+    ],
+    "icon_inventory_equipped": [
+      378,
+      518,
+      413,
+      552
+    ],
+    "icon_trial_of_iron": [
+      144,
+      28,
+      207,
+      80
+    ],
+    "icon_attribute_deflection": [
+      669,
+      639,
+      707,
+      676
+    ],
+    "icon_attribute_weapon_skill": [
+      554,
+      638,
+      592,
+      676
+    ],
+    "icon_group_select": [
+      64,
+      92,
+      125,
+      153
+    ],
+    "icon_exitareamap": [
+      378,
+      340,
+      412,
+      374
+    ],
+    "icon_message_glow": [
+      686,
+      680,
+      726,
+      720
+    ],
+    "icon_LegacyMode": [
+      144,
+      494,
+      208,
+      546
+    ]
+  }
+}

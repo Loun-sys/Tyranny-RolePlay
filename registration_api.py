@@ -508,6 +508,30 @@ async def portal_weapon_set(request: web.Request) -> web.Response:
 
 async def portal_combat_quickbar(request: web.Request) -> web.Response:
     cid, payload = await _portal_payload(request)
+    if 'bindings' in payload:
+        bindings = payload['bindings']
+        if not isinstance(bindings, list) or len(bindings) != 5 or not all(isinstance(row, dict) for row in bindings):
+            raise web.HTTPBadRequest(reason='Некорректный список быстрых ячеек.')
+        character = await request.app['db'].get_character_by_id(cid)
+        owned = {row['name'] for row in character.get('talents', [])}
+        spells = {row['name'] for row in await request.app['db'].spells(cid) if row.get('equipped_slot') is not None}
+        cleaned = []
+        for row in bindings:
+            kind, name = str(row.get('kind', '')), str(row.get('name', ''))
+            valid = (not kind and not name) or (kind == 'attack' and name == 'Обычная атака')
+            valid = valid or (kind == 'ability' and name in owned) or (kind == 'spell' and name in spells)
+            valid = valid or (kind == 'disengage' and name == 'Осторожный отход')
+            if not valid:
+                raise web.HTTPConflict(reason='Это действие сейчас недоступно персонажу.')
+            try:
+                cleaned.append({'slot': int(row.get('slot', 0)), 'kind': kind, 'name': name})
+            except (TypeError, ValueError) as error:
+                raise web.HTTPBadRequest(reason='Некорректный номер ячейки.') from error
+        try:
+            await request.app['db'].replace_combat_quickbar(cid, cleaned)
+        except ValueError as error:
+            raise web.HTTPBadRequest(reason=str(error)) from error
+        return web.json_response({'ok': True, 'message': 'Быстрые ячейки сохранены.', **await _dashboard(request, cid)})
     try:
         slot = int(payload.get("slot", 0))
     except (TypeError, ValueError) as error:

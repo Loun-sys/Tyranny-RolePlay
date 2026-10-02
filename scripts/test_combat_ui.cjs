@@ -1,11 +1,12 @@
 // Browser-independent regression tests for the capture handlers and targeting flow.
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const handlers={},messages=[],requests=[];
+const handlers={},messages=[],requests=[],bindings=[];
 const context=vm.createContext({
  document:{addEventListener(type,handler){(handlers[type]??=[]).push(handler)},querySelector(){return null},querySelectorAll(){return []}},
- renderTraining(){},combatPickerPanel(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
+ renderTraining(){},combatPickerPanel(){return ''},statsBox(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
  data:{character:{name:'QA'}},token:'isolated-qa',encodeURIComponent,
  toast(message){messages.push(message)},$:()=>({}),
+ esc:value=>String(value),mutate(path,body){bindings.push(body)},quickbarAction(slot,actions){return actions[slot-1]},
  request:async(path,options)=>{requests.push(JSON.parse(options.body));return {training:{active:true,turn:{actionAvailable:false}},message:'OK'}},
  training:{active:true,turn:{actionAvailable:true},grid:{tokens:[{id:'player',x:2,y:4,team:'player'},{id:'dummy_left',x:10,y:2,team:'enemy'}]},actions:[]},
 });
@@ -34,6 +35,15 @@ async function main(){
  const cancel={target:{closest(){return true}},preventDefault(){},stopImmediatePropagation(){}};
  handlers.contextmenu[0](cancel);
  assert.equal(vm.runInContext('armedCombatAction',context),null);
+ context.training={active:true,turn:{actionAvailable:true},actions:[action,{kind:'attack',name:'Обычная атака'}]};
+ vm.runInContext('saveQuickbarBinding(2,testAction.kind,testAction.name,1)',context);
+ assert.equal(bindings.length,1,'Swap must use one atomic update');
+ assert.equal(bindings[0].bindings.length,5);
+ assert.equal(bindings[0].bindings[0].name,'Обычная атака');
+ assert.equal(bindings[0].bindings[1].name,action.name);
+ assert.equal(bindings[0].bindings[4].kind,'','Empty slots must remain intentionally empty');
+ vm.runInContext('saveQuickbarBinding(5,testAction.kind,testAction.name)',context);
+ assert.equal(bindings[1].bindings[0].name,action.name,'Assigning one slot preserves the other defaults');
  console.log('Combat UI: selection, invalid aim, explicit confirmation, target ID, Esc and right-click OK');
 }
 main().catch(error=>{console.error(error);process.exitCode=1});
