@@ -1,7 +1,12 @@
 /* Targeting and original-game HUD. All highlighted cells come from the server. */
 let armedCombatAction=null,combatAim=null,combatBusy=false;
 const gameCombatRoot='assets/game-combat/';
-const coreTexture={Огонь:'Core-Fire',Холод:'Core-Frost',Молния:'Core-Shock',Жизнь:'Core-Heal',Истощение:'Core-Weaken',Эмоции:'Core-Passion',Рвение:'Core-Passion',Сила:'Core-Strength',Камень:'Core-Stone',Терратус:'Core-Gravelight',Иллюзия:'Core-Illusion'};
+const coreTexture={Огонь:'Core-Fire',Холод:'Core-Frost',Молния:'Core-Shock',Жизнь:'Core-Heal',Истощение:'Core-Weaken',Эмоции:'Core-Passion',Рвение:'Core-Strength',Сила:'Core-Gravity',Камень:'Core-Stone',Терратус:'Core-Gravelight',Иллюзия:'Core-Illusion'};
+const originalLocalTalentIcon=localTalentIcon;
+localTalentIcon=function(url){if(!url)return '';if(String(url).startsWith('assets/'))return url+'?v=20261002-game';return originalLocalTalentIcon(url)+'?v=20261002-game'};
+const originalSigilIcon=sigilIcon;
+sigilIcon=function(s,size=''){return originalSigilIcon(s?.image_url?{...s,image_url:s.image_url+'?v=20261002-game'}:s,size)};
+spellCoreIcon=function(spell,size='small'){const path=GAME_SPELL_ICONS[`${spell.core}|${spell.expression}`]||`${gameCombatRoot}fx_spellicon_${({Огонь:'fire',Холод:'frost',Молния:'shock',Рвение:'strength',Сила:'gravity'})[spell.core]||'arcane'}.png`;return `<span class="sigil-icon ${size}" data-ui-tip="${esc(spell.name)}\n${esc(spell.core)} · ${esc(spell.expression)}"><img src="${path}" alt="${esc(spell.name)}" title="${esc(spell.name)}" loading="lazy"></span>`};
 const existingRenderTraining=renderTraining;
 const originalCombatPickerPanel=combatPickerPanel;
 combatPickerPanel=function(t){

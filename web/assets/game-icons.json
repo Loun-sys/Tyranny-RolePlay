@@ -1,0 +1,2670 @@
+{
+  "source": "Tyranny installed game archives",
+  "icons": {
+    "assets/sigil-icons/shape-trap-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Trap",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_spurting_blood.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_spurting_blood",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_aura_of_rage.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_aura_of_rage",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_wild_strength.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_wild_strength",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/shape-field-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Field",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_repelling_blast.png": {
+      "archive": "resources.assets",
+      "texture": "abl_eb_repelling_blast",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_arcane_understanding.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_arcane_understanding",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_elemental_shield.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_elemental_shield",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spell-lightningtouch-l-png.png": {
+      "archive": "resources.assets",
+      "texture": "Spell-LightningTouch_L",
+      "width": 208,
+      "height": 208
+    },
+    "assets/talent-icons/Abl_rep_sever_ashes_bond.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_sever_ashes_bond",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/shape-bolt-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Bolt",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_extinguish.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_extinguish",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_smelting_ore.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_smelting_ore",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_scarlet_skin.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_scarlet_skin",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/shape-aura-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Aura",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/shape-armor-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Armor",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_force.png": {
+      "archive": "resources.assets",
+      "texture": "abl_sirin_aria_force",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_merciless.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_merciless",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_renewal.png": {
+      "archive": "resources.assets",
+      "texture": "abl_lantry_renewal",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_withering_touch.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_withering_touch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_swords.png": {
+      "archive": "resources.assets",
+      "texture": "abl_sirin_swords",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_flesh_to_stone.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_flesh_to_stone",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/titans-touch.webp": {
+      "archive": "resources.assets",
+      "texture": "Spell-StrengthTouch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/charged-fist.webp": {
+      "archive": "resources.assets",
+      "texture": "Spell-ShockTouch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_intimidate.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_intimidate",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-heal-png.png": {
+      "archive": "resources.assets",
+      "texture": "Core-Heal",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_force_strike.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_force_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_arcane_missile.png": {
+      "archive": "resources.assets",
+      "texture": "abl_eb_arcane_missile",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_skewer_1.png": {
+      "archive": "resources.assets",
+      "texture": "abl_verse_skewer 1",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_total_binding.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_total_binding",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_knowledge_hunter.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_knowledge_hunter",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_striking_iron.png": {
+      "archive": "resources.assets",
+      "texture": "abl_barik_striking_iron",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-gravelight-png.png": {
+      "archive": "resources.assets",
+      "texture": "Core-Gravelight",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_indomitable.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_indomitable",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_gruesome_blows.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_gruesome_blows",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_ignore_the_elements.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_ignore_the_elements",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_sun_spear.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_sun_spear",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-shock-png.png": {
+      "archive": "resources.assets",
+      "texture": "Core-Shock",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_mothers_embrace.png": {
+      "archive": "resources.assets",
+      "texture": "abl_eb_mothers_embrace",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_unnerving_presence.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_unnerving_presence",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_drain_strength.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_drain_strength",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/shape-rain-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Rain",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_favor_of_the_herald.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_favor_of_the_herald",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/shape-cone-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Cone",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-strength-png.png": {
+      "archive": "resources.assets",
+      "texture": "Core-Strength",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_visage_of_terror.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_visage_of_terror",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_broken_earth.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_broken_earth",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/shape-weapon-png.png": {
+      "archive": "resources.assets",
+      "texture": "Shape-Weapon",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_fallen_leader.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_fallen_leader",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_quill_strike.png": {
+      "archive": "resources.assets",
+      "texture": "abl_lantry_quill_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_rep_magic_seal.png": {
+      "archive": "resources.assets",
+      "texture": "abl_rep_magic_seal",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_champions_valor.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_champions_valor",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_undying_herald.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_undying_herald",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_burning_iron_1.png": {
+      "archive": "resources.assets",
+      "texture": "abl_verse_burning_iron 1",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_corrosive_aura.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_corrosive_aura",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_stand_together.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_stand_together",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_rep_mighty_blows.png": {
+      "archive": "resources.assets",
+      "texture": "psv_rep_mighty_blows",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-deflecting-png.png": {
+      "archive": "sharedassets1.assets",
+      "texture": "secondary_deflecting",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-gravity-png.png": {
+      "archive": "sharedassets1.assets",
+      "texture": "Core-Gravity",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-stone-png.png": {
+      "archive": "sharedassets1.assets",
+      "texture": "Core-Stone",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-sudden-death-png.png": {
+      "archive": "sharedassets1.assets",
+      "texture": "secondary_sudden_death",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-phasing-png.png": {
+      "archive": "sharedassets1.assets",
+      "texture": "secondary_phasing",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-rapid-casting-png.png": {
+      "archive": "sharedassets1.assets",
+      "texture": "secondary_rapid_casting",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-bleeding-png.png": {
+      "archive": "sharedassets16.assets",
+      "texture": "secondary_bleeding",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-volcanic-weapon-png.png": {
+      "archive": "sharedassets16.assets",
+      "texture": "secondary_volcanic_weapon",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-rooting-png.png": {
+      "archive": "sharedassets16.assets",
+      "texture": "secondary_rooting",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/frozen-grasp.webp": {
+      "archive": "sharedassets2.assets",
+      "texture": "Spell-FrostTouch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-fire-png.png": {
+      "archive": "sharedassets2.assets",
+      "texture": "Core-Fire",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-frost-png.png": {
+      "archive": "sharedassets2.assets",
+      "texture": "Core-Frost",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_heart_shot.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_range_heart_shot",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/heart-shot.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_range_heart_shot",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_hobble.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_range_hobble",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/hobble.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_range_hobble",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_cleave.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_power_cleave",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/cleave.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_power_cleave",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_sunder.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_power_sunder",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/sunder.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_power_sunder",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_palm_strike.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_power_palm_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/palm-strike.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_power_palm_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_unfettered.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_agility_unfettered",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-weaken-png.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "Core-Weaken",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_shield_slam.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_defense_shield_slam",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/shield-slam.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_defense_shield_slam",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_magic_charged_strike.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_magic_charged_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/touch-of-atrophy.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "Spell-WeakenTouch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_slice.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_agility_slice",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/slice.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_agility_slice",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_flurry_of_blows.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_agility_flurry_of_blows",
+      "width": 64,
+      "height": 64
+    },
+    "assets/abilities/flurry-of-blows.webp": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_agility_flurry_of_blows",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_magic_energy_shield.png": {
+      "archive": "sharedassets21.assets",
+      "texture": "abl_magic_energy_shield",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-frostfire-png.png": {
+      "archive": "sharedassets25.assets",
+      "texture": "secondary_frostfire",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-accuracy-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_accuracy_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-intensity-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_intensity_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-duration-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_duration_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-illusion-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "Core-Illusion",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-killing-blow-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "secondary_killing_blow",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-dt-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_dt_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-range-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_range_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-recovery-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_recovery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-chain-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_chain_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-wild-magic-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "secondary_wild_magic",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-interrupt-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_interrupt_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/spellmod-aoe-i-png.png": {
+      "archive": "sharedassets3.assets",
+      "texture": "spellmod_aoe_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_return_source.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_return_source",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_terratus_gate.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_terratus_gate",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_terratus_call.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_terratus_call",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_repelling_nova.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_repelling_nova",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_terratus_grip.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_terratus_grip",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_improvised_attacks_1.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "psv_verse_improvised_attacks 1",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_passage_of_hours.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_lantry_passage_of_hours",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_gravestrike.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_gravestrike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_repelling_wave.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_repelling_wave",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_mothers_breath.png": {
+      "archive": "sharedassets30.assets",
+      "texture": "abl_eb_mothers_breath",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_unbound.png": {
+      "archive": "sharedassets33.assets",
+      "texture": "abl_verse_unbound",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-impact-png.png": {
+      "archive": "sharedassets388.assets",
+      "texture": "secondary_impact",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_charge.png": {
+      "archive": "sharedassets388.assets",
+      "texture": "abl_agility_charge",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_magic_chaos_blast.png": {
+      "archive": "sharedassets388.assets",
+      "texture": "abl_magic_chaos_blast",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_skull_splitter.png": {
+      "archive": "sharedassets388.assets",
+      "texture": "abl_power_skull_splitter",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_penetrating_strike.png": {
+      "archive": "sharedassets388.assets",
+      "texture": "abl_range_penetrating_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/core-passion-png.png": {
+      "archive": "sharedassets4.assets",
+      "texture": "Core-Passion",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-focused-rain-png.png": {
+      "archive": "sharedassets42.assets",
+      "texture": "secondary_focused_rain",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-marking-png.png": {
+      "archive": "sharedassets42.assets",
+      "texture": "secondary_marking",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_seeking_strike.png": {
+      "archive": "sharedassets45.assets",
+      "texture": "abl_verse_seeking_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_clawswipe.png": {
+      "archive": "sharedassets45.assets",
+      "texture": "abl_kis_clawswipe",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_red_geyser.png": {
+      "archive": "sharedassets45.assets",
+      "texture": "abl_verse_red_geyser",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_three_whispers.png": {
+      "archive": "sharedassets45.assets",
+      "texture": "abl_verse_three_whispers",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-volley-png.png": {
+      "archive": "sharedassets46.assets",
+      "texture": "secondary_volley",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-pride-magic-png.png": {
+      "archive": "sharedassets54.assets",
+      "texture": "secondary_pride_magic",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_shield_bash.png": {
+      "archive": "sharedassets64.assets",
+      "texture": "abl_defense_shield_bash",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-piercing-png.png": {
+      "archive": "sharedassets66.assets",
+      "texture": "secondary_piercing",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-selfless-magic-png.png": {
+      "archive": "sharedassets68.assets",
+      "texture": "secondary_selfless_magic",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_expanded_mind.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_expanded_mind",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_sound_of_war.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_sound_of_war",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_unarmed_mastery_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_unarmed_mastery_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_taste_of_blood.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_taste_of_blood",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_heavy_guard_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_heavy_guard_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_last_stand.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_last_stand",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_adaptation_crush.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_adaptation_crush",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_shield_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_shield_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_expose_weakness.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_expose_weakness",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_undying.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_undying",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_hundred_fists.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_hundred_fists",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_blade_wall_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_blade_wall_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_breath_of_winter.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_breath_of_winter",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_deadeye_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_deadeye_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_battle_mind.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_battle_mind",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_heroic_defense.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_heroic_defense",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_apply_the_lash.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_apply_the_lash",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_refuse_pain.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_refuse_pain",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_lethal_opening.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_lethal_opening",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_massive_blow_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_massive_blow_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_elemental_fury_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_elemental_fury_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_duelist_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_duelist_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_killing_rush.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_killing_rush",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_dual_claw.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_dual_claw",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_subtle_throw.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_subtle_throw",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_glory_in_battle.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_glory_in_battle",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_feint.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_agility_feint",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_concentrated_force.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_concentrated_force",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_headshot_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_headshot_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_herald_of_victory.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_herald_of_victory",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_canvas_splitter.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_canvas_splitter",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_tooth_and_nail.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_tooth_and_nail",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_evasive.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_evasive",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_enfeebling_touch.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_enfeebling_touch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_frozen.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_frozen",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_poison_dart.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_range_poison_dart",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_natural_weaponry_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_natural_weaponry_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_rending_claws_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_rending_claws_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_overrun.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_overrun",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_recounting_of_deeds.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_recounting_of_deeds",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_respite.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_respite",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_penetrating_throw_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_penetrating_throw_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_furys_embrace.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_furys_embrace",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_twohanded_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_twohanded_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_winter.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_winter",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_inspiration.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_inspiration",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_darken_the_sky.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_range_darken_the_sky",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_shield_of_suffering.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_shield_of_suffering",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_suffering_to_strength.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_suffering_to_strength",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_bouncing_blades.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_bouncing_blades",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_gifted_vigor_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_gifted_vigor_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_student_of_magic_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_student_of_magic_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_piercing_arrows_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_piercing_arrows_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_dual_vocalization.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_dual_vocalization",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_clash_of_iron.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_clash_of_iron",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_scarlet_vengeance.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_scarlet_vengeance",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_learned_instructor.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_learned_instructor",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_runic_teacher.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_runic_teacher",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_natural_weaponry_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_natural_weaponry_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_stance_shieldbanger.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_defense_stance_shieldbanger",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_staff_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_staff_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_massive_blow_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_massive_blow_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_arcane_shield_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_arcane_shield_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_trample.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_trample",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_stance_blitz.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_power_stance_blitz",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_defenders_watch_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_defenders_watch_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_imbue_shock.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_imbue_shock",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_guise_of_innocence_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_guise_of_innocence_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_magical_prodigy_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_magical_prodigy_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_bloodless.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_bloodless",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_abundant_arms.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_abundant_arms",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_arcane_charge.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_arcane_charge",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_swap_positions.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_swap_positions",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_bow_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_bow_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_surging_waters.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_surging_waters",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_to_arms.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_to_arms",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_vigilant_protector.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_vigilant_protector",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_shield_wall.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_shield_wall",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_swift_current.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_swift_current",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_onehanded_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_onehanded_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_imbue_fire.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_imbue_fire",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_resonant_field_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_resonant_field_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_quick_breath_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_quick_breath_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_primalscream.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_primalscream",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_onehanded_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_onehanded_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_miasmic_strikes.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_miasmic_strikes",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_untamed_might_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_untamed_might_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_blood_brings_dawn.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_blood_brings_dawn",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_arrow_shield.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_arrow_shield",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_glory_to_the_bold.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_glory_to_the_bold",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_disarming_guise.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_disarming_guise",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_dissonance.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_dissonance",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_loremaster_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_loremaster_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_gifted_healer_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_gifted_healer_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_art_of_the_blade_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_art_of_the_blade_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_piercing_throw.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_piercing_throw",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_blood_calls.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_blood_calls",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_blade_wall_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_blade_wall_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_loremaster_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_loremaster_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_adaptation_shock.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_adaptation_shock",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_leaping_kick.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_agility_leaping_kick",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_legs_of_iron.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_legs_of_iron",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_fluid_body.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_fluid_body",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_breaking_the_wall.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_breaking_the_wall",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_duelist_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_duelist_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_nimble_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_nimble_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_reaching_claws.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_reaching_claws",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_thrown_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_thrown_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_gifted_vigor_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_gifted_vigor_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_accelerate.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_accelerate",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_charged_throw.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_charged_throw",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_explosive_missile.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_range_explosive_missile",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_vengeful_pitch.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_vengeful_pitch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_interrupt.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_defense_interrupt",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_untamed_might_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_untamed_might_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_abundant_knowledge.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_abundant_knowledge",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_moment_of_peace.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_moment_of_peace",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_engagement_attack_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_engagement_attack_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_sense_weakness.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_sense_weakness",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_focused_song.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_focused_song",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_stealth_accuracy.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_stealth_accuracy",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_leg_sweep.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_agility_leg_sweep",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_lightfoot.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_lightfoot",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_resonant_field_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_resonant_field_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_mark_enemy.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_mark_enemy",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_moonlit_way_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_moonlit_way_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_repelling_strike.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis__repelling_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_stalking_prey.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_stalking_prey",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_raking_slash.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_raking_slash",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_killing_spree.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_killing_spree",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_gifted_healer_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_gifted_healer_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_mage_slayer.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_mage_slayer",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_mobile_recovery.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_mobile_recovery",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_stance_mighty.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_power_stance_mighty",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_sweeping_death.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_sweeping_death",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_seize_the_initiative.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_seize_the_initiative",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_aura_of_command.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_aura_of_command",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_abundant_arms_two.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_abundant_arms_two",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_seasoned_veteran_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_seasoned_veteran_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_ward_master.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_ward_master",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_focused_strike.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_power_focused_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_fan_of_blades.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_range_fan_of_blades",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_empowered_afflictions.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_empowered_afflictions",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_bow_mastery_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_bow_mastery_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_penetrating_throw_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_penetrating_throw_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_blood_rage.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_blood_rage",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_defensive_cry.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_defensive_cry",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_call_to_the_grave.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_call_to_the_grave",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_blood_bond.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_blood_bond",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_knockdown.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_defense_knockdown",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_blood_brings_victory.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_blood_brings_victory",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_power_head_strike.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_power_head_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_imbue_frost.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_imbue_frost",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_eternal_flame.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_eternal_flame",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_runic_barrier_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_runic_barrier_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_piercing_arrows_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_piercing_arrows_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_spell_barrier_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_spell_barrier_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_adaptation_frost.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_adaptation_frost",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_vigilance.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_vigilance",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_thick_hide.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_thick_hide",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_onehanded_mastery_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_onehanded_mastery_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_gifted_healer_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_gifted_healer_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_arcane_judgement.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_arcane_judgement",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_shield_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_shield_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_shield_assault.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_defense_shield_assault",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_arcane_shield_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_arcane_shield_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_gravedigger.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_gravedigger",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_arcane_shield_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_arcane_shield_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_ricochet.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_ricochet",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_stance_guard.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_defense_stance_guard",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_hobbled_prey.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_hobbled_prey",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_erase_the_record.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_erase_the_record",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_headshot_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_headshot_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_to_the_tiers.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_to_the_tiers",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_nightmares.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_nightmares",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_heavy_guard_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_heavy_guard_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_bestial_constitution.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_bestial_constitution",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_resolve.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_resolve",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_defense_iron_light_as_air.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_defense_iron_light_as_air",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_pain.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_pain",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_empowered_1.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_empowered 1",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_defense_pinning_strike.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_defense_pinning_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_voice_of_ages.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_voice_of_ages",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_guise_of_innocence_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_guise_of_innocence_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_defenders_charge.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_defenders_charge",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_and_you_shall_triumph.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_and_you_shall_triumph",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_thrown_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_thrown_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_blade_dancer_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_blade_dancer_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_elemental_fury_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_elemental_fury_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_scars_of_battle.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_scars_of_battle",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_gift_of_moments.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_gift_of_moments",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_know_enemy_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_know_enemy_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_swift_quill.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_swift_quill",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_penetrating_throw_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_penetrating_throw_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_pig_on_a_spit.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_pig_on_a_spit",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_crystalline_control_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_crystalline_control_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_relentless.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_relentless",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_resillient_one.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_resillient_one",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_loremaster_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_loremaster_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_natural_weaponry_iv.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_natural_weaponry_iv",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_seasoned_veteran_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_seasoned_veteran_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_wild_instinct.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_wild_instinct",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_snapping_bones.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_snapping_bones",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_magic_empowered_chaos.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_magic_empowered_chaos",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_runic_loremaster.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_runic_loremaster",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_ancient_knowledge.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_ancient_knowledge",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_shadow_of_death.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_shadow_of_death",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_gifted_vigor_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_gifted_vigor_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_quick_breath_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_quick_breath_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_memories.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_memories",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_storms.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_storms",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_blade_dancer_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_blade_dancer_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_fury's_rush.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_fury's_rush",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_thrown_mastery_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_thrown_mastery_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_sneak_attack.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_sneak_attack",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_know_enemy_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_know_enemy_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_phalanx_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_phalanx_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_defenders_watch_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_defenders_watch_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_unarmed_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_unarmed_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_red_runs_blood.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_red_runs_blood",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_retribution.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_retribution",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_breakingiron.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_breakingiron",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_bringer_of_death.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_bringer_of_death",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_watchers_judgement.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_watchers_judgement",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_bane_of_night.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_bane_of_night",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_victory_in_defeat.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_victory_in_defeat",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_seize_prey.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_seize_prey",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_blades_embrace.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_blades_embrace",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_mocking_iron.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_mocking_iron",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_bersker_rage.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_bersker_rage",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_pursuit.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_pursuit",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_runic_barrier_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_runic_barrier_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_engagement_attack_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_engagement_attack_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_wounded_defender.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_wounded_defender",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_sprinting_death.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_sprinting_death",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_resurgence.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_resurgence",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_sustained_breath_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_sustained_breath_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_spell_reflection.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_spell_reflection",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_cry_of_despair.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_cry_of_despair",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_magic_channel_strength.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_magic_channel_strength",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_quillstorm.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_quillstorm",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_brawler.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_brawler",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_cascading_embrace.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_cascading_embrace",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_resonant_field_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_resonant_field_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_rapid_tempo.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_rapid_tempo",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_bow_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_bow_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_battle_cry.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_battle_cry",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_student_of_magic_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_student_of_magic_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_boost_morale.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_boost_morale",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_training_ground.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_training_ground",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_disarm.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_agility_disarm",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_nimble_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_nimble_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_art_of_the_blade_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_art_of_the_blade_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_safe_distance.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_safe_distance",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_fierce_demeanor.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_fierce_demeanor",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_clear_mind.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_clear_mind",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_dual_wield_mastery_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_dual_wield_mastery_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_duelist_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_duelist_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_moonlit_way_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_moonlit_way_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_blade_dancing.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_blade_dancing",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_engagement_attack_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_engagement_attack_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_crystalline_control_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_crystalline_control_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_terror_shot.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_terror_shot",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_verse_skull_splitter.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_verse_skull_splitter",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_agility_whirlwind_strike.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_agility_whirlwind_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_twohanded_mastery_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_twohanded_mastery_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_killing_spree_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_killing_spree_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_deadeye_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_deadeye_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_leadership_bandolier.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_leadership_bandolier",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_range_escape.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_range_escape",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_elemental_fury_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_elemental_fury_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_runic_barrier_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_runic_barrier_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_slow_tempo.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_slow_tempo",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_greater_renewal.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_greater_renewal",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_arrowcatch.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_arrowcatch",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_bloodspike.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_bloodspike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_dual_wield_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_dual_wield_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_barik_phalanx_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_barik_phalanx_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_confusion.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_confusion",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_staff_mastery_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_staff_mastery_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_pack_aggression.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_pack_aggression",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_moonlit_way_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_moonlit_way_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_magic_cone_of_magic.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_magic_cone_of_magic",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_natural_weaponry_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_natural_weaponry_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_eb_purifying_waters.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_eb_purifying_waters",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_unencumbered.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_unencumbered",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_reviving_song.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_reviving_song",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_unarmed_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_unarmed_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_sirin_sustained_breath_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_sirin_sustained_breath_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_twohanded_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_twohanded_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_agility_dual_wield_mastery_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_agility_dual_wield_mastery_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_pack_leader.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_pack_leader",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_spell_barrier_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_spell_barrier_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_defenders_watch_iii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_defenders_watch_iii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_verse_spear_catcher.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_verse_spear_catcher",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_barik_art_of_the_blade_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_barik_art_of_the_blade_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_leadership_call_to_battle.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_leadership_call_to_battle",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_lantry_wary_gaze.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_lantry_wary_gaze",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_spiritual_reckoning.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_spiritual_reckoning",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_shadow_strike.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_shadow_strike",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_magical_prodigy.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_magical_prodigy",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_sirin_aria_resonance.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_sirin_aria_resonance",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_eb_student_of_magic_i.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_eb_student_of_magic_i",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_magic_staff_mastery_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_magic_staff_mastery_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_kis_rending_claws_ii.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_kis_rending_claws_ii",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_range_evasive.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_range_evasive",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_lantry_second_breath.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_lantry_second_breath",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Abl_kis_disembowel.png": {
+      "archive": "abilities.unity3d",
+      "texture": "abl_kis_disembowel",
+      "width": 64,
+      "height": 64
+    },
+    "assets/talent-icons/Psv_power_rampage.png": {
+      "archive": "abilities.unity3d",
+      "texture": "psv_power_rampage",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-stunning-png.png": {
+      "archive": "spells.unity3d",
+      "texture": "secondary_stunning",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-spellsurge-png.png": {
+      "archive": "spells.unity3d",
+      "texture": "secondary_spellsurge",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-blood-magic-png.png": {
+      "archive": "spells.unity3d",
+      "texture": "secondary_blood_magic",
+      "width": 64,
+      "height": 64
+    },
+    "assets/sigil-icons/secondary-dazing-png.png": {
+      "archive": "spells.unity3d",
+      "texture": "secondary_dazing",
+      "width": 64,
+      "height": 64
+    }
+  },
+  "unmatched": []
+}

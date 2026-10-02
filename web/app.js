@@ -131,7 +131,7 @@ function renderSpecializations(slot) {
     <p class="lore-copy">${escapeHtml(detail.description)}</p><h4>БОНУСЫ К НАВЫКАМ</h4>${bonusesHtml(detail.bonuses)}
     <h4>ВЫБЕРИТЕ СТАРТОВУЮ СПОСОБНОСТЬ</h4><div class="ability-grid">${detail.abilities.map((ability) => `
       <button type="button" class="ability-choice ${state.abilities[slot] === ability.name ? "selected" : ""}" data-ability-slot="${slot}" data-ability-name="${escapeHtml(ability.name)}">
-        <img src="${escapeHtml(ability.icon)}" alt="" width="72" height="72" loading="lazy">
+        <img src="${escapeHtml(ability.icon)}?v=20261002-game" alt="${escapeHtml(ability.name)}" title="${escapeHtml(ability.name)}" width="72" height="72" loading="lazy">
         <span class="ability-body"><span class="ability-name">${escapeHtml(ability.name)}</span><span class="ability-type">${escapeHtml(ability.type)}</span>
           <span class="ability-description">${escapeHtml(ability.description)}</span>
           <span class="ability-meta"><span><i>ПЕРЕЗАРЯДКА</i><b>${escapeHtml(ability.cooldown)}</b></span><span><i>ДЛИТЕЛЬНОСТЬ</i><b>${escapeHtml(ability.duration)}</b></span></span>

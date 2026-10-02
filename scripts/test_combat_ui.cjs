@@ -3,7 +3,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const handlers={},messages=[],requests=[],bindings=[];
 const context=vm.createContext({
  document:{addEventListener(type,handler){(handlers[type]??=[]).push(handler)},querySelector(){return null},querySelectorAll(){return []}},
- renderTraining(){},combatPickerPanel(){return ''},statsBox(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
+ renderTraining(){},combatPickerPanel(){return ''},statsBox(){return ''},localTalentIcon:url=>'assets/talent-icons/'+url,sigilIcon(){return ''},tab:'training',combatPicker:'',quickbarEditing:0,
  data:{character:{name:'QA'}},token:'isolated-qa',encodeURIComponent,
  toast(message){messages.push(message)},$:()=>({}),
  esc:value=>String(value),mutate(path,body){bindings.push(body)},quickbarAction(slot,actions){return actions[slot-1]},
@@ -16,6 +16,7 @@ context.testAction=action;
 vm.runInContext('training.actions=[testAction];renderTraining=()=>{};showCombatAim=()=>{};playCombatEffect=()=>{};',context);
 function click(target){const event={target,preventDefault(){this.prevented=true},stopImmediatePropagation(){this.stopped=true}};handlers.click[0](event);return event}
 async function main(){
+ assert.equal(vm.runInContext('localTalentIcon("assets/abilities/hobble.webp")',context),'assets/abilities/hobble.webp?v=20261002-game');
  const button={disabled:false,dataset:{trainingKind:'spell',trainingName:action.name},matches(){return false}};
  const event=click({closest(selector){return selector==='[data-training-kind]'?button:null}});
  assert(event.stopped);assert.equal(requests.length,0,'Selecting a spell must never POST an action');
