@@ -234,6 +234,8 @@ def _apply_property(base: float, items: list[dict[str, Any]], *names: str) -> fl
 
 
 def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict[str, Any]:
+    from ability_rules import passive_equipment
+    inventory=inventory+passive_equipment(character.get('talents',[]))
     active_set = max(1, min(4, int(character.get("active_weapon_set", 1))))
     roman = ("I", "II", "III", "IV")[active_set - 1]
     equipped = [item for item in inventory if item.get("equipped_slot") and item.get('equipped_slot')!='Мастерская']
@@ -370,7 +372,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "itemEffects":consumed_states,
         "equipmentSlots": list(EQUIPMENT_SLOTS),
         "equipmentLimits": await db.equipment_limits(character_id),
-        "talentLibrary": [*TALENTS, *background_talents],
+        "talentLibrary": [__import__('ability_rules').normalize_talent(t) for t in [*TALENTS, *background_talents]],
         "reputations": reputations,
         "factionTalents": request.app["extended_talents"]["factions"],
         "sigils": {"library": sigil_library, "knownKeys": sorted(known_sigils), "scrolls": sigil_scrolls},
@@ -823,6 +825,7 @@ async def training_start(request: web.Request) -> web.Response:
     session = TrainingSession(
         character_id=cid, active_weapon_set=max(1, min(4, int(character.get("active_weapon_set", 1)))), custom_map=custom_map
     )
+    if custom_map:session.map_owner_id=selected['owner_id']
     request.app["training_sessions"][cid] = session
     character, inventory, spells, limits = await _training_character(request, cid, session)
     derived = _derived(character, inventory)
@@ -847,6 +850,8 @@ async def training_action(request: web.Request) -> web.Response:
             raise web.HTTPConflict(reason=str(error)) from error
         # Смена комплекта влияет на расчёты немедленно, но не меняет личное дело.
         character["active_weapon_set"] = session.active_weapon_set
+        # Rebuild timed modifiers after applying/removing an effect in this action.
+        character, inventory, spells, limits = await _training_character(request, cid, session)
         derived = _derived(character, inventory)
         return web.json_response({
             "ok": True, "message": result["line"],
@@ -859,6 +864,27 @@ async def training_reset(request: web.Request) -> web.Response:
     request.app["training_sessions"].pop(cid, None)
     request.app["training_locks"].pop(cid, None)
     return web.json_response({"ok": True, "message": "Тренировка завершена без опыта и наград.", "training": {"active": False}})
+
+async def admin_training(request: web.Request) -> web.Response:
+    guild,owner,cid=await _admin_character(request)
+    session=request.app['training_sessions'].get(cid)
+    if not session:return web.json_response({'ok':True,'active':False})
+    if getattr(session,'map_owner_id',owner)!=owner:raise web.HTTPForbidden(reason='Карта принадлежит другому мастеру.')
+    async with request.app['training_locks'].setdefault(cid,asyncio.Lock()):
+        actor,inventory,spells,limits=await _training_character(request,cid,session)
+        message=''
+        if request.method=='POST':
+            payload=await request.json()
+            try:
+                base=_derived(actor,[i for i in inventory if i.get('equipped_slot')!='Эффект'])
+                result=session.master_npc_ability(str(payload.get('actorId','')),str(payload.get('abilityKey','')),str(payload.get('targetId','')),actor,base)
+                message=result['line']
+            except (TypeError,ValueError) as error:raise web.HTTPConflict(reason=str(error)) from error
+        from ability_rules import profile
+        from npc_store import refresh_ability
+        npcs=[{'id':key,'name':n['name'],'abilities':[{k:v for k,v in profile(refresh_ability(a)).items() if k in {'key','name','description','icon','details','supported','limitation'}} for a in n.get('abilities',[]) if not a.get('passive')]}
+              for key,n in session.targets.items() if n.get('kind')=='npc']
+        return web.json_response({'ok':True,'active':True,'message':message,'npcs':npcs,'training':session.view(actor,_derived(actor,inventory),spells,limits['weaponSets'])})
 
 
 async def portrait_media(request: web.Request) -> web.StreamResponse:
@@ -1031,6 +1057,8 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post('/api/portal/{token}/shop',portal_shop)
     app.router.add_get("/api/admin/{token}/character/{character_id}", admin_character)
     app.router.add_post("/api/admin/{token}/character/{character_id}", admin_mutation)
+    app.router.add_get('/api/admin/{token}/character/{character_id}/training',admin_training)
+    app.router.add_post('/api/admin/{token}/character/{character_id}/training',admin_training)
     app.router.add_options("/api/admin/{token}/character/{character_id}", lambda _: web.Response(status=204))
     app.router.add_get("/media/portraits/{name}", portrait_media)
     app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))

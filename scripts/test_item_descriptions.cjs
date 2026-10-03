@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const ctx=vm.createContext({document:{addEventListener(){}},esc:s=>String(s).replaceAll('<','&lt;'),inventoryItemCard:()=>'<article>Предмет</article>',shopRow:()=>'<article>Товар</article>'});
+vm.runInContext(fs.readFileSync('web/item-descriptions.js','utf8'),ctx);
+const item={properties:{'При использовании':'Здоровье: 25% максимального здоровья'}};
+ctx.item=item;
+for(const fn of ['inventoryItemCard','shopRow'])assert(vm.runInContext(`${fn}(item)`,ctx).includes('При применении:</b> Здоровье: 25%'));
+ctx.item={properties:JSON.stringify(item.properties)};
+assert(vm.runInContext('inventoryItemCard(item)',ctx).includes('25%'));
+ctx.item={properties:{}};assert(!vm.runInContext('shopRow(item)',ctx).includes('При применении'));
+ctx.item={properties:{'При использовании':'<script>'}};assert(vm.runInContext('shopRow(item)',ctx).includes('&lt;script>'));
+console.log('Consumable summaries: inventory, shop, JSON properties, empty effects and escaping OK');

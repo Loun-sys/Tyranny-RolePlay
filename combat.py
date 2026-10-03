@@ -353,6 +353,10 @@ class TargetSelect(discord.ui.Select):
         self.session, self.action, self.payload = session, action, payload
         actor = session.current
         targets = [unit for unit in session.combatants.values() if unit.alive and actor and unit.team != actor.team]
+        if action=='talent' and actor:
+            from ability_combat import actor_ability,find_owned
+            rule=actor_ability(actor,find_owned(actor,payload) or {})
+            if rule and rule['targeting']=='self':targets=[actor]
         super().__init__(placeholder="Выберите цель", min_values=1, max_values=1, options=[
             discord.SelectOption(label=unit.name[:100], value=unit.key, description=f"{session.distance(actor, unit)} м · здоровье {unit.health}/{unit.health_max}")
             for unit in targets[:25]
@@ -370,7 +374,9 @@ class TargetSelect(discord.ui.Select):
         if self.action == "attack":
             action_range = weapon_range(actor)
         elif self.action == "talent":
-            action_range = RANGED_TALENT_RANGES.get(self.payload, 1)
+            from ability_combat import actor_ability,find_owned
+            selected=actor_ability(actor,find_owned(actor,self.payload) or {})
+            action_range=selected['range'] if selected else 0
         else:
             selected_spell = next((item for item in actor.spells if item["name"] == self.payload), None)
             skill_name = CORE_SKILLS.get((selected_spell or {}).get("core"), "Знания")
@@ -399,7 +405,8 @@ class TargetSelect(discord.ui.Select):
             recovery = actor.recovery
             used_skill = weapon_skill(actor)
         elif self.action == "talent":
-            talent = next((item for item in actor.talents if item["name"] == self.payload), None)
+            from ability_combat import find_owned,execute
+            talent = find_owned(actor,self.payload)
             if not talent:
                 await interaction.response.send_message("Способность больше недоступна.", ephemeral=True)
                 return
@@ -409,37 +416,11 @@ class TargetSelect(discord.ui.Select):
                     f"Способность ещё восстанавливается: {remaining} раунд.", ephemeral=True
                 )
                 return
-            if talent["name"] in EXTRA_ACTIVE_TALENTS:
-                occupied = {(unit.x, unit.y) for unit in self.session.combatants.values() if unit.alive}
-                destination = min(
-                    (cell for cell in self.session.grid.neighbors((target.x, target.y)) if cell not in occupied),
-                    key=lambda cell: self.session.grid.distance((actor.x, actor.y), cell), default=None,
-                )
-                if destination is None or not self.session.grid.can_teleport(
-                    (actor.x, actor.y), destination, action_range, occupied - {(actor.x, actor.y)},
-                ):
-                    await interaction.response.send_message("Рядом с целью нет свободной клетки.", ephemeral=True)
-                    return
-                actor.x, actor.y = destination
-            line = resolve_attack(actor, target, accuracy=actor.accuracy + 5 + flank_bonus,
-                                  damage=(actor.damage_min + 2, actor.damage_max + 4), penetration=2,
-                                  defense_bonus=cover_bonus)
-            line = f"✨ **{talent['name']}**: " + line
+            try:line,extra_damage=execute(self.session,actor,target,talent)
+            except ValueError as error:
+                await interaction.response.send_message(str(error),ephemeral=True);return
             recovery = actor.recovery + 1
             used_skill = weapon_skill(actor)
-            details = ABILITY_DETAILS.get(talent["name"], {}) or EXTRA_ACTIVE_TALENTS.get(talent["name"], {})
-            base_cooldown = next(iter(re.findall(r"\d+(?:[.,]\d+)?", str(details.get("cooldown", "1")))), "1")
-            rounds = max(1, math.ceil(float(base_cooldown.replace(",", ".")) * max(.1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03)))
-            actor.cooldowns[talent["name"]] = self.session.round_number + rounds + 1
-            forced = FORCED_TALENT_MOVEMENT.get(talent["name"])
-            if forced and target.alive:
-                occupied = {(unit.x, unit.y) for unit in self.session.combatants.values() if unit.alive and unit is not target}
-                old = (target.x, target.y)
-                new = self.session.grid.displace((actor.x, actor.y), old, forced[1], occupied, pull=forced[0] == "pull")
-                target.x, target.y = new
-                moved = self.session.grid.distance(old, new)
-                if moved:
-                    line += f" Цель {'притянута' if forced[0] == 'pull' else 'отброшена'} на {moved} м."
         else:
             spell = next((item for item in actor.spells if item["name"] == self.payload), None)
             if not spell:
@@ -602,11 +583,12 @@ class BattleView(discord.ui.View):
     @discord.ui.button(label="Способность", emoji="✨", style=discord.ButtonStyle.primary, row=0)
     async def ability(self, interaction: discord.Interaction, _: discord.ui.Button):
         actor = self.session.current
-        available = [
-            talent for talent in (actor.talents if actor else [])
-            if talent["name"] in {**ABILITY_DETAILS, **EXTRA_ACTIVE_TALENTS}
-            and actor.cooldowns.get(talent["name"], 0) <= self.session.round_number
-        ]
+        from ability_combat import actor_ability
+        available=[]
+        for talent in actor.talents if actor else []:
+            rule=actor_ability(actor,talent)
+            if rule and not rule['passive'] and rule['supported'] and actor.cooldowns.get(talent['name'],0)<=self.session.round_number:
+                available.append({**talent,'name':rule['name'],'description':rule['description']})
         if not actor or not available:
             await interaction.response.send_message("У персонажа нет доступных способностей.", ephemeral=True)
             return
@@ -698,7 +680,6 @@ class ItemSelect(discord.ui.Select):
         item["quantity"] -= 1
         line = f"🧪 **{actor.name}**: {line}"
         self.session.log.append(line)
-        self.session.advance(actor, 2)
         # use() already committed the new health; never apply healing twice.
         await interaction.response.edit_message(content=line, view=None)
         await self.session.refresh()

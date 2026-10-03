@@ -13,6 +13,23 @@ CREATE TABLE IF NOT EXISTS npc_archive(id INTEGER PRIMARY KEY AUTOINCREMENT,guil
 
 @lru_cache(maxsize=1)
 def ability_library():
+    from ability_rules import resolve,profile
+    old=legacy_abilities()
+    return [{**a,**profile(resolve(a))} if resolve(a) else a for a in old]
+
+def refresh_ability(a):
+    from ability_rules import resolve,profile
+    original=resolve(a)
+    if not original:return a
+    new=profile(original)
+    old=next((r for r in legacy_abilities() if r['key']==original['key']),{})
+    for field in ('name','description','range','area','damageMin','damageMax','cooldown','targeting','passive'):
+        if a.get('sourceVersion') or (field in a and a[field]!=old.get(field)):
+            new[field]=a.get(field,new[field])
+    return {**a,**new}
+
+@lru_cache(maxsize=1)
+def legacy_abilities():
     return json.loads((Path(__file__).parent/'catalog/npc_abilities.json').read_text(encoding='utf-8'))['abilities']
 
 def ability_page(query='',kind='',offset=0):
@@ -24,7 +41,7 @@ def ability_page(query='',kind='',offset=0):
 @lru_cache(maxsize=1)
 def templates():
     rows=json.loads((Path(__file__).parent/'catalog/game_npcs.json').read_text(encoding='utf-8'))
-    return [{**row,**portrait_library().get(row['key'],portrait_library()['default'])} for row in rows]
+    return [{**row,'abilities':[refresh_ability(a) for a in row['abilities']],**portrait_library().get(row['key'],portrait_library()['default'])} for row in rows]
 
 
 @lru_cache(maxsize=1)
@@ -135,6 +152,7 @@ class NPCStore:
         result=[]
         for row in rows:
             spec=json.loads(row['spec'])
+            spec['abilities']=[refresh_ability(a) for a in spec.get('abilities',[])]
             image=portrait_library().get(spec.get('sourceKey'),portrait_library()['default'])
             if not spec.get('portrait'):spec.update(image)
             elif spec['portrait']==image['portrait']:spec.update(image)
@@ -169,5 +187,5 @@ class NPCStore:
         for row in placements:
             spec=available.get(int(row['id']))
             if not spec:raise ValueError('НПС на карте не принадлежит этому мастеру.')
-            resolved.append({**{k:v for k,v in spec.items() if k!='notes'},'id':row['id'],'x':row['x'],'y':row['y'],'team':row.get('team','enemy')})
+            resolved.append({**{k:v for k,v in spec.items() if k!='notes'},'kind':'npc','id':row['id'],'x':row['x'],'y':row['y'],'team':row.get('team','enemy')})
         return resolved

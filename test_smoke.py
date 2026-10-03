@@ -91,6 +91,7 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             "armor": 3,
         }
         session = TrainingSession(character_id=1)
+        session.consumable_inventory=[{'category':'Щиты','equipped_slot':'Оружие I — левая рука','hands':1,'properties':{}}]
         stance = session.act({"kind": "stance", "name": "Стойка: Страж"}, character, derived, [], 2)
         self.assertEqual(session.active_stance, "Стойка: Страж")
         self.assertIn("принимает стойку", stance["line"])

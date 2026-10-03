@@ -12,6 +12,7 @@ import registration_api as api
 
 
 async def main():
+    port = int(sys.argv[1]) if len(sys.argv)>1 else 8766
     with tempfile.TemporaryDirectory(prefix="tyranny-combat-qa-") as folder:
         db = Database(Path(folder) / "qa.sqlite3")
         await db.initialize()
@@ -30,19 +31,20 @@ async def main():
         app.router.add_get("/api/archive", api.archive_list)
         app.router.add_get("/api/portal/{token}", api.portal_info)
         app.router.add_get("/api/portal/{token}/training", api.training_info)
+        app.router.add_get("/api/portal/{token}/shop", api.portal_shop)
         for path, handler in [("start", api.training_start), ("action", api.training_action), ("reset", api.training_reset)]:
             app.router.add_post("/api/portal/{token}/training/" + path, handler)
         app.router.add_post("/api/portal/{token}/combat-quickbar", api.portal_combat_quickbar)
         app.router.add_post('/api/portal/{token}/item/use',api.portal_use_item)
         async def index(_):
             # API middleware formats raised HTTP exceptions as JSON; retain Location.
-            return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:8766#token={token}"})
+            return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:{port}#token={token}"})
         app.router.add_get("/", index)
         app.router.add_static("/", ROOT / "web")
         runner = web.AppRunner(app)
         await runner.setup()
-        await web.TCPSite(runner, "127.0.0.1", 8766).start()
-        print("Local isolated QA: http://127.0.0.1:8766/", flush=True)
+        await web.TCPSite(runner, "127.0.0.1", port).start()
+        print(f"Local isolated QA: http://127.0.0.1:{port}/", flush=True)
         try:
             await asyncio.Event().wait()
         finally:

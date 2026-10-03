@@ -60,7 +60,7 @@ class ConsumableRulesTests(unittest.TestCase):
         session=TrainingSession(1);session.consumable_inventory=[i];c=character();d=_derived(c,[])
         session.view(c,d,[],2)
         session.act({'kind':'item','name':'1'},c,d,[],2)
-        self.assertFalse(session.action_available);self.assertEqual(i['quantity'],1)
+        self.assertTrue(session.action_available);self.assertEqual(i['quantity'],1)
         self.assertEqual(len(session.conditions['player']),7)
 
 class ConsumableStoreTests(CampaignTests):
