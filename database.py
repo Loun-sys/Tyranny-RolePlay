@@ -223,6 +223,10 @@ class Database:
             await db.executescript(SCHEMA)
             from campaign_store import SCHEMA as CAMPAIGN_SCHEMA
             await db.executescript(CAMPAIGN_SCHEMA)
+            shop_columns={r['name'] for r in await db.execute_fetchall('PRAGMA table_info(shop_stock)')}
+            if 'shop_key' not in shop_columns:
+                await db.execute("ALTER TABLE shop_stock ADD COLUMN shop_key TEXT NOT NULL DEFAULT 'custom'")
+                await db.commit()
             quickbar_schema = await db.execute_fetchall("SELECT sql FROM sqlite_master WHERE name='combat_quickbar'")
             if quickbar_schema and 'BETWEEN 1 AND 5' in quickbar_schema[0]['sql']:
                 # Preserve every binding while widening the legacy SQLite constraint.
