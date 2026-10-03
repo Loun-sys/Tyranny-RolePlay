@@ -323,7 +323,9 @@ class Database:
                         f"""DELETE FROM item_catalog
                             WHERE source_url LIKE 'https://tyranny.fandom.com/%'
                               AND source_url NOT IN ({placeholders})
-                              AND NOT EXISTS (SELECT 1 FROM inventory WHERE inventory.item_id=item_catalog.id)""",
+                              AND NOT EXISTS (SELECT 1 FROM inventory WHERE inventory.item_id=item_catalog.id)
+                              AND NOT EXISTS (SELECT 1 FROM shop_stock WHERE shop_stock.item_id=item_catalog.id)
+                              AND NOT EXISTS (SELECT 1 FROM commerce_log WHERE commerce_log.item_id=item_catalog.id)""",
                         source_urls,
                     )
                 missing = await db.execute_fetchall(
