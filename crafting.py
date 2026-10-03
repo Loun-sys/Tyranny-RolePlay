@@ -1,6 +1,6 @@
 """Character-scoped crafting from extracted game recipes; no client-supplied costs."""
 import json,copy,hashlib
-from datetime import datetime,timedelta,timezone
+from datetime import datetime,timezone
 from functools import lru_cache
 from pathlib import Path
 ORIGIN='Скованный Ремеслом'
@@ -90,16 +90,15 @@ class CraftingStore:
             output=items[r['output'][0]['prefab']]
             ingredients=[{**x,'item':items.get(x['prefab'])} for x in r['ingredients']]
             if any(not x['item'] for x in ingredients):continue
-            recipes.append({**r,'outputItem':output,'ingredients':ingredients,'known':not r['unlocks'] or r['key'] in known})
+            recipes.append({**r,'originalHours':r['hours'],'hours':0,'outputItem':output,'ingredients':ingredients,'known':not r['unlocks'] or r['key'] in known})
         for inv in inventory:
             r=upgrade_recipe(inv)
             if r and not inv['equipped_slot'] and all(x['prefab'] in items for x in r['ingredients']):
-                upgrades.append({'inventoryId':inv['inventory_id'],'item':normalize_quality(inv),'recipe':r,
+                upgrades.append({'inventoryId':inv['inventory_id'],'item':normalize_quality(inv),'recipe':{**r,'originalHours':r['hours'],'hours':0},
                     'result':normalize_quality(inv,r['to']),'ingredients':[{**x,'item':items.get(x['prefab'])} for x in r['ingredients']]})
             matches=[r for r in recipes if prefab(inv) in r['scrolls']]
             if matches:scrolls.append({'inventoryId':inv['inventory_id'],'item':inv,'recipes':[r['key'] for r in matches],'known':all(r['known'] for r in matches)})
-        now=datetime.now(timezone.utc)
-        for j in jobs:j['ready']=now>=datetime.fromisoformat(j['ready_at'])
+        for j in jobs:j['ready']=True
         return {'recipes':recipes,'upgrades':upgrades,'scrolls':scrolls,'jobs':jobs}
     async def act(self,cid,payload):
         async with self.db.connect() as c:
@@ -114,29 +113,9 @@ class CraftingStore:
                 await c.commit();return 'Рецепт изучен. Свиток сохранён.'
             if action=='claim':
                 jobs=await c.execute_fetchall('SELECT * FROM crafting_jobs WHERE id=? AND character_id=? AND claimed=0',(int(payload.get('jobId',0)),cid))
-                if not jobs or datetime.now(timezone.utc)<datetime.fromisoformat(jobs[0]['ready_at']):raise ValueError('Работа ещё не завершена или уже получена.')
+                if not jobs:raise ValueError('Работа не найдена или уже получена.')
                 job=json.loads(jobs[0]['payload'])
-                if job['kind']=='upgrade':
-                    if not await c.execute_fetchall("SELECT id FROM inventory WHERE id=? AND character_id=? AND equipped_slot='Мастерская'",(job['inventoryId'],cid)):raise ValueError('Предмет мастерской изменён. Обратитесь к мастеру.')
-                    cols=['name','category','slot','quality','description','lore','image_url','value','weight','hands','damage_min','damage_max','armor','recovery','properties','source_url']
-                    result=job['result'];result['properties']=json.dumps(result['properties'],ensure_ascii=False)
-                    existing=await c.execute_fetchall('SELECT id FROM item_catalog WHERE source_url=?',(result['source_url'],))
-                    if existing:item_id=existing[0]['id']
-                    else:
-                        if await c.execute_fetchall('SELECT id FROM item_catalog WHERE name=?',(result['name'],)):result['name']+=' · '+result['source_url'][-8:]
-                        cursor=await c.execute('INSERT INTO item_catalog('+','.join(cols)+') VALUES('+','.join('?' for _ in cols)+')',[result.get(k,'') for k in cols]);item_id=cursor.lastrowid
-                    await c.execute('UPDATE inventory SET item_id=?,equipped_slot=NULL WHERE id=? AND character_id=?',(item_id,job['inventoryId'],cid))
-                else:
-                    inventory=await c.execute_fetchall('SELECT item_catalog.*,inventory.equipped_slot FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=?',(cid,))
-                    athletics=await c.execute_fetchall("SELECT value FROM skills WHERE character_id=? AND name='Атлетика'",(cid,))
-                    capacity=min(40,8+(athletics[0]['value'] if athletics else 0)//5)
-                    used=sum(self.db._item_consumes_slot(i['name'],i['category'],i['weight'],i['equipped_slot']) for i in inventory)
-                    for out in job['outputs']:
-                        existing=await c.execute_fetchall('SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL',(cid,out['itemId']))
-                        if existing:await c.execute('UPDATE inventory SET quantity=quantity+? WHERE id=?',(out['quantity'],existing[0]['id']))
-                        else:
-                            if used>=capacity:raise ValueError('Освободите место в инвентаре, чтобы забрать работу.')
-                            await c.execute('INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,?)',(cid,out['itemId'],out['quantity']));used+=1
+                await self._deliver(c,cid,job)
                 await c.execute('UPDATE crafting_jobs SET claimed=1 WHERE id=?',(jobs[0]['id'],));await c.commit();return 'Работа получена.'
             if action not in {'craft','upgrade'}:raise ValueError('Неизвестная операция мастерской.')
             if await c.execute_fetchall('SELECT id FROM crafting_jobs WHERE character_id=? AND claimed=0',(cid,)):raise ValueError('Сначала получите предыдущую работу.')
@@ -177,6 +156,30 @@ class CraftingStore:
             # Reserve the upgraded item so it cannot be sold/equipped while work is underway.
             if action=='upgrade':await c.execute('UPDATE inventory SET equipped_slot=? WHERE id=?',('Мастерская',job['inventoryId']))
             await c.execute('UPDATE wallets SET copper=copper-? WHERE character_id=?',(cost,cid))
-            ready=datetime.now(timezone.utc)+timedelta(hours=recipe['hours']*quantity)
-            await c.execute('INSERT INTO crafting_jobs(character_id,payload,ready_at) VALUES(?,?,?)',(cid,json.dumps(job,ensure_ascii=False),ready.isoformat()))
-            await c.commit();return 'Работа начата. Материалы и кольца списаны.'
+            await self._deliver(c,cid,copy.deepcopy(job))
+            ready=datetime.now(timezone.utc)
+            await c.execute('INSERT INTO crafting_jobs(character_id,payload,ready_at,claimed) VALUES(?,?,?,1)',(cid,json.dumps(job,ensure_ascii=False),ready.isoformat()))
+            await c.commit();return 'Предмет улучшен.' if action=='upgrade' else 'Расходники изготовлены.'
+
+    async def _deliver(self,c,cid,job):
+        if job['kind']=='upgrade':
+            if not await c.execute_fetchall("SELECT id FROM inventory WHERE id=? AND character_id=? AND equipped_slot='Мастерская'",(job['inventoryId'],cid)):raise ValueError('Предмет мастерской изменён. Обратитесь к мастеру.')
+            cols=['name','category','slot','quality','description','lore','image_url','value','weight','hands','damage_min','damage_max','armor','recovery','properties','source_url']
+            result=job['result'];result['properties']=json.dumps(result['properties'],ensure_ascii=False)
+            existing=await c.execute_fetchall('SELECT id FROM item_catalog WHERE source_url=?',(result['source_url'],))
+            if existing:item_id=existing[0]['id']
+            else:
+                if await c.execute_fetchall('SELECT id FROM item_catalog WHERE name=?',(result['name'],)):result['name']+=' · '+result['source_url'][-8:]
+                cursor=await c.execute('INSERT INTO item_catalog('+','.join(cols)+') VALUES('+','.join('?' for _ in cols)+')',[result.get(k,'') for k in cols]);item_id=cursor.lastrowid
+            await c.execute('UPDATE inventory SET item_id=?,equipped_slot=NULL WHERE id=? AND character_id=?',(item_id,job['inventoryId'],cid))
+        else:
+            inventory=await c.execute_fetchall('SELECT item_catalog.*,inventory.equipped_slot FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=?',(cid,))
+            athletics=await c.execute_fetchall("SELECT value FROM skills WHERE character_id=? AND name='Атлетика'",(cid,))
+            capacity=min(40,8+(athletics[0]['value'] if athletics else 0)//5)
+            used=sum(self.db._item_consumes_slot(i['name'],i['category'],i['weight'],i['equipped_slot']) for i in inventory)
+            for out in job['outputs']:
+                existing=await c.execute_fetchall('SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL',(cid,out['itemId']))
+                if existing:await c.execute('UPDATE inventory SET quantity=quantity+? WHERE id=?',(out['quantity'],existing[0]['id']))
+                else:
+                    if used>=capacity:raise ValueError('Освободите место в инвентаре, чтобы забрать работу.')
+                    await c.execute('INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,?)',(cid,out['itemId'],out['quantity']));used+=1
