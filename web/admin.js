@@ -1,4 +1,6 @@
 const params=new URLSearchParams(location.search),fragment=new URLSearchParams(location.hash.slice(1));
+const progressViewBeforeOrigin=progressView;
+progressView=function(c){const html=progressViewBeforeOrigin(c);return c.background==='Зверолюд'?html.replaceAll(' max="30"','').replaceAll('1–30','От 1 · без потолка'):html};
 const api=(params.get('api')||localStorage.getItem('tyranny_api')||'').replace(/\/$/,''),token=fragment.get('token')||'';
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let roster=[],detail=null,currentId=0,tab='identity',catalog=[];if(api)localStorage.setItem('tyranny_api',api);

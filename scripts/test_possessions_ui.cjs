@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const node={innerHTML:'',insertAdjacentHTML(_,text){this.innerHTML+=text}};
+const ctx=vm.createContext({document:{addEventListener(){}},data:{character:{background:'Книгочей'},recipients:[{id:2,name:'Получатель',background:'Книгочей'}],wallet:{copper:300},inventory:[{inventory_id:4,quantity:2}]},esc:x=>String(x??''),moneyText:()=> '300 медных',renderInventory:()=>{},openItemDetails:()=>{},compatibleSlots:()=>['Торс'],$:()=>node});
+vm.runInContext(fs.readFileSync('web/player-possessions.js','utf8'),ctx);
+ctx.panel=node;vm.runInContext('renderInventory(panel,data.character)',ctx);
+assert(node.innerHTML.includes('data-possession-kind="money"'));
+assert(node.innerHTML.includes('name="iron"'));assert(node.innerHTML.includes('value="2">Получатель'));
+vm.runInContext('openItemDetails(4)',ctx);assert(node.innerHTML.includes('max="2"'));
+assert(node.innerHTML.includes('data-possession-action="destroy"'));
+ctx.data.character.background='Зверолюд';assert.deepEqual([...vm.runInContext("compatibleSlots({category:'Броня'})",ctx)],[]);
+console.log('Possessions UI: wallet denominations, recipient choice, quantity bounds and beast armor restriction OK');

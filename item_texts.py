@@ -10,6 +10,8 @@ from official_localization import official_entity
 @lru_cache(maxsize=1)
 def catalog_texts():
     rows = json.loads((Path(__file__).parent/'catalog/game_items.json').read_text(encoding='utf-8'))
+    for row in rows:
+        if row['properties']['gameData']['prefab']=='WPN_1H_IR_Dagger_Lantry':row['name']='Перо Книгочея'
     return {r['properties']['gameData']['prefab']:r for r in rows}, {r['name'].casefold():r for r in rows}
 
 def clean_copy(text):

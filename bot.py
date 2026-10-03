@@ -330,7 +330,7 @@ async def portrait(interaction: discord.Interaction, ссылка: str):
 @app_commands.choices(характеристика=[app_commands.Choice(name=value, value=value) for value in ATTRIBUTES])
 async def attribute_command(
     interaction: discord.Interaction, участник: discord.Member,
-    характеристика: app_commands.Choice[str], значение: app_commands.Range[int, 1, 30],
+    характеристика: app_commands.Choice[str], значение: app_commands.Range[int, 1, 999],
 ):
     if not is_master(interaction):
         await interaction.response.send_message("Команда доступна мастеру игры.", ephemeral=True)
@@ -339,7 +339,8 @@ async def attribute_command(
     if not character:
         return
     await bot.db.set_attribute(character["id"], характеристика.value, значение)
-    await interaction.response.send_message(f'**{характеристика.value}** персонажа {участник.mention}: **{значение}**.')
+    actual=(await bot.db.get_character_by_id(character['id']))['attributes'][характеристика.value]
+    await interaction.response.send_message(f'**{характеристика.value}** персонажа {участник.mention}: **{actual}**.')
 
 
 @bot.tree.command(name="навык", description="Установить значение навыка — мастерская команда")

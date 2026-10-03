@@ -2,6 +2,7 @@
 
 const $ = (selector) => document.querySelector(selector);
 const screens = ["История", "Основа", "Доп.", "Имя", "Характеристики", "Навыки", "Итог"];
+function creationAttributeTotal(){return state.config.attributeTotal+(state.background==='Зверолюд'?4:0)}
 const weaponSkills = ["Волшебный посох", "Луки", "Безоружный бой", "Двуручное оружие", "Одноручное оружие", "Парное оружие"];
 const supportSkills = ["Знания", "Уклонение", "Хитроумие", "Атлетика", "Парирование"];
 const glossary = {
@@ -152,13 +153,13 @@ function attributeRelated(name, index) {
 
 function renderAttributes() {
   const used = Object.values(state.attributes).reduce((sum, value) => sum + value, 0);
-  const left = state.config.attributeTotal - used;
+  const left = creationAttributeTotal() - used;
   $("#attribute-counter").className = `counter ${left === 0 ? "done" : left < 0 ? "over" : ""}`;
-  $("#attribute-counter").innerHTML = `<b>${left}</b><span>/ 8</span><small>${left === 0 ? "РАСПРЕДЕЛЕНО" : "ОСТАЛОСЬ"}</small>`;
+  $("#attribute-counter").innerHTML = `<b>${left}</b><span>/ ${state.background==='Зверолюд'?12:8}</span><small>${left === 0 ? "РАСПРЕДЕЛЕНО" : "ОСТАЛОСЬ"}</small>`;
   $("#attributes").innerHTML = state.config.attributes.map((name) => `
     <div class="stat-row ${state.focusedAttribute === name ? "focused" : ""}" data-focus-kind="attribute" data-focus-name="${escapeHtml(name)}">
       <span><b>${escapeHtml(name)}</b><small>${escapeHtml(state.config.attributeDetails[name].summary)}</small></span>
-      <div class="stepper"><button type="button" data-step-kind="attribute" data-step-name="${escapeHtml(name)}" data-delta="-1" ${state.attributes[name] <= state.config.attributeMin ? "disabled" : ""}>‹</button><output>${state.attributes[name]}</output><button type="button" data-step-kind="attribute" data-step-name="${escapeHtml(name)}" data-delta="1" ${state.attributes[name] >= state.config.attributeMax || left <= 0 ? "disabled" : ""}>›</button></div>
+      <div class="stepper"><button type="button" data-step-kind="attribute" data-step-name="${escapeHtml(name)}" data-delta="-1" ${state.attributes[name] <= state.config.attributeMin ? "disabled" : ""}>‹</button><output>${state.attributes[name]}</output><button type="button" data-step-kind="attribute" data-step-name="${escapeHtml(name)}" data-delta="1" ${(state.background!=='Зверолюд'&&state.attributes[name] >= state.config.attributeMax) || left <= 0 ? "disabled" : ""}>›</button></div>
     </div>`).join("");
   const name = state.focusedAttribute;
   const detail = state.config.attributeDetails[name];
@@ -223,7 +224,7 @@ function validation() {
   return [
     ["Происхождение", Boolean(state.background)], ["Основная специализация и способность", Boolean(state.specs[0] && state.abilities[0])],
     ["Дополнительная специализация и способность", Boolean(state.specs[1] && state.abilities[1])], ["Имя персонажа", state.name.trim().length >= 2],
-    ["Характеристики", attrUsed === state.config.attributeTotal], ["Навыки", skillUsed === state.config.skillPoints],
+    ["Характеристики", attrUsed === creationAttributeTotal()&&Object.values(state.attributes).every(v=>v>=state.config.attributeMin&&(state.background==='Зверолюд'||v<=state.config.attributeMax))], ["Навыки", skillUsed === state.config.skillPoints],
   ];
 }
 

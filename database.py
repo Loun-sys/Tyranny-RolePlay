@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS characters (
 CREATE TABLE IF NOT EXISTS attributes (
     character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
-    value INTEGER NOT NULL DEFAULT 10 CHECK(value BETWEEN 1 AND 30),
+    value INTEGER NOT NULL DEFAULT 10 CHECK(value >= 1),
     PRIMARY KEY(character_id, name)
 );
 CREATE TABLE IF NOT EXISTS skills (
@@ -221,6 +221,16 @@ class Database:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         async with self.connect() as db:
             await db.executescript(SCHEMA)
+            from player_possessions import SCHEMA as POSSESSION_SCHEMA
+            await db.executescript(POSSESSION_SCHEMA)
+            attribute_schema=await db.execute_fetchall("SELECT sql FROM sqlite_master WHERE name='attributes'")
+            if attribute_schema and 'BETWEEN 1 AND 30' in attribute_schema[0]['sql']:
+                await db.execute('BEGIN')
+                await db.execute('ALTER TABLE attributes RENAME TO attributes_legacy')
+                await db.execute('CREATE TABLE attributes(character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,name TEXT NOT NULL,value INTEGER NOT NULL DEFAULT 10 CHECK(value >= 1),PRIMARY KEY(character_id,name))')
+                await db.execute('INSERT INTO attributes SELECT * FROM attributes_legacy')
+                await db.execute('DROP TABLE attributes_legacy')
+                await db.commit()
             from campaign_store import SCHEMA as CAMPAIGN_SCHEMA
             await db.executescript(CAMPAIGN_SCHEMA)
             from crafting import SCHEMA as CRAFTING_SCHEMA
@@ -356,6 +366,10 @@ class Database:
         from npc_store import SCHEMA as NPC_SCHEMA
         async with self.connect() as db:
             await db.executescript(NPC_SCHEMA)
+            await db.execute("""UPDATE inventory SET equipped_slot=NULL WHERE character_id IN
+                (SELECT id FROM characters WHERE background='Зверолюд') AND item_id IN
+                (SELECT id FROM item_catalog WHERE category='Броня') AND equipped_slot IN ('Голова','Торс','Руки','Ноги')""")
+            await db.commit()
         from master_update import apply_master_update
         await apply_master_update(self,int(__import__('os').getenv('DISCORD_GUILD_ID','0') or 0))
         await self.ensure_starting_sigils()
@@ -577,6 +591,7 @@ class Database:
     async def create_character(
         self, guild_id: int, user_id: int, name: str, background: str,
         specialization_1: str, specialization_2: str, abilities: list[str] | None = None,
+        *, allocate_start_bonus: bool = True,
     ) -> int:
         async with self.connect() as db:
             await db.execute(
@@ -627,6 +642,8 @@ class Database:
             )
             await self._insert_starting_sigils(db, character_id, (specialization_1, specialization_2))
             await self._recalculate_health(db, character_id)
+            from player_possessions import grant_start
+            await grant_start(db, character_id, background,allocate_start_bonus)
             await db.commit()
         await self.normalize_spell_slots(character_id, fill_empty=True)
         return character_id
@@ -733,8 +750,9 @@ class Database:
             await db.commit()
 
     async def set_attribute(self, character_id: int, name: str, value: int) -> None:
-        value = max(1, min(30, int(value)))
         async with self.connect() as db:
+            origin=await db.execute_fetchall('SELECT background FROM characters WHERE id=?',(character_id,))
+            value=max(1,int(value)) if origin and origin[0]['background']=='Зверолюд' else max(1,min(30,int(value)))
             old_attrs = {
                 row["name"]: int(row["value"])
                 for row in await db.execute_fetchall("SELECT name,value FROM attributes WHERE character_id=?", (character_id,))
@@ -797,6 +815,9 @@ class Database:
                 f"UPDATE characters SET {assignments},updated_at=CURRENT_TIMESTAMP WHERE id=?",
                 (*clean.values(), character_id),
             )
+            if clean.get('background')=='Зверолюд':
+                await db.execute("""UPDATE inventory SET equipped_slot=NULL WHERE character_id=? AND item_id IN
+                    (SELECT id FROM item_catalog WHERE category='Броня') AND equipped_slot IN ('Голова','Торс','Руки','Ноги')""",(character_id,))
             await db.commit()
 
     async def admin_level_up(self, character_id: int, amount: int = 1) -> int:
@@ -896,7 +917,7 @@ class Database:
         async with self.connect() as db:
             await db.execute("BEGIN IMMEDIATE")
             rows = await db.execute_fetchall(
-                """SELECT attributes.value,characters.attribute_points FROM attributes
+                """SELECT attributes.value,characters.attribute_points,characters.background FROM attributes
                    JOIN characters ON characters.id=attributes.character_id
                    WHERE attributes.character_id=? AND attributes.name=?""", (character_id, name)
             )
@@ -904,7 +925,7 @@ class Database:
                 await db.rollback(); return False, "Характеристика не найдена."
             current, points = int(rows[0]["value"]), int(rows[0]["attribute_points"])
             cost = 1 + max(0, current - 9) // 10
-            if current >= 30:
+            if current >= 30 and rows[0]['background']!='Зверолюд':
                 await db.rollback(); return False, "Достигнут предел характеристики."
             if points < cost:
                 await db.rollback(); return False, f"Нужно очков: {cost}; доступно: {points}."
@@ -1191,6 +1212,8 @@ class Database:
             }:
                 return False, "Этот предмет нельзя поместить в оружейный набор."
             if slot in {"Голова", "Торс", "Руки", "Ноги"}:
+                origin=await db.execute_fetchall('SELECT background FROM characters WHERE id=?',(character_id,))
+                if origin and origin[0]['background']=='Зверолюд':return False,'Зверолюды не могут носить броню.'
                 if category != "Броня":
                     return False, "В этот слот помещается только броня."
                 item_rows = await db.execute_fetchall(

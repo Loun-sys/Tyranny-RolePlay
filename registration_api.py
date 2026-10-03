@@ -109,8 +109,10 @@ def _validate_payload(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, s
         skills = {name: int(raw_skills.get(name, 0)) for name in SKILLS}
     except (KeyError, TypeError, ValueError):
         return None, "Все значения должны быть целыми числами."
-    if any(value < 8 or value > 18 for value in attributes.values()) or sum(attributes.values()) != ATTRIBUTE_TOTAL:
-        return None, f"Характеристики должны быть от 8 до 18, общая сумма — {ATTRIBUTE_TOTAL}."
+    total=ATTRIBUTE_TOTAL+(4 if background=='Зверолюд' else 0)
+    maximum=total-8*(len(ATTRIBUTES)-1) if background=='Зверолюд' else 18
+    if any(value < 8 or value > maximum for value in attributes.values()) or sum(attributes.values()) != total:
+        return None, f"Характеристики должны быть от 8 до {maximum}, общая сумма — {total}."
     if any(value < 0 or value > SKILL_POINTS for value in skills.values()) or sum(skills.values()) != SKILL_POINTS:
         return None, f"Распределите ровно {SKILL_POINTS} дополнительных очков навыков."
     return {
@@ -173,6 +175,7 @@ async def registration_submit(request: web.Request) -> web.Response:
     character_id = await db.create_character(
         guild_id, user_id, clean["name"], clean["background"],
         clean["specialization1"], clean["specialization2"], [clean["ability1"], clean["ability2"]],
+        allocate_start_bonus=False,
     )
     for name, value in clean["attributes"].items():
         await db.set_attribute(character_id, name, value)
@@ -361,6 +364,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "wallet": await CampaignStore(db).wallet(character_id),
         "inventory": inventory,
         "capacity": await db.inventory_capacity(character_id),
+        "recipients": await __import__('player_possessions').recipients(db,character_id),
         "spells": await db.spells(character_id),
         "combatQuickbar": await db.combat_quickbar(character_id),
         "spellNames": {f"{core}|{expression}": name for (core, expression), name in SPELL_NAMES.items()},
@@ -424,6 +428,14 @@ async def portal_attribute(request: web.Request) -> web.Response:
     if not ok:
         raise web.HTTPConflict(reason=message)
     return web.json_response({"ok": True, "message": message, **await _dashboard(request, cid)})
+
+
+async def portal_possessions(request):
+    cid,payload=await _portal_payload(request)
+    from player_possessions import operate
+    try:message=await operate(request.app['db'],cid,payload)
+    except (TypeError,ValueError) as error:raise web.HTTPConflict(reason=str(error)) from error
+    return web.json_response({'ok':True,'message':message,**await _dashboard(request,cid)})
 
 
 async def portal_talent(request: web.Request) -> web.Response:
@@ -1035,6 +1047,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/sigil/learn", portal_learn_sigil)
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
     app.router.add_post('/api/portal/{token}/item/use',portal_use_item)
+    app.router.add_post('/api/portal/{token}/possessions',portal_possessions)
     app.router.add_post("/api/portal/{token}/weapon-set", portal_weapon_set)
     app.router.add_get("/api/portal/{token}/training", training_info)
     app.router.add_get('/api/portal/{token}/crafting',portal_crafting)

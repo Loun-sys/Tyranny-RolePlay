@@ -17,6 +17,7 @@ async def main():
         db = Database(Path(folder) / "qa.sqlite3")
         await db.initialize()
         cid = await db.create_character(1, 2, "Испытатель", "Заклинатель", "Заклинания молний", "Заклинания льда")
+        await db.create_character(1,3,'Получатель','Книгочей','Меч и щит','Дротик')
         await db.create_spell(cid, "Огненный взрыв", "Огонь", "Направленная сила", [], [], 0)
         await db.normalize_spell_slots(cid, fill_empty=True)
         for name in ['Тяжелый бронзовый шлем с гребнем','Зелье героев','Слабое зелье исцеления','Алый яд']:
@@ -36,6 +37,7 @@ async def main():
             app.router.add_post("/api/portal/{token}/training/" + path, handler)
         app.router.add_post("/api/portal/{token}/combat-quickbar", api.portal_combat_quickbar)
         app.router.add_post('/api/portal/{token}/item/use',api.portal_use_item)
+        app.router.add_post('/api/portal/{token}/possessions',api.portal_possessions)
         async def index(_):
             # API middleware formats raised HTTP exceptions as JSON; retain Location.
             return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:{port}#token={token}"})
