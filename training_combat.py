@@ -669,6 +669,9 @@ class TrainingSession:
             }
             if name not in stances:
                 raise ValueError("Эта стойка не изучена персонажем.")
+            from ability_rules import stance_equipment
+            if not stance_equipment(name):
+                raise ValueError('Эффекты этой стойки ещё не подключены; переключение отменено.')
             self.active_stance = name
             line = f"Раунд {self.round_number}: персонаж принимает стойку «{name.removeprefix('Стойка:').strip()}»."
             self.log.append(line)
@@ -687,6 +690,19 @@ class TrainingSession:
                 defense=self._defense(defense_name), armor=self.targets[self.selected_target_id]["armor"], cover_bonus=cover_bonus,
                 penetration=round(attack.get('penetration',0)),
             )
+            chances=attack.get('splitChances',{})
+            if chances:
+                roll=random.randint(1,100);cutoff=0;count=1
+                for hits,chance in sorted(chances.items(),key=lambda pair:int(pair[0]),reverse=True):
+                    cutoff+=float(chance)
+                    if roll<=cutoff:count=int(hits);break
+                for _ in range(count-1):
+                    if self.target_healths[self.selected_target_id]<=0:break
+                    extra=self._roll_attack(name='Дополнительный удар',accuracy=int(attack.get('accuracy',0)),
+                        low=int(attack.get('damageMin',1)),high=int(attack.get('damageMax',2)),
+                        defense=self._defense(defense_name),armor=self.targets[self.selected_target_id]['armor'],
+                        cover_bonus=cover_bonus,penetration=round(attack.get('penetration',0)))
+                    result['damage']+=extra['damage'];result['line']+=' '+extra['line']
         elif kind == "ability":
             from ability_rules import owned_actions
             rule=next((a for a in owned_actions(character.get('talents',[]),derived,self._weapon_range(attack)) if name in {a['name'],a['key']}),None)

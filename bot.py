@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import asyncio
 import os
 import random
 from pathlib import Path
@@ -13,7 +14,7 @@ from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from card_renderer import render_character_card
+from card_renderer import render_character_card, render_inventory_card
 from combat import LobbyView, create_combat
 from constants import (
     ACCENT_SIGILS, ATTRIBUTES, BACKGROUNDS, CORE_SIGILS, ENHANCEMENT_SIGILS,
@@ -114,6 +115,11 @@ class CharacterView(discord.ui.View):
     def __init__(self, character: dict):
         super().__init__(timeout=600)
         self.character = character
+        for item in list(self.children):
+            if item.label != "Личное дело":
+                self.remove_item(item)
+            else:
+                item.row = 0
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.character["user_id"] and not is_master(interaction):
@@ -215,14 +221,22 @@ class TyrannyBot(commands.Bot):
     async def setup_hook(self) -> None:
         await self.db.initialize()
         self.registration_runner = await start_registration_api(self, self.db, DATA_DIR)
+        restrict_commands(self.tree)
+        synced = await self.tree.sync()
+        log.info("Глобально синхронизировано команд: %s", len(synced))
         if TEST_GUILD_ID:
             guild = discord.Object(id=TEST_GUILD_ID)
             self.tree.copy_global_to(guild=guild)
             synced = await self.tree.sync(guild=guild)
             log.info("Синхронизировано команд на тестовом сервере: %s", len(synced))
-        else:
-            synced = await self.tree.sync()
-            log.info("Глобально синхронизировано команд: %s", len(synced))
+
+
+def restrict_commands(tree):
+    """The site owns gameplay; Discord only issues access links."""
+    allowed = {"админ", "регистрация", "персонаж"}
+    for command in list(tree.get_commands()):
+        if command.name not in allowed:
+            tree.remove_command(command.name)
 
 
 bot = TyrannyBot()
@@ -263,7 +277,7 @@ async def registration(interaction: discord.Interaction):
     embed = discord.Embed(title="Создание Вершителя Судеб", color=BRONZE)
     embed.description = (
         "Откройте личный конструктор, распределите характеристики и навыки, добавьте портрет и нажмите "
-        "**«Сохранить в Дискорде»**.\n\nСсылка одноразовая, действует **2 часа** и привязана к вашему профилю в Дискорде."
+        "**«Создать персонажа»**.\n\nСсылка одноразовая, действует **2 часа** и привязана к вашему профилю в Дискорде."
     )
     view = discord.ui.View(timeout=7200)
     view.add_item(discord.ui.Button(label="Открыть конструктор", emoji="⚖️", url=link))
@@ -276,7 +290,15 @@ async def character_command(interaction: discord.Interaction, участник: 
     character = await require_character(interaction, участник)
     if not character:
         return
-    await interaction.response.send_message(embed=character_embed(character), view=CharacterView(character))
+    await interaction.response.defer(thinking=True)
+    from registration_api import _derived, _clean_inventory
+    from consumable_store import states
+    from consumables import virtual_equipment
+    inventory = _clean_inventory(await bot.db.inventory(character['id']))
+    derived = _derived(character, inventory + virtual_equipment(await states(bot.db, character['id']), 1))
+    limits = await bot.db.equipment_limits(character['id'])
+    image = await asyncio.to_thread(render_inventory_card, character, inventory, derived, limits)
+    await interaction.followup.send(file=discord.File(image, filename="inventory.png"), view=CharacterView(character))
 
 
 @bot.tree.command(name="архив", description="Открыть архив всех созданных персонажей")

@@ -238,7 +238,7 @@ def _apply_property(base: float, items: list[dict[str, Any]], *names: str) -> fl
 
 def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict[str, Any]:
     from ability_rules import passive_equipment
-    inventory=inventory+passive_equipment(character.get('talents',[]))
+    inventory=inventory+passive_equipment(character.get('talents',[]),inventory,character.get('active_weapon_set',1))
     active_set = max(1, min(4, int(character.get("active_weapon_set", 1))))
     roman = ("I", "II", "III", "IV")[active_set - 1]
     equipped = [item for item in inventory if item.get("equipped_slot") and item.get('equipped_slot')!='Мастерская']
@@ -267,6 +267,10 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         name: round(_apply_property(value, active_items, name, f"Защита {name}", f"{name} defense"))
         for name, value in base_defenses.items()
     }
+    from ability_rules import shield_mastery_bonuses
+    shield_bonuses=shield_mastery_bonuses(character.get('talents',[]),active_items)
+    for name in defenses:
+        defenses[name]=round(defenses[name]+shield_bonuses.get(name,0))
     weapons = [item for item in active_items if str(item.get("equipped_slot", "")).startswith("Оружие")]
     primary = next((item for item in weapons if "правая рука" in item.get("equipped_slot", "")), None)
     skill_by_category = {
@@ -287,12 +291,17 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     melee=(primary or {}).get('category') not in {'Луки','Метательное оружие','Посохи'}
     damage_min=round(_apply_property(damage_min,active_items,'Урон','Урон ближнего боя') if melee else _apply_property(damage_min,active_items,'Урон'))
     damage_max=round(_apply_property(damage_max,active_items,'Урон','Урон ближнего боя') if melee else _apply_property(damage_max,active_items,'Урон'))
+    from ability_rules import weapon_mastery
+    mastery_multiplier,split_chances=weapon_mastery(character.get('talents',[]),active_items,active_set)
+    damage_min=round(damage_min*mastery_multiplier)
+    damage_max=round(damage_max*mastery_multiplier)
     armor = sum(float(item.get("armor") or 0) for item in active_items)
     armor = round(_apply_property(armor, active_items, "Броня", "Armor"),4)
     from item_effects import armor_by_type,DAMAGE_TYPES
     typed_armor={name:round(sum(armor_by_type(item)[name] for item in active_items),4) for name in DAMAGE_TYPES.values()}
     deflection = max(0, attrs.get("Искусность", 10) - 10)
     deflection = round(_apply_property(deflection, active_items, "Отражение", "Deflection"))
+    deflection=round(deflection+shield_bonuses.get('Отражение',0))
     recovery = sum(float(item.get("recovery") or 0) for item in active_items)
     recovery = _apply_property(recovery, active_items, "Восстановление", "Recovery")
     return {
@@ -304,7 +313,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "spellPowerMultiplier":_apply_property(1,active_items,'Сила заклинаний'),
         "incomingDamageMultiplier":_apply_property(1,active_items,'Получаемый урон'),
         "healingMultiplier":_apply_property(1,active_items,'Получаемое лечение'),
-        "attack": {"accuracy": accuracy, "damageMin": damage_min, "damageMax": damage_max,
+        "attack": {"accuracy": accuracy, "damageMin": damage_min, "damageMax": damage_max,"splitChances":split_chances,
                    "recovery": round(recovery, 4), "criticalChance":max(1,round(_apply_property(attrs.get('Искусность',10)-9,active_items,'Критический шанс'))),
                    "penetration":_apply_property(0,active_items,'Пробивание брони'),
                    "skill": attack_skill},
@@ -442,7 +451,9 @@ async def portal_talent(request: web.Request) -> web.Response:
     cid, payload = await _portal_payload(request)
     character = await request.app["db"].get_character_by_id(cid)
     library = [*TALENTS, *request.app["extended_talents"]["backgrounds"].get(character["background"], [])]
-    talent = next((item for item in library if item["name"].casefold() == str(payload.get("name", "")).casefold()), None)
+    from ability_rules import normalize_talent
+    requested = str(payload.get('name','')).casefold()
+    talent = next((item for item in library if requested in {item['name'].casefold(),str(item.get('legacyName','')).casefold(),normalize_talent(item)['name'].casefold()}), None)
     if not talent:
         raise web.HTTPBadRequest(reason="Талант не найден.")
     if talent.get("automatic_level"):
@@ -787,6 +798,8 @@ async def _training_character(request: web.Request, character_id: int, session: 
         from consumable_store import states as item_states
         session.conditions.setdefault('player',{}).update(await item_states(db,character_id))
     inventory=inventory+virtual_equipment(session.conditions.get('player',{}),session.round_number)
+    from ability_rules import stance_equipment
+    inventory=inventory+stance_equipment(session.active_stance)
     limits = await db.equipment_limits(character_id)
     return character, inventory, spells, limits
 

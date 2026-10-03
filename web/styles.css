@@ -1,3 +1,5 @@
+.canonical-result {grid-template-columns:1fr!important}
+#summary[hidden] {display:none!important}
 :root {
   --black: #050506; --panel: #101014; --paper: #e9e4dc; --muted: #918b88;
   --blood: #a40717; --blood-bright: #e21d2f; --blood-dark: #520008;

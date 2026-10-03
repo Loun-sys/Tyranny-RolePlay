@@ -54,7 +54,7 @@
 .talent-dialog { width: min(560px,92vw); min-height: 430px; border-color: #9e843e; background: linear-gradient(150deg,#11110e,#030303); box-shadow: 0 0 0 2px #33290f,0 20px 80px #000; }
 .talent-dialog-head { display: flex; gap: 18px; align-items: center; }.talent-dialog-head h2 { margin: 4px 0; font: 27px Georgia,serif; }.talent-dialog-head small,.talent-dialog-head i { color: #ae9150; }
 .talent-divider { height: 1px; margin: 20px 0; background: linear-gradient(90deg,#9c8039,transparent); }
-.talent-dialog-requirement { color: #a98b47; }.talent-dialog-requirement b { color: #d74753; }.talent-dialog-description { min-height: 180px; color: #d1c9ba; font: 17px/1.55 Georgia,serif; }
+.talent-dialog-requirement { color: #a98b47; }.talent-dialog-requirement b { color: #d74753; }.talent-dialog-description { color: #d1c9ba; font: 17px/1.55 Georgia,serif; }
 .wiki-link { display: inline-block; margin-top: 20px; }
 
 @media(max-width:1000px){.talent-tree{flex-basis:calc(50% - 6px)}}

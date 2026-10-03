@@ -276,6 +276,7 @@ def _canonicalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
             if not entity:
                 continue
             talent["name_en"] = english_name
+            talent.setdefault('legacyName',talent.get('name',''))
             talent["name"] = localize_game_text(entity.get("name_ru") or talent.get("name", ""))
             if entity.get("description_ru"):
                 talent["description"] = localize_game_text(entity["description_ru"])

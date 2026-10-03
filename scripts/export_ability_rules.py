@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from scripts.game_asset_index import GameIndex,localized_tables
 from localization import localize_game_text
 
-COMBAT_REFS={'Afflictions','AfflictionPrefab','AttackPrefab','AbilityPrefab','ExtraAOE','SecondAOE','FollowUpAttacks','AttackPrefabTriggeredOn','ChildAttacks'}
+COMBAT_REFS={'Afflictions','AfflictionPrefab','AttackPrefab','AbilityPrefab','ExtraAOE','SecondAOE','FollowUpAttacks','AttackPrefabTriggeredOn','ChildAttacks','AbilityMods','StatusEffects'}
 ATTACK_FIELDS={'DamageData','DamageMultiplier','AttackDistance','OverrideAttackDistance','UsePrimaryWeaponRange','AccuracyBonus','DTBypass','DefendedBy','SecondaryDefense','ValidTargets','ApplyToSelfOnly','PushDistance','BlastRadius','DamageAngleDegrees','ConeAngle','TargetAngle','m_attackSkills','UsePrimaryAttack','UseFullAttack','Bounces','BounceRange','BounceMultiplier','BaseInterruptValue','RecoveryTime','PersonalCooldownModifier','AttackVariation'}
 DEFENSE={0:'Парирование',1:'Выносливость',2:'Воля',3:'Магия',5:'Нет'}
 
@@ -40,6 +40,7 @@ def main():
                     if 'm_PathID' in value:
                         target=g.resolve(obj,value)
                         child_side=local_side if local_side=='self' and phase!='root' else ('target' if attack else local_side)
+                        if t.get('AbilityMods') and key in {'AfflictionPrefab','AttackPrefab'}:child_side='target'
                         child_phase='affliction' if key=='AfflictionPrefab' else 'followup' if key=='FollowUpAttacks' else 'attack' if key in {'AttackPrefab','ExtraAOE','SecondAOE'} else phase
                         duration=float(edge.get('Duration',inherited) or inherited)
                         for co,ct in g.components(target):queue.append((co,ct,duration,child_side,child_phase))
@@ -55,13 +56,17 @@ def main():
     rows=[];icons=ROOT/'web/assets/ability-icons';icons.mkdir(parents=True,exist_ok=True)
     for group,components in g.groups.items():
         prefab=g.names.get(group,'')
-        candidates=[(o,t) for o,t in components if 'DisplayName' in t and 'CooldownType' in t]
+        candidates=[(o,t) for o,t in components if 'DisplayName' in t and ('CooldownType' in t or 'AbilityMods' in t)]
         if not candidates:continue
         obj,t=max(candidates,key=lambda p:bool(text(p[1].get('Description',{}))))
         name=text(t['DisplayName'])
         if not name:continue
         nodes=walk(obj);attacks=[n['attack'] for n in nodes if n['attack'] and n['phase'] in {'root','attack'}]
         primary=attacks[0] if attacks else {};damage=primary.get('DamageData',{})
+        is_talent='AbilityMods' in t and 'CooldownType' not in t
+        if is_talent:
+            nodes.append({'prefab':prefab,'phase':'upgrade','side':'target','name':name,'tag':'','attack':{},
+                          'statuses':[s for mod in t['AbilityMods'] for s in mod.get('StatusEffects',[])]})
         mode=t.get('CooldownType',0);seconds=float(t.get('CooldownTimerDuration',0) if mode==3 else t.get('Cooldown',0))
         icon='';texture=g.resolve(obj,t.get('Icon'))
         if texture and texture.type.name=='Texture2D':
@@ -72,7 +77,10 @@ def main():
         angle=float(primary.get('DamageAngleDegrees',primary.get('ConeAngle',primary.get('TargetAngle',0))))
         targeting='self' if not attacks or primary.get('ApplyToSelfOnly') else 'cone' if 0<angle<360 and radius>0 else 'area' if radius>0 else 'unit'
         row={'key':prefab,'prefab':prefab,'name':name,'name_en':text(t['DisplayName'],en,False),'description':text(t.get('Description',{})),
-            'passive':bool(t.get('Passive')),'modal':bool(t.get('Modal')),'icon':icon or 'assets/game-combat/icon_option_talents.png',
+            'passive':bool(t.get('Passive')) or is_talent,'modal':bool(t.get('Modal')),'icon':icon or 'assets/game-combat/icon_option_talents.png',
+            'isTalentUpgrade':is_talent,'abilityMods':t.get('AbilityMods',[]),'skillBonuses':t.get('SkillBonuses',[]),
+            'grantedAbilities':[g.name(g.resolve(obj,ref)) for ref in t.get('Abilities',[])],
+            'bonusDamageMult':float(t.get('BonusDamageMult',1)),'specializationCategory':t.get('SpecializationCategory'),
             'cooldown':math.ceil(seconds/10),'cooldownSeconds':seconds,'oncePerBattle':mode in {1,2},'cooldownMode':mode,
             'range':math.ceil(float(primary.get('OverrideAttackDistance') or primary.get('AttackDistance',0))),
             'weaponRange':bool(primary.get('UsePrimaryWeaponRange')),'area':math.ceil(radius),'angle':angle,'targeting':targeting,

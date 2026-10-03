@@ -115,7 +115,7 @@ function renderBackgrounds() {
     </button>`).join("");
   const name = state.background || state.config.backgrounds[0];
   const detail = details[name];
-  $("#background-detail").innerHTML = `<p>ПРОИСХОЖДЕНИЕ</p><h3>${escapeHtml(name)}</h3><div class="lore-rule"></div><p class="lore-copy">${escapeHtml(detail.description)}</p><h4>ЛИЧНОЕ ДРЕВО</h4><p class="lore-copy">Таланты: <b>${escapeHtml(detail.talentSource||"—")}</b>. После регистрации ветка появится в личном деле вместе с базовыми деревьями Вершителя.</p><h4>НАЧАЛЬНАЯ ПОДГОТОВКА</h4>${bonusesHtml(detail.bonuses)}`;
+  $("#background-detail").innerHTML = `<p>ПРОИСХОЖДЕНИЕ</p><h3>${escapeHtml(name)}</h3><div class="lore-rule"></div><p class="lore-copy">${escapeHtml(detail.description)}</p><h4>НАЧАЛЬНАЯ ПОДГОТОВКА</h4>${bonusesHtml(detail.bonuses)}`;
 }
 
 function renderSpecializations(slot) {

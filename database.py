@@ -527,6 +527,11 @@ class Database:
 
     @staticmethod
     def _equipment_limits_from_talents(names: set[str]) -> dict[str, int]:
+        from talent_data import TALENTS
+        names=set(names)
+        for talent in TALENTS:
+            if talent['name'] in names:
+                names.add(talent.get('legacyName',talent['name']))
         weapon_sets = 2
         if "Изобилие оружия I" in names:
             weapon_sets += 1
@@ -953,7 +958,11 @@ class Database:
             character = await db.execute_fetchall("SELECT talent_points FROM characters WHERE id=?", (character_id,))
             if not character or int(character[0]["talent_points"]) < 1:
                 await db.rollback(); return False, "Нет свободных очков талантов."
-            owned = await db.execute_fetchall("SELECT name FROM talents WHERE character_id=? AND name=?", (character_id, talent["name"]))
+            from ability_rules import resolve
+            requested_source=resolve(talent)
+            all_owned=await db.execute_fetchall('SELECT name FROM talents WHERE character_id=?',(character_id,))
+            owned=[row for row in all_owned if row['name'] in {talent['name'],talent.get('legacyName')} or
+                   (requested_source and (resolve(row['name']) or {}).get('key')==requested_source['key'])]
             if owned:
                 await db.rollback(); return False, "Этот талант уже изучен."
             tree_points = int((await db.execute_fetchall(

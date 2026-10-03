@@ -131,3 +131,84 @@ def render_character_card(character: dict[str, Any], inventory: list[dict[str, A
 
 
 render_card = render_character_card
+
+
+def render_inventory_card(character, inventory, derived, limits):
+    """Discord inventory snapshot, using the same calculated values as the site."""
+    from PIL import ImageOps
+    image = Image.new('RGB', (1100, 1090), '#080708')
+    draw = ImageDraw.Draw(image)
+    gold, muted = '#dfc790', '#a99874'
+    root = Path(__file__).parent / 'web'
+
+    def icon(path, xy, size):
+        # Icons are shipped game assets, not remote images or user-supplied paths.
+        asset = (root / path).resolve()
+        if root.resolve() not in asset.parents or not asset.is_file():
+            return
+        with Image.open(asset) as original:
+            pic = ImageOps.contain(original.convert('RGBA'), (size, size))
+            image.paste(pic, (xy[0] + (size-pic.width)//2, xy[1] + (size-pic.height)//2), pic)
+
+    draw.rectangle((12, 12, 1087, 1077), outline='#6a512a', width=2)
+    draw.text((30, 25), str(character['name'])[:40], font=_font(30, True), fill=gold)
+    draw.text((850, 32), f"Уровень {character['level']}", font=_font(20), fill=gold)
+    draw.rectangle((22, 80, 285, 1060), outline='#584126')
+    draw.rectangle((306, 80, 1074, 1060), outline='#584126')
+    draw.text((38, 98), 'Показатели', font=_font(24, True), fill=gold)
+    attack = derived['attack']
+    rows = [('health', 'Здоровье', f"{character['health']}/{derived.get('healthMax',character['health_max'])}"),
+            ('accuracy', 'Точность', attack['accuracy']), ('critical', 'Крит. шанс', f"{attack['criticalChance']}%"),
+            ('recovery', 'Восстановление', f"{attack['recovery']:g} раунд."),
+            ('damage', 'Урон', f"{attack['damageMin']}–{attack['damageMax']}")]
+    def stat_rows(rows, y):
+        for filename, label, value in rows:
+            icon(f'assets/stat-icons/{filename}.png', (35, y), 25)
+            draw.text((69, y+3), label, font=_font(14), fill=gold)
+            draw.text((270, y+30), str(value), font=_font(19, True), fill=gold, anchor='ra')
+            y += 66
+        return y
+    y = stat_rows(rows, 143)
+    draw.line((38, y, 270, y), fill='#584126')
+    draw.text((38, y+15), 'Защиты', font=_font(24, True), fill=gold)
+    y = stat_rows([(f, n, derived['defenses'].get(n, 0)) for f, n in
+                  [('endurance','Выносливость'),('will','Воля'),('magic','Магия'),('parry','Парирование'),('dodge','Уклонение')]], y+58)
+    draw.text((38, y+5), 'Броня', font=_font(24, True), fill=gold)
+    stat_rows([('armor','Поглощение',derived.get('armor',0)),('deflection','Отражение',f"{derived.get('deflection',0)}%")], y+44)
+    portrait = _load_portrait(character.get('portrait_url',''))
+    if portrait:
+        pic = ImageOps.contain(portrait, (500, 450))
+        image.paste(pic, (690-pic.width//2, 280+(450-pic.height)//2))
+    else:
+        draw.text((690, 460), character['name'][:22], font=_font(25), fill=muted, anchor='mm')
+    by_slot = {i['equipped_slot']: i for i in inventory if i.get('equipped_slot')}
+
+    def slot(key, label, x, y, label_side='right'):
+        draw.rectangle((x, y, x+66, y+66), fill='#161416', outline='#993040', width=2)
+        item = by_slot.get(key)
+        if item:
+            quality_color = {'Хорошее':'#60a164','Превосходное':'#679de0','Выдающееся':'#a659e8','Безупречное':'#f1a847'}.get(item.get('quality'),'#9b9582')
+            draw.rectangle((x+5,y+5,x+61,y+61), outline=quality_color, width=2)
+            icon(item.get('image_url',''), (x+8,y+8), 50)
+        else:
+            draw.polygon([(x+33,y+19),(x+47,y+33),(x+33,y+47),(x+19,y+33)], outline='#625a4c', width=2)
+        if label_side=='right': draw.text((x+80,y+24), label, font=_font(17,True), fill=gold)
+        elif label_side=='left': draw.text((x-14,y+24), label, font=_font(17,True), fill=gold, anchor='ra')
+        elif label: draw.text((x+33,y+74), label, font=_font(16,True), fill=gold, anchor='ma')
+
+    for n,(left,right,ll,rl) in enumerate([('Голова','Руки','Голова','Руки'),('Торс','Ноги','Торс','Ноги'),('Аксессуар 1','Аксессуар 2','Аксессуар','Аксессуар')]):
+        slot(left,ll,325,102+n*84)
+        slot(right,rl,989,102+n*84,'left')
+    roman = ['I','II','III','IV'][derived.get('activeWeaponSet',1)-1]
+    slot(f'Оружие {roman} — правая рука','П. рука',390,685,'bottom')
+    slot(f'Оружие {roman} — левая рука','Л. рука',923,685,'bottom')
+    draw.text((690,790), 'Быстрый доступ', font=_font(22,True), fill=gold, anchor='mm')
+    quick_count = int(limits.get('quickSlots',4))
+    for n in range(quick_count):
+        columns = min(6,quick_count)
+        slot(f'Быстрый предмет {n+1}','',690-columns*38+(n%columns)*76,818+(n//columns)*72,'bottom')
+    draw.text((330,900), 'Комплекты оружия: '+ ' / '.join(['I','II','III','IV'][:limits.get('weaponSets',2)]), font=_font(16), fill=muted)
+    output = io.BytesIO()
+    image.save(output, format='PNG')
+    output.seek(0)
+    return output
