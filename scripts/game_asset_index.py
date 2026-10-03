@@ -8,11 +8,11 @@ GAME = Path('C:/Games/Tyranny/Data/bundles')
 
 class GameIndex:
     def __init__(self,extra_bundles=()):
-        self.assets={}; self.environments=[]; self.trees={}; self.groups=collections.defaultdict(list);self.names={}
+        self.assets={}; self.asset_bundles={};self.environments=[]; self.trees={}; self.groups=collections.defaultdict(list);self.names={}
         for name in ['characters','items','abilities','afflictions','spells','lists','progression_tables','dlc00','dlc01','dlc02','dlc03','vx1_characters','vx1_items',*extra_bundles]:
             env=UnityPy.load(str(GAME/(name+'.unity3d')));self.environments.append(env)
             for asset in env.assets:
-                key=asset.name.casefold();self.assets[key]=asset
+                key=asset.name.casefold();self.assets[key]=asset;self.asset_bundles[key]=name
                 for obj in asset.objects.values():
                     if obj.type.name=='GameObject':self.names[(key,obj.path_id)]=obj.read().m_Name
                     elif obj.type.name=='MonoBehaviour':

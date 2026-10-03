@@ -83,6 +83,9 @@ class Combatant:
         return self.health > 0
 
     def defense(self, kind: str) -> int:
+        cached=getattr(self,'equipment_defenses',{})
+        if kind=='Стойкость':kind='Выносливость'
+        if kind in cached:return cached[kind]
         if kind == "Парирование":
             return self.skills.get("Парирование", self.accuracy)
         if kind == "Уклонение":
@@ -196,10 +199,27 @@ class CombatSession:
             embed.add_field(name=team, value="\n".join(lines)[:1024], inline=False)
         if self.log:
             embed.add_field(name="Последние события", value="\n".join(self.log[-6:])[-1024:], inline=False)
-        embed.set_footer(text="1 клетка = 1 метр · 6 м движения за ход · действия выбираются кнопками")
+        embed.set_footer(text="1 клетка = 1 метр · 5 м базового движения за ход · действия выбираются кнопками")
         return embed
 
     async def refresh(self) -> None:
+        from consumables import pulse
+        for unit in self.combatants.values():
+            if not hasattr(unit,'consumable_states'):continue
+            previous=getattr(unit,'consumable_round',1)
+            if previous>=self.round_number:continue
+            before=unit.health
+            for r in range(previous+1,self.round_number+1):
+                unit.health=pulse(unit.consumable_states,r,unit.health,unit.health_max)
+            unit.consumable_states={k:s for k,s in unit.consumable_states.items() if s['until']>=self.round_number}
+            unit.consumable_round=self.round_number;apply_equipment(unit)
+            await self.persist_damage(unit,before)
+            if unit.character_id:
+                import json
+                stored={k:{**s,'until':s['until']-self.round_number+1} for k,s in unit.consumable_states.items()}
+                async with self.db.connect() as conn:
+                    await conn.execute('INSERT OR REPLACE INTO character_item_effects(character_id,states) VALUES(?,?)',(unit.character_id,json.dumps(stored,ensure_ascii=False)))
+                    await conn.commit()
         if self.message:
             winner = self.winner()
             if winner:
@@ -223,6 +243,9 @@ class CombatSession:
         )
         player_count = sum(1 for row in self.combatants.values() if row.team == "Вершители Судеб")
         unit.x, unit.y = 1, min(self.grid.height - 1, 2 + player_count * 2)
+        from consumable_store import states
+        unit.consumable_states=await states(self.db,character['id'])
+        unit.consumable_round=1
         apply_equipment(unit)
         self.combatants[key] = unit
         return True, f"**{unit.name}** присоединяется к сцене."
@@ -233,29 +256,26 @@ class CombatSession:
 
 
 def apply_equipment(unit: Combatant) -> None:
-    unit.armor = sum(int(item.get("armor") or 0) for item in unit.inventory if item.get("equipped_slot") in {"Голова", "Торс", "Руки", "Ноги"})
-    prefix = f"Оружие {['I', 'II', 'III', 'IV'][unit.active_weapon_set - 1]}"
-    weapons = [item for item in unit.inventory if (item.get("equipped_slot") or "").startswith(prefix)]
-    weapon = next((item for item in weapons if int(item.get("damage_max") or 0) > 0), None)
-    if not weapon:
-        unit.accuracy = unit.skills.get("Безоружный бой", 25)
-        return
-    category = weapon.get("category", "")
-    skill = {
-        "Одноручное оружие": "Одноручное оружие", "Двуручное оружие": "Двуручное оружие",
-        "Парное оружие": "Парное оружие", "Луки": "Луки", "Метательное оружие": "Одноручное оружие",
-        "Посохи": "Волшебный посох",
-    }.get(category, "Одноручное оружие")
-    unit.accuracy = unit.skills.get(skill, 25)
-    unit.damage_min = int(weapon.get("damage_min") or 3)
-    unit.damage_max = max(unit.damage_min, int(weapon.get("damage_max") or 7))
-    unit.recovery = float(weapon.get("recovery") or 3)
-    props = weapon.get("properties") or "{}"
-    props_text = str(props).casefold()
-    for damage_type in ("Рубящий", "Колющий", "Дробящий", "Огненный", "Ледяной", "Электрический", "Магический"):
-        if damage_type.casefold() in props_text:
-            unit.damage_type = damage_type
-            break
+    # Discord and the site must calculate the same equipment, not parallel subsets.
+    from registration_api import _derived,_clean_inventory
+    from item_effects import active_equipment,game_data,DAMAGE_TYPES
+    if not hasattr(unit,'equipment_base_attributes'):
+        unit.equipment_base_attributes=dict(unit.attributes)
+        unit.equipment_base_skills=dict(unit.skills)
+        unit.equipment_base_health_max=unit.health_max
+    character={'attributes':unit.equipment_base_attributes,'skills':{name:{'value':value} for name,value in unit.equipment_base_skills.items()},'active_weapon_set':unit.active_weapon_set,'health_max':unit.equipment_base_health_max}
+    from consumables import virtual_equipment
+    inventory=_clean_inventory(unit.inventory)
+    inventory+=virtual_equipment(getattr(unit,'consumable_states',{}),getattr(unit,'consumable_round',1))
+    derived=_derived(character,inventory)
+    unit.attributes=derived['effectiveAttributes'];unit.skills=derived['effectiveSkills']
+    unit.armor=derived['armor'];unit.accuracy=derived['attack']['accuracy']
+    unit.damage_min=derived['attack']['damageMin'];unit.damage_max=derived['attack']['damageMax']
+    unit.recovery=derived['attack']['recovery'];unit.health_max=derived['healthMax']
+    unit.equipment_defenses=derived['defenses'];unit.equipment_armor_by_type=derived['armorByType']
+    unit.equipment_penetration=derived['attack']['penetration'];unit.equipment_incoming_damage=derived['incomingDamageMultiplier']
+    primary=next((i for i in active_equipment(inventory,unit.active_weapon_set) if 'правая рука' in i.get('equipped_slot','')),None)
+    unit.damage_type=DAMAGE_TYPES.get(game_data(primary or {}).get('attack',{}).get('DamageData',{}).get('Type'),'Рубящий')
 
 
 def weapon_skill(unit: Combatant) -> str:
@@ -308,9 +328,21 @@ def resolve_attack(attacker: Combatant, target: Combatant, *, accuracy: int | No
         return f"**{attacker.name}** → **{target.name}**: промах ({roll} + {attack_accuracy} − {target_defense})."
     low, high = damage or (attacker.damage_min, attacker.damage_max)
     raw = max(1, round(random.randint(low, high) * multiplier))
-    armor = max(0, target.armor - penetration)
-    dealt = max(1, raw - armor)
+    kind = damage_type or attacker.damage_type
+    if damage is None:penetration+=getattr(attacker,'equipment_penetration',0)
+    armor = max(0, getattr(target,'equipment_armor_by_type',{}).get(kind,target.armor) - penetration)
+    dealt = max(1, round(raw - armor))
+    from consumables import receive_damage
+    # Consumable incoming multipliers are already part of the shared derived stats.
+    shield_states={k:s for k,s in getattr(target,'consumable_states',{}).items() if s.get('source',{}).get('AffectsStat')!=188}
+    dealt=receive_damage(shield_states,round(dealt*getattr(target,'equipment_incoming_damage',1)))
     target.health = max(0, target.health - dealt)
+    if quality=='критическое попадание' and damage is None:
+        from consumables import crit_effects,apply
+        triggered=crit_effects(getattr(attacker,'consumable_states',{}))
+        if triggered:
+            target.consumable_states=getattr(target,'consumable_states',{})
+            target.health=apply({'properties':{'gameData':{'prefab':'weapon_poison','useComponents':[{'StatusEffects':triggered}]}}},target.consumable_states,getattr(attacker,'consumable_round',1),target.health,target.health_max)
     kind = damage_type or attacker.damage_type
     fallen = " Цель повержена." if not target.alive else ""
     return f"**{attacker.name}** → **{target.name}**: {quality}, **{dealt} {kind.lower()} урона** (бросок {roll}, броня {armor}).{fallen}"
@@ -649,15 +681,25 @@ class ItemSelect(discord.ui.Select):
         actor = self.session.current
         item = self.rows[self.values[0]]
         before = actor.health
-        healing = max(3, 5 + actor.attributes.get("Живучесть", 10) // 2)
-        actor.health = min(actor.health_max, actor.health + healing)
-        restored = actor.health - before
-        await self.session.db.remove_item(actor.character_id, item["inventory_id"], 1)
+        from consumables import profile
+        from consumable_store import use,states
+        info=profile(item)
+        if not info:
+            await interaction.response.send_message('Предмет не имеет эффекта применения.',ephemeral=True);return
+        try:line=await use(self.session.db,actor.character_id,item['inventory_id'])
+        except ValueError as error:
+            await interaction.response.send_message(str(error),ephemeral=True);return
+        updated=await self.session.db.get_character_by_id(actor.character_id)
+        actor.equipment_base_attributes=dict(updated['attributes'])
+        actor.health=updated['health']
+        actor.consumable_states=await states(self.session.db,actor.character_id)
+        for state in actor.consumable_states.values():state['until']+=self.session.round_number-1
+        actor.consumable_round=self.session.round_number;apply_equipment(actor)
         item["quantity"] -= 1
-        line = f"🧪 **{actor.name}** использует **{item['name']}** и восстанавливает {restored} здоровья."
+        line = f"🧪 **{actor.name}**: {line}"
         self.session.log.append(line)
         self.session.advance(actor, 2)
-        await self.session.persist_damage(actor, before)
+        # use() already committed the new health; never apply healing twice.
         await interaction.response.edit_message(content=line, view=None)
         await self.session.refresh()
 

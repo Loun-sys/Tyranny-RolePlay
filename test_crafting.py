@@ -108,7 +108,7 @@ class CraftTests(CampaignTests):
         shop=await self.store.shop(1,shop_key='custom')
         self.assertTrue(any(i['category']=='Материалы' for i in shop['items']))
         self.assertTrue(any(i['name'].startswith('Рецепт:') for i in shop['items']))
-        self.assertTrue(all(i['category'] in {'Материалы','Чертежи','Прочее'} for i in shop['items']))
+        self.assertTrue(all(i['category'] in {'Материалы','Чертежи','Разное'} for i in shop['items']))
         first=shop['items'][0]
         await self.store.edit_shop(1,{'itemId':first['id'],'stock':3,'buyPrice':5,'sellPrice':2})
         await self.craft.ensure_supplies(1)

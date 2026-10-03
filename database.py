@@ -350,8 +350,8 @@ class Database:
                 item = normalize_item_text(dict(row))
                 from crafting import normalize_quality
                 item = normalize_quality(item)
-                await db.execute('UPDATE item_catalog SET description=?,lore=?,properties=? WHERE id=?',
-                    (item['description'],item['lore'],json.dumps(item['properties'],ensure_ascii=False),row['id']))
+                await db.execute('UPDATE item_catalog SET description=?,lore=?,properties=?,armor=?,damage_min=?,damage_max=?,recovery=?,category=? WHERE id=?',
+                    (item['description'],item['lore'],json.dumps(item['properties'],ensure_ascii=False),item['armor'],item['damage_min'],item['damage_max'],item['recovery'],item['category'],row['id']))
             await db.commit()
         from npc_store import SCHEMA as NPC_SCHEMA
         async with self.connect() as db:
@@ -535,12 +535,20 @@ class Database:
         async with self.connect() as db:
             rows = await db.execute_fetchall("SELECT name FROM talents WHERE character_id=?", (character_id,))
             equipped = await db.execute_fetchall(
-                """SELECT item_catalog.name,item_catalog.source_url,item_catalog.properties
+                """SELECT inventory.equipped_slot,item_catalog.name,item_catalog.source_url,item_catalog.properties
                    FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id
                    WHERE inventory.character_id=? AND inventory.equipped_slot IS NOT NULL""", (character_id,)
             )
         limits = self._equipment_limits_from_talents({str(row["name"]) for row in rows})
+        from item_effects import active_equipment,equip_bonuses
+        character=await self.get_character_by_id(character_id)
+        equipped=active_equipment([dict(i) for i in equipped],character.get('active_weapon_set',1))
         for item in equipped:
+            original=equip_bonuses(item)
+            limits['spellSlots']+=round(original.get('Ячейки заклинаний',0))
+            limits['weaponSets']+=round(original.get('Комплекты оружия',0))
+            limits['quickSlots']+=round(original.get('Быстрые предметы',0))
+            if original.get('Ячейки заклинаний') or __import__('item_effects').game_data(item).get('statsVersion')==2:continue
             source = str(item["source_url"] or "").casefold()
             properties = str(item["properties"] or "").casefold()
             name = str(item["name"] or "").casefold()
@@ -550,6 +558,7 @@ class Database:
             ):
                 limits["spellSlots"] += 1
         limits["spellSlots"] = min(11, limits["spellSlots"])
+        limits['weaponSets']=min(4,limits['weaponSets'])
         return limits
 
     async def set_active_weapon_set(self, character_id: int, number: int) -> tuple[bool, str]:
@@ -940,17 +949,22 @@ class Database:
             await db.commit()
             return True, f"Изучен талант «{talent['name']}»."
 
+    async def effective_skill_in_connection(self,db,character_id,name):
+        from item_effects import active_equipment,equip_bonuses
+        skill=await db.execute_fetchall('SELECT value FROM skills WHERE character_id=? AND name=?',(character_id,name))
+        actor=await db.execute_fetchall('SELECT active_weapon_set FROM characters WHERE id=?',(character_id,))
+        items=await db.execute_fetchall('SELECT inventory.equipped_slot,item_catalog.properties FROM inventory JOIN item_catalog ON inventory.item_id=item_catalog.id WHERE inventory.character_id=? AND inventory.equipped_slot IS NOT NULL',(character_id,))
+        bonus=sum(equip_bonuses(i).get(name,0) for i in active_equipment([dict(i) for i in items],actor[0]['active_weapon_set'] if actor else 1))
+        return max(0,round((skill[0]['value'] if skill else 0)+bonus))
+
     async def inventory_capacity(self, character_id: int) -> dict[str, int]:
         async with self.connect() as db:
-            skill = await db.execute_fetchall(
-                "SELECT value FROM skills WHERE character_id=? AND name='Атлетика'", (character_id,)
-            )
+            athletics=await self.effective_skill_in_connection(db,character_id,'Атлетика')
             rows = await db.execute_fetchall(
                 """SELECT inventory.equipped_slot,item_catalog.category,item_catalog.name,item_catalog.weight
                    FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id
                    WHERE inventory.character_id=?""", (character_id,)
             )
-        athletics = int(skill[0]["value"]) if skill else 0
         capacity = min(40, 8 + athletics // 5)
         return {
             "used": sum(1 for row in rows if self._item_consumes_slot(
@@ -1008,7 +1022,7 @@ class Database:
                                 item.get("quality", "Обычное"), item.get("description", ""), item.get("lore", ""), item.get("image_url", ""),
                                 int(item.get("value", 0) or 0), float(item.get("weight", 0) or 0), int(item.get("hands", 0) or 0),
                                 int(item.get("damage_min", 0) or 0), int(item.get("damage_max", 0) or 0),
-                                int(item.get("armor", 0) or 0), float(item.get("recovery", 0) or 0),
+                                float(item.get("armor", 0) or 0), float(item.get("recovery", 0) or 0),
                                 json.dumps(item.get("properties", {}), ensure_ascii=False), item.get("wiki_page_id"), row_id,
                             ),
                         )
@@ -1030,7 +1044,7 @@ class Database:
                         item.get("quality", "Обычное"), item.get("description", ""), item.get("lore", ""), item.get("image_url", ""),
                         source_url, int(item.get("value", 0) or 0), float(item.get("weight", 0) or 0),
                         int(item.get("hands", 0) or 0), int(item.get("damage_min", 0) or 0),
-                        int(item.get("damage_max", 0) or 0), int(item.get("armor", 0) or 0),
+                        int(item.get("damage_max", 0) or 0), float(item.get("armor", 0) or 0),
                         float(item.get("recovery", 0) or 0), json.dumps(item.get("properties", {}), ensure_ascii=False),
                         item.get("wiki_page_id"),
                     ),
@@ -1069,7 +1083,7 @@ class Database:
                 athletics_rows = await db.execute_fetchall(
                     "SELECT value FROM skills WHERE character_id=? AND name='Атлетика'", (character_id,)
                 )
-                capacity = min(40, 8 + (int(athletics_rows[0]["value"]) if athletics_rows else 0) // 5)
+                capacity = min(40, 8 + (await self.effective_skill_in_connection(db,character_id,'Атлетика')) // 5)
                 current = await db.execute_fetchall(
                     """SELECT inventory.equipped_slot,item_catalog.name,item_catalog.category,item_catalog.weight
                        FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id

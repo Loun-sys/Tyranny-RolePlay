@@ -60,6 +60,10 @@ def main():
                     active_text.append(line)
         if active_text: item['properties']['При использовании'] = '; '.join(dict.fromkeys(active_text))
         game['localizedText'] = True
+        if game.get('statsVersion')==2:
+            from item_effects import refresh_item_properties
+            from consumables import refresh_consumable
+            refresh_item_properties(item);refresh_consumable(item)
     path.write_text(json.dumps(items, ensure_ascii=False, indent=2), encoding='utf-8')
     print(f'Original Russian item references restored: {len(items)}')
 

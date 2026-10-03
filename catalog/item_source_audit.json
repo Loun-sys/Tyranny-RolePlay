@@ -1,0 +1,3462 @@
+{
+  "sourcePrefabs": 1337,
+  "catalog": 1233,
+  "missing": [
+    {
+      "prefab": "1H_Sword_Generic",
+      "archive": "cab-3a03fb32e752762692789b1ef2864371",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 21,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "1H_Shield01",
+      "archive": "cab-3a03fb32e752762692789b1ef2864371",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "2H_Sword_Generic",
+      "archive": "cab-3a03fb32e752762692789b1ef2864371",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 3,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_2H_War_Hammer01_test",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 518,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_ENEMY_STF_IR_Bloodchanter_Staff",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 27,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Natural_Beastman_Hide",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Stone",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 441,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Bronze_ENEMY_Armor_BronzeBrotherhood_Raider",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 440,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Cape",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 25,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Frost",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 441,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_MLC_Claws",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_ENEMY_SHLD_BR_Unbroken_Buckler",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 239,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_1H_BR_Scepter_Nerat",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 561,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_cup01_wine",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 227,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_ART_SHLD_TheBaneward",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 577,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Fire",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 441,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_BR_Sword_prop_Nerat",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 508,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "DEBUG_Blade_of_Assuring_Quality",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 592,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Natural_Beastwoman_Hide",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SCROLL_open",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 0,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "IT_CONS_Scroll_LibraryUpgrade_Symbol_Fear",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1335,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_2H_BR_Spear_CrimsonSpear",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 285,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Research_Scroll_Library_Mindless_Fury_Decrypted",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1057,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_bag_small",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 508,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SHLD_BR_Tower_02",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 635,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_BR_Mace_BronzeBrotherhood",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 451,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "IT_CONS_Scroll_LibraryUpgrade_Mod_SuddenDeath",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 1,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1318,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_BR_Dagger",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 28,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Natural_BeastwomanMage_Hide",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "prop_1H_IR_Sword_Disfavored",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 22,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "IT_CONS_Scroll_LibraryUpgrade_Symbol_Frenzy",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1341,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_FQ_Dis_Item_TIG_Distillates",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 492,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Kills-In-Shadow_Legacy_Hide",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_ENEMY_SHLD_LE_Chorus_DamagedBuckler",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 31,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Bronze_ENEMY_Armor_BronzeBrotherhood_Bruiser",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 440,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Test_Gloves",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1252,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "TR_Oldwall_Crystal_White",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 789,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "prop_SHLD_IR_Disfavored_StoneShield",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 24,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_HarchiandBronze_WorkOrders",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 458,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_2H_BR_Hammer_BronzeBrotherhood",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 442,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_Welby_Note",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 796,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_scr_claws",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Test_Armor",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 42,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SCROLL_SCROLL_V01",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 0,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_IR_Hammer_Blacksmith",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 441,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_d20",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 227,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "prop_1H_IR_Dagger_BloodBound_Melee",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 343,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_1H_IR_Javelin_01",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 469,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_Hammer01",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 28,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SHLD_IR_Heater",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 636,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Armor_Dead_Scourge",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Armor_Dead_Wisp",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_Disfavored_FB",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1111,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_ENEMY_BOW_WD_Fury_Bow",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 284,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_Drumstick",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 28,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_BR_Sword_prop",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 508,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_broom",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 508,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Bronze_ENEMY_Armor_SC_CrimsonSpears",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 286,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_Weighted_Dagger",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 341,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_Item_EdictOfShadow",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1044,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "DEBUG_Bow_Of_Assuring_Quality",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 632,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "prop_Dagger_BloodBound_Thrown",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 343,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_HNT_RockCharge",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_STF_WD_Staff_Starting_Weakness_paperdoll",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 774,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "IT_CONS_Scroll_Testing",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 637,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_1H_BR_Axe_02",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 498,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_BR_Axe_BronzeBrotherhood",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 450,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_Lorebook_Artifact",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 487,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Shock",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 441,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_cup02_beer",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 227,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_Echocall_FoodSupplies",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 322,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SHLD_BR_VendrienGuard_LargeShield",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 360,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_bag_bst",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 227,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_ArtifactLoction_Document",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 357,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Fire",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1292,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_1H_BR_Javelin_02",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 470,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_scr_claws_dark",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_WPN_ENEMY_2H_IR_Spear_01",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 461,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_ENEMY_1H_IR_Hammer_ForgeBound_Stone",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 441,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Armor_Dead_Malice",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SCROLL_open_in_hand",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 0,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_ART_SHLD_AzureShield",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 552,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_WPN_ENEMY_1H_BR_Sword_03",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 224,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SHLD_LE_Chorus_DamagedBuckler",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 31,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Shock",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1294,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_BOW_SP_Gravebow_OLD",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 36,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SHLD_IR_Disfavored_Buckler",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 795,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_ENEMY_BOW_WD_VendrienGuard_Bow",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 484,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_Wisp_claws",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": -1,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "BurningLibrary_FirstSage_Note",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 434,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_LC_Artifact",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 392,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Test_Helmet",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 144,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_IR_Sword_01",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 227,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_SHLD_BR_Tower",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 634,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PORP_2H_BR_Axe_01",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1223,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_IR_Sword_Chorus",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 30,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "PROP_1H_IR_Spear_Disfavored",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 468,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_Bucket01",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 227,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Test_Boots",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1240,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "WPN_1H_IR_Hammer_ForgeBound_Frost",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1293,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Prop_1H_SK_Dagger_BledenMark",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1285,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "Quest_Symbol_of_Resistance",
+      "archive": "cab-763783315a71b3bb7718d1b68c8de901",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 332,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "vx1_WPN_ART_2H_SP_STF_EbsStaff",
+      "archive": "cab-8661a993dfa9f664b1b5c31b398cf638",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1272,
+        "Package": 0
+      }
+    },
+    {
+      "prefab": "vx1_WPN_ART_2H_SP_STF_EbsStaff_Legacy",
+      "archive": "cab-8661a993dfa9f664b1b5c31b398cf638",
+      "cut": 0,
+      "nameRef": {
+        "StringTable": 5,
+        "StringID": 1272,
+        "Package": 0
+      }
+    }
+  ],
+  "lostMods": [],
+  "stats": [
+    {
+      "id": 99,
+      "stat": "Wits",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 8
+    },
+    {
+      "id": 2040,
+      "stat": "Spell_Hallucination",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 2065,
+      "stat": "Spell_Stone",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2156,
+      "stat": "LaunchAttackOnWeaponCrit",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 73
+    },
+    {
+      "id": 59,
+      "stat": "Quickness",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 8
+    },
+    {
+      "id": 56,
+      "stat": "Resolve",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 12
+    },
+    {
+      "id": 2046,
+      "stat": "MagicSkill",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 5
+    },
+    {
+      "id": 2064,
+      "stat": "Spell_Gravity",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2030,
+      "stat": "Spell_Fire",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 161,
+      "stat": "SpellDefense",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 4
+    },
+    {
+      "id": 2097,
+      "stat": "GrantAbility",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 26
+    },
+    {
+      "id": 107,
+      "stat": "BonusHitToCritPercent",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 5
+    },
+    {
+      "id": 0,
+      "stat": "BaseMaxHealth",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 5
+    },
+    {
+      "id": 2108,
+      "stat": "BonusDamageMultBasedOnInverseHealth",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 5
+    },
+    {
+      "id": 2037,
+      "stat": "Spell_Heal",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 6
+    },
+    {
+      "id": 116,
+      "stat": "HealthPercent",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 11
+    },
+    {
+      "id": 150,
+      "stat": "AddAfflictionImmunity",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 20
+    },
+    {
+      "id": 2169,
+      "stat": "NighttimeDamageMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 7
+    },
+    {
+      "id": 90,
+      "stat": "Lore",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 3
+    },
+    {
+      "id": 12,
+      "stat": "Stealth",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 4
+    },
+    {
+      "id": 2000,
+      "stat": "PersonalCooldownMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 7
+    },
+    {
+      "id": 2137,
+      "stat": "BonusHitToCritPercentEnemyBelowHealthPercent",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 6
+    },
+    {
+      "id": 185,
+      "stat": "Accuracy",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 7
+    },
+    {
+      "id": 58,
+      "stat": "Finesse",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 7
+    },
+    {
+      "id": 2035,
+      "stat": "Spell_Weaken",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 3
+    },
+    {
+      "id": 2039,
+      "stat": "Spell_Drain",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 184,
+      "stat": "NoEffect",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 27
+    },
+    {
+      "id": 2045,
+      "stat": "Spell_Tidecasting",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 14,
+      "stat": "DamageThreshold",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 9
+    },
+    {
+      "id": 8,
+      "stat": "Spirit",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 3
+    },
+    {
+      "id": 9,
+      "stat": "Will",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 4
+    },
+    {
+      "id": 104,
+      "stat": "BonusGrazeToMissPercent",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 3
+    },
+    {
+      "id": 57,
+      "stat": "Might",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 12
+    },
+    {
+      "id": 7,
+      "stat": "Endurance",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 45,
+      "stat": "BonusDamageMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 7
+    },
+    {
+      "id": 101,
+      "stat": "CritHitMultiplierBonus",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 7
+    },
+    {
+      "id": 87,
+      "stat": "AttackOnMeleeHit",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 188,
+      "stat": "IncomingDamageMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 8
+    },
+    {
+      "id": 2042,
+      "stat": "PerceptionDistanceMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2112,
+      "stat": "TrapDetectionBonus",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 4
+    },
+    {
+      "id": 100,
+      "stat": "Vitality",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 9
+    },
+    {
+      "id": 2166,
+      "stat": "MovementRateMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 5,
+      "stat": "RangedAccuracy",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2104,
+      "stat": "Performance",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2130,
+      "stat": "CustomSpellReflection",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 3
+    },
+    {
+      "id": 2113,
+      "stat": "SkillPartyXPMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 52
+    },
+    {
+      "id": 2059,
+      "stat": "AddTalent",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 170,
+      "stat": "IncomingCritDamageMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2026,
+      "stat": "Parry",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 8
+    },
+    {
+      "id": 136,
+      "stat": "BonusDamageMultAtLowHealth",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2159,
+      "stat": "LaunchAttackOnWeaponHit",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 89,
+      "stat": "Athletics",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2036,
+      "stat": "Spell_Frenzy",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 181,
+      "stat": "MaxHealthMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 2133,
+      "stat": "BonusSpellSlot",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 74,
+      "stat": "EnemyCritToHitPercent",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 3
+    },
+    {
+      "id": 2027,
+      "stat": "Dodge",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 2057,
+      "stat": "BonusDamageMultOnAfflicted",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 20
+    },
+    {
+      "id": 84,
+      "stat": "DTBypass",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 70,
+      "stat": "DistantEnemyBonus",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 2032,
+      "stat": "Spell_Lightning",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 27,
+      "stat": "BonusUnarmedDamage",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2098,
+      "stat": "AllSkillsBonus",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 109,
+      "stat": "BonusDamageProc",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 2099,
+      "stat": "StartBreathBonus",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 153,
+      "stat": "SpellDamageMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 2143,
+      "stat": "BonusParryPerEnemyEngagedBy",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 3
+    },
+    {
+      "id": 2116,
+      "stat": "AfflictionCastDurationMult",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 140,
+      "stat": "EnemyHitToGrazePercent",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    },
+    {
+      "id": 2158,
+      "stat": "LaunchAttackWhenCrit",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 2
+    },
+    {
+      "id": 215,
+      "stat": "WeaponSwitchCooldownBonus",
+      "trigger": "StatusEffectsOnEquip",
+      "count": 1
+    }
+  ],
+  "applications": {
+    "0": 464
+  },
+  "modFields": {
+    "m_Enabled": 383,
+    "DisplayName": 383,
+    "Cost": 354,
+    "StatusEffectsOnEquip": 349,
+    "OnEquipVisualEffect": 383,
+    "AbilityPrefab": 383,
+    "AbilityTriggeredOn": 48,
+    "AbilityTarget": 29,
+    "AbilitiesToModOnEquip": 6,
+    "AbilityModsOnEquip": 2,
+    "DamageProcs": 3
+  },
+  "samples": [
+    {
+      "name": "Загадка Книгочея",
+      "prefab": "UNIQUE_Cloth_HELM_BindersEnigma",
+      "components": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -2948001224381641059
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4855546306734171163
+          },
+          "m_Name": "",
+          "FilterType": 2,
+          "InventoryDragDropSound": 3,
+          "InventoryEquipSound": 4,
+          "IsQuestItem": 0,
+          "IsIngredient": 0,
+          "FullValueSell": 0,
+          "ForceShowInInventoryLootInterfaces": 0,
+          "MaxStackSize": 1,
+          "NeverDropAsLoot": 0,
+          "Unique": 0,
+          "PlayerBound": 0,
+          "OneOfAKind": 0,
+          "CutFromGame": 0,
+          "Value": {
+            "InitialValue": 10.0
+          },
+          "DisplayName": {
+            "StringTable": 5,
+            "StringID": 884,
+            "Package": 0
+          },
+          "DescriptionText": {
+            "StringTable": 5,
+            "StringID": 1632,
+            "Package": 0
+          },
+          "IconTexture": {
+            "m_FileID": 0,
+            "m_PathID": 8840866551650452763
+          },
+          "IconLargeTexture": {
+            "m_FileID": 0,
+            "m_PathID": -1952221813599130207
+          },
+          "InspectionTexture": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "DisableInspection": 0,
+          "MiscType": 0,
+          "DroppedItemContainer": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "m_cachedItemTypeValue": 0,
+          "HeadSlot": 1,
+          "NeckSlot": 0,
+          "ArmorSlot": 0,
+          "RingRightHandSlot": 0,
+          "RingLeftHandSlot": 0,
+          "HandSlot": 0,
+          "CapeSlot": 0,
+          "FeetSlot": 0,
+          "WaistSlot": 0,
+          "GrimoireSlot": 0,
+          "PrimaryWeaponSlot": 0,
+          "SecondaryWeaponSlot": 0,
+          "BothPrimaryAndSecondarySlot": 0,
+          "UseBackScabbardWhenSheathed": 0,
+          "PetSlot": 0,
+          "LocksOnEquip": 0,
+          "IsProp": 0,
+          "UnequipOnDeath": 1,
+          "Appearance": {
+            "bodyPiece": 5,
+            "armorType": 1,
+            "modelVariation": 4,
+            "materialVariation": 1,
+            "specialOverride": ""
+          },
+          "StatusEffects": [],
+          "ItemMods": [
+            {
+              "m_FileID": 0,
+              "m_PathID": 4804159438899230194
+            },
+            {
+              "m_FileID": 0,
+              "m_PathID": 2238726627660491667
+            }
+          ],
+          "OnEquipVFXList": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousObj": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousSlot": 16,
+          "RestrictedToClass": [],
+          "RestrictedToCharacter": 0,
+          "PrimaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "SecondaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_ownerEquipment": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ActiveWhenWielded": [],
+          "RightHandIK": 0,
+          "m_bSubscribedToDeathEvent": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -2948001224381641059
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4862359340389065705
+          },
+          "m_Name": "",
+          "Mobile": 1,
+          "TemplateOnly": 0,
+          "m_prefabPath": "Assets/Data/Prefabs/Items/Head/Cloth/UNIQUE_Cloth_HELM_BindersEnigma.prefab",
+          "m_isPrefab": 1
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -2948001224381641059
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -6707392170690938290
+          },
+          "m_Name": "",
+          "UniqueID": "",
+          "GlobalObject": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -2948001224381641059
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -1537218242319838516
+          },
+          "m_Name": "",
+          "ParryBonus": -15,
+          "DodgeBonus": -10,
+          "AccuracyBonus": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -2948001224381641059
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 3696081712173924636
+          },
+          "m_Name": "",
+          "DamageThreshold": 1.2000000476837158,
+          "DamageThresholdMax": 0.0,
+          "DamageReduction": 0.0,
+          "SpeedFactor": 1.0,
+          "RecoveryModifier": 0.10000000149011612,
+          "ArmorCategory": 0,
+          "Material": 2,
+          "SkillType": 12,
+          "DtPercPiercing": 100,
+          "DtPercSlashing": 50,
+          "DtPercCrushing": 100,
+          "DtPercBurning": 50,
+          "DtPercFreezing": 150,
+          "DtPercShocking": 150,
+          "DtPercCorroding": 100,
+          "DtPercArcane": 100,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "DtAdjustment": 0.0
+          },
+          "QualityScaleID": 50,
+          "QualityScaleLevel": 4,
+          "DeflectionBonus": 0
+        }
+      ],
+      "mods": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 4794085592144039588
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 8751797900369213674
+          },
+          "m_Name": "",
+          "DisplayName": {
+            "StringTable": 16,
+            "StringID": 35,
+            "Package": 0
+          },
+          "ModEnchantCategory": 0,
+          "Cost": 1,
+          "FriendlyRadius": 0.0,
+          "StatusEffectsOnEquip": [
+            {
+              "Tag": "Wits",
+              "Persistent": 1,
+              "IsHostile": 0,
+              "HideFromPortrait": 1,
+              "HideFromUI": 0,
+              "HideFromUIInspect": 0,
+              "Apply": 0,
+              "Value": 1.0,
+              "ExtraValue": 0.0,
+              "Duration": 0.0,
+              "ExtraObject": "",
+              "LastsUntilCombatEnds": 0,
+              "LastsUntilRest": 0,
+              "MaxRestCycles": 0,
+              "IntervalRate": 0,
+              "OneHitUse": 0,
+              "OnStartVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnAppliedVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnStopVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnAuraVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnTriggerVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "ExtraVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "VFXList": [],
+              "Icon": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "Keyword": "",
+              "DontHideFromLog": 0,
+              "IgnoreAbilityDeactivation": 0,
+              "m_deserializeInitialized": 1,
+              "ApplicationPrerequisites": [],
+              "AffectsStat": 99,
+              "DmgType": 9,
+              "DefType": 5,
+              "Companion": 0,
+              "OnlyIfNotCompanion": 0,
+              "ContinuousApplicationAura": 0,
+              "ChecksReligion": 0,
+              "VisualEffectAttach": 0,
+              "TrapPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "EquippablePrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AttackPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AfflictionPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AfflictionPrefabTag": "",
+              "AbilityPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "RaceType": 0,
+              "Skill": 0,
+              "TriggerAdjustment": {
+                "Type": 0,
+                "TriggerValue": 0.0,
+                "ValueAdjustment": 0.0,
+                "DurationAdjustment": 0.0,
+                "RadiusAdjustment": 0.0,
+                "MaxTriggerCount": 0,
+                "RemoveEffectAtMax": 0,
+                "ResetTriggerOnEffectPulse": 0,
+                "ResetTriggerOnEffectEnd": 0,
+                "DisplayType": 1,
+                "ShouldShowActivation": 0
+              },
+              "SwapToInstructionSet": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "ShowInLog": 0,
+              "Stackable": 0,
+              "UsePassiveStackingRules": 1,
+              "ClearOnOwnerDeath": 0,
+              "UseTargetAsLaunchAttackOwner": 0,
+              "AttackTypeTriggerForLaunchAttack": 2,
+              "LevelScaling": {
+                "BaseLevel": 0,
+                "LevelIncrement": 0,
+                "MaxLevel": 0,
+                "UseProgressionIndexForScaling": 0,
+                "Faction": 0,
+                "Axis": 0,
+                "UseTargetReputation": 0,
+                "ValueAdjustment": 0.0,
+                "ExtraValueAdjustment": 0.0,
+                "DurationAdjustment": 0.0
+              }
+            }
+          ],
+          "AbilitiesToModOnEquip": [],
+          "AbilityModsOnEquip": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "StatusEffectsOnLaunch": [],
+          "StatusEffectsOnAttack": [],
+          "StatusEffectsOnCrit": [],
+          "DamageProcs": [],
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AbilityTriggeredOn": 0,
+          "AbilityTarget": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 7471911488673087231
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 8751797900369213674
+          },
+          "m_Name": "",
+          "DisplayName": {
+            "StringTable": 16,
+            "StringID": 75,
+            "Package": 0
+          },
+          "ModEnchantCategory": 0,
+          "Cost": 2,
+          "FriendlyRadius": 0.0,
+          "StatusEffectsOnEquip": [
+            {
+              "Tag": "Illusion Skill",
+              "Persistent": 1,
+              "IsHostile": 0,
+              "HideFromPortrait": 1,
+              "HideFromUI": 0,
+              "HideFromUIInspect": 0,
+              "Apply": 0,
+              "Value": 10.0,
+              "ExtraValue": 0.0,
+              "Duration": 0.0,
+              "ExtraObject": "",
+              "LastsUntilCombatEnds": 0,
+              "LastsUntilRest": 0,
+              "MaxRestCycles": 0,
+              "IntervalRate": 0,
+              "OneHitUse": 0,
+              "OnStartVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnAppliedVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnStopVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnAuraVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnTriggerVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "ExtraVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "VFXList": [],
+              "Icon": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "Keyword": "",
+              "DontHideFromLog": 0,
+              "IgnoreAbilityDeactivation": 0,
+              "m_deserializeInitialized": 1,
+              "ApplicationPrerequisites": [],
+              "AffectsStat": 2040,
+              "DmgType": 9,
+              "DefType": 5,
+              "Companion": 0,
+              "OnlyIfNotCompanion": 0,
+              "ContinuousApplicationAura": 0,
+              "ChecksReligion": 0,
+              "VisualEffectAttach": 0,
+              "TrapPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "EquippablePrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AttackPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AfflictionPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AfflictionPrefabTag": "",
+              "AbilityPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "RaceType": 0,
+              "Skill": 0,
+              "TriggerAdjustment": {
+                "Type": 0,
+                "TriggerValue": 0.0,
+                "ValueAdjustment": 0.0,
+                "DurationAdjustment": 0.0,
+                "RadiusAdjustment": 0.0,
+                "MaxTriggerCount": 0,
+                "RemoveEffectAtMax": 0,
+                "ResetTriggerOnEffectPulse": 0,
+                "ResetTriggerOnEffectEnd": 0,
+                "DisplayType": 1,
+                "ShouldShowActivation": 0
+              },
+              "SwapToInstructionSet": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "ShowInLog": 0,
+              "Stackable": 0,
+              "UsePassiveStackingRules": 1,
+              "ClearOnOwnerDeath": 0,
+              "UseTargetAsLaunchAttackOwner": 0,
+              "AttackTypeTriggerForLaunchAttack": 2,
+              "LevelScaling": {
+                "BaseLevel": 0,
+                "LevelIncrement": 0,
+                "MaxLevel": 0,
+                "UseProgressionIndexForScaling": 0,
+                "Faction": 0,
+                "Axis": 0,
+                "UseTargetReputation": 0,
+                "ValueAdjustment": 0.0,
+                "ExtraValueAdjustment": 0.0,
+                "DurationAdjustment": 0.0
+              }
+            }
+          ],
+          "AbilitiesToModOnEquip": [],
+          "AbilityModsOnEquip": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "StatusEffectsOnLaunch": [],
+          "StatusEffectsOnAttack": [],
+          "StatusEffectsOnCrit": [],
+          "DamageProcs": [],
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AbilityTriggeredOn": 0,
+          "AbilityTarget": 0
+        }
+      ]
+    },
+    {
+      "name": "Шлем Каменных Щитов",
+      "prefab": "Leather_HELM_Disfavored_Stone_Shield",
+      "components": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -6793008992179223710
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4855546306734171163
+          },
+          "m_Name": "",
+          "FilterType": 2,
+          "InventoryDragDropSound": 0,
+          "InventoryEquipSound": 1,
+          "IsQuestItem": 0,
+          "IsIngredient": 0,
+          "FullValueSell": 0,
+          "ForceShowInInventoryLootInterfaces": 0,
+          "MaxStackSize": 1,
+          "NeverDropAsLoot": 0,
+          "Unique": 0,
+          "PlayerBound": 0,
+          "OneOfAKind": 0,
+          "CutFromGame": 0,
+          "Value": {
+            "InitialValue": 160.0
+          },
+          "DisplayName": {
+            "StringTable": 5,
+            "StringID": 147,
+            "Package": 0
+          },
+          "DescriptionText": {
+            "StringTable": 5,
+            "StringID": -1,
+            "Package": 0
+          },
+          "IconTexture": {
+            "m_FileID": 0,
+            "m_PathID": 8925491271825137425
+          },
+          "IconLargeTexture": {
+            "m_FileID": 0,
+            "m_PathID": 752619128585291551
+          },
+          "InspectionTexture": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "DisableInspection": 0,
+          "MiscType": 0,
+          "DroppedItemContainer": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "m_cachedItemTypeValue": 0,
+          "HeadSlot": 1,
+          "NeckSlot": 0,
+          "ArmorSlot": 0,
+          "RingRightHandSlot": 0,
+          "RingLeftHandSlot": 0,
+          "HandSlot": 0,
+          "CapeSlot": 0,
+          "FeetSlot": 0,
+          "WaistSlot": 0,
+          "GrimoireSlot": 0,
+          "PrimaryWeaponSlot": 0,
+          "SecondaryWeaponSlot": 0,
+          "BothPrimaryAndSecondarySlot": 0,
+          "UseBackScabbardWhenSheathed": 0,
+          "PetSlot": 0,
+          "LocksOnEquip": 0,
+          "IsProp": 0,
+          "UnequipOnDeath": 1,
+          "Appearance": {
+            "bodyPiece": 5,
+            "armorType": 2,
+            "modelVariation": 1,
+            "materialVariation": 1,
+            "specialOverride": ""
+          },
+          "StatusEffects": [],
+          "ItemMods": [],
+          "OnEquipVFXList": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousObj": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousSlot": 5,
+          "RestrictedToClass": [],
+          "RestrictedToCharacter": 0,
+          "PrimaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "SecondaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_ownerEquipment": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ActiveWhenWielded": [],
+          "RightHandIK": 0,
+          "m_bSubscribedToDeathEvent": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -6793008992179223710
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 3696081712173924636
+          },
+          "m_Name": "",
+          "DamageThreshold": 1.7999999523162842,
+          "DamageThresholdMax": 0.0,
+          "DamageReduction": 0.0,
+          "SpeedFactor": 1.0,
+          "RecoveryModifier": 0.25,
+          "ArmorCategory": 1,
+          "Material": 5,
+          "SkillType": 13,
+          "DtPercPiercing": 100,
+          "DtPercSlashing": 100,
+          "DtPercCrushing": 100,
+          "DtPercBurning": 50,
+          "DtPercFreezing": 150,
+          "DtPercShocking": 100,
+          "DtPercCorroding": 150,
+          "DtPercArcane": 100,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "DtAdjustment": 0.0
+          },
+          "QualityScaleID": 3650,
+          "QualityScaleLevel": 1,
+          "DeflectionBonus": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -6793008992179223710
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4862359340389065705
+          },
+          "m_Name": "",
+          "Mobile": 1,
+          "TemplateOnly": 0,
+          "m_prefabPath": "Assets/Data/Prefabs/Items/Head/Leather/Leather_HELM_Disfavored_Stone_Shield.prefab",
+          "m_isPrefab": 1
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -6793008992179223710
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -1537218242319838516
+          },
+          "m_Name": "",
+          "ParryBonus": -10,
+          "DodgeBonus": -10,
+          "AccuracyBonus": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -6793008992179223710
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -6707392170690938290
+          },
+          "m_Name": "",
+          "UniqueID": "",
+          "GlobalObject": 0
+        }
+      ],
+      "mods": []
+    },
+    {
+      "name": "Суконный пояс",
+      "prefab": "Cloth_Outfit_04",
+      "components": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6924300036886742797
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4855546306734171163
+          },
+          "m_Name": "",
+          "FilterType": 2,
+          "InventoryDragDropSound": 3,
+          "InventoryEquipSound": 4,
+          "IsQuestItem": 0,
+          "IsIngredient": 0,
+          "FullValueSell": 0,
+          "ForceShowInInventoryLootInterfaces": 0,
+          "MaxStackSize": 1,
+          "NeverDropAsLoot": 0,
+          "Unique": 0,
+          "PlayerBound": 0,
+          "OneOfAKind": 0,
+          "CutFromGame": 0,
+          "Value": {
+            "InitialValue": 10.0
+          },
+          "DisplayName": {
+            "StringTable": 5,
+            "StringID": 58,
+            "Package": 0
+          },
+          "DescriptionText": {
+            "StringTable": 5,
+            "StringID": -1,
+            "Package": 0
+          },
+          "IconTexture": {
+            "m_FileID": 0,
+            "m_PathID": -4061534830814309015
+          },
+          "IconLargeTexture": {
+            "m_FileID": 0,
+            "m_PathID": 8499551488840628584
+          },
+          "InspectionTexture": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "DisableInspection": 0,
+          "MiscType": 0,
+          "DroppedItemContainer": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "m_cachedItemTypeValue": 0,
+          "HeadSlot": 0,
+          "NeckSlot": 0,
+          "ArmorSlot": 1,
+          "RingRightHandSlot": 0,
+          "RingLeftHandSlot": 0,
+          "HandSlot": 0,
+          "CapeSlot": 0,
+          "FeetSlot": 0,
+          "WaistSlot": 0,
+          "GrimoireSlot": 0,
+          "PrimaryWeaponSlot": 0,
+          "SecondaryWeaponSlot": 0,
+          "BothPrimaryAndSecondarySlot": 0,
+          "UseBackScabbardWhenSheathed": 0,
+          "PetSlot": 0,
+          "LocksOnEquip": 0,
+          "IsProp": 0,
+          "UnequipOnDeath": 1,
+          "Appearance": {
+            "bodyPiece": 1,
+            "armorType": 1,
+            "modelVariation": 15,
+            "materialVariation": 1,
+            "specialOverride": ""
+          },
+          "StatusEffects": [],
+          "ItemMods": [],
+          "OnEquipVFXList": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousObj": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousSlot": 5,
+          "RestrictedToClass": [],
+          "RestrictedToCharacter": 0,
+          "PrimaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "SecondaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_ownerEquipment": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ActiveWhenWielded": [],
+          "RightHandIK": 0,
+          "m_bSubscribedToDeathEvent": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6924300036886742797
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -6707392170690938290
+          },
+          "m_Name": "",
+          "UniqueID": "",
+          "GlobalObject": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6924300036886742797
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4862359340389065705
+          },
+          "m_Name": "",
+          "Mobile": 1,
+          "TemplateOnly": 0,
+          "m_prefabPath": "Assets/Data/Prefabs/Items/Armor/Cloth/Cloth_Outfit_04.prefab",
+          "m_isPrefab": 1
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6924300036886742797
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 3696081712173924636
+          },
+          "m_Name": "",
+          "DamageThreshold": 3.5999999046325684,
+          "DamageThresholdMax": 0.0,
+          "DamageReduction": 0.0,
+          "SpeedFactor": 1.0,
+          "RecoveryModifier": 0.30000001192092896,
+          "ArmorCategory": 0,
+          "Material": 2,
+          "SkillType": 12,
+          "DtPercPiercing": 100,
+          "DtPercSlashing": 50,
+          "DtPercCrushing": 100,
+          "DtPercBurning": 50,
+          "DtPercFreezing": 150,
+          "DtPercShocking": 150,
+          "DtPercCorroding": 100,
+          "DtPercArcane": 100,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "DtAdjustment": 0.0
+          },
+          "QualityScaleID": 1,
+          "QualityScaleLevel": 1,
+          "DeflectionBonus": 0
+        }
+      ],
+      "mods": []
+    },
+    {
+      "name": "Тяжелый бронзовый шлем с гребнем",
+      "prefab": "Bronze_HELM_03",
+      "components": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -850518423494664030
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4855546306734171163
+          },
+          "m_Name": "",
+          "FilterType": 2,
+          "InventoryDragDropSound": 0,
+          "InventoryEquipSound": 1,
+          "IsQuestItem": 0,
+          "IsIngredient": 0,
+          "FullValueSell": 0,
+          "ForceShowInInventoryLootInterfaces": 0,
+          "MaxStackSize": 1,
+          "NeverDropAsLoot": 0,
+          "Unique": 0,
+          "PlayerBound": 0,
+          "OneOfAKind": 0,
+          "CutFromGame": 0,
+          "Value": {
+            "InitialValue": 370.0
+          },
+          "DisplayName": {
+            "StringTable": 5,
+            "StringID": 772,
+            "Package": 0
+          },
+          "DescriptionText": {
+            "StringTable": 5,
+            "StringID": -1,
+            "Package": 0
+          },
+          "IconTexture": {
+            "m_FileID": 0,
+            "m_PathID": -8180521567253155809
+          },
+          "IconLargeTexture": {
+            "m_FileID": 0,
+            "m_PathID": -3918381383194799669
+          },
+          "InspectionTexture": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "DisableInspection": 0,
+          "MiscType": 0,
+          "DroppedItemContainer": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "m_cachedItemTypeValue": 0,
+          "HeadSlot": 1,
+          "NeckSlot": 0,
+          "ArmorSlot": 0,
+          "RingRightHandSlot": 0,
+          "RingLeftHandSlot": 0,
+          "HandSlot": 0,
+          "CapeSlot": 0,
+          "FeetSlot": 0,
+          "WaistSlot": 0,
+          "GrimoireSlot": 0,
+          "PrimaryWeaponSlot": 0,
+          "SecondaryWeaponSlot": 0,
+          "BothPrimaryAndSecondarySlot": 0,
+          "UseBackScabbardWhenSheathed": 0,
+          "PetSlot": 0,
+          "LocksOnEquip": 0,
+          "IsProp": 0,
+          "UnequipOnDeath": 1,
+          "Appearance": {
+            "bodyPiece": 5,
+            "armorType": 5,
+            "modelVariation": 8,
+            "materialVariation": 1,
+            "specialOverride": ""
+          },
+          "StatusEffects": [],
+          "ItemMods": [],
+          "OnEquipVFXList": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousObj": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousSlot": 16,
+          "RestrictedToClass": [],
+          "RestrictedToCharacter": 0,
+          "PrimaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "SecondaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_ownerEquipment": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ActiveWhenWielded": [],
+          "RightHandIK": 0,
+          "m_bSubscribedToDeathEvent": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -850518423494664030
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 3696081712173924636
+          },
+          "m_Name": "",
+          "DamageThreshold": 1.100000023841858,
+          "DamageThresholdMax": 0.0,
+          "DamageReduction": 0.0,
+          "SpeedFactor": 0.699999988079071,
+          "RecoveryModifier": 0.30000001192092896,
+          "ArmorCategory": 1,
+          "Material": 6,
+          "SkillType": 13,
+          "DtPercPiercing": 125,
+          "DtPercSlashing": 125,
+          "DtPercCrushing": 50,
+          "DtPercBurning": 100,
+          "DtPercFreezing": 100,
+          "DtPercShocking": 100,
+          "DtPercCorroding": 100,
+          "DtPercArcane": 100,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "DtAdjustment": 0.0
+          },
+          "QualityScaleID": 650,
+          "QualityScaleLevel": 1,
+          "DeflectionBonus": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -850518423494664030
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -1537218242319838516
+          },
+          "m_Name": "",
+          "ParryBonus": -10,
+          "DodgeBonus": -5,
+          "AccuracyBonus": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -850518423494664030
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4862359340389065705
+          },
+          "m_Name": "",
+          "Mobile": 1,
+          "TemplateOnly": 0,
+          "m_prefabPath": "Assets/Data/Prefabs/Items/Head/Bronze/Bronze_HELM_03.prefab",
+          "m_isPrefab": 1
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -850518423494664030
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -6707392170690938290
+          },
+          "m_Name": "",
+          "UniqueID": "",
+          "GlobalObject": 0
+        }
+      ],
+      "mods": []
+    },
+    {
+      "name": "Перчатки подчинения",
+      "prefab": "Leather_GLOVE_Submission_Gloves",
+      "components": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6105555427877203470
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4855546306734171163
+          },
+          "m_Name": "",
+          "FilterType": 2,
+          "InventoryDragDropSound": 2,
+          "InventoryEquipSound": 3,
+          "IsQuestItem": 0,
+          "IsIngredient": 0,
+          "FullValueSell": 0,
+          "ForceShowInInventoryLootInterfaces": 0,
+          "MaxStackSize": 1,
+          "NeverDropAsLoot": 0,
+          "Unique": 0,
+          "PlayerBound": 0,
+          "OneOfAKind": 0,
+          "CutFromGame": 0,
+          "Value": {
+            "InitialValue": 120.0
+          },
+          "DisplayName": {
+            "StringTable": 5,
+            "StringID": 1825,
+            "Package": 0
+          },
+          "DescriptionText": {
+            "StringTable": 5,
+            "StringID": 1844,
+            "Package": 0
+          },
+          "IconTexture": {
+            "m_FileID": 0,
+            "m_PathID": 6568065958892388398
+          },
+          "IconLargeTexture": {
+            "m_FileID": 0,
+            "m_PathID": -6552705109021849607
+          },
+          "InspectionTexture": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "DisableInspection": 0,
+          "MiscType": 0,
+          "DroppedItemContainer": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "m_cachedItemTypeValue": 0,
+          "HeadSlot": 0,
+          "NeckSlot": 0,
+          "ArmorSlot": 0,
+          "RingRightHandSlot": 0,
+          "RingLeftHandSlot": 0,
+          "HandSlot": 1,
+          "CapeSlot": 0,
+          "FeetSlot": 0,
+          "WaistSlot": 0,
+          "GrimoireSlot": 0,
+          "PrimaryWeaponSlot": 0,
+          "SecondaryWeaponSlot": 0,
+          "BothPrimaryAndSecondarySlot": 0,
+          "UseBackScabbardWhenSheathed": 0,
+          "PetSlot": 0,
+          "LocksOnEquip": 0,
+          "IsProp": 0,
+          "UnequipOnDeath": 1,
+          "Appearance": {
+            "bodyPiece": 4,
+            "armorType": 2,
+            "modelVariation": 13,
+            "materialVariation": 1,
+            "specialOverride": ""
+          },
+          "StatusEffects": [],
+          "ItemMods": [
+            {
+              "m_FileID": 0,
+              "m_PathID": 8168557653592065448
+            }
+          ],
+          "OnEquipVFXList": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousObj": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "MiscellaneousSlot": 16,
+          "RestrictedToClass": [],
+          "RestrictedToCharacter": 0,
+          "PrimaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "SecondaryColorOverride": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          },
+          "m_ownerEquipment": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "ActiveWhenWielded": [],
+          "RightHandIK": 0,
+          "m_bSubscribedToDeathEvent": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6105555427877203470
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": -6707392170690938290
+          },
+          "m_Name": "",
+          "UniqueID": "",
+          "GlobalObject": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6105555427877203470
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 3696081712173924636
+          },
+          "m_Name": "",
+          "DamageThreshold": 0.75,
+          "DamageThresholdMax": 0.0,
+          "DamageReduction": 0.0,
+          "SpeedFactor": 1.0,
+          "RecoveryModifier": 0.07500000298023224,
+          "ArmorCategory": 0,
+          "Material": 3,
+          "SkillType": 12,
+          "DtPercPiercing": 100,
+          "DtPercSlashing": 100,
+          "DtPercCrushing": 150,
+          "DtPercBurning": 50,
+          "DtPercFreezing": 50,
+          "DtPercShocking": 150,
+          "DtPercCorroding": 50,
+          "DtPercArcane": 100,
+          "LevelScaling": {
+            "BaseLevel": 0,
+            "LevelIncrement": 1,
+            "MaxLevel": 0,
+            "UseProgressionIndexForScaling": 0,
+            "Faction": 0,
+            "Axis": 0,
+            "DtAdjustment": 0.0
+          },
+          "QualityScaleID": 500,
+          "QualityScaleLevel": 1,
+          "DeflectionBonus": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6105555427877203470
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 2319700336239035479
+          },
+          "m_Name": "",
+          "DamageData": {
+            "Type": 1,
+            "Minimum": 8.0,
+            "Maximum": 12.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          },
+          "oldDamageData": {
+            "Type": 0,
+            "Minimum": 1.0,
+            "Maximum": 6.0,
+            "LevelScaling": {
+              "BaseLevel": 0,
+              "LevelIncrement": 1,
+              "MaxLevel": 0,
+              "UseProgressionIndexForScaling": 0,
+              "Faction": 0,
+              "Axis": 0,
+              "BaseDamageRatioAdjustment": 1.0
+            },
+            "DamageProc": [],
+            "BestOfType": 9,
+            "WeaponDamageMult": 0.0
+          },
+          "AccuracyBonus": 0,
+          "MeleeDamageBonus": 0,
+          "PrecisionBonus": 0
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 6105555427877203470
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 4862359340389065705
+          },
+          "m_Name": "",
+          "Mobile": 1,
+          "TemplateOnly": 0,
+          "m_prefabPath": "Assets/Data/Prefabs/Items/WME_Items/Leather_GLOVE_Submission_Gloves.prefab",
+          "m_isPrefab": 1
+        }
+      ],
+      "mods": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": -9151777486628594776
+          },
+          "m_Enabled": 1,
+          "m_Script": {
+            "m_FileID": 0,
+            "m_PathID": 8751797900369213674
+          },
+          "m_Name": "",
+          "DisplayName": {
+            "StringTable": 16,
+            "StringID": 166,
+            "Package": 0
+          },
+          "ModEnchantCategory": 0,
+          "Cost": 1,
+          "FriendlyRadius": 0.0,
+          "StatusEffectsOnEquip": [
+            {
+              "Tag": "Launch Attack on Weapon Crit",
+              "Persistent": 1,
+              "IsHostile": 0,
+              "HideFromPortrait": 1,
+              "HideFromUI": 0,
+              "HideFromUIInspect": 0,
+              "Apply": 0,
+              "Value": 0.0,
+              "ExtraValue": 0.0,
+              "Duration": 0.0,
+              "ExtraObject": "",
+              "LastsUntilCombatEnds": 0,
+              "LastsUntilRest": 0,
+              "MaxRestCycles": 0,
+              "IntervalRate": 0,
+              "OneHitUse": 0,
+              "OnStartVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnAppliedVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnStopVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnAuraVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "OnTriggerVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "ExtraVisualEffect": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "VFXList": [],
+              "Icon": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "Keyword": "",
+              "DontHideFromLog": 0,
+              "IgnoreAbilityDeactivation": 0,
+              "m_deserializeInitialized": 1,
+              "ApplicationPrerequisites": [],
+              "AffectsStat": 2156,
+              "DmgType": 9,
+              "DefType": 5,
+              "Companion": 0,
+              "OnlyIfNotCompanion": 0,
+              "ContinuousApplicationAura": 0,
+              "ChecksReligion": 0,
+              "VisualEffectAttach": 0,
+              "TrapPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "EquippablePrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AttackPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 8298685202741802055
+              },
+              "AfflictionPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "AfflictionPrefabTag": "",
+              "AbilityPrefab": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "RaceType": 0,
+              "Skill": 0,
+              "TriggerAdjustment": {
+                "Type": 0,
+                "TriggerValue": 0.0,
+                "ValueAdjustment": 0.0,
+                "DurationAdjustment": 0.0,
+                "RadiusAdjustment": 0.0,
+                "MaxTriggerCount": 0,
+                "RemoveEffectAtMax": 0,
+                "ResetTriggerOnEffectPulse": 0,
+                "ResetTriggerOnEffectEnd": 0,
+                "DisplayType": 1,
+                "ShouldShowActivation": 0
+              },
+              "SwapToInstructionSet": {
+                "m_FileID": 0,
+                "m_PathID": 0
+              },
+              "ShowInLog": 0,
+              "Stackable": 0,
+              "UsePassiveStackingRules": 1,
+              "ClearOnOwnerDeath": 0,
+              "UseTargetAsLaunchAttackOwner": 0,
+              "AttackTypeTriggerForLaunchAttack": 2,
+              "LevelScaling": {
+                "BaseLevel": 0,
+                "LevelIncrement": 1,
+                "MaxLevel": 0,
+                "UseProgressionIndexForScaling": 0,
+                "Faction": 0,
+                "Axis": 0,
+                "UseTargetReputation": 0,
+                "ValueAdjustment": 0.0,
+                "ExtraValueAdjustment": 0.0,
+                "DurationAdjustment": 0.0
+              }
+            }
+          ],
+          "AbilitiesToModOnEquip": [],
+          "AbilityModsOnEquip": [],
+          "OnEquipVisualEffect": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "StatusEffectsOnLaunch": [],
+          "StatusEffectsOnAttack": [],
+          "StatusEffectsOnCrit": [],
+          "DamageProcs": [],
+          "AbilityPrefab": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          },
+          "AbilityTriggeredOn": 0,
+          "AbilityTarget": 0
+        }
+      ]
+    }
+  ],
+  "enums": {
+    "DamageType": {
+      "0": "Slash",
+      "1": "Crush",
+      "2": "Pierce",
+      "3": "Burn",
+      "4": "Freeze",
+      "5": "Shock",
+      "6": "Corrode",
+      "7": "Spirit",
+      "8": "Count",
+      "9": "None",
+      "10": "All",
+      "11": "Raw",
+      "12": "PrimaryWeapon",
+      "13": "Random",
+      "14": "SecondaryWeapon"
+    },
+    "ModifiedStat": {
+      "0": "BaseMaxHealth",
+      "1": "DO_NOT_USE_MaxStamina",
+      "2": "Health",
+      "3": "DO_NOT_USE_Stamina",
+      "4": "MeleeAccuracy",
+      "5": "RangedAccuracy",
+      "6": "Physical",
+      "7": "Endurance",
+      "8": "Spirit",
+      "9": "Will",
+      "10": "DO_NOT_USE_StaminaRechargeRate",
+      "11": "AttackSpeed",
+      "12": "Stealth",
+      "13": "BonusDamage",
+      "14": "DamageThreshold",
+      "15": "DamageMinimum",
+      "16": "MovementRate",
+      "17": "NonTargetable",
+      "18": "NonMobile",
+      "19": "KnockedDown",
+      "20": "EngagedEnemyCount",
+      "21": "EngagementRadius",
+      "22": "EngagementAccuracy",
+      "23": "EngagementDamage",
+      "24": "Engageable",
+      "25": "RawDamage",
+      "26": "Stunned",
+      "27": "BonusUnarmedDamage",
+      "28": "MeleeAttackDistanceMult",
+      "29": "RangedAttackDistanceMult",
+      "30": "MeleeAttackAllOnPath",
+      "31": "BonusMeleeDamageFromWounds",
+      "32": "BonusDTFromArmor",
+      "33": "MeleeMissThresholdDelta_DO_NOT_USE",
+      "34": "MeleeDamageRangePctIncreaseToMin",
+      "35": "CanStun",
+      "36": "SneakAttackOnNearDead",
+      "37": "MeleeCritThresholdDelta_DO_NOT_USE",
+      "38": "RangedCritThresholdDelta_DO_NOT_USE",
+      "39": "CanCripple",
+      "40": "MarkedPrey",
+      "41": "SuspendHostileEffects",
+      "42": "BonusMeleeDamage",
+      "43": "ImmuneToEngageStop",
+      "44": "HealthLossPctMult_DO_NOT_USE",
+      "45": "BonusDamageMult",
+      "46": "FocusWhenHits",
+      "47": "BeamDamageMult",
+      "48": "DrainResolveForDeflection",
+      "49": "ReapplyDamage",
+      "50": "ReapplyDamageToNearbyEnemies",
+      "51": "ReloadSpeed",
+      "52": "DropTrap",
+      "53": "StasisShield",
+      "54": "SuspendBeneficialEffects",
+      "55": "DamageBasedOnInverseHealth",
+      "56": "Resolve",
+      "57": "Might",
+      "58": "Finesse",
+      "59": "Quickness",
+      "60": "SummonWeapon",
+      "61": "TransferHealth",
+      "62": "DO_NOT_USE_StaminaRechargeRateMult",
+      "63": "VesselAccuracy",
+      "64": "BeastAccuracy",
+      "65": "WilderAccuracy",
+      "66": "StunDefense",
+      "67": "KnockdownDefense",
+      "68": "PoisonDefense",
+      "69": "DiseaseDefense",
+      "70": "DistantEnemyBonus",
+      "71": "BonusDamageMultOnLowHealthTarget",
+      "72": "BonusCritChanceOnSameEnemy",
+      "73": "BonusAccuracyForNearestAllyOnSameEnemy",
+      "74": "EnemyCritToHitPercent",
+      "75": "HostileEffectDurationMult",
+      "76": "DO_NOT_USE_DeflectReflexGrazeToMissPercent",
+      "77": "DO_NOT_USE_FortitudeWillGrazeToMissPercent",
+      "78": "ExtraStraightBounces",
+      "79": "DamageToDOT",
+      "80": "BonusDamageMultIfTargetHasDOT",
+      "81": "RedirectMeleeAttacks",
+      "82": "HostileAOEDamageMultiplier",
+      "83": "ImprovedFlanking",
+      "84": "DTBypass",
+      "85": "StealSpell",
+      "86": "SwapFaction",
+      "87": "AttackOnMeleeHit",
+      "88": "MinorSpellReflection",
+      "89": "Athletics",
+      "90": "Lore",
+      "91": "Mechanics",
+      "92": "Survival",
+      "93": "Crafting",
+      "94": "PushDefense",
+      "95": "WhileStunnedDefense",
+      "96": "WhileKnockeddownDefense",
+      "97": "BonusAccuracyOnSameEnemy",
+      "98": "BonusDamageMultOnSameEnemy",
+      "99": "Wits",
+      "100": "Vitality",
+      "101": "CritHitMultiplierBonus",
+      "102": "BonusGrazeToHitPercent",
+      "103": "CanStunOnCrit",
+      "104": "BonusGrazeToMissPercent",
+      "105": "BonusCritToHitPercent",
+      "106": "BonusMissToGrazePercent",
+      "107": "BonusHitToCritPercent",
+      "108": "BonusHitToGrazePercent",
+      "109": "BonusDamageProc",
+      "110": "Confused",
+      "111": "BonusMeleeWeaponDamageMult",
+      "112": "BonusRangedWeaponDamageMult",
+      "113": "RateOfFireMult",
+      "114": "ApplyAttackEffects",
+      "115": "DO_NOT_USE_EnemyReflexGrazeToMissPercent",
+      "116": "HealthPercent",
+      "117": "EnemiesNeededToFlankAdj",
+      "118": "ConcentrationBonus",
+      "119": "DOTOnHit",
+      "120": "SpellReflection",
+      "121": "DisableSpellcasting",
+      "122": "ResistAffliction",
+      "123": "PreventDeath",
+      "124": "AdjustDurationBeneficialEffects",
+      "125": "DOTTickMult",
+      "126": "AdjustDurationHostileEffects",
+      "127": "ResistKeyword",
+      "128": "TransferDT",
+      "129": "TransferRandomAttribute",
+      "130": "Disintegrate",
+      "131": "BonusAccuracyOnSameEnemyAsExtraObject",
+      "132": "Duplicate",
+      "133": "GainHealthWhenHits",
+      "134": "CanKnockDownOnCrit",
+      "135": "BonusAccuracyAtLowHealth",
+      "136": "BonusDamageMultAtLowHealth",
+      "137": "BonusDamageMultOnKDSFTarget",
+      "138": "DamagePlusDOT",
+      "139": "RangedGrazeReflection",
+      "140": "EnemyHitToGrazePercent",
+      "141": "StunDurationMult",
+      "142": "KnockDownDurationMult",
+      "143": "BonusArmorDTMultAtLowHealth",
+      "144": "AccuracyByRace",
+      "145": "DamageMultByRace",
+      "146": "Fatigue",
+      "147": "DUMMY_EFFECT_IncreasedWeaponReach",
+      "148": "PrimordialAccuracy",
+      "149": "StopAnimation",
+      "150": "AddAfflictionImmunity",
+      "151": "Invisible",
+      "152": "DO_NOT_USE_WoundDelay",
+      "153": "SpellDamageMult",
+      "154": "FinishingBlowDamageMult",
+      "155": "ZealousAuraAoEMult",
+      "156": "DelayUnconsciousness",
+      "157": "NegMoveTickMult",
+      "158": "BonusDamageMultOnFlankedTarget",
+      "159": "FocusGainMult",
+      "160": "DisengagementDefense",
+      "161": "SpellDefense",
+      "162": "RangedDeflection",
+      "163": "BonusUsesPerRestPastThree",
+      "164": "PoisonTickMult",
+      "165": "DiseaseTickMult",
+      "166": "StalkersLinkDamageMult",
+      "167": "DamageToHealth",
+      "168": "ChanterPhraseAoEMult",
+      "169": "BonusHealMult",
+      "170": "IncomingCritDamageMult",
+      "171": "SpellCastBonus",
+      "172": "AoEMult",
+      "173": "FrenzyDurationMult",
+      "174": "ProneDurationMult",
+      "175": "WildstrikeDamageMult",
+      "176": "ReviveAndAddHealth",
+      "177": "DamageToHealthRegen",
+      "178": "LaunchAttack",
+      "179": "HidesHealth",
+      "180": "DO_NOT_USE_AllDefense",
+      "181": "MaxHealthMult",
+      "182": "CallbackOnDamaged",
+      "183": "ApplyFinishingBlowDamage",
+      "184": "NoEffect",
+      "185": "Accuracy",
+      "186": "TransferDamageToHealth",
+      "187": "CallbackAfterAttack",
+      "188": "IncomingDamageMult",
+      "189": "GivePlayerMoney",
+      "190": "ArmorSpeedFactorAdj",
+      "191": "DistantEnemyWeaponAccuracyBonus",
+      "192": "BonusRangedWeaponCloseEnemyDamageMult",
+      "193": "DualWieldAttackSpeedPercent",
+      "194": "DO_NOT_USE_BonusShieldDeflection",
+      "195": "DO_NOT_USE_ShieldDeflectionExtendToReflex",
+      "196": "DO_NOT_USE_ApplyWounds",
+      "197": "BonusDamageMultWithImplements",
+      "198": "DamageAttackerOnImplementLaunch",
+      "199": "RangedMovingRecoveryReductionPct",
+      "200": "BonusGrazeToHitRatioMeleeOneHand",
+      "201": "DO_NOT_USE_TwoHandedDeflectionBonus",
+      "202": "BonusDamageByRacePercent",
+      "203": "InterruptBonusPercent",
+      "204": "BonusPotionEffectOrDurationPercent",
+      "205": "ExtraSimultaneousHitDefenseBonus",
+      "206": "BonusWeaponSets",
+      "207": "BonusQuickSlots",
+      "208": "MeleeAttackSpeedPercent",
+      "209": "RangedAttackSpeedPercent",
+      "210": "TrapAccuracy",
+      "211": "BonusDamageByTypePercent",
+      "212": "MeleeDTBypass",
+      "213": "RangedDTBYpass",
+      "214": "GrimoireCooldownBonus",
+      "215": "WeaponSwitchCooldownBonus",
+      "216": "ShortenAfflictionDuration",
+      "217": "MaxFocus",
+      "218": "TrapBonusDamageOrDurationPercent",
+      "219": "BonusHitToCritPercentEnemyBelow10Percent",
+      "220": "DO_NOT_USE_AllDefensesExceptDeflection",
+      "221": "ApplyPulsedAOE",
+      "222": "WeapMinDamageMult",
+      "223": "BreakAllEngagement",
+      "224": "VeilDeflection",
+      "225": "BonusTwoHandedMeleeWeaponDamageMult",
+      "226": "BonusMeleeDamageMult",
+      "227": "BonusCritHitMultiplierEnemyBelow10Percent",
+      "228": "UnarmedAccuracy",
+      "229": "Push",
+      "2000": "PersonalCooldownMult",
+      "2001": "CurrentStanceAnim",
+      "2002": "MaxHealthWoundAdditivePercent",
+      "2003": "AllSkillsWoundBonus",
+      "2004": "RemoveStunOrRandomAffliction",
+      "2005": "AddShieldDefenseMultiplierPercent",
+      "2006": "AlertAllies",
+      "2007": "ParryBonusWithShield",
+      "2008": "Taunt",
+      "2009": "ShieldParryBonusPercent",
+      "2010": "PhysicalDamage",
+      "2011": "CurrentSpecialIdleAnim",
+      "2012": "ReplaceParryWithDodge",
+      "2013": "BonusDamageMultPerEnemyEngagedPercent",
+      "2014": "RevealDTOrDefense",
+      "2015": "AnimationControllerSpeedPercent",
+      "2016": "DamageReduction",
+      "2017": "One_Handed",
+      "2018": "Dual_Wield",
+      "2019": "Two_Handed",
+      "2020": "Staff",
+      "2021": "Unarmed",
+      "2022": "Bows",
+      "2023": "Magical_Weapons",
+      "2024": "Light_Armor",
+      "2025": "Heavy_Armor",
+      "2026": "Parry",
+      "2027": "Dodge",
+      "2028": "Engagement",
+      "2029": "Protection",
+      "2030": "Spell_Fire",
+      "2031": "Spell_Frost",
+      "2032": "Spell_Lightning",
+      "2033": "Spell_Acid",
+      "2034": "Spell_Strengthen",
+      "2035": "Spell_Weaken",
+      "2036": "Spell_Frenzy",
+      "2037": "Spell_Heal",
+      "2038": "Spell_Fear",
+      "2039": "Spell_Drain",
+      "2040": "Spell_Hallucination",
+      "2041": "Spell_SpiritCall",
+      "2042": "PerceptionDistanceMult",
+      "2043": "DisplayAOEIcon",
+      "2044": "DisengagementAttackOnMissed",
+      "2045": "Spell_Tidecasting",
+      "2046": "MagicSkill",
+      "2047": "NoAggro",
+      "2048": "StoreStealableAbilities",
+      "2049": "TransferStolenAbilities",
+      "2050": "ModifyCharacterCooldown",
+      "2051": "RemoveWounds",
+      "2052": "ThrownWeaponExtraAttackRange",
+      "2053": "ThrownWeaponDTBypass",
+      "2054": "AbilityExtraAttackRange",
+      "2055": "ForgetStealableAbilities",
+      "2056": "RemoveRandomBeneficialEffects",
+      "2057": "BonusDamageMultOnAfflicted",
+      "2058": "DisplaySummonIcon",
+      "2059": "AddTalent",
+      "2060": "BonusDamageFromReceivedDamage",
+      "2061": "ShareDamageWithCompanion",
+      "2062": "TransferHealthIfTargetHasSpells",
+      "2063": "TriggerTargetAbilityCooldowns",
+      "2064": "Spell_Gravity",
+      "2065": "Spell_Stone",
+      "2066": "CannotDualWield",
+      "2067": "CannotEquipMagicStaff",
+      "2068": "CannotEquipBow",
+      "2069": "TwoHandedIsOneHanded",
+      "2070": "CannotEquipArmorSlots",
+      "2071": "PushImmunity",
+      "2072": "BonusDamageMultIfEnemyEngaged",
+      "2073": "ShieldCasterFromHealthLost",
+      "2074": "AbsorbDamage_DO_NOT_USE",
+      "2075": "ShareDamageWithCaster",
+      "2076": "ShareDamageWithCaster_IconOnly",
+      "2077": "ApplyAffliction",
+      "2078": "Floating",
+      "2079": "TransferHealthToParty_AOEOnly",
+      "2080": "CannotBeTargettedByMelee",
+      "2081": "SetCurrentPhase",
+      "2082": "IncrementPhase",
+      "2083": "RemoveStatusEffectsWithTag",
+      "2084": "ScriptEventViaStatusEffect",
+      "2085": "AddBubbleShield",
+      "2086": "ImmunityToHostileStatusEffects",
+      "2087": "ImmuneToInterrupt",
+      "2088": "ChangeInstructionSets",
+      "2089": "ChangeWeaponSets",
+      "2090": "FactionedDamageMultiplier",
+      "2091": "TransformScale",
+      "2092": "DisableShadow",
+      "2093": "ShareDamageWithTarget",
+      "2094": "ApplyGhost",
+      "2095": "TauntToOther",
+      "2096": "MarkedPreyWithKeyword",
+      "2097": "GrantAbility",
+      "2098": "AllSkillsBonus",
+      "2099": "StartBreathBonus",
+      "2100": "RetainedBreathBonus",
+      "2101": "AllowTwoSongs",
+      "2102": "DefensiveSongRadiusBonus",
+      "2103": "OffensiveSongAccuracyBonus",
+      "2104": "Performance",
+      "2105": "UnarmedAttackRankSplitAdjustment",
+      "2106": "UnarmedDTBypass",
+      "2107": "WoundSkillBonusMult",
+      "2108": "BonusDamageMultBasedOnInverseHealth",
+      "2109": "RecoveryMultBasedOnInverseHealth",
+      "2110": "RedirectMeleeAttackVFXSource",
+      "2111": "RedirectMeleeAttackVFXTarget",
+      "2112": "TrapDetectionBonus",
+      "2113": "SkillPartyXPMult",
+      "2114": "TempoAdjustmentPercentBonus",
+      "2115": "NighttimeGravelightDamageMult",
+      "2116": "AfflictionCastDurationMult",
+      "2117": "MovingRecoveryReductionPct",
+      "2118": "LaunchAttackOnCrit",
+      "2119": "LaunchAttackOnMeleeCrit",
+      "2120": "IncomingAfflictionDurationMult",
+      "2121": "RangedGrazeReflectionPct",
+      "2122": "BonusPartyWeaponSets",
+      "2123": "BonusPartyQuickSlots",
+      "2124": "MarkedPreyForParty",
+      "2125": "BonusDamageMultIfNumEnemyEngagedPercent",
+      "2126": "SetEngagementAttackLvl",
+      "2127": "SpellCritToHitPct",
+      "2128": "SpellHitToGrazePct",
+      "2129": "IgnoreArmorAndShieldRecoveryPenalties",
+      "2130": "CustomSpellReflection",
+      "2131": "DTBypassWithKeyword",
+      "2132": "CustomSpellDifficultyMultiplier",
+      "2133": "BonusSpellSlot",
+      "2134": "DONOTUSE_AdditivePushDistance",
+      "2135": "AccuracyByKeyword",
+      "2136": "DamagePlusBonusDamageAndAccuracy",
+      "2137": "BonusHitToCritPercentEnemyBelowHealthPercent",
+      "2138": "ReflectArrows",
+      "2139": "TransferMight",
+      "2140": "TransferFinesse",
+      "2141": "TransferResolve",
+      "2142": "ExtraStraightBouncesOnGrazeOrMiss",
+      "2143": "BonusParryPerEnemyEngagedBy",
+      "2144": "Disarm",
+      "2145": "CannotBeEngaged",
+      "2146": "ReplaceDodgeWithParryIfRanged",
+      "2147": "MeleeHitToGrazePct",
+      "2148": "MeleeGrazeToMissPct",
+      "2149": "LaunchAttackOnRangedCrit",
+      "2150": "Single1HWeaponAccuracyBonus",
+      "2151": "ShareHighestStealthWithPartyDistance",
+      "2152": "DurationMultiplierIfHasAffliction",
+      "2153": "TransferAllAttributes",
+      "2154": "TransferMaxHealthPercent",
+      "2155": "WeaponProcVFX",
+      "2156": "LaunchAttackOnWeaponCrit",
+      "2157": "SetAttackSplitCount",
+      "2158": "LaunchAttackWhenCrit",
+      "2159": "LaunchAttackOnWeaponHit",
+      "2160": "LoreRequirementBonus",
+      "2161": "BonusPartySpellSlots",
+      "2162": "SendKeywordAsAnimatonTrigger",
+      "2163": "EnduranceBonus",
+      "2164": "SpiritBonus",
+      "2165": "WillBonus",
+      "2166": "MovementRateMult",
+      "2167": "HideSelectionCircle",
+      "2168": "ChanceToAttackSplit",
+      "2169": "NighttimeDamageMult",
+      "2170": "MarkedTarget",
+      "2171": "HideCombatTooltip",
+      "2172": "WeaponSpecializationBonusDamageMultDisplay",
+      "2173": "ImmunityToFirstHostileAfflictionDuringCombat",
+      "2174": "DisengagementAttackOnMissedAllWeapons",
+      "2175": "AfflictionCastDurationMultSpecific",
+      "2176": "BonusDamageMultOnAnyAfflicted",
+      "2177": "DO_NOT_USE_TransferRandomAttributeOwner",
+      "2178": "DO_NOT_USE_TransferDTOwner",
+      "2179": "Count"
+    }
+  }
+}

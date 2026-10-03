@@ -32,5 +32,5 @@ def common_item(item,key):
     except (ValueError,TypeError):return False
     prefab=props.get('gameData',{}).get('prefab','')
     if re.search(r'unique|_art_|quest|test|debug|fine|superior|exquisite|masterwork|legendary',prefab,re.I):return False
-    if key=='consumables':return bool(re.search(r'potion|food|elixir|consumable',prefab,re.I))
+    if key=='consumables':return bool(props.get('gameData',{}).get('useComponents'))
     return bool(prefab) and not props.get('gameData',{}).get('mods') and '(вариант ' not in item['name']

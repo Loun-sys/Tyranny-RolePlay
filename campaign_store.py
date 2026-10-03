@@ -236,7 +236,7 @@ class CampaignStore:
                 existing=await conn.execute_fetchall('SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL',(cid,ident))
                 inventory=await conn.execute_fetchall('SELECT item_catalog.name,item_catalog.category,item_catalog.weight,inventory.equipped_slot FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=?',(cid,))
                 athletics=await conn.execute_fetchall("SELECT value FROM skills WHERE character_id=? AND name='Атлетика'",(cid,))
-                capacity=min(40,8+(athletics[0]['value'] if athletics else 0)//5)
+                capacity=min(40,8+(await self.db.effective_skill_in_connection(conn,cid,'Атлетика'))//5)
                 used=sum(self.db._item_consumes_slot(r['name'],r['category'],r['weight'],r['equipped_slot']) for r in inventory)
                 needed=0 if (stackable and existing) or not self.db._item_consumes_slot(item['name'],item['category'],item['weight']) else (1 if stackable else quantity)
                 if used+needed>capacity: raise ValueError('Недостаточно места в инвентаре.')

@@ -105,6 +105,8 @@ def main():
     # Never leave old Wiki text attached to newly exported game prefabs.
     from repair_item_texts import main as repair_texts
     repair_texts()
+    from repair_item_stats import main as repair_stats
+    repair_stats()
     print({k:v for k,v in report.items() if k not in {'excluded','missingIcons'}})
 
 

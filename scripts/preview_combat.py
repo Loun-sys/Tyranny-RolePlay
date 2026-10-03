@@ -18,6 +18,10 @@ async def main():
         cid = await db.create_character(1, 2, "Испытатель", "Заклинатель", "Заклинания молний", "Заклинания льда")
         await db.create_spell(cid, "Огненный взрыв", "Огонь", "Направленная сила", [], [], 0)
         await db.normalize_spell_slots(cid, fill_empty=True)
+        for name in ['Тяжелый бронзовый шлем с гребнем','Зелье героев','Слабое зелье исцеления','Алый яд']:
+            await db.admin_give_item(cid,name,2)
+        helmet=next(i for i in await db.inventory(cid) if i['name']=='Тяжелый бронзовый шлем с гребнем')
+        await db.equip(cid,helmet['inventory_id'],'Голова')
         token = await db.create_portal_token(1, 2)
         app = web.Application(middlewares=[api.cors_middleware])
         app["db"], app["data_dir"] = db, Path(folder)
@@ -29,6 +33,7 @@ async def main():
         for path, handler in [("start", api.training_start), ("action", api.training_action), ("reset", api.training_reset)]:
             app.router.add_post("/api/portal/{token}/training/" + path, handler)
         app.router.add_post("/api/portal/{token}/combat-quickbar", api.portal_combat_quickbar)
+        app.router.add_post('/api/portal/{token}/item/use',api.portal_use_item)
         async def index(_):
             # API middleware formats raised HTTP exceptions as JSON; retain Location.
             return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:8766#token={token}"})

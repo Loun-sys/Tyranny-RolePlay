@@ -40,7 +40,18 @@ def normalize_item_text(item):
             item['lore'] = entity.get('description_ru','') if entity and entity.get('table') == 'items' else ''
             p = {k:v for k,v in p.items() if k == 'gameData' or not re.search(r'[А-Яа-яA-Za-z]', str(v))}
     if canonical:
+        item['category']=canonical['category']
         item['description'], item['lore'] = canonical['description'], canonical['lore']
+        source=canonical['properties']['gameData']
+        if source.get('statsVersion')==2 and game.get('statsVersion')!=2:
+            retained={k:copy.deepcopy(game[k]) for k in ['craftQuality','craftBaseName'] if k in game}
+            game={**copy.deepcopy(source),**retained}
+            p={'gameData':game,**{k:copy.deepcopy(v) for k,v in canonical['properties'].items() if k!='gameData'}}
+            for field in ['armor','damage_min','damage_max','recovery']:item[field]=canonical[field]
+            from crafting import normalize_quality
+            item['properties']=p
+            item=normalize_quality(item)
+            p=item['properties'];game=p['gameData']
         if str(item.get('source_url','')).startswith('craft://'):
             game['craftBaseName'] = canonical['name']
             item['name'] = canonical['name'] + ' (' + item.get('quality','Обычное') + ')'
@@ -52,4 +63,7 @@ def normalize_item_text(item):
     item['lore'] = clean_copy(item.get('lore'))
     if item['lore'] == item['description']: item['description'] = ''
     item['properties'] = p
+    if game.get('statsVersion')==2:
+        from consumables import refresh_consumable
+        refresh_consumable(item)
     return item

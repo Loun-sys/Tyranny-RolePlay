@@ -157,6 +157,7 @@ class TrainingSession:
                                     "roll": roll, "bonus": initiative_bonus(int(self.targets[target_id].get("attributes",{}).get("Быстрота",10))), "total": roll + initiative_bonus(int(self.targets[target_id].get("attributes",{}).get("Быстрота",10)))})
         self.initiative.sort(key=lambda row: (-row["total"], row["id"] != "player"))
         self.initialized = True
+        self.movement_remaining=self._movement_limit()
         self.log.append("Инициатива: " + " → ".join(row["name"] for row in self.initiative) + ".")
         for entry in self.initiative:
             if entry['id'] == 'player':
@@ -172,7 +173,7 @@ class TrainingSession:
 
     @staticmethod
     def _weapon_range(attack: dict[str, Any]) -> int:
-        return {"Луки": 12, "Дротики": 6, "Волшебные посохи": 10}.get(attack.get("skill"), 1)
+        return {"Луки": 12, "Дротики": 6, "Волшебный посох": 10, "Волшебные посохи": 10}.get(attack.get("skill"), 1)
 
     def _distance(self) -> int:
         return self.grid.distance(self.player_position, self.target_positions.get(self.selected_target_id,self.player_position))
@@ -191,6 +192,9 @@ class TrainingSession:
     def _defense(self, name, target_id=None):
         target=target_id or self.selected_target_id
         base=self.targets[target]['defenses'].get(name,30)
+        from consumables import virtual_equipment
+        from registration_api import _apply_property
+        base=_apply_property(base,virtual_equipment(self.conditions.get(target,{}),self.round_number),name)
         for state in self.conditions.get(target,{}).values():
             if state.get('kind')==name:
                 value=state['value'];base=base*(1+value) if abs(value)<1 else base+value
@@ -217,6 +221,7 @@ class TrainingSession:
     def _combat_derived(self, derived):
         import copy
         result=copy.deepcopy(derived)
+        self.equipment_movement_multiplier=result.get('movementMultiplier',1)
         attrs=result.setdefault('effectiveAttributes',{})
         attack=result.setdefault('attack',{})
         for state in self.conditions.get('player',{}).values():
@@ -234,10 +239,15 @@ class TrainingSession:
             elif kind=='accuracy':attack['accuracy']=attack.get('accuracy',20)+round(value)
             elif kind=='armor':result['armor']=max(0,result.get('armor',0)+round(value))
             elif kind=='cooldown':result['cooldownMultiplier']=result.get('cooldownMultiplier',1)*value
+        if self.initialized:
+            self.player_base_health_max = int(result.get('healthMax', self.player_base_health_max))
+            if not self.conditions.get('player', {}).get('restore'):
+                self.player_health_max = self.player_base_health_max
+                self.player_health = min(self.player_health, self.player_health_max)
         return result
 
     def _movement_limit(self):
-        multiplier=1
+        multiplier=getattr(self,'equipment_movement_multiplier',1)
         for state in self.conditions.get('player',{}).values():
             if state.get('kind')=='movement':multiplier*=state['value']
         return max(1,math.floor(BASE_MOVEMENT*multiplier))
@@ -290,7 +300,9 @@ class TrainingSession:
         for state in self.conditions.get('player',{}).values():
             if state.get('kind')=='extraDamage':raw+=round(raw*state['value']/100)
         effective_armor = max(0, armor - penetration)
-        damage = max(1, raw - effective_armor) if raw else 0
+        damage = max(1,round(raw - effective_armor)) if raw else 0
+        from consumables import receive_damage
+        damage=receive_damage(statuses,damage)
         self.target_healths[target_id] = max(0, self.target_healths[target_id] - damage)
         if target_id == "dummy":
             self.dummy_health = self.target_healths[target_id]
@@ -303,6 +315,13 @@ class TrainingSession:
         if self.finished:
             line += " Манекен разрушен."
         self.log.append(line)
+        if quality==1.5 and name=='Обычная атака':
+            from consumables import crit_effects,apply
+            triggered=crit_effects(self.conditions.get('player',{}))
+            if triggered:
+                pseudo={'properties':{'gameData':{'prefab':'weapon_poison','useComponents':[{'StatusEffects':triggered}]}}}
+                self.target_healths[target_id]=apply(pseudo,self.conditions.setdefault(target_id,{}),self.round_number,self.target_healths[target_id],self.targets[target_id]['healthMax'])
+                self.log.append('Критическое попадание активировало нанесённый на оружие состав.')
         return {"result": result, "damage": damage, "roll": roll, "line": line}
 
     def _end_turn(self) -> dict[str, Any]:
@@ -314,6 +333,12 @@ class TrainingSession:
             if entry['id'] in self._alive_targets():
                 self.log.append(f"{entry['name']}: тренировочная цель пропускает ход.")
         self.round_number += 1
+        from consumables import pulse
+        self.player_health=pulse(self.conditions.get('player',{}),self.round_number,self.player_health,self.player_health_max)
+        for key in self.target_healths:
+            before=self.target_healths[key]
+            self.target_healths[key]=pulse(self.conditions.get(key,{}),self.round_number,before,self.targets[key]['healthMax'])
+            self.damage_total+=max(0,before-self.target_healths[key])
         for target,states in self.conditions.items():
             for key,state in list(states.items()):
                 if state.get('kind')=='delayedDamage' and state['triggerRound']<=self.round_number:
@@ -421,13 +446,30 @@ class TrainingSession:
         spells: list[dict[str, Any]], weapon_sets: int,
     ) -> dict[str, Any]:
         derived=self._combat_derived(derived)
-        self._initialize({**character,'health_max':derived.get('healthMax',character.get('health_max',character.get('health',20)))})
+        self._initialize({**character,'attributes':derived.get('effectiveAttributes',character.get('attributes',{})),'health_max':derived.get('healthMax',character.get('health_max',character.get('health',20)))})
         if self.finished:
             raise ValueError("Манекен уже разрушен. Начните новую тренировку.")
         kind, name = str(payload.get("kind", "")), str(payload.get("name", ""))
         attack = derived["attack"]
         attrs = derived.get("effectiveAttributes", character.get("attributes", {}))
         multiplier = float(derived.get("cooldownMultiplier", 1))
+        if kind=='item':
+            from consumables import apply,profile
+            item=next((i for i in getattr(self,'consumable_inventory',[]) if str(i['inventory_id'])==name),None)
+            used=getattr(self,'consumable_used',{})
+            if not item or int(item['quantity'])<=used.get(name,0):raise ValueError('Расходник недоступен.')
+            info=profile(item)
+            if not info:raise ValueError('Этот предмет не является расходником.')
+            if info['targeting']!='self':raise ValueError('В тренировке нет павшего союзника для воскрешения.')
+            self._require_action(0)
+            if self.remaining('item:'+name):raise ValueError('Расходник ещё перезаряжается.')
+            self.player_health=apply(item,self.conditions.setdefault('player',{}),self.round_number,self.player_health,self.player_health_max)
+            used[name]=used.get(name,0)+1;self.consumable_used=used
+            self.cooldowns['item:'+name]=self.round_number+info['cooldown']+1
+            self.action_available=False
+            line=f"«{item['name']}»: {info['description']} (тренировка — настоящий предмет не расходуется)."
+            self.log.append(line)
+            return {'result':'Предмет применён','damage':0,'line':line}
         if kind == "select_target":
             target_id = str(payload.get("targetId", ""))
             if target_id not in self._alive_targets():
@@ -454,7 +496,7 @@ class TrainingSession:
                 and self.grid.distance(target, self.target_positions[key]) > 1
                 and not any(self.conditions.get(key,{}).get(state) for state in ('sleep','prone','special:freeze','special:frozen','special:stun','special:paralyze','special:petrif','special:disarm'))
             ]
-            if controllers and not self.disengaged:
+            if controllers and not self.disengaged and not any(s.get('source',{}).get('AffectsStat') in {24,151} for s in self.conditions.get('player',{}).values()):
                 attacker = self.targets[controllers[0]]["name"]
                 roll = random.randint(1, 100)
                 dodge = int(derived.get("defenses", {}).get("Уклонение", 20))
@@ -462,7 +504,10 @@ class TrainingSession:
                 penalty=(5 if states.get('fatigue') else 0)+(10 if states.get('fear') else 0)
                 npc_attack=self.targets[controllers[0]].get('attack',{})
                 if roll + int(npc_attack.get('accuracy',35)) - penalty > dodge:
-                    damage = max(1, random.randint(int(npc_attack.get('damageMin',4)),int(npc_attack.get('damageMax',8))) - int(derived.get("armor", 0)))
+                    damage = max(1, round(random.randint(int(npc_attack.get('damageMin',4)),int(npc_attack.get('damageMax',8))) - float(derived.get("armor", 0))))
+                    from consumables import receive_damage
+                    shield_states={key:state for key,state in self.conditions.get('player',{}).items() if state.get('source',{}).get('AffectsStat')!=188}
+                    damage=receive_damage(shield_states,round(damage*derived.get('incomingDamageMultiplier',1)))
                     for state in self.conditions.get('player',{}).values():
                         if state.get('kind')=='incoming':damage=round(damage*state['value'])
                         if state.get('kind')=='shield':
@@ -517,6 +562,7 @@ class TrainingSession:
                 name="Обычная атака", accuracy=int(attack.get("accuracy", 0)),
                 low=int(attack.get("damageMin", 1)), high=int(attack.get("damageMax", 2)),
                 defense=self._defense(defense_name), armor=self.targets[self.selected_target_id]["armor"], cover_bonus=cover_bonus,
+                penetration=round(attack.get('penetration',0)),
             )
         elif kind == "ability":
             details = ABILITY_DETAILS.get(name) or MOBILITY_ABILITIES.get(name)
@@ -617,9 +663,10 @@ class TrainingSession:
                 raise ValueError(f"Заклинание будет готово через {self.remaining(key)} {_round_word(self.remaining(key))}.")
             skill = CORE_SKILLS.get(spell.get("core"), "Знания")
             profile = spell_runtime_profile(
-                spell, skill=int(character.get("skills", {}).get(skill, {}).get("value", 0)),
+                spell, skill=int(derived.get('effectiveSkills',{}).get(skill,character.get("skills", {}).get(skill, {}).get("value", 0))),
                 wits=int(attrs.get("Смекалка", 10)), cooldown_multiplier=multiplier,
             )
+            for field in ['damage_min','damage_max']:profile[field]=round(profile[field]*derived.get('spellPowerMultiplier',1))
             if profile["targeting"] == "unit" and self.aim_point is not None:
                 target_id = next((key for key in self._alive_targets() if self.target_positions[key] == self.aim_point), None)
                 if not target_id:
@@ -684,7 +731,7 @@ class TrainingSession:
         weapon_sets: int,
     ) -> dict[str, Any]:
         derived=self._combat_derived(derived)
-        self._initialize({**character,'health_max':derived.get('healthMax',character.get('health_max',character.get('health',20)))})
+        self._initialize({**character,'attributes':derived.get('effectiveAttributes',character.get('attributes',{})),'health_max':derived.get('healthMax',character.get('health_max',character.get('health',20)))})
         attack = derived.get("attack", {})
         attrs = derived.get("effectiveAttributes", character.get("attributes", {}))
         owned = {talent["name"] for talent in character.get("talents", [])}
@@ -710,6 +757,15 @@ class TrainingSession:
         actions = [{"kind": "attack", "name": "Обычная атака", "description": "Атака активным оружейным комплектом.",
                     "remaining": 0, "range": weapon_range, "weaponSkill": attack.get("skill", ""), "disabledReason": reason(weapon_range),
                     "cells": [{"x": selected_target["x"], "y": selected_target["y"]}]}]
+        from consumables import profile
+        for item in getattr(self,'consumable_inventory',[]):
+            info=profile(item);used=getattr(self,'consumable_used',{}).get(str(item['inventory_id']),0)
+            if info and int(item['quantity'])>used:
+                actions.append({'kind':'item','name':str(item['inventory_id']),'displayName':item['name'],
+                    'description':info['description']+f" · Осталось в тренировке: {int(item['quantity'])-used}",
+                    'icon':item['image_url'],'targeting':'self','range':0,'remaining':self.remaining('item:'+str(item['inventory_id'])),
+                    'disabledReason':'Требуется павший союзник' if info['targeting']=='ally' else reason(0),
+                    'limitation':'Требуется павший союзник' if info['targeting']=='ally' else '', 'cells':[]})
         for ability in derived.get('artifactAbilities',[]):
             actions.append({**ability,'kind':'artifact',
                 'remaining':self.remaining('artifact:'+ability['name']),
@@ -727,9 +783,10 @@ class TrainingSession:
         for spell in spells:
             skill = CORE_SKILLS.get(spell.get("core"), "Знания")
             profile = spell_runtime_profile(
-                spell, skill=int(character.get("skills", {}).get(skill, {}).get("value", 0)),
+                spell, skill=int(derived.get('effectiveSkills',{}).get(skill,character.get("skills", {}).get(skill, {}).get("value", 0))),
                 wits=int(attrs.get("Смекалка", 10)), cooldown_multiplier=float(derived.get("cooldownMultiplier", 1)),
             )
+            for field in ['damage_min','damage_max']:profile[field]=round(profile[field]*derived.get('spellPowerMultiplier',1))
             actions.append({"kind": "spell", "name": spell["name"],
                             "core": spell["core"], "angle": profile.get("angle", 90),
                             "cooldown": profile["cooldown"], "damageMin": profile["damage_min"],

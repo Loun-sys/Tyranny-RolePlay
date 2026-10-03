@@ -40,9 +40,9 @@ def normalize_quality(item,level=None):
         attack['DamageData']={**attack.get('DamageData',{}),'Minimum':item['damage_min'],'Maximum':item['damage_max']}
         p['Точность']=f"{attack['AccuracyBonus']:+g}";p['Пробивание брони']=f"{attack['DTBypass']:g}"
     else:
-        item['value']=round(row['Equippable_Value']);item['recovery']=row['RecoveryModifier']
+        item['value']=round(row['Equippable_Value']);item['recovery']=round(row['RecoveryModifier']/10,4)
         if info['kind']=='armor':
-            item['armor']=round(row['DamageThreshold']);game.setdefault('armor',{})['DamageThreshold']=item['armor']
+            item['armor']=round(row['DamageThreshold'],4);game.setdefault('armor',{})['DamageThreshold']=item['armor']
             game['armor']['DeflectionBonus']=row.get('Defensive_DeflectionBonus',0)
         fields={'BaseParryBonus':'Парирование','BaseDodgeBonus':'Уклонение','BaseAccuracyBonus':'Точность','BaseEnduranceBonus':'Выносливость',
             'Helmet_ParryBonus':'Парирование','Helmet_DodgeBonus':'Уклонение','Helmet_AccuracyBonus':'Точность','Gloves_Accuracy':'Точность',
@@ -50,6 +50,9 @@ def normalize_quality(item,level=None):
         for field,label in fields.items():
             if row.get(field):p[label]=f"{row[field]:+g}"
     item['properties']=p
+    if game.get('statsVersion')==2:
+        from item_effects import refresh_item_properties
+        refresh_item_properties(item)
     return item
 def upgrade_recipe(item):
     info=quality_info(item)
@@ -175,7 +178,7 @@ class CraftingStore:
         else:
             inventory=await c.execute_fetchall('SELECT item_catalog.*,inventory.equipped_slot FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=?',(cid,))
             athletics=await c.execute_fetchall("SELECT value FROM skills WHERE character_id=? AND name='Атлетика'",(cid,))
-            capacity=min(40,8+(athletics[0]['value'] if athletics else 0)//5)
+            capacity=min(40,8+(await self.db.effective_skill_in_connection(c,cid,'Атлетика'))//5)
             used=sum(self.db._item_consumes_slot(i['name'],i['category'],i['weight'],i['equipped_slot']) for i in inventory)
             for out in job['outputs']:
                 existing=await c.execute_fetchall('SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL',(cid,out['itemId']))

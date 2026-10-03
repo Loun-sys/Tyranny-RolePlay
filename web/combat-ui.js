@@ -12,8 +12,8 @@ const originalCombatPickerPanel=combatPickerPanel;
 combatPickerPanel=function(t){
  if(!combatPicker||combatPicker==='initiative')return '';
  if(combatPicker==='stance')return originalCombatPickerPanel(t);
- const actions=(t.actions||[]).filter(x=>combatPicker==='spell'?x.kind==='spell':combatPicker==='artifact'?x.kind==='artifact':['ability','disengage'].includes(x.kind));
- return `<div class="combat-picker"><header><b>${combatPicker==='spell'?'ГРИМУАР':combatPicker==='artifact'?'СПОСОБНОСТИ АРТЕФАКТОВ':'УМЕНИЯ'}</b><button data-combat-picker-close aria-label="Закрыть">×</button></header><nav class="combat-picker-tabs"><button data-combat-picker="ability">Умения</button><button data-combat-picker="spell">Заклинания</button></nav><p>${quickbarEditing?`Выберите действие для ячейки ${quickbarEditing} или перетащите его.`:'Нажмите для прицеливания. Перетащите в быстрые ячейки 1–9.'}</p><div class="combat-picker-list">${actions.map(x=>`<div class="combat-choice">${combatActionButton(x,'data-picker-action="1"')}</div>`).join('')||'<p>Нет доступных действий.</p>'}</div></div>`;
+ const actions=(t.actions||[]).filter(x=>combatPicker==='item'?x.kind==='item':combatPicker==='spell'?x.kind==='spell':combatPicker==='artifact'?x.kind==='artifact':['ability','disengage'].includes(x.kind));
+ return `<div class="combat-picker"><header><b>${combatPicker==='item'?'РАСХОДНИКИ':combatPicker==='spell'?'ГРИМУАР':combatPicker==='artifact'?'СПОСОБНОСТИ АРТЕФАКТОВ':'УМЕНИЯ'}</b><button data-combat-picker-close aria-label="Закрыть">×</button></header><nav class="combat-picker-tabs"><button data-combat-picker="ability">Умения</button><button data-combat-picker="spell">Заклинания</button><button data-combat-picker="item">Расходники</button></nav><p>${quickbarEditing?`Выберите действие для ячейки ${quickbarEditing} или перетащите его.`:'Нажмите для прицеливания. Перетащите в быстрые ячейки 1–9.'}</p><div class="combat-picker-list">${actions.map(x=>`<div class="combat-choice">${combatActionButton(x,'data-picker-action="1"')}</div>`).join('')||'<p>Нет доступных действий.</p>'}</div></div>`;
 };
 const statNames={health:'Здоровье',critical:'Критический шанс',accuracy:'Точность',damage:'Урон оружия',recovery:'Восстановление',endurance:'Защита Выносливостью',will:'Защита Волей',magic:'Защита Магией',dodge:'Уклонение',parry:'Парирование',armor:'Поглощение брони',deflection:'Отражение'};
 function hudStat(icon,value,label=statNames[icon]){return `<span tabindex="0" data-ui-tip="${esc(label)}: ${esc(value)}" aria-label="${esc(label)}: ${esc(value)}"><img src="assets/stat-icons/${icon}.png?v=20261002-atlas" alt="${esc(label)}">${esc(value)}</span>`}
@@ -58,6 +58,7 @@ renderTraining=function(panel,character){
  const menus={ability:'icon_option_skilltree',spell:'icon_option_spell_creation',stance:'icon_hud_stance',initiative:'icon_option_formation',artifact:'icon_option_reputation'};
  hud.querySelectorAll('.original-menus [data-combat-picker]').forEach(button=>{button.querySelector('img').src=gameCombatRoot+menus[button.dataset.combatPicker]+'.png'});
  hud.querySelector('.original-menus [data-training-kind="attack"] img').src=gameCombatRoot+'icon_option_attack.png';
+ hud.querySelector('.original-menus').insertAdjacentHTML('beforeend',menu('item',gameCombatRoot+'icon_option_inventory.png','Расходники'));
  hud.querySelectorAll('[data-training-set]').forEach(button=>{button.dataset.uiTip=`Комплект оружия ${button.dataset.trainingSet}`;button.innerHTML=`<img src="${gameCombatRoot}icon_weaponset_${button.dataset.trainingSet}.png" alt="Комплект ${button.dataset.trainingSet}">`});
  // Distant targets must not prevent entering targeting mode.
  panel.querySelectorAll('[data-training-kind]').forEach(button=>{const x=(t.actions||[]).find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(x){button.disabled=!!t.finished;button.setAttribute('aria-disabled',String(!!(x.remaining||!turn.actionAvailable)));button.removeAttribute('data-effect-cells');button.removeAttribute('title');const status=button.querySelector('em');if(status)status.textContent=x.remaining?`Готово через ${x.remaining} раунд.`:`Дальность: ${x.range||0} м · выберите цель`;}});
@@ -160,7 +161,7 @@ document.addEventListener('click',e=>{
  const button=e.target.closest('[data-training-kind]');if(!button||button.disabled)return;
  if(['end_turn','wait','disengage'].includes(button.dataset.trainingKind))clearCombatAim();
  if(button.matches('[data-picker-action]')&&quickbarEditing)return;
- if(!['attack','ability','spell','artifact'].includes(button.dataset.trainingKind))return;
+ if(!['attack','ability','spell','artifact','item'].includes(button.dataset.trainingKind))return;
  const action=training.actions.find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(action){e.preventDefault();e.stopImmediatePropagation();armCombatAction(action)}
 },true);
 document.addEventListener('pointerover',e=>{if(!armedCombatAction)return;const cell=e.target.closest('[data-cell]');if(cell){const [x,y]=cell.dataset.cell.split(':').map(Number);showCombatAim({x,y})}},true);

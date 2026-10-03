@@ -213,17 +213,24 @@ def _property_number(properties: dict[str, Any], *names: str) -> tuple[float, bo
 
 
 def _apply_property(base: float, items: list[dict[str, Any]], *names: str) -> float:
-    from item_effects import equip_bonuses
+    from item_effects import equip_modifiers
     flat = percent = 0.0
+    multiplier=1.0
+    aliases={name.casefold() for name in names}
     for item in items:
-        original=equip_bonuses(item)
-        key=next((key for key in original if key.casefold() in {name.casefold() for name in names}),None)
-        value, is_percent = (original[key],False) if key else _property_number(item.get("properties") or {}, *names)
+        modifiers=equip_modifiers(item);original=modifiers['flat']
+        keys=[key for key in original if key.casefold() in aliases]
+        source=item.get('properties') or {}
+        if isinstance(source,str):source=__import__('json').loads(source)
+        value, is_percent = (sum(original[key] for key in keys),False) if keys else _property_number(source, *names)
         if is_percent:
             percent += value
         else:
             flat += value
-    return base * (1 + percent / 100) + flat
+        percent+=sum(v for k,v in modifiers['percent'].items() if k.casefold() in aliases)
+        for k,v in modifiers['multiply'].items():
+            if k.casefold() in aliases:multiplier*=v
+    return (base * (1 + percent / 100) + flat)*multiplier
 
 
 def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict[str, Any]:
@@ -239,6 +246,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         )
     ]
     attrs = dict(character["attributes"])
+    skills={name:round(_apply_property(row['value'],active_items,name)) for name,row in character['skills'].items()}
     for name in attrs:
         attrs[name] = round(_apply_property(attrs[name], active_items, name))
     quickness = attrs.get("Быстрота", 10)
@@ -259,7 +267,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     skill_by_category = {
         "Одноручное оружие": "Одноручное оружие", "Двуручное оружие": "Двуручное оружие",
         "Парное оружие": "Парное оружие", "Луки": "Луки", "Метательное оружие": "Дротики",
-        "Посохи": "Волшебные посохи", "Щиты": "Одноручное оружие",
+        "Посохи": "Волшебный посох", "Щиты": "Одноручное оружие",
     }
     attack_skill = skill_by_category.get((primary or {}).get("category"), "Безоружный бой")
     accuracy = character["skills"].get(attack_skill, {}).get("value", 0)
@@ -268,9 +276,16 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     damage_min = round(sum(int(item.get("damage_min") or 0) for item in weapons) * might_multiplier)
     damage_max = round(sum(int(item.get("damage_max") or 0) for item in weapons) * might_multiplier)
     if not damage_max:
-        damage_min, damage_max = max(1, round(2 * might_multiplier)), max(2, round(4 * might_multiplier))
-    armor = sum(int(item.get("armor") or 0) for item in active_items)
-    armor = round(_apply_property(armor, active_items, "Броня", "Armor"))
+        from item_effects import unarmed_damage
+        fists=next((unarmed_damage(i) for i in active_items if unarmed_damage(i)[1]>0),(2,4))
+        damage_min, damage_max = max(1, round(fists[0] * might_multiplier)), max(2, round(fists[1] * might_multiplier))
+    melee=(primary or {}).get('category') not in {'Луки','Метательное оружие','Посохи'}
+    damage_min=round(_apply_property(damage_min,active_items,'Урон','Урон ближнего боя') if melee else _apply_property(damage_min,active_items,'Урон'))
+    damage_max=round(_apply_property(damage_max,active_items,'Урон','Урон ближнего боя') if melee else _apply_property(damage_max,active_items,'Урон'))
+    armor = sum(float(item.get("armor") or 0) for item in active_items)
+    armor = round(_apply_property(armor, active_items, "Броня", "Armor"),4)
+    from item_effects import armor_by_type,DAMAGE_TYPES
+    typed_armor={name:round(sum(armor_by_type(item)[name] for item in active_items),4) for name in DAMAGE_TYPES.values()}
     deflection = max(0, attrs.get("Искусность", 10) - 10)
     deflection = round(_apply_property(deflection, active_items, "Отражение", "Deflection"))
     recovery = sum(float(item.get("recovery") or 0) for item in active_items)
@@ -279,12 +294,18 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "defenses": defenses,
         "artifactAbilities": __import__('artifact_rules').equipped_artifacts(active_items),
         "effectiveAttributes": attrs,
+        "effectiveSkills":skills,"armorByType":typed_armor,
+        "movementMultiplier":_apply_property(1,active_items,'Передвижение'),
+        "spellPowerMultiplier":_apply_property(1,active_items,'Сила заклинаний'),
+        "incomingDamageMultiplier":_apply_property(1,active_items,'Получаемый урон'),
+        "healingMultiplier":_apply_property(1,active_items,'Получаемое лечение'),
         "attack": {"accuracy": accuracy, "damageMin": damage_min, "damageMax": damage_max,
-                   "recovery": round(recovery, 2), "criticalChance": max(1, attrs.get("Искусность", 10) - 9),
+                   "recovery": round(recovery, 4), "criticalChance":max(1,round(_apply_property(attrs.get('Искусность',10)-9,active_items,'Критический шанс'))),
+                   "penetration":_apply_property(0,active_items,'Пробивание брони'),
                    "skill": attack_skill},
         "armor": armor, "deflection": deflection, "activeWeaponSet": active_set,
-        "cooldownMultiplier": round(max(.1, 1 - (quickness - 10) * .03), 3),
-        "cooldownPercent": round((1 - max(.1, 1 - (quickness - 10) * .03)) * 100),
+        "cooldownMultiplier": round(max(.1,_apply_property(1 - (quickness - 10) * .03,active_items,'Перезарядка')),3),
+        "cooldownPercent": round((1 - max(.1,_apply_property(1 - (quickness - 10) * .03,active_items,'Перезарядка'))) * 100),
         "equipmentRecovery": round(recovery, 2),
         "healthMax": max(1, round(_apply_property(character.get('health_max',20) + attrs.get('Живучесть',10)-character['attributes'].get('Живучесть',10),active_items,'Максимум здоровья'))),
         "equipmentBonuses": [{"item":item['name'],"bonuses":__import__('item_effects').equip_bonuses(item)} for item in active_items],
@@ -315,6 +336,9 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
     await db.normalize_spell_slots(character_id)
     inventory = _clean_inventory(await db.inventory(character_id))
     character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
+    from consumable_store import states as item_states
+    from consumables import virtual_equipment
+    consumed_states=await item_states(db,character_id)
     character.pop("guild_id", None)
     character.pop("user_id", None)
     background_talents = request.app["extended_talents"]["backgrounds"].get(character["background"], [])
@@ -342,7 +366,8 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
             f"{core}|{expression}": details
             for (core, expression), details in official_spell_details().items()
         },
-        "derived": _derived(character, inventory),
+        "derived": _derived(character, inventory+virtual_equipment(consumed_states,1)),
+        "itemEffects":consumed_states,
         "equipmentSlots": list(EQUIPMENT_SLOTS),
         "equipmentLimits": await db.equipment_limits(character_id),
         "talentLibrary": [*TALENTS, *background_talents],
@@ -420,10 +445,11 @@ async def portal_spell(request: web.Request) -> web.Response:
     accents = [str(x) for x in payload.get("accents", [])]
     enhancements = [str(x) for x in payload.get("enhancements", [])]
     character = await request.app["db"].get_character_by_id(cid)
+    effective=_derived(character,_clean_inventory(await request.app['db'].inventory(cid)))
     try:
         formula = validate_formula(
             core, expression, accents, enhancements,
-            await request.app["db"].known_sigils(cid), character["skills"]["Знания"]["value"],
+            await request.app["db"].known_sigils(cid),effective['effectiveSkills'].get('Знания',0),
         )
     except ValueError as error:
         raise web.HTTPConflict(reason=str(error)) from error
@@ -527,6 +553,8 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         character = await request.app['db'].get_character_by_id(cid)
         inventory=_clean_inventory(await request.app['db'].inventory(cid))
         artifacts={a['name'] for a in _derived(character,inventory)['artifactAbilities'] if a['supported']}
+        from consumables import profile
+        usable={str(i['inventory_id']) for i in inventory if profile(i)}
         owned = {row['name'] for row in character.get('talents', [])}
         spells = {row['name'] for row in await request.app['db'].spells(cid) if row.get('equipped_slot') is not None}
         cleaned = []
@@ -535,6 +563,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
             valid = (not kind and not name) or (kind == 'attack' and name == 'Обычная атака')
             valid = valid or (kind == 'ability' and name in owned) or (kind == 'spell' and name in spells)
             valid = valid or (kind == 'artifact' and name in artifacts)
+            valid = valid or (kind == 'item' and name in usable)
             valid = valid or (kind == 'disengage' and name == 'Осторожный отход')
             if not valid:
                 raise web.HTTPConflict(reason='Это действие сейчас недоступно персонажу.')
@@ -553,7 +582,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         raise web.HTTPBadRequest(reason="Некорректная ячейка быстрого доступа.") from error
     kind, name = str(payload.get("kind", "")).strip(), str(payload.get("name", "")).strip()
     if kind or name:
-        if kind not in {"attack", "ability", "spell", "disengage", "artifact"} or not name:
+        if kind not in {"attack", "ability", "spell", "disengage", "artifact", "item"} or not name:
             raise web.HTTPBadRequest(reason="Неизвестное боевое действие.")
         character = await request.app["db"].get_character_by_id(cid)
         owned = {row["name"] for row in character.get("talents", [])}
@@ -563,6 +592,8 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         valid = valid or kind == "spell" and name in spells
         valid = valid or kind == "disengage" and name == "Осторожный отход"
         inventory=_clean_inventory(await request.app['db'].inventory(cid))
+        from consumables import profile
+        valid = valid or kind=='item' and any(str(i['inventory_id'])==name and profile(i) for i in inventory)
         valid = valid or kind == 'artifact' and any(a['name']==name and a['supported'] for a in _derived(character,inventory)['artifactAbilities'])
         if not valid:
             raise web.HTTPConflict(reason="Это действие сейчас недоступно персонажу.")
@@ -736,6 +767,12 @@ async def _training_character(request: web.Request, character_id: int, session: 
     character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
     inventory = _clean_inventory(await db.inventory(character_id))
     spells = [spell for spell in await db.spells(character_id) if spell.get("equipped_slot") is not None]
+    session.consumable_inventory=inventory
+    from consumables import virtual_equipment
+    if not session.initialized:
+        from consumable_store import states as item_states
+        session.conditions.setdefault('player',{}).update(await item_states(db,character_id))
+    inventory=inventory+virtual_equipment(session.conditions.get('player',{}),session.round_number)
     limits = await db.equipment_limits(character_id)
     return character, inventory, spells, limits
 
@@ -940,6 +977,14 @@ async def portal_crafting(request):
     for r in result['scrolls']:r['item']=clean(r['item'])
     return web.json_response({'ok':True,**result,'wallet':await CampaignStore(request.app['db']).wallet(cid),'message':message})
 
+async def portal_use_item(request):
+    cid,payload=await _portal_payload(request)
+    try:
+        from consumable_store import use
+        message=await use(request.app['db'],cid,int(payload.get('inventoryId',0)))
+    except (ValueError,TypeError) as error:raise web.HTTPConflict(reason=str(error)) from error
+    return web.json_response({'ok':True,'message':message,**await _dashboard(request,cid)})
+
 
 async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRunner | None:
     if os.getenv("TYRANNY_ENABLE_WEB", "1").strip().casefold() in {"0", "false", "no"}:
@@ -963,6 +1008,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/spell/delete", portal_spell_delete)
     app.router.add_post("/api/portal/{token}/sigil/learn", portal_learn_sigil)
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
+    app.router.add_post('/api/portal/{token}/item/use',portal_use_item)
     app.router.add_post("/api/portal/{token}/weapon-set", portal_weapon_set)
     app.router.add_get("/api/portal/{token}/training", training_info)
     app.router.add_get('/api/portal/{token}/crafting',portal_crafting)
