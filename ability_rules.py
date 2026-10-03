@@ -7,7 +7,7 @@ from localization import localize_game_text
 
 SKILLS={2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',37:'Дротики'}
 CONTROL={'dazed':'daze','prone':'prone','stun':'stun','paralyzed':'paralyze','petrified':'petrif','frozen':'freeze','asleep':'sleep','rooted':'root','hobbled':'hobble','Silenced':'silence','Disarm':'disarm','blinded':'blind','terrified':'fear','fear':'fear','confused':'confus','taunted':'taunt'}
-RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166}
+RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166,2129,2168}
 
 @lru_cache(maxsize=1)
 def library():
@@ -124,6 +124,9 @@ def profile(row,derived=None,weapon_range=1):
     row=copy.deepcopy(row);derived=derived or {};skills=derived.get('effectiveSkills',{})
     attack=derived.get('attack',{});row['range']=max(1,weapon_range) if row.get('weaponRange') else row.get('range',0)
     if row['targeting']=='cone':row['range']=max(row['range'],row.get('area',0))
+    runtime={int(k):v for k,v in derived.get('talentRuntime',{}).items()}
+    if (row.get('weaponRange') or row.get('weaponMultiplier')) and row['targeting']!='self':
+        row['range']+=runtime.get(2054,0)
     row['accuracy']=max([skills.get(SKILLS[s],0) for s in row.get('skills',[]) if s in SKILLS]+([attack.get('accuracy',0)] if 31 in row.get('skills',[]) or not row.get('skills') else []),default=0)+row.get('accuracyBonus',0)
     row['cooldown']=0 if row.get('cooldown',0)==0 else max(1,math.ceil(round(row['cooldown']*derived.get('cooldownMultiplier',1),6)))
     row['effects']=[];unsupported=[];seen=set()
