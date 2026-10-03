@@ -44,7 +44,8 @@ class EquipmentStatsTests(unittest.TestCase):
             helmet['equipped_slot']=slot
             self.assertEqual(_derived(char,[helmet])['effectiveSkills']['Управление иллюзиями'],20)
         helmet['equipped_slot']='Голова'
-        self.assertEqual(_derived(char,[helmet])['effectiveSkills']['Управление иллюзиями'],30)
+        # +10 skill and +1 Wits -> +2 attribute contribution after game rounding.
+        self.assertEqual(_derived(char,[helmet])['effectiveSkills']['Управление иллюзиями'],32)
     def test_upgrade_preserves_components_and_round_units(self):
         upgraded=normalize_quality(self.item('Суконные обмотки для ног'),5)
         self.assertEqual(equip_bonuses(upgraded)['Отражение'],upgraded['properties']['gameData']['qualityStats']['Defensive_DeflectionBonus'])
@@ -63,7 +64,7 @@ class EquipmentStatsTests(unittest.TestCase):
         attrs=dict.fromkeys(['Сила','Искусность','Быстрота','Живучесть','Смекалка','Стойкость'],10)
         unit=Combatant(key='test',name='test',team='test',health=100,health_max=100,attributes=attrs,skills={'Безоружный бой':20,'Управление иллюзиями':20},inventory=[item])
         apply_equipment(unit);self.assertEqual(unit.attributes['Смекалка'],11)
-        self.assertEqual(unit.skills['Управление иллюзиями'],30)
-        apply_equipment(unit);self.assertEqual(unit.skills['Управление иллюзиями'],30)
+        self.assertEqual(unit.skills['Управление иллюзиями'],32)
+        apply_equipment(unit);self.assertEqual(unit.skills['Управление иллюзиями'],32)
 
 if __name__=='__main__':unittest.main()

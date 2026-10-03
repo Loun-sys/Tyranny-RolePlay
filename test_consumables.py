@@ -44,7 +44,8 @@ class ConsumableRulesTests(unittest.TestCase):
         d=_derived(character(),virtual_equipment(states,1))
         self.assertEqual(d['armor'],0);self.assertEqual(d['armorByType']['Рубящий'],2)
         apply(item('IT_CONS_VialOfMentalPower'),states,1,50,100)
-        self.assertEqual(_derived(character(),virtual_equipment(states,1))['effectiveSkills']['Управление огнём'],30)
+        # +10 magic skill and +4 Wits (primary attribute, +6 skill).
+        self.assertEqual(_derived(character(),virtual_equipment(states,1))['effectiveSkills']['Управление огнём'],36)
     def test_regeneration_15_seconds_two_rounds_without_extra_ticks(self):
         states={};hp=apply(item('IT_CONS_DireRemedy'),states,1,1,100)
         hp=pulse(states,2,hp,100);self.assertEqual(hp,41)

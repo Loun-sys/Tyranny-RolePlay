@@ -37,7 +37,7 @@ class CharacterInterfaceTests(unittest.TestCase):
             self.assertGreater(len(result.getvalue()), 10000)
 
     def test_details_preserve_source_and_modifiers(self):
-        row = next(r for r in __import__('ability_rules').library() if r['passive'] and
+        row = next(r for r in __import__('ability_rules').library() if r['passive'] and r.get('abilityClass')=='GenericAbility' and
                    any(s['AffectsStat']==57 and s.get('Apply')==0 and not s.get('ApplicationPrerequisites') for n in r['nodes'] if n['side']=='self' and n['phase']=='root' for s in n['statuses']))
         talent = normalize_talent({'name':'Старое имя','prefab':row['key']})
         self.assertEqual(talent['legacyName'], 'Старое имя')

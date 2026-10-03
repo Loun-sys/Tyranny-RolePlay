@@ -77,6 +77,7 @@ def main():
         angle=float(primary.get('DamageAngleDegrees',primary.get('ConeAngle',primary.get('TargetAngle',0))))
         targeting='self' if not attacks or primary.get('ApplyToSelfOnly') else 'cone' if 0<angle<360 and radius>0 else 'area' if radius>0 else 'unit'
         row={'key':prefab,'prefab':prefab,'name':name,'name_en':text(t['DisplayName'],en,False),'description':text(t.get('Description',{})),
+            'abilityClass':str(g.resolve(obj,t.get('m_Script')).read().m_ClassName) if g.resolve(obj,t.get('m_Script')) else '',
             'passive':bool(t.get('Passive')) or is_talent,'modal':bool(t.get('Modal')),'icon':icon or 'assets/game-combat/icon_option_talents.png',
             'isTalentUpgrade':is_talent,'abilityMods':t.get('AbilityMods',[]),'skillBonuses':t.get('SkillBonuses',[]),
             'grantedAbilities':[g.name(g.resolve(obj,ref)) for ref in t.get('Abilities',[])],

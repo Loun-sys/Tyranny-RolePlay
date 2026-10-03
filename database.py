@@ -527,28 +527,23 @@ class Database:
 
     @staticmethod
     def _equipment_limits_from_talents(names: set[str]) -> dict[str, int]:
-        from talent_data import TALENTS
-        names=set(names)
-        for talent in TALENTS:
-            if talent['name'] in names:
-                names.add(talent.get('legacyName',talent['name']))
-        weapon_sets = 2
-        if "Изобилие оружия I" in names:
-            weapon_sets += 1
-        if "Изобилие оружия II" in names:
-            weapon_sets += 2
-        spell_slots = 4
-        if "Расширенный разум II" in names:
-            spell_slots += 4
-        elif "Расширенный разум I" in names:
-            spell_slots += 2
-        if "Арбитр знаний" in names:
-            spell_slots += 2
-        return {
-            "weaponSets": min(4, weapon_sets),
-            "quickSlots": 6 if "Патронташ" in names else 4,
-            "spellSlots": spell_slots,
-        }
+        from ability_rules import resolve
+        import re
+        bonuses={}
+        for name in names:
+            row=resolve(name)
+            if not row or not row['passive'] or row.get('modal') or row.get('isTalentUpgrade'):continue
+            family=re.sub(r'_(?:\d+of\d+|\d{2})$','',row['key'])
+            for node in row['nodes']:
+                if node['side']!='self' or node['phase']!='root':continue
+                for effect in node['statuses']:
+                    stat=effect['AffectsStat']
+                    if stat not in {2122,2123,2133,2161}:continue
+                    if effect.get('ApplicationPrerequisites') or effect.get('TriggerAdjustment',{}).get('Type'):continue
+                    identity=(family,stat);bonuses[identity]=max(bonuses.get(identity,0),round(effect['Value']))
+        total=lambda stats:sum(v for (_,stat),v in bonuses.items() if stat in stats)
+        return {'weaponSets':min(4,2+total({2122})), 'quickSlots':4+total({2123}),
+                'spellSlots':4+total({2133,2161})}
 
     async def equipment_limits(self, character_id: int) -> dict[str, int]:
         async with self.connect() as db:
@@ -983,8 +978,16 @@ class Database:
         from item_effects import active_equipment,equip_bonuses
         skill=await db.execute_fetchall('SELECT value FROM skills WHERE character_id=? AND name=?',(character_id,name))
         actor=await db.execute_fetchall('SELECT active_weapon_set FROM characters WHERE id=?',(character_id,))
-        items=await db.execute_fetchall('SELECT inventory.equipped_slot,item_catalog.properties FROM inventory JOIN item_catalog ON inventory.item_id=item_catalog.id WHERE inventory.character_id=? AND inventory.equipped_slot IS NOT NULL',(character_id,))
-        bonus=sum(equip_bonuses(i).get(name,0) for i in active_equipment([dict(i) for i in items],actor[0]['active_weapon_set'] if actor else 1))
+        items=await db.execute_fetchall('SELECT inventory.equipped_slot,item_catalog.category,item_catalog.properties FROM inventory JOIN item_catalog ON inventory.item_id=item_catalog.id WHERE inventory.character_id=? AND inventory.equipped_slot IS NOT NULL',(character_id,))
+        talents=await db.execute_fetchall('SELECT name FROM talents WHERE character_id=?',(character_id,))
+        attrs={r['name']:r['value'] for r in await db.execute_fetchall('SELECT name,value FROM attributes WHERE character_id=?',(character_id,))}
+        from ability_rules import passive_equipment
+        from talent_runtime import attribute_skill_delta
+        inventory=[dict(i) for i in items];active_set=actor[0]['active_weapon_set'] if actor else 1
+        equipped=active_equipment(inventory+passive_equipment([dict(t) for t in talents],inventory,active_set),active_set)
+        bonuses=[equip_bonuses(i) for i in equipped]
+        effective={k:v+sum(b.get(k,0) for b in bonuses) for k,v in attrs.items()}
+        bonus=sum(b.get(name,0) for b in bonuses)+attribute_skill_delta(name,attrs,effective)
         return max(0,round((skill[0]['value'] if skill else 0)+bonus))
 
     async def inventory_capacity(self, character_id: int) -> dict[str, int]:

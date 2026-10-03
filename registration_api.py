@@ -251,17 +251,19 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         )
     ]
     attrs = dict(character["attributes"])
-    skills={name:round(_apply_property(row['value'],active_items,name)) for name,row in character['skills'].items()}
     for name in attrs:
         attrs[name] = round(_apply_property(attrs[name], active_items, name))
+    from talent_runtime import attribute_skill_delta
+    skills={name:round(_apply_property(row['value']+attribute_skill_delta(name,character['attributes'],attrs),active_items,name))
+            for name,row in character['skills'].items()}
     quickness = attrs.get("Быстрота", 10)
     resolve = attrs.get("Стойкость", 10)
     base_defenses = {
         "Выносливость": resolve * 1.5 + attrs.get("Сила", 10) * .5,
         "Воля": resolve * 1.5 + attrs.get("Живучесть", 10) * .5,
         "Магия": resolve * 1.5 + attrs.get("Смекалка", 10) * .5,
-        "Парирование": character["skills"].get("Парирование", {}).get("value", 0),
-        "Уклонение": character["skills"].get("Уклонение", {}).get("value", 0),
+        "Парирование": character["skills"].get("Парирование", {}).get("value", 0)+attribute_skill_delta('Парирование',character['attributes'],attrs),
+        "Уклонение": character["skills"].get("Уклонение", {}).get("value", 0)+attribute_skill_delta('Уклонение',character['attributes'],attrs),
     }
     defenses = {
         name: round(_apply_property(value, active_items, name, f"Защита {name}", f"{name} defense"))
@@ -279,8 +281,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "Посохи": "Волшебный посох", "Щиты": "Одноручное оружие",
     }
     attack_skill = skill_by_category.get((primary or {}).get("category"), "Безоружный бой")
-    accuracy = character["skills"].get(attack_skill, {}).get("value", 0)
-    accuracy = round(_apply_property(_apply_property(accuracy, active_items, attack_skill), active_items, "Точность", "Accuracy"))
+    accuracy = round(_apply_property(skills.get(attack_skill,0), active_items, "Точность", "Accuracy"))
     might_multiplier = max(.1, 1 + (attrs.get("Сила", 10) - 10) * .03)
     damage_min = round(sum(int(item.get("damage_min") or 0) for item in weapons) * might_multiplier)
     damage_max = round(sum(int(item.get("damage_max") or 0) for item in weapons) * might_multiplier)
@@ -304,8 +305,20 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     deflection=round(deflection+shield_bonuses.get('Отражение',0))
     recovery = sum(float(item.get("recovery") or 0) for item in active_items)
     recovery = _apply_property(recovery, active_items, "Восстановление", "Recovery")
+    from talent_runtime import effects as talent_effects, equipment_attack
+    runtime=talent_effects(character.get('talents',[]),active_items,active_set)
+    if 2012 in runtime:defenses['Парирование']=defenses['Уклонение']
+    attack_values=equipment_attack({"accuracy":accuracy,"damageMin":damage_min,"damageMax":damage_max,
+        "splitChances":split_chances,"recovery":round(recovery,4),
+        "criticalChance":max(1,round(_apply_property(attrs.get('Искусность',10)-9,active_items,'Критический шанс'))),
+        "penetration":_apply_property(0,active_items,'Пробивание брони'),"skill":attack_skill,
+        "range":{'Луки':12,'Дротики':6,'Волшебный посох':10}.get(attack_skill,1)},runtime,attack_skill,len(weapons))
     return {
         "defenses": defenses,
+        "talentRuntime":runtime,
+        "incomingConversions":{'critToHit':_apply_property(0,active_items,'Отражение критических ударов'),
+            'hitToGraze':_apply_property(0,active_items,'Отражение попаданий'),
+            'grazeToMiss':_apply_property(0,active_items,'Отражение промахов')},
         "artifactAbilities": __import__('artifact_rules').equipped_artifacts(active_items),
         "effectiveAttributes": attrs,
         "effectiveSkills":skills,"armorByType":typed_armor,
@@ -313,10 +326,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "spellPowerMultiplier":_apply_property(1,active_items,'Сила заклинаний'),
         "incomingDamageMultiplier":_apply_property(1,active_items,'Получаемый урон'),
         "healingMultiplier":_apply_property(1,active_items,'Получаемое лечение'),
-        "attack": {"accuracy": accuracy, "damageMin": damage_min, "damageMax": damage_max,"splitChances":split_chances,
-                   "recovery": round(recovery, 4), "criticalChance":max(1,round(_apply_property(attrs.get('Искусность',10)-9,active_items,'Критический шанс'))),
-                   "penetration":_apply_property(0,active_items,'Пробивание брони'),
-                   "skill": attack_skill},
+        "attack":attack_values,
         "armor": armor, "deflection": deflection, "activeWeaponSet": active_set,
         "cooldownMultiplier": round(max(.1,_apply_property(1 - (quickness - 10) * .03,active_items,'Перезарядка')),3),
         "cooldownPercent": round((1 - max(.1,_apply_property(1 - (quickness - 10) * .03,active_items,'Перезарядка'))) * 100),
