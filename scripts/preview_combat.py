@@ -30,7 +30,8 @@ async def main():
             app.router.add_post("/api/portal/{token}/training/" + path, handler)
         app.router.add_post("/api/portal/{token}/combat-quickbar", api.portal_combat_quickbar)
         async def index(_):
-            raise web.HTTPFound(f"/archive.html?api=http://127.0.0.1:8766#token={token}")
+            # API middleware formats raised HTTP exceptions as JSON; retain Location.
+            return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:8766#token={token}"})
         app.router.add_get("/", index)
         app.router.add_static("/", ROOT / "web")
         runner = web.AppRunner(app)

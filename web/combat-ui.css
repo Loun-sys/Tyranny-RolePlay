@@ -26,4 +26,29 @@ body button:not(.tactical-cell):disabled{opacity:.65;color:#c5b9be;background-co
 @media(max-width:900px){.combat-picker{left:10px;bottom:280px}.tyranny-combat-hud{width:470px!important}.original-hotkeys{gap:6px}}
 .persistent-area-cell{position:absolute;z-index:1;pointer-events:none;background:color-mix(in srgb,var(--area-color) 12%,transparent);box-shadow:inset 0 0 10px color-mix(in srgb,var(--area-color) 18%,transparent);animation:area-breathe 3s ease-in-out infinite}.persistent-area-label{position:absolute;z-index:2;pointer-events:none;color:#ddd;font:10px Arial;padding:3px 5px;background:#09090ab0;transform:translate(-50%,-50%);border-radius:2px;max-width:130px;text-align:center}.combat-token{position:relative;z-index:3}.training-map-select{display:block;margin:16px auto}.training-map-select select{background:#100b0e;color:#eee;border:1px solid #852333;padding:9px}.tactical-map-wrap{overflow:auto}
 @keyframes area-breathe{50%{opacity:.55}}@media(prefers-reduced-motion:reduce){.persistent-area-cell{animation:none}}
+/* Keep map coordinates independent of HUD dimensions and page scrolling. */
+.combat-game-screen .combat-arena{display:grid;grid-template-columns:380px minmax(0,1fr);align-items:start;gap:20px;min-height:0;padding:16px;background:#080709}
+.combat-game-screen{scroll-margin-top:130px}
+.combat-game-screen .training-header{min-height:80px;padding:12px 20px;gap:14px}
+.combat-game-screen .training-header small{font-size:10px;letter-spacing:1px}
+.combat-game-screen .training-header h2{font-size:24px}
+.combat-sidebar{position:relative;display:flex;flex-direction:column;gap:16px;min-width:0;padding:4px}
+.combat-sidebar .combat-turn-order{display:block;flex:none;width:100%;margin:0;max-height:clamp(120px,20dvh,180px);overflow-y:auto}
+.combat-sidebar .turn-order-row{padding:9px 4px}
+.combat-sidebar .tyranny-combat-hud{position:relative;inset:auto;width:100%!important;max-width:none;margin:0;flex:none;padding:12px 10px 8px}
+.combat-sidebar .original-hud-name{position:static;margin-bottom:10px;overflow-wrap:anywhere}
+.combat-sidebar .original-hotkeys{height:auto;padding-bottom:14px;gap:5px}
+.combat-sidebar .original-quick{max-width:36px}
+.combat-sidebar .original-hud-body{gap:10px}
+.combat-sidebar .original-stat-row{gap:6px 9px;line-height:1.4}
+.combat-sidebar .original-turn{font-size:12px;line-height:1.5}
+.combat-sidebar .original-sets small{font-size:11px}
+.combat-sidebar .combat-picker,.combat-sidebar .combat-info-drawer{position:relative;inset:auto;width:100%;max-width:none;max-height:360px;margin:0;flex:none;padding:12px}
+.combat-sidebar .combat-info-drawer:not(.open){display:none}
+.combat-game-screen .tactical-map-wrap{width:100%;min-width:0;max-height:calc(100dvh - 152px);overflow:auto;border:1px solid #50212e}
+.combat-game-screen .tactical-map{width:calc(var(--cols)*48px);height:calc(var(--rows)*48px);min-width:0;min-height:0;max-height:none;aspect-ratio:var(--cols)/var(--rows);margin:0;flex:none}
+.combat-game-screen .tactical-map-wrap>footer{position:static;min-width:0;flex-wrap:wrap;padding:12px;letter-spacing:0;gap:8px}
+.combat-game-screen .tactical-map-wrap>footer span{float:none}
+@media(max-width:1100px){.combat-game-screen .combat-arena{grid-template-columns:330px minmax(0,1fr);gap:12px;padding:10px}.combat-sidebar .original-portrait{width:64px;height:94px}.combat-sidebar .original-menus{gap:4px}}
+@media(max-width:760px){.combat-game-screen .combat-arena{display:flex;flex-direction:column}.combat-sidebar{position:static;width:100%;max-height:none;overflow:visible}.combat-sidebar .combat-turn-order{display:flex;max-height:none;overflow-x:auto}.combat-sidebar .combat-turn-order header{width:100px;flex:none}.combat-sidebar .turn-order-row{flex:0 0 150px}.combat-game-screen .tactical-map-wrap{max-height:65dvh}.combat-sidebar .combat-picker{max-height:300px}}
 .tactical-map[style*="grid-opacity"] .tactical-cell{border-color:rgba(225,205,210,var(--grid-opacity))}.tactical-cell.map-sight{box-shadow:inset 0 0 0 2px #8464a455}.tactical-cell.map-cover{background:#63866c33}

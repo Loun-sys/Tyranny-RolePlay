@@ -49,7 +49,11 @@ renderTraining=function(panel,character){
  const end=hud.querySelector('[data-training-kind="end_turn"]');end.className='combat-end-turn';end.textContent='ЗАВЕРШИТЬ ХОД';end.disabled=!!t.finished;
  panel.querySelector('.training-reset').textContent='ЗАВЕРШИТЬ ТРЕНИРОВКУ';
  const edit=hud.querySelector('.edit-hotkeys');edit.textContent='⚙';edit.dataset.uiTip='Перетащите умение или заклинание из отдельного списка в ячейку 1–9';edit.setAttribute('aria-label','Настроить быстрые ячейки');edit.removeAttribute('title');
- panel.querySelector('.tactical-map-wrap').insertAdjacentHTML('beforebegin',combatOrderPanel(t));
+ // Controls belong to the arena sidebar, never to the scrolling map surface.
+ const arena=panel.querySelector('.combat-arena'),sidebar=document.createElement('aside');
+ sidebar.className='combat-sidebar';sidebar.setAttribute('aria-label','Управление боем');
+ arena.prepend(sidebar);sidebar.innerHTML=combatOrderPanel(t);sidebar.append(hud);
+ panel.querySelectorAll('.combat-picker,.combat-info-drawer').forEach(drawer=>sidebar.append(drawer));
  panel.querySelectorAll('.original-menus button').forEach(button=>{button.dataset.uiTip=button.title||button.textContent;button.querySelector('img')?.setAttribute('alt',button.title);button.removeAttribute('title');});
  const menus={ability:'icon_option_skilltree',spell:'icon_option_spell_creation',stance:'icon_hud_stance',initiative:'icon_option_formation',artifact:'icon_option_reputation'};
  hud.querySelectorAll('.original-menus [data-combat-picker]').forEach(button=>{button.querySelector('img').src=gameCombatRoot+menus[button.dataset.combatPicker]+'.png'});
@@ -64,7 +68,7 @@ function clearCombatAim(){armedCombatAction=null;combatAim=null;document.querySe
 function renderPersistentAreas(panel,t){
  const map=panel.querySelector('.tactical-map'),layout=t.grid.layout||{};
  if(t.grid.source==='Карта мастера'){
-  map.style.width=`${t.grid.width*(layout.cellSize||48)}px`;map.style.minHeight=`${t.grid.height*(layout.cellSize||48)}px`;
+  map.style.width=`${t.grid.width*(layout.cellSize||48)}px`;map.style.height=`${t.grid.height*(layout.cellSize||48)}px`;map.style.minHeight='0';
   map.style.setProperty('--grid-opacity',layout.gridOpacity??.3);map.closest('.tactical-map-wrap')?.querySelector('footer a')?.remove();map.style.backgroundSize=`${(layout.imageScale||1)*100}% auto`;map.style.backgroundPosition=`calc(50% + ${layout.offsetX||0}px) calc(50% + ${layout.offsetY||0}px)`;
  }
  const colors={Холод:'#80c6dc',Огонь:'#ce6841',Жизнь:'#7eb877',Истощение:'#a47ec4',Эмоции:'#bc83a5'};
@@ -83,7 +87,7 @@ async function animateTokenMovement(oldGrid,newGrid,path=[]){
 trainingMutate=async function(path,body={}){
  if(combatBusy)return;combatBusy=true;const oldGrid=training?.grid;
  if(path==='start'){const selected=document.querySelector('#training-map')?.value;if(selected)body.mapId=Number(selected)}
- try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/${path}`,{method:'POST',body:JSON.stringify(body)});training=j.training||{active:false};if(tab==='training')renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);toast(j.message)}catch(error){toast(error.message)}finally{combatBusy=false}
+ try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/${path}`,{method:'POST',body:JSON.stringify(body)});training=j.training||{active:false};if(tab==='training'){renderTraining($('#panel'),data.character);if(path==='start')document.querySelector('.combat-game-screen')?.scrollIntoView({block:'start',behavior:'instant'})}await animateTokenMovement(oldGrid,training.grid,training.movementPath);toast(j.message)}catch(error){toast(error.message)}finally{combatBusy=false}
 };
 const originalLoadTraining=loadTraining;
 loadTraining=async function(){await originalLoadTraining();try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training`);trainingMaps=j.maps||[];if(tab==='training'&&!training?.active)renderTraining($('#panel'),data.character)}catch{}};

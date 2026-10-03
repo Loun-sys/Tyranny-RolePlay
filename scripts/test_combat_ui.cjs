@@ -16,6 +16,16 @@ context.testAction=action;
 vm.runInContext('training.actions=[testAction];renderTraining=()=>{};showCombatAim=()=>{};playCombatEffect=()=>{};',context);
 function click(target){const event={target,preventDefault(){this.prevented=true},stopImmediatePropagation(){this.stopped=true}};handlers.click[0](event);return event}
 async function main(){
+ // A master's cell size must control BOTH axes; legacy min-height stretched rows.
+ const map={style:{setProperty(){}},closest(){return null},querySelector(){return null}};
+ context.layoutPanel={querySelector(){return map}};
+ for(const size of [32,48,60,96]){
+  context.layoutTraining={grid:{source:'Карта мастера',width:13,height:9,layout:{cellSize:size},tokens:[]}};
+  vm.runInContext('renderPersistentAreas(layoutPanel,layoutTraining)',context);
+  assert.equal(map.style.width,`${13*size}px`);
+  assert.equal(map.style.height,`${9*size}px`);
+  assert.equal(map.style.minHeight,'0');
+ }
  context.pickerActions={actions:[{kind:'spell',name:'ONLY SPELL'},{kind:'ability',name:'ONLY ABILITY'}]};
  vm.runInContext('combatPicker="ability"',context);
  const abilities=vm.runInContext('combatPickerPanel(pickerActions)',context);
