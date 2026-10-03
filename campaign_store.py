@@ -151,6 +151,10 @@ class CampaignStore:
         from merchant_rules import SHOPS
         if shop_key and shop_key not in SHOPS:raise ValueError('Неизвестный магазин.')
         await self.ensure_shops(guild)
+        from crafting import CraftingStore
+        async with self.db.connect() as conn:
+            ready=await conn.execute_fetchall("SELECT name FROM sqlite_master WHERE name='crafting_shop_seeded'")
+        if ready:await CraftingStore(self.db).ensure_supplies(guild)
         async with self.db.connect() as conn:
             settings=await conn.execute_fetchall('SELECT * FROM shop_settings WHERE guild_id=?',(guild,))
             branch=await conn.execute_fetchall('SELECT name,enabled FROM shop_branches WHERE guild_id=? AND shop_key=?',(guild,shop_key))
@@ -165,7 +169,7 @@ class CampaignStore:
             if shop_key and shop_key!='custom':config={'name':SHOPS[shop_key]['name'],'enabled':1}
             if branch:config.update(dict(branch[0]))
             return {'settings':config,'items':[dict(row) for row in rows],'shopKey':shop_key,'shops':[{'key':k,**v} for k,v in SHOPS.items()],
-                'categories':[r['category'] for r in cats],'qualities':['Обычное','Добротное','Превосходное','Изысканное','Шедевр','Артефакт']}
+                'categories':[r['category'] for r in cats],'qualities':['Обычное','Хорошее','Превосходное','Выдающееся','Безупречное','Артефакт','Добротное','Изысканное','Шедевр']}
 
     async def edit_shop(self,guild,payload):
         if not isinstance(payload,dict): raise ValueError('Некорректная настройка магазина.')

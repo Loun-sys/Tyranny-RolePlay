@@ -1,0 +1,14 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const nodes={},node=k=>nodes[k]??={innerHTML:'',hidden:false,insertAdjacentHTML(){}};
+const ctx=vm.createContext({document:{querySelector:node,addEventListener(){}},$:node,renderCabinet(){},renderTab(){},esc:v=>String(v??''),data:{character:{background:'Скованный Ремеслом'},inventory:[]},tab:'crafting',moneyText(){return 'Кольца'},itemVisual:i=>`<img data-quality="${i.quality}">`,request(){},toast(){},token:'test'});
+vm.runInContext(fs.readFileSync('web/player-crafting.js','utf8'),ctx);
+const item={name:'Меч',quality:'Выдающееся',damage_min:20,damage_max:30,category:'Одноручное оружие',properties:{},value:100};
+const data={wallet:{},jobs:[],scrolls:[],upgrades:[{inventoryId:1,item,result:{...item,quality:'Безупречное',damage_min:25},ingredients:[],recipe:{cost:50,hours:5}}],recipes:[{key:'test',name:'Зелье',outputItem:{...item,name:'Зелье'},known:false,ingredients:[],cost:350,hours:1}]};
+vm.runInContext(`craftingData=${JSON.stringify(data)};craftingSelection='1';renderCrafting()`,ctx);
+assert(node('#panel').innerHTML.includes('ПОСЛЕ УЛУЧШЕНИЯ'));
+assert(node('#panel').innerHTML.includes('Безупречное'));
+assert(node('#panel').innerHTML.includes('data-craft-action="upgrade"'));
+vm.runInContext("craftingKind='consumable';craftingSelection='test';renderCrafting()",ctx);
+assert(node('#panel').innerHTML.includes('приобретите и изучите рецепт'));
+assert(!node('#panel').innerHTML.includes('data-craft-action="craft"'));
+console.log('Craft UI: before/after quality preview, ingredients, upgrade action and locked recipes OK');

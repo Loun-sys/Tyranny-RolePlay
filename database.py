@@ -223,6 +223,8 @@ class Database:
             await db.executescript(SCHEMA)
             from campaign_store import SCHEMA as CAMPAIGN_SCHEMA
             await db.executescript(CAMPAIGN_SCHEMA)
+            from crafting import SCHEMA as CRAFTING_SCHEMA
+            await db.executescript(CRAFTING_SCHEMA)
             shop_columns={r['name'] for r in await db.execute_fetchall('PRAGMA table_info(shop_stock)')}
             if 'shop_key' not in shop_columns:
                 await db.execute("ALTER TABLE shop_stock ADD COLUMN shop_key TEXT NOT NULL DEFAULT 'custom'")
@@ -335,7 +337,8 @@ class Database:
                 await db.commit()
         game_items = Path(__file__).resolve().parent / 'catalog' / 'game_items.json'
         if game_items.exists():
-            await self.upsert_catalog(json.loads(game_items.read_text(encoding='utf-8')))
+            from crafting import normalize_quality
+            await self.upsert_catalog([normalize_quality(i) for i in json.loads(game_items.read_text(encoding='utf-8'))])
         from npc_store import SCHEMA as NPC_SCHEMA
         async with self.connect() as db:
             await db.executescript(NPC_SCHEMA)
@@ -487,7 +490,7 @@ class Database:
     def _item_consumes_slot(name: str, category: str, weight: float, equipped_slot: str | None = None) -> bool:
         tiny = ("чернил", "перо", "ключ", "руна", "самоцвет", "записка")
         return (
-            not equipped_slot and category not in {"Материалы", "Сигилы"}
+            (not equipped_slot or equipped_slot=='Мастерская') and category not in {"Материалы", "Сигилы"}
             and not any(part in name.casefold() for part in tiny)
             and not (0 < float(weight or 0) <= .25)
         )
@@ -1108,7 +1111,7 @@ class Database:
     async def remove_item(self, character_id: int, inventory_id: int, quantity: int = 1) -> bool:
         async with self.connect() as db:
             rows = await db.execute_fetchall(
-                "SELECT quantity FROM inventory WHERE id=? AND character_id=?", (inventory_id, character_id)
+                "SELECT quantity FROM inventory WHERE id=? AND character_id=? AND COALESCE(equipped_slot,'')!='Мастерская'", (inventory_id, character_id)
             )
             if not rows:
                 return False
@@ -1134,6 +1137,7 @@ class Database:
         if slot not in EQUIPMENT_SLOTS:
             return False, "Неизвестный слот экипировки."
         async with self.connect() as db:
+            await db.execute('BEGIN IMMEDIATE')
             talent_rows = await db.execute_fetchall("SELECT name FROM talents WHERE character_id=?", (character_id,))
             limits = self._equipment_limits_from_talents({str(row["name"]) for row in talent_rows})
             roman_sets = {"I": 1, "II": 2, "III": 3, "IV": 4}
@@ -1146,7 +1150,7 @@ class Database:
             rows = await db.execute_fetchall(
                 """SELECT inventory.id,item_catalog.category,item_catalog.hands FROM inventory
                    JOIN item_catalog ON item_catalog.id=inventory.item_id
-                   WHERE inventory.id=? AND inventory.character_id=?""", (inventory_id, character_id)
+                   WHERE inventory.id=? AND inventory.character_id=? AND COALESCE(inventory.equipped_slot,'')!='Мастерская'""", (inventory_id, character_id)
             )
             if not rows:
                 return False, "Предмет не найден в инвентаре."
@@ -1191,7 +1195,7 @@ class Database:
     async def unequip(self, character_id: int, inventory_id: int) -> bool:
         async with self.connect() as db:
             cursor = await db.execute(
-                "UPDATE inventory SET equipped_slot=NULL WHERE id=? AND character_id=?", (inventory_id, character_id)
+                "UPDATE inventory SET equipped_slot=NULL WHERE id=? AND character_id=? AND COALESCE(equipped_slot,'')!='Мастерская'", (inventory_id, character_id)
             )
             await db.commit()
             return bool(cursor.rowcount)

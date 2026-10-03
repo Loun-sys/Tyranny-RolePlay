@@ -229,7 +229,7 @@ def _apply_property(base: float, items: list[dict[str, Any]], *names: str) -> fl
 def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict[str, Any]:
     active_set = max(1, min(4, int(character.get("active_weapon_set", 1))))
     roman = ("I", "II", "III", "IV")[active_set - 1]
-    equipped = [item for item in inventory if item.get("equipped_slot")]
+    equipped = [item for item in inventory if item.get("equipped_slot") and item.get('equipped_slot')!='Мастерская']
     active_items = [
         item for item in equipped
         if not str(item.get("equipped_slot", "")).startswith("Быстрый предмет")
@@ -296,7 +296,7 @@ def _clean_inventory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for row in rows:
         item = dict(row)
         try:
-            item["properties"] = __import__("json").loads(item.get("properties") or "{}")
+            item["properties"] = item['properties'] if isinstance(item.get('properties'),dict) else __import__("json").loads(item.get("properties") or "{}")
         except (TypeError, ValueError):
             item["properties"] = {}
         from merchant_rules import reliable_icon
@@ -905,6 +905,26 @@ async def portal_shop(request):
     return web.json_response({'ok':True,**shop,'saleOffers':await store.sale_offers(cid,character['guild_id'],key),'wallet':await store.wallet(cid),'message':message})
 
 
+async def portal_crafting(request):
+    from crafting import CraftingStore
+    cid=await request.app['db'].portal_character_id(request.match_info['token'])
+    if not cid:raise web.HTTPGone(reason='Личная ссылка недоступна.')
+    store=CraftingStore(request.app['db']);message=''
+    try:
+        if request.method=='POST':message=await store.act(cid,await request.json())
+        result=await store.snapshot(cid)
+    except (ValueError,TypeError) as error:raise web.HTTPConflict(reason=str(error)) from error
+    def clean(item):return _clean_inventory([item])[0] if item else None
+    for r in result['recipes']:
+        r['outputItem']=clean(r['outputItem'])
+        for i in r['ingredients']:i['item']=clean(i['item'])
+    for r in result['upgrades']:
+        r['item']=clean(r['item']);r['result']=clean(r['result'])
+        for i in r['ingredients']:i['item']=clean(i['item'])
+    for r in result['scrolls']:r['item']=clean(r['item'])
+    return web.json_response({'ok':True,**result,'wallet':await CampaignStore(request.app['db']).wallet(cid),'message':message})
+
+
 async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRunner | None:
     if os.getenv("TYRANNY_ENABLE_WEB", "1").strip().casefold() in {"0", "false", "no"}:
         return None
@@ -929,6 +949,8 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/portal/{token}/equipment", portal_equip)
     app.router.add_post("/api/portal/{token}/weapon-set", portal_weapon_set)
     app.router.add_get("/api/portal/{token}/training", training_info)
+    app.router.add_get('/api/portal/{token}/crafting',portal_crafting)
+    app.router.add_post('/api/portal/{token}/crafting',portal_crafting)
     app.router.add_post("/api/portal/{token}/training/start", training_start)
     app.router.add_post("/api/portal/{token}/training/action", training_action)
     app.router.add_post("/api/portal/{token}/training/reset", training_reset)
