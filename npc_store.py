@@ -12,7 +12,13 @@ created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMEST
 
 @lru_cache(maxsize=1)
 def templates():
-    return json.loads((Path(__file__).parent/'catalog/game_npcs.json').read_text(encoding='utf-8'))
+    rows=json.loads((Path(__file__).parent/'catalog/game_npcs.json').read_text(encoding='utf-8'))
+    return [{**row,**portrait_library().get(row['key'],portrait_library()['default'])} for row in rows]
+
+
+@lru_cache(maxsize=1)
+def portrait_library():
+    return json.loads((Path(__file__).parent/'catalog/npc_portraits.json').read_text(encoding='utf-8'))
 
 
 def template_page(query='',category='',offset=0):
@@ -30,7 +36,11 @@ def validate_npc(spec):
     name=str(spec.get('name','')).strip()[:100]
     if not name:raise ValueError('Укажите имя НПС.')
     portrait=str(spec.get('portrait',''))
-    validate_map({'image':portrait})
+    if portrait.startswith('assets/npc-portraits/'):
+        filename=portrait.removeprefix('assets/npc-portraits/')
+        if not __import__('re').fullmatch(r'[a-zA-Z0-9_-]+\.png',filename) or not (Path(__file__).parent/'web/assets/npc-portraits'/filename).is_file():
+            raise ValueError('Неизвестный игровой портрет НПС.')
+    else:validate_map({'image':portrait})
     color=str(spec.get('color','#a92339'))
     if not __import__('re').fullmatch(r'#[0-9a-fA-F]{6}',color):raise ValueError('Нужен шестизначный цвет токена.')
     attrs={str(k)[:60]:int(v) for k,v in dict(spec.get('attributes',{})).items()}
@@ -71,12 +81,20 @@ class NPCStore:
         result=[]
         for row in rows:
             spec=json.loads(row['spec'])
+            image=portrait_library().get(spec.get('sourceKey'),portrait_library()['default'])
+            if not spec.get('portrait'):spec.update(image)
+            elif spec['portrait']==image['portrait']:spec.update(image)
             if public:spec.pop('notes',None)
             result.append({'id':row['id'],'published':bool(row['published']),'spec':spec})
         return result
 
     async def save(self,guild,owner,payload):
         if not isinstance(payload,dict):raise ValueError('Нужен объект НПС.')
+        if payload.get('action')=='fromTemplate':
+            key=str(payload.get('key',''))
+            template=next((t for t in templates() if t['key']==key),None)
+            if not template:raise ValueError('Игровой шаблон не найден.')
+            payload={'spec':{**template,'sourceKey':key},'published':False}
         spec=validate_npc(payload.get('spec',{}));ident=int(payload.get('id',0))
         async with self.db.connect() as conn:
             if ident:

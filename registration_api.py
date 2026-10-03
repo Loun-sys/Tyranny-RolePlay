@@ -824,7 +824,7 @@ async def _player_maps(request,cid):
 
 
 async def admin_npcs(request):
-    from npc_store import NPCStore,template_page
+    from npc_store import NPCStore,template_page,templates
     guild,owner=await _admin_owner(request);store=NPCStore(request.app['db']);ident=None
     if request.method=='POST':
         try:
@@ -836,7 +836,8 @@ async def admin_npcs(request):
     try:offset=max(0,int(request.query.get('offset',0)))
     except ValueError:raise web.HTTPBadRequest(reason='Некорректная страница.')
     return web.json_response({'ok':True,'id':ident,'npcs':await store.list(guild,owner),
-        'templates':template_page(str(request.query.get('q',''))[:150],str(request.query.get('category',''))[:100],offset)})
+        'templates':template_page(str(request.query.get('q',''))[:150],str(request.query.get('category',''))[:100],offset),
+        'tokenTemplates':[{'key':t['key'],'name':t['name'],'portrait':t['portrait'],'category':t['category']} for t in templates()]})
 
 
 async def public_npcs(request):

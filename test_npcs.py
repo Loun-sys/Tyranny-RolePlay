@@ -79,10 +79,27 @@ class NPCTests(CampaignTests):
             self.assertEqual(reply.status,200)
             payload=await reply.json()
             self.assertGreaterEqual(payload['templates']['total'],1023)
+            template=payload['tokenTemplates'][0]
+            self.assertTrue(template['portrait'].startswith('assets/npc-portraits/'))
+            copied=await client.post(f'/api/admin/{token}/npcs',json={'action':'fromTemplate','key':template['key']})
+            self.assertEqual(copied.status,200)
+            data=await copied.json()
+            row=next(r for r in data['npcs'] if r['id']==data['id'])
+            self.assertFalse(row['published'])
+            self.assertEqual(row['spec']['sourceKey'],template['key'])
+            self.assertTrue(row['spec']['portrait'])
+            await self.store.save_map(1,10,{'spec':{'tokens':[{'kind':'npc','id':row['id'],'x':2,'y':2}]}})
             public=await (await client.get('/api/archive/npcs')).json()
             self.assertNotIn('notes',public['npcs'][0]['spec'])
             bad=await client.post(f'/api/admin/{token}/npcs',json={'spec':{'name':'Страж','attack':[]}})
             self.assertEqual(bad.status,400)
+
+    async def test_existing_npc_gains_default_portrait(self):
+        ident=await self.npcs.save(1,10,{'spec':{'name':'Без портрета'}})
+        row=(await self.npcs.list(1,10))[0]
+        self.assertTrue(row['spec']['portrait'].startswith('assets/npc-portraits/'))
+        resolved=await self.npcs.resolve_map(1,10,[{'id':ident,'x':2,'y':2}])
+        self.assertEqual(resolved[0]['portrait'],row['spec']['portrait'])
 
     async def test_artifact_delayed_damage_and_expiration(self):
         session=TrainingSession(1,player_position=(9,4))

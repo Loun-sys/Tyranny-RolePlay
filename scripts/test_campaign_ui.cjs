@@ -26,3 +26,16 @@ assert.equal(vm.runInContext('mapUndo.length',ctx),1);
 vm.runInContext("renderTab()",ctx);
 assert(element('#admin-panel').innerHTML.includes('Кольца персонажа'));
 console.log('Campaign UI: map render, layer separation, history and wallet panel OK');
+// A game template is instantiated as an owner-scoped NPC before placement.
+(async()=>{
+element('#map-token-choice').options=[];
+element('#map-token-choice').prepend=o=>element('#map-token-choice').options.unshift(o);
+ctx.document.createElement=()=>({});
+ctx.request=async(path,opt)=>{assert.equal(JSON.parse(opt.body).action,'fromTemplate');return {id:22,npcs:[{id:22,spec:{name:'Страж',portrait:'assets/npc-portraits/tankfighter_m_white_sm.png',sourceKey:'game:test',color:'#a92339'}}]}};
+vm.runInContext("mapTokenChoices=[{kind:'game',id:0,name:'Страж',templateKey:'game:test'}];mapTool='token'",ctx);
+await vm.runInContext('placeGameMapToken(mapTokenChoices[0],4,4)',ctx);
+assert.equal(vm.runInContext('mapDraft.tokens.find(t=>t.x===4&&t.y===4).id',ctx),22);
+assert.equal(vm.runInContext('mapDraft.tokens.find(t=>t.x===4&&t.y===4).kind',ctx),'npc');
+assert(element('#map-edit-grid').innerHTML.includes('assets/npc-portraits/tankfighter_m_white_sm.png'));
+console.log('Game NPC template: clone, placement and original portrait OK');
+})().catch(e=>{console.error(e);process.exitCode=1});
