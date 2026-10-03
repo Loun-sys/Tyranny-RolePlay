@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from scripts.game_asset_index import GameIndex,localized_tables
 from localization import localize_game_text
 
-COMBAT_REFS={'Afflictions','AfflictionPrefab','AttackPrefab','AbilityPrefab','ExtraAOE','SecondAOE','FollowUpAttacks','AttackPrefabTriggeredOn','ChildAttacks','AbilityMods','StatusEffects'}
+COMBAT_REFS={'Afflictions','AfflictionPrefab','AttackPrefab','AbilityPrefab','ExtraAOE','SecondAOE','FollowUpAttacks','AttackPrefabTriggeredOn','ChildAttacks','AbilityMods','StatusEffects','m_afflictionData'}
 ATTACK_FIELDS={'DamageData','DamageMultiplier','AttackDistance','OverrideAttackDistance','UsePrimaryWeaponRange','AccuracyBonus','DTBypass','DefendedBy','SecondaryDefense','ValidTargets','ApplyToSelfOnly','PushDistance','BlastRadius','DamageAngleDegrees','ConeAngle','TargetAngle','m_attackSkills','UsePrimaryAttack','UseFullAttack','Bounces','BounceRange','BounceMultiplier','BaseInterruptValue','RecoveryTime','PersonalCooldownModifier','AttackVariation'}
 DEFENSE={0:'Парирование',1:'Выносливость',2:'Воля',3:'Магия',5:'Нет'}
 
@@ -27,8 +27,10 @@ def main():
             local_side=('self' if t.get('ApplyToSelfOnly') else 'target') if attack else side
             node={'prefab':prefab,'phase':phase,'side':local_side,'name':text(t.get('DisplayName',{})),'tag':t.get('Tag',''),
                   'attack':{k:copy.deepcopy(v) for k,v in t.items() if k in ATTACK_FIELDS} if attack else {},'statuses':[]}
-            for s in t.get('StatusEffects',[]):
+            for s in t.get('StatusEffects',t.get('m_phraseData',[])):
                 s=copy.deepcopy(s)
+                for field in ('AttackPrefab','AbilityPrefab','AfflictionPrefab'):
+                    s[field+'Key']=g.name(g.resolve(obj,s.get(field)))
                 if inherited and not s.get('Duration'):s['Duration']=inherited
                 s['phase']=phase;s['side']=local_side;s['affliction']=prefab if phase=='affliction' else ''
                 node['statuses'].append(s)
@@ -41,7 +43,7 @@ def main():
                         target=g.resolve(obj,value)
                         child_side=local_side if local_side=='self' and phase!='root' else ('target' if attack else local_side)
                         if t.get('AbilityMods') and key in {'AfflictionPrefab','AttackPrefab'}:child_side='target'
-                        child_phase='affliction' if key=='AfflictionPrefab' else 'followup' if key=='FollowUpAttacks' else 'attack' if key in {'AttackPrefab','ExtraAOE','SecondAOE'} else phase
+                        child_phase='affliction' if key in {'AfflictionPrefab','m_afflictionData'} else 'followup' if key=='FollowUpAttacks' else 'attack' if key in {'AttackPrefab','ExtraAOE','SecondAOE'} else phase
                         duration=float(edge.get('Duration',inherited) or inherited)
                         for co,ct in g.components(target):queue.append((co,ct,duration,child_side,child_phase))
                     else:
@@ -49,7 +51,7 @@ def main():
                             if k in COMBAT_REFS:follow(v,value,k)
             for key,value in t.items():
                 if key in COMBAT_REFS:follow(value,t,key)
-            for s in t.get('StatusEffects',[]):
+            for s in t.get('StatusEffects',t.get('m_phraseData',[])):
                 for key in COMBAT_REFS:
                     if key in s:follow(s[key],s,key)
         return nodes
@@ -92,6 +94,19 @@ def main():
             'push':primary.get('PushDistance',0),'weaponMask':t.get('PermittedWeaponTypes',0),'skills':primary.get('m_attackSkills',[]),
             'attackCount':2 if 'FlurryOfBlows' in prefab else 1,'sourceVersion':1,'source':{'archive':g.asset_bundles[obj.assets_file.name.casefold()],'nameRef':t['DisplayName'],
                'descriptionRef':t.get('Description'),'activation':t.get('ActivationPrerequisites',[]),'application':t.get('ApplicationPrerequisites',[])},'nodes':nodes}
+        row['breathCost']=max((int(p.get('Value',0)) for p in t.get('ActivationPrerequisites',[]) if p.get('Type')==9 and p.get('IsConsumed')),default=0)
+        row['aura']={field:t.get(field,0) for field in ('FriendlyRadius','AuraType','AuraIntervalSpeed','TriggerOnHit','TriggerOnWounded','RemoveWhenDeactivated')}
+        row['phrases']=[]
+        for ref in t.get('PhraseTemplates',[]):
+            phrase=g.resolve(obj,ref)
+            component=next((ct for co,ct in g.components(phrase) if 'm_phraseData' in ct),None)
+            if not component:continue
+            row['phrases'].append({'key':g.name(phrase),'name':text(component.get('DisplayName')),
+                'description':text(component.get('Description')),'level':component.get('Level',1),
+                'defense':DEFENSE.get(component.get('DefendedBy',5),'Нет'),'nodes':walk(phrase)})
+        if row['phrases']:
+            # Assembly-CSharp: AttackData..ctor, Phrase.get_Recitation/CalculateLinger.
+            row['song']={'type':t.get('SongType',0),'radius':4,'recitationPerLevel':2,'recitationBase':2,'lingerBase':1}
         rows.append(row)
     # Same prefab across bundles must prefer the canonical abilities archive.
     unique={}

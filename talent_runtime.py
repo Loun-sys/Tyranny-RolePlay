@@ -5,7 +5,7 @@ No name matching: source stat IDs and values drive these calculations.
 import math
 
 SUPPORTED={27,101,137,70,2053,2052,112,2106,28,2157,80,2057,
-           2108,2109,2012,102,213,2054,2120,2116,2146,2143,2147,2148,2138,2121}
+           2108,2109,2012,102,213,2054,2120,2116,2146,2143,2147,2148,2138,2121,2099,2101,2102,2103}
 DISPLAY_ONLY={184,2001,2011,2172,225}
 
 def attribute_skill_delta(name,base,effective):

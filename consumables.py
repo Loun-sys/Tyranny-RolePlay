@@ -170,16 +170,17 @@ def crit_effects(states):
                 output.extend({**s,'effectName':g.get('localizedName',''),'affliction':g.get('prefab','')} for s in g.get('StatusEffects',[]))
     return output
 
-def pulse(states,round_number,health,health_max):
+def pulse(states,round_number,health,health_max,elapsed_seconds=10):
     healing=math.prod(s.get('source',{}).get('Value',1) for s in states.values()
                       if s.get('source',{}).get('AffectsStat')==169 and s.get('until',0)>=round_number-1)
     for state in states.values():
         if not state.get('consumable') or state['until']<round_number-1:continue
         e=state['source']
+        elapsed=max(0,elapsed_seconds-state.pop('pulseDelaySeconds',0))
         if e.get('AffectsStat')==116 and e.get('IntervalRate') and state['remainingSeconds']>0:
-            seconds=min(10,state['remainingSeconds']);state['remainingSeconds']-=seconds
+            seconds=min(elapsed,state['remainingSeconds']);state['remainingSeconds']-=seconds
             health=min(health_max,health+math.ceil(health_max*e['Value']*seconds*healing))
         elif e.get('AffectsStat')==25 and state['remainingSeconds']>0:
-            seconds=min(10,state['remainingSeconds']);state['remainingSeconds']-=seconds
+            seconds=min(elapsed,state['remainingSeconds']);state['remainingSeconds']-=seconds
             health=max(0,health-round(e['Value']*(seconds if e.get('IntervalRate') else 1)))
     return health

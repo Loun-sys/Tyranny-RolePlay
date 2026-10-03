@@ -5,7 +5,7 @@ from pathlib import Path
 from item_effects import STATS
 from localization import localize_game_text
 
-SKILLS={2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',37:'Дротики'}
+SKILLS={2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',34:'Исполнение',37:'Дротики'}
 CONTROL={'dazed':'daze','prone':'prone','stun':'stun','paralyzed':'paralyze','petrified':'petrif','frozen':'freeze','asleep':'sleep','rooted':'root','hobbled':'hobble','Silenced':'silence','Disarm':'disarm','blinded':'blind','terrified':'fear','fear':'fear','confused':'confus','taunted':'taunt'}
 RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166,2129,2168}
 
@@ -53,6 +53,11 @@ def talent_mechanics(row):
     """Readable source values and execution coverage, not invented tooltip bonuses."""
     from consumables import effect_text
     from item_effects import passive_descriptions, equip_modifiers
+    if row.get('song'):
+        from song_rules import song_profile
+        p=song_profile(row)
+        return {'type':'Песня','effects':[phrase['description'] for phrase in row['phrases']],
+                'details':p['details'],'limitation':p['limitation']}
     result={'effects':[], 'type':'Стойка' if row.get('modal') else 'Пассивный талант' if row['passive'] else 'Активная способность'}
     if row.get('bonusDamageMult',1)!=1:
         result['effects'].append(f"Урон подходящего оружия: {(row['bonusDamageMult']-1)*100:+.0f}%")
@@ -121,6 +126,9 @@ def upgrade_limitation(row):
     return ''
 
 def profile(row,derived=None,weapon_range=1):
+    if row.get('song'):
+        from song_rules import song_profile
+        return song_profile(row,derived)
     row=copy.deepcopy(row);derived=derived or {};skills=derived.get('effectiveSkills',{})
     attack=derived.get('attack',{});row['range']=max(1,weapon_range) if row.get('weaponRange') else row.get('range',0)
     if row['targeting']=='cone':row['range']=max(row['range'],row.get('area',0))
@@ -153,6 +161,7 @@ def profile(row,derived=None,weapon_range=1):
         row['supported']=False
         row['limitation']='Эта способность содержит условные эффекты, для которых ещё нет боевого обработчика.'
     row['details']=f"Дальность: {row['range']} клеток · Перезарядка: {'один раз за бой' if row.get('oncePerBattle') else str(row['cooldown'])+' раундов'}"
+    if row.get('breathCost'):row['details']+=f" · Дыхание: {row['breathCost']}"
     if row['damageMax']:row['details']+=f" · Урон: {row['damageMin']:g}–{row['damageMax']:g}"
     elif row.get('weaponMultiplier'):row['details']+=f" · Урон оружия: {row['weaponMultiplier']*100:g}%"
     return row
@@ -165,7 +174,7 @@ def owned_actions(talents,derived,weapon_range=1):
         if row.get('isTalentUpgrade'):
             upgrades.append(row)
             candidates.extend(filter(None,(resolve(key) for key in row.get('grantedAbilities',[]))))
-        elif not row['passive'] and not row.get('modal'):candidates.append(row)
+        elif not row['passive'] and (not row.get('modal') or row.get('song')):candidates.append(row)
     for row in candidates:
         if row['key'] in seen:continue
         rows.append(profile(apply_upgrades(row,upgrades),derived,weapon_range));seen.add(row['key'])
@@ -243,9 +252,9 @@ def weapon_mastery(talents, inventory, active_set=1):
 def stance_equipment(name):
     from item_effects import unconditional
     row=resolve(name)
-    if not row or not row.get('modal'):return []
+    if not row or not row.get('modal') or row.get('song'):return []
     effects=[s for n in row['nodes'] if n['side']=='self' and n['phase']=='root' for s in n['statuses'] if s['AffectsStat'] not in {184,2001,2011}]
-    allowed=set(STATS)|{7,8,9,14,107,104,74,140,2000,181,2166,45,153,226,188,169,2046}
+    allowed=set(STATS)|{7,8,9,14,107,104,74,140,2000,181,2166,45,153,226,188,169,2046,2114}
     if proc_profiles(row):allowed|={2156,2159}
     if not effects or any(not unconditional(s) or s['AffectsStat'] not in allowed for s in effects):return []
     return [{'name':row['name'],'category':'Эффекты','equipped_slot':'Эффект','armor':0,'properties':{'gameData':{'statusEffects':effects}}}]

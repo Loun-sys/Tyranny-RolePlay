@@ -103,6 +103,8 @@ class TrainingSession:
     disengaged: bool = False
     preview_cells: set[tuple[int, int]] = field(default_factory=set)
     active_stance: str = ""
+    active_songs: list[dict[str, Any]] = field(default_factory=list)
+    breath: int = 0
     aim_point: tuple[int, int] | None = None
     areas: list[dict[str, Any]] = field(default_factory=list)
     conditions: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -158,6 +160,9 @@ class TrainingSession:
                                     "roll": roll, "bonus": initiative_bonus(int(self.targets[target_id].get("attributes",{}).get("Быстрота",10))), "total": roll + initiative_bonus(int(self.targets[target_id].get("attributes",{}).get("Быстрота",10)))})
         self.initiative.sort(key=lambda row: (-row["total"], row["id"] != "player"))
         self.initialized = True
+        from song_rules import breath_limit
+        from talent_runtime import effects
+        self.breath=min(breath_limit(character.get('talents',[])),int(effects(character.get('talents',[])).get(2099,0)))
         self.movement_remaining=self._movement_limit()
         self.log.append("Инициатива: " + " → ".join(row["name"] for row in self.initiative) + ".")
         for entry in self.initiative:
@@ -239,7 +244,8 @@ class TrainingSession:
             if effect.get('control') or effect.get('AffectsStat') in {18,121}:
                 effect={**effect,'control':effect.get('control') or {18:'root',121:'silence'}[effect['AffectsStat']]}
                 key=effect['control'];rounds=max(1,math.ceil(effect.get('Duration',10)/10))
-                states[key]={'name':effect['name'] or key,'kind':key,'until':self.round_number+rounds-1,'stacks':1,'beneficial':False}
+                states[key]={'name':effect['name'] or key,'kind':key,'until':self.round_number+rounds-1,'stacks':1,'beneficial':False,
+                             'abilityKey':rule['key'],'durationSeconds':effect.get('Duration',10)}
             else:raw.append(effect)
         if not raw:return
         synthetic={'properties':{'gameData':{'prefab':rule['key'],'useComponents':[{'StatusEffects':raw}]}}}
@@ -268,6 +274,8 @@ class TrainingSession:
         requirement=weapon_requirement(rule,inventory,self.active_weapon_set)
         if requirement:raise ValueError(requirement)
         if not rule['supported']:raise ValueError(rule['limitation'])
+        if rule.get('song'):return self._toggle_song(rule,derived)
+        if rule.get('breathCost',0)>self.breath:raise ValueError('Недостаточно дыхания для этой арии.')
         self._require_action(0 if rule['targeting']=='self' else rule['range'])
         key='ability:'+rule['key']
         if self.remaining(key):raise ValueError('Способность ещё перезаряжается.')
@@ -322,9 +330,81 @@ class TrainingSession:
                     self.target_positions[target]=self.grid.displace(self.player_position,self.target_positions[target],max(1,math.ceil(abs(rule['push']))),occupied,pull=rule['push']<0)
         self._apply_ability_effects(rule,'player','self')
         self.cooldowns[key]=999999 if rule['oncePerBattle'] else self.round_number+rule['cooldown']+1
+        self.breath-=rule.get('breathCost',0)
         line=' '.join(lines) or f"Применена способность «{rule['name']}»."
         if not lines:self.log.append(line)
         return {'result':'Способность применена','damage':total,'line':line}
+
+    def _song_tempo(self):
+        from ability_rules import resolve
+        stance=resolve(self.active_stance)
+        return sum(s['Value'] for n in stance['nodes'] for s in n['statuses'] if s['AffectsStat']==2114) if stance else 0
+
+    def _song_phrase(self,song,index,derived,offset=0):
+        from song_rules import phrase_profile
+        p=phrase_profile(song,song['phrases'][index],derived,self._song_tempo())
+        if not p['supported']:raise ValueError('Этот станс содержит неподключённые эффекты.')
+        for target in ['player',*self.target_healths]:
+            if (self.player_health if target=='player' else self.target_healths[target])<=0:continue
+            position=self.player_position if target=='player' else self.target_positions[target]
+            if self.grid.distance(self.player_position,position)>p['area']:continue
+            if not self.grid.line_of_sight(self.player_position,position):continue
+            enemy=target!='player' and self.targets[target].get('team','enemy')=='enemy'
+            chosen=[e for e in p['effects'] if bool(e.get('control') or e.get('IsHostile'))==enemy]
+            if not chosen:continue
+            if enemy and p['defense']!='Нет':
+                hit=self._roll_attack(name=p['name'],accuracy=p['accuracy'],low=0,high=0,
+                    defense=self._defense(p['defense'],target),armor=0,target_id=target,
+                    attack_mode='spell',defense_name=p['defense'])
+                if hit['result'] in {'Промах','Отражено'}:continue
+            # A fast song can loop within a round. Tick the previous copy before
+            # refreshing it; otherwise its elapsed damage/healing would be lost.
+            from consumables import pulse
+            previous={k:s for k,s in self.conditions.get(target,{}).items() if k.startswith('consumable:'+p['key']+':')}
+            if previous and offset:
+                before=self.player_health if target=='player' else self.target_healths[target]
+                after=pulse(previous,self.round_number+1,before,
+                            self.player_health_max if target=='player' else self.targets[target]['healthMax'],elapsed_seconds=offset)
+                if target=='player':self.player_health=after
+                else:
+                    self.target_healths[target]=after
+                    self.damage_total+=max(0,before-after)
+            self._apply_ability_effects({**p,'effects':[{**e,'side':'target'} for e in chosen]},target,'target')
+            for key,state in self.conditions.get(target,{}).items():
+                if key.startswith('consumable:'+p['key']+':') or state.get('abilityKey')==p['key']:
+                    duration=state.get('source',{}).get('Duration',state.get('durationSeconds',0))
+                    state['until']=self.round_number+max(1,math.ceil((offset+duration)/10))-1
+                    state['pulseDelaySeconds']=offset
+        self.log.append(p['name'])
+        return p['recitationSeconds']
+
+    def _toggle_song(self,song,derived):
+        if any(k in self.conditions.get('player',{}) for k in ('silence','stun','paralyze','petrif','freeze','sleep')):
+            raise ValueError('Под этим воздействием нельзя петь.')
+        previous=next((s for s in self.active_songs if s['key']==song['key']),None)
+        if previous:
+            self.active_songs.remove(previous)
+            return {'result':'Пение остановлено','damage':0,'line':song['name'],'consumesAction':False}
+        capacity=2 if 2101 in getattr(self,'talent_runtime',{}) else 1
+        if len(self.active_songs)>=capacity:
+            raise ValueError('Сначала остановите активную песню: доступно '+str(capacity)+' одновременно.')
+        seconds=self._song_phrase(song,0,derived)
+        self.active_songs.append({'key':song['key'],'phrase':0,'phraseCount':len(song['phrases']),'remainingSeconds':seconds})
+        return {'result':'Пение начато','damage':0,'line':song['name'],'consumesAction':False}
+
+    def _advance_songs(self):
+        from song_rules import advance,phrase_profile,breath_limit
+        from ability_rules import resolve
+        if self.player_health<=0:return
+        if any(k in self.conditions.get('player',{}) for k in ('silence','stun','paralyze','petrif','freeze','sleep')):return
+        derived=getattr(self,'runtime_derived',{})
+        for active in self.active_songs:
+            song=resolve(active['key'])
+            if not song:continue
+            def duration(i):return phrase_profile(song,song['phrases'][i],derived,self._song_tempo())['recitationSeconds']
+            for index,offset in advance(active,10,duration):
+                self.breath=min(breath_limit(getattr(self,'runtime_talents',[])),self.breath+1)
+                self._song_phrase(song,index,derived,offset)
 
     def master_npc_ability(self, actor_id, ability_key, target_id, player, player_derived):
         """Master-only simulation; NPCs use the same executor as player abilities."""
@@ -340,6 +420,7 @@ class TrainingSession:
         derived={'attack':npc.get('attack',{}),'effectiveSkills':npc.get('skills',{}),'effectiveAttributes':npc.get('attributes',{}),
                  'cooldownMultiplier':max(.1,1-(npc.get('attributes',{}).get('Быстрота',10)-10)*.03)}
         rule=profile(refresh_ability(ability),derived,npc.get('attack',{}).get('range',1))
+        if rule.get('song'):raise ValueError('Автоматическое пение НПС ещё не подключено; эта песня доступна персонажу игрока.')
         clone=copy.deepcopy(self);player_target='master_player'
         clone.targets={k:v for k,v in clone.targets.items() if k!=actor_id}
         for n in clone.targets.values():n['team']='ally' if n.get('team','enemy')==npc.get('team','enemy') else 'enemy'
@@ -572,6 +653,7 @@ class TrainingSession:
         return {"result": result, "damage": damage, "roll": roll, "line": line}
 
     def _end_turn(self) -> dict[str, Any]:
+        self._advance_songs()
         line = f"Раунд {self.round_number}: ход персонажа завершён."
         self.log.append(line)
         player_index = next(i for i, entry in enumerate(self.initiative) if entry['id'] == 'player')
@@ -807,16 +889,14 @@ class TrainingSession:
             self.log.append(line)
             return {"result": "Комплект сменён", "damage": 0, "line": line}
         if kind == "stance":
-            stances = {
-                talent["name"] for talent in character.get("talents", [])
-                if str(talent.get("name", "")).startswith("Стойка:")
-            }
-            if name not in stances:
+            from ability_rules import resolve,stance_equipment
+            stance=next((r for talent in character.get('talents',[]) for r in [resolve(talent)]
+                         if r and r.get('modal') and not r.get('song') and name in {r['name'],r['key'],talent.get('name')}),None)
+            if not stance:
                 raise ValueError("Эта стойка не изучена персонажем.")
-            from ability_rules import stance_equipment
-            if not stance_equipment(name):
+            if not stance_equipment(stance['key']):
                 raise ValueError('Эффекты этой стойки ещё не подключены; переключение отменено.')
-            self.active_stance = name
+            self.active_stance = stance['name']
             line = f"Раунд {self.round_number}: персонаж принимает стойку «{name.removeprefix('Стойка:').strip()}»."
             self.log.append(line)
             return {"result": "Стойка изменена", "damage": 0, "line": line}
@@ -864,6 +944,7 @@ class TrainingSession:
             if not rule:
                 raise ValueError("Эта способность не изучена персонажем.")
             result=self._execute_ability(rule,derived,getattr(self,'consumable_inventory',[]))
+            if result.get('consumesAction') is False:return result
         elif kind == "artifact":
             ability=next((a for a in derived.get('artifactAbilities',[]) if a['name']==name),None)
             if not ability:raise ValueError('Артефакт не экипирован в активном комплекте.')
@@ -989,7 +1070,7 @@ class TrainingSession:
             {"name": talent["name"], "description": talent.get("description", ""),
              "icon": (ABILITY_DETAILS.get(talent["name"]) or {}).get("icon", "")}
             for talent in character.get("talents", [])
-            if str(talent.get("name", "")).startswith("Стойка:")
+            if (lambda r:bool(r and r.get('modal') and not r.get('song')))(__import__('ability_rules').resolve(talent))
         ]
         distance, weapon_range = self._distance(), self._weapon_range(attack)
         selected_target = self._target()
@@ -1023,10 +1104,16 @@ class TrainingSession:
                 'disabledReason':ability['limitation'] or reason(ability['range']),
                 'description':ability['description']+'\n'+ability['limitation']+'\n'+'; '.join(ability['passives'])})
         from ability_rules import owned_actions,weapon_requirement
+        from song_rules import breath_limit
+        song_capacity=2 if 2101 in getattr(self,'talent_runtime',{}) else 1
         for rule in owned_actions(character.get('talents',[]),derived,weapon_range):
+            song_active=any(s['key']==rule['key'] for s in self.active_songs)
+            resource_reason=('Недостаточно дыхания' if rule.get('breathCost',0)>self.breath else '')
+            if rule.get('song') and not song_active and len(self.active_songs)>=song_capacity:
+                resource_reason='Сначала остановите активную песню'
             actions.append({**{k:v for k,v in rule.items() if k not in {'nodes','source'}},'kind':'ability',
                 'description':rule['description']+'\n'+rule['details'],'remaining':self.remaining('ability:'+rule['key']),
-                'disabledReason':rule['limitation'] or weapon_requirement(rule,getattr(self,'consumable_inventory',[]),self.active_weapon_set) or reason(rule['range']),
+                'disabledReason':rule['limitation'] or resource_reason or weapon_requirement(rule,getattr(self,'consumable_inventory',[]),self.active_weapon_set) or ('' if rule.get('song') else reason(rule['range'])),
                 'cells':[]})
         for spell in spells:
             skill = CORE_SKILLS.get(spell.get("core"), "Знания")
@@ -1120,6 +1207,11 @@ class TrainingSession:
                      "distanceToTarget": distance, "inControlZone": self.player_position in controlled,
                      "cover": cover_name, "coverBonus": cover_bonus, "disengaged": self.disengaged},
             "initiative": self.initiative, "grid": grid_payload,
+            "songs": {"available":any(a.get('song') or a.get('breathCost') for a in actions),
+                      "breath":self.breath,"limit":breath_limit(character.get('talents',[])),"capacity":song_capacity,
+                      "active":[{"key":s['key'],"name":__import__('ability_rules').resolve(s['key'])['name'],
+                                 "phraseName":__import__('ability_rules').resolve(s['key'])['phrases'][s['phrase']]['name'],
+                                 "remainingSeconds":round(s['remainingSeconds'],4)} for s in self.active_songs]},
             "derived": derived, "actions": actions, "stances": stances, "activeStance": self.active_stance,
             "cooldowns": self.cooldowns,
             "areas": [{**area, 'center':{'x':area['center'][0],'y':area['center'][1]},

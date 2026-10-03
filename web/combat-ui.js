@@ -17,6 +17,12 @@ combatPickerPanel=function(t){
 };
 const statNames={health:'Здоровье',critical:'Критический шанс',accuracy:'Точность',damage:'Урон оружия',recovery:'Восстановление',endurance:'Защита Выносливостью',will:'Защита Волей',magic:'Защита Магией',dodge:'Уклонение',parry:'Парирование',armor:'Поглощение брони',deflection:'Отражение'};
 function hudStat(icon,value,label=statNames[icon]){return `<span tabindex="0" data-ui-tip="${esc(label)}: ${esc(value)}" aria-label="${esc(label)}: ${esc(value)}"><img src="assets/stat-icons/${icon}.png?v=20261002-atlas" alt="${esc(label)}">${esc(value)}</span>`}
+function hudSongStatus(songs){
+ if(!songs?.available)return '';
+ const active=songs.active||[],label=`Дыхание ${songs.breath??0} / ${songs.limit??1} · Песни ${active.length} / ${songs.capacity??1}`;
+ const details=active.map(song=>`${song.name}${song.phraseName?` — ${song.phraseName}`:''}`).join('\n');
+ return `<div class="original-turn combat-song-status" tabindex="0" aria-label="${esc(label)}" data-ui-tip="${esc(label)}${details?`\n${esc(details)}`:''}">${esc(label)}</div>`;
+}
 statIcon=function(file,label,value,help=''){const canonical=statNames[file.replace('.png','')]||label;return `<div class="combat-stat" tabindex="0" data-ui-tip="${esc(canonical)}: ${esc(value)}${help?`\n${esc(help)}`:''}" aria-label="${esc(canonical)}: ${esc(value)}"><img src="assets/stat-icons/${file}?v=20261002-atlas" alt="${esc(canonical)}"><span>${esc(label)}</span><b>${esc(value)}</b></div>`};
 const originalStatsBox=statsBox;
 const attributeSprites={Сила:'might',Искусность:'finesse',Быстрота:'quickness',Живучесть:'health',Смекалка:'wits',Стойкость:'resolve'};
@@ -47,6 +53,7 @@ renderTraining=function(panel,character){
  hud.querySelector('.original-stat-row').insertAdjacentHTML('beforeend',stat('critical',`${a.criticalChance||0}%`)+stat('recovery',roundText(a.recovery||0)));
  hud.querySelectorAll('.original-stat-row')[2]?.insertAdjacentHTML('beforeend',stat('deflection',`${d.deflection||0}%`));
  const end=hud.querySelector('[data-training-kind="end_turn"]');end.className='combat-end-turn';end.textContent='ЗАВЕРШИТЬ ХОД';end.disabled=!!t.finished;
+ hud.querySelector('.original-turn').insertAdjacentHTML('afterend',hudSongStatus(t.songs));
  panel.querySelector('.training-reset').textContent='ЗАВЕРШИТЬ ТРЕНИРОВКУ';
  const edit=hud.querySelector('.edit-hotkeys');edit.textContent='⚙';edit.dataset.uiTip='Перетащите умение или заклинание из отдельного списка в ячейку 1–9';edit.setAttribute('aria-label','Настроить быстрые ячейки');edit.removeAttribute('title');
  // Controls belong to the arena sidebar, never to the scrolling map surface.

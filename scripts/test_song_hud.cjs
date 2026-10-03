@@ -1,0 +1,24 @@
+// Song resources stay compact; names and current stanzas live in the tooltip.
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('web/combat-ui.js','utf8');
+const start=source.indexOf('function hudSongStatus('),end=source.indexOf('\nstatIcon=',start);
+assert(start>=0&&end>start,'Song HUD helper must exist');
+const context=vm.createContext({esc:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')});
+vm.runInContext(source.slice(start,end),context);
+const render=songs=>{context.songs=songs;return vm.runInContext('hudSongStatus(songs)',context)};
+assert.equal(render(undefined),'');
+assert.equal(render({available:false,breath:2,active:[{name:'Нельзя показывать'}]}),'');
+let html=render({available:true,breath:3,limit:8,capacity:2,active:[{key:'song',name:'Красная кровь',phraseName:'Станс силы'}]});
+assert(html.includes('Дыхание 3 / 8 · Песни 1 / 2'));
+assert(html.includes('data-ui-tip="Дыхание 3 / 8 · Песни 1 / 2\nКрасная кровь — Станс силы"'));
+assert(!html.slice(html.indexOf('>')+1).includes('Красная кровь'),'Names must not crowd the visible HUD');
+assert(html.includes('tabindex="0"'),'Keyboard users can reveal the tooltip');
+html=render({available:true,breath:0,limit:1,capacity:1,active:[]});
+assert(html.includes('Дыхание 0 / 1 · Песни 0 / 1'));
+assert(!html.includes('undefined'));
+html=render({available:true,breath:1,limit:5,capacity:1,active:[{name:'<img src=x onerror=1>',phraseName:'"станс"'}]});
+assert(!html.includes('<img'));
+assert(html.includes('&lt;img'));
+assert(html.includes('&quot;станс&quot;'));
+assert(source.includes("insertAdjacentHTML('afterend',hudSongStatus(t.songs))"),'Live HUD must render the resource helper');
+console.log('Song HUD: conditional visibility, compact resources, active stanza tooltip, keyboard access and escaping OK');
