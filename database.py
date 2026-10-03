@@ -339,6 +339,18 @@ class Database:
         if game_items.exists():
             from crafting import normalize_quality
             await self.upsert_catalog([normalize_quality(i) for i in json.loads(game_items.read_text(encoding='utf-8'))])
+        # Repair persisted crafted variants too, without changing IDs, inventory,
+        # prices or the upgraded numerical quality values.
+        async with self.connect() as db:
+            from item_texts import normalize_item_text
+            rows = await db.execute_fetchall('SELECT * FROM item_catalog')
+            for row in rows:
+                item = normalize_item_text(dict(row))
+                from crafting import normalize_quality
+                item = normalize_quality(item)
+                await db.execute('UPDATE item_catalog SET description=?,lore=?,properties=? WHERE id=?',
+                    (item['description'],item['lore'],json.dumps(item['properties'],ensure_ascii=False),row['id']))
+            await db.commit()
         from npc_store import SCHEMA as NPC_SCHEMA
         async with self.connect() as db:
             await db.executescript(NPC_SCHEMA)
@@ -961,7 +973,8 @@ class Database:
     async def upsert_catalog(self, items: list[dict[str, Any]]) -> int:
         async with self.connect() as db:
             for source_item in items:
-                item = dict(source_item)
+                from item_texts import normalize_item_text
+                item = normalize_item_text(source_item)
                 item["name"] = localize_game_text(str(item.get("name", ""))).replace("Tyranny", "Тирания")
                 item["description"] = localize_game_text(str(item.get("description", ""))).replace("Tyranny", "Тирания")
                 item["lore"] = localize_game_text(str(item.get("lore", ""))).replace("Tyranny", "Тирания")

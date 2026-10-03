@@ -299,6 +299,8 @@ def _clean_inventory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             item["properties"] = item['properties'] if isinstance(item.get('properties'),dict) else __import__("json").loads(item.get("properties") or "{}")
         except (TypeError, ValueError):
             item["properties"] = {}
+        from item_texts import normalize_item_text
+        item = normalize_item_text(item)
         from merchant_rules import reliable_icon
         item['image_url'],item['iconFallback']=reliable_icon(item)
         result.append(item)
@@ -597,10 +599,15 @@ async def admin_home(request: web.Request) -> web.Response:
     })
 
 
+def master_faction_talents(request):
+    return [{**t, 'tree': 'Фракционные · ' + t['faction']} for t in request.app['extended_talents']['factions']]
+
+
 async def admin_character(request: web.Request) -> web.Response:
     guild_id, _, character_id = await _admin_character(request)
     original = await request.app["db"].get_character_by_id(character_id)
     payload = await _dashboard(request, character_id)
+    payload['masterFactionTalents'] = master_faction_talents(request)
     payload["character"]["user_id"] = str(original["user_id"])
     payload["adminConfig"] = {
         "backgrounds": list(BACKGROUNDS), "specializations": list(SPECIALIZATIONS),
@@ -656,7 +663,7 @@ async def admin_mutation(request: web.Request) -> web.Response:
         await db.admin_set_skill(cid, name, int(payload.get("value", 0)), int(payload.get("experience", 0)))
     elif action == "talent_add":
         character = await db.get_character_by_id(cid)
-        library = [*TALENTS, *request.app["extended_talents"]["backgrounds"].get(character["background"], [])]
+        library = [*TALENTS, *request.app["extended_talents"]["backgrounds"].get(character["background"], []), *master_faction_talents(request)]
         talent = next((row for row in library if row["name"] == str(payload.get("name", ""))), None)
         if not talent:
             raise web.HTTPBadRequest(reason="Талант не найден в доступных деревьях персонажа.")
@@ -710,6 +717,7 @@ async def admin_mutation(request: web.Request) -> web.Response:
     await db.record_admin_action(guild_id, admin_user_id, cid, action, safe_log)
     original = await db.get_character_by_id(cid)
     refreshed = await _dashboard(request, cid)
+    refreshed['masterFactionTalents'] = master_faction_talents(request)
     refreshed["character"]["user_id"] = str(original["user_id"])
     refreshed["adminConfig"] = {
         "backgrounds": list(BACKGROUNDS), "specializations": list(SPECIALIZATIONS),

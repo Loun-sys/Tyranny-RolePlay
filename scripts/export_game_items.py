@@ -102,6 +102,9 @@ def main():
             'missingIcons':[r['name'] for r in out if not r['image_url']],
             'note':'Conditional item mods and quality scaling are preserved as source data; not all are executable combat rules.'}
     (ROOT/'catalog/game_item_audit.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+    # Never leave old Wiki text attached to newly exported game prefabs.
+    from repair_item_texts import main as repair_texts
+    repair_texts()
     print({k:v for k,v in report.items() if k not in {'excluded','missingIcons'}})
 
 

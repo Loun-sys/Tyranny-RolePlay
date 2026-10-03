@@ -50,7 +50,7 @@ def main() -> None:
                 item["name"] = translations[key(slug)]
             # Русская Wiki часто уже содержит полноценный раздел «Описание».
             # Он остаётся безопасным резервом, если у объекта нет DescriptionText.
-            item["lore"] = re.sub(r"\s+", " ", lore).strip() or original_description
+            item["lore"] = re.sub(r"\s+", " ", lore).strip()
         path.write_text(json.dumps(items, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"{path}: официально сопоставлено {matched}/{len(items)}, поле предыстории заполнено у всех")
 
