@@ -761,6 +761,9 @@ async def training_start(request: web.Request) -> web.Response:
     cid, payload = await _portal_payload(request)
     character = await request.app["db"].get_character_by_id(cid)
     custom_map = None
+    if not payload.get('mapId'):
+        default_map=next((m for m in await _player_maps(request,cid) if m['name'].strip().casefold()=='тренировочное поле'),None)
+        if default_map:payload['mapId']=default_map['id']
     if payload.get('mapId'):
         choices = await _player_maps(request,cid)
         selected = next((row for row in choices if row['id']==int(payload['mapId'])),None)
@@ -840,18 +843,23 @@ async def _player_maps(request,cid):
 
 
 async def admin_npcs(request):
-    from npc_store import NPCStore,template_page,templates
+    from npc_store import NPCStore,template_page,templates,ability_page
     guild,owner=await _admin_owner(request);store=NPCStore(request.app['db']);ident=None
     if request.method=='POST':
         try:
             payload=await request.json()
             if not isinstance(payload,dict):raise ValueError('Нужен объект НПС.')
-            ident=await store.save(guild,owner,payload)
+            if payload.get('action')=='delete':await store.archive(guild,owner,int(payload['id']))
+            elif payload.get('action')=='restore':ident=await store.restore(guild,owner,int(payload['archiveId']))
+            else:ident=await store.save(guild,owner,payload)
             await request.app['db'].record_admin_action(guild,owner,None,'npc',{'id':ident})
         except (ValueError,TypeError,KeyError) as error:raise web.HTTPBadRequest(reason=str(error)) from error
-    try:offset=max(0,int(request.query.get('offset',0)))
+    try:
+        offset=max(0,int(request.query.get('offset',0)))
+        ability_offset=max(0,int(request.query.get('abilityOffset',0)))
     except ValueError:raise web.HTTPBadRequest(reason='Некорректная страница.')
-    return web.json_response({'ok':True,'id':ident,'npcs':await store.list(guild,owner),
+    return web.json_response({'ok':True,'id':ident,'npcs':await store.list(guild,owner),'archive':await store.archived(guild,owner),
+        'abilities':ability_page(str(request.query.get('abilityQ',''))[:150],str(request.query.get('abilityKind','')),ability_offset),
         'templates':template_page(str(request.query.get('q',''))[:150],str(request.query.get('category',''))[:100],offset),
         'tokenTemplates':[{'key':t['key'],'name':t['name'],'portrait':t['portrait'],'category':t['category']} for t in templates()]})
 
@@ -980,7 +988,8 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_options("/api/admin/{token}/character/{character_id}", lambda _: web.Response(status=204))
     app.router.add_get("/media/portraits/{name}", portrait_media)
     app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))
-    runner = web.AppRunner(app)
+    # Secret portal/admin tokens must never be written to access logs.
+    runner = web.AppRunner(app,access_log_format='%a %t %s %b')
     await runner.setup()
     site = web.TCPSite(runner, os.getenv("HOST", "0.0.0.0"), int(os.getenv("PORT", "8080")))
     await site.start()

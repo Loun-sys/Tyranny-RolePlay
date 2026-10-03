@@ -356,6 +356,8 @@ class Database:
         from npc_store import SCHEMA as NPC_SCHEMA
         async with self.connect() as db:
             await db.executescript(NPC_SCHEMA)
+        from master_update import apply_master_update
+        await apply_master_update(self,int(__import__('os').getenv('DISCORD_GUILD_ID','0') or 0))
         await self.ensure_starting_sigils()
         if spell_slots_added:
             async with self.connect() as db:

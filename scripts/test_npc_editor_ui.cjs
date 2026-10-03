@@ -1,0 +1,15 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+let html='';
+const ctx=vm.createContext({document:{querySelector(){return {insertAdjacentHTML(){}}},querySelectorAll(){return []},addEventListener(){}},campaignWorkspace(s){html=s},campaignClone:v=>JSON.parse(JSON.stringify(v)),esc:s=>String(s??''),request(){},toast(){},base(){return ''}});
+vm.runInContext(fs.readFileSync('web/admin-npcs.js','utf8'),ctx);
+const a={key:'test',name:'Пламя',description:'Описание',icon:'assets/test.png',passive:false,cooldown:3,range:12,area:2,damageMin:10,damageMax:20,effects:[{name:'Ослабление',value:-2,rounds:2}]};
+vm.runInContext(`npcData=${JSON.stringify({npcs:[],archive:[],templates:{items:[{portrait:'assets/test.png',skills:{Знания:20}}],total:1,categories:[]},abilities:{items:[a],total:1}})};newNPC();npcDraft.abilities.push(${JSON.stringify(a)});npcTab='abilities';renderNPCs()`,ctx);
+assert(html.includes('data-pick-npc-ability="test" disabled'));
+assert(html.includes('data-ability-stat="cooldown"'));
+assert(html.includes('value="12"'));
+assert(html.includes('Особые эффекты'));
+assert(!html.includes('Показывать в публичном архиве'));
+vm.runInContext('collectNPCDraft()',ctx);
+assert.equal(vm.runInContext('npcDraft.abilities[0].key',ctx),'test');
+assert.equal(vm.runInContext('npcDraft.abilities[0].effects[0].rounds',ctx),2);
+console.log('NPC editor: ability library, editable combat stats, source metadata and draft preservation OK');

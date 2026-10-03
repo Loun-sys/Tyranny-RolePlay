@@ -10,6 +10,9 @@ from artifact_rules import equipped_artifacts
 from aiohttp import web
 from aiohttp.test_utils import TestClient,TestServer
 from registration_api import admin_npcs,public_npcs
+from npc_store import ability_library,ability_page,validate_npc
+from master_update import apply_master_update,training_positions
+import json
 
 class NPCTests(CampaignTests):
     async def asyncSetUp(self):
@@ -25,6 +28,55 @@ class NPCTests(CampaignTests):
         with self.assertRaises(ValueError):await self.npcs.resolve_map(2,10,[{'id':ident,'x':0,'y':0}])
         await self.npcs.save(1,10,{'id':ident,'spec':{'name':'Страж'},'published':False})
         self.assertFalse(await self.npcs.list(public=True))
+
+    async def test_original_ability_catalog_and_editable_parameters(self):
+        self.assertGreaterEqual(len(ability_library()),281)
+        for row in ability_library():
+            self.assertTrue(row['name'])
+            self.assertTrue((__import__('pathlib').Path('web')/row['icon']).is_file(),row['icon'])
+        a=next(a for a in ability_library() if not a['passive'])
+        spec=validate_npc({'name':'Страж','abilities':[{**a,'cooldown':3,'range':4}]})
+        self.assertEqual(spec['abilities'][0]['key'],a['key'])
+        self.assertEqual(spec['abilities'][0]['effects'],a['effects'])
+        self.assertEqual(spec['abilities'][0]['range'],4)
+        self.assertEqual(spec['abilities'][0]['cooldown'],3)
+        self.assertTrue(all(a['passive'] for a in ability_page(kind='passive')['items']))
+
+    async def test_archive_removes_map_tokens_and_restores_npc(self):
+        ident=await self.npcs.save(1,10,{'spec':{'name':'Страж'}})
+        await self.store.save_map(1,10,{'spec':{'tokens':[{'id':ident,'kind':'npc','x':2,'y':2},{'id':1,'kind':'player','x':0,'y':0}]}})
+        with self.assertRaises(ValueError):await self.npcs.archive(1,11,ident)
+        await self.npcs.archive(1,10,ident)
+        self.assertFalse(await self.npcs.list(1,10))
+        spec=(await self.store.maps(1,10))[0]['spec']
+        self.assertEqual([p['kind'] for p in spec['tokens']],['player'])
+        saved=(await self.npcs.archived(1,10))[0]
+        restored=await self.npcs.restore(1,10,saved['id'])
+        self.assertEqual((await self.npcs.list(1,10))[0]['id'],restored)
+        self.assertFalse(await self.npcs.archived(1,10))
+
+    async def test_requested_reset_is_once_scoped_and_training_keeps_background(self):
+        await self.npcs.save(1,10,{'spec':{'name':'Старый'}})
+        await self.npcs.save(2,20,{'spec':{'name':'Другой сервер'}})
+        spec={'name':'Тренировочное Поле','image':'assets/maps/training-grounds.png','blocked':[{'x':0,'y':0}], 'width':20,'height':10}
+        ident=await self.store.save_map(1,10,{'spec':spec})
+        await apply_master_update(self.db,1)
+        self.assertFalse(await self.npcs.list(1,10))
+        self.assertEqual(len(await self.npcs.list(2,20)),1)
+        self.assertEqual(len(await self.npcs.archived(1,10)),1)
+        row=(await self.store.maps(1,10))[0]
+        self.assertEqual(row['id'],ident);self.assertTrue(row['published'])
+        self.assertEqual(row['spec']['image'],spec['image'])
+        self.assertEqual(row['spec']['blocked'],spec['blocked'])
+        positions=row['spec']['spawns']
+        self.assertEqual(len(positions),3)
+        self.assertLess(positions['dummy_left']['x'],positions['player']['x'])
+        session=TrainingSession(1,custom_map=row['spec'])
+        self.assertEqual(len(session.targets),2)
+        self.assertEqual(session.player_position,(positions['player']['x'],positions['player']['y']))
+        await self.npcs.save(1,10,{'spec':{'name':'Новый'}})
+        await apply_master_update(self.db,1)
+        self.assertEqual(len(await self.npcs.list(1,10)),1)
 
     async def test_arbitrary_tokens_without_fixed_spawns(self):
         ident=await self.npcs.save(1,10,{'spec':{'name':'Страж'}})

@@ -70,7 +70,7 @@ def validate_map(payload):
         points.append((x,y));placements.append({'id':int(row['id']),'kind':kind,'x':x,'y':y,'team':team})
     return {'name': str(payload.get('name','Новая карта')).strip()[:100] or 'Новая карта',
             'width':width,'height':height,'cellSize':cell,'image':image,'blocked':blocked,
-            'sightBlocked':sight,'cover':cover,'spawns':spawns,'tokens':placements,
+            'sightBlocked':sight,'cover':cover,'spawns':spawns,'tokens':placements,'training':bool(payload.get('training')),
             'offsetX': max(-2000,min(2000,int(payload.get('offsetX',0)))),
             'offsetY': max(-2000,min(2000,int(payload.get('offsetY',0)))),
             'imageScale': max(.1,min(5,float(payload.get('imageScale',1)))),
