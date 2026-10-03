@@ -1,6 +1,7 @@
 """Isolated local combat QA: never opens the production database or Discord."""
 import asyncio
 import sys
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -17,6 +18,10 @@ async def main():
         db = Database(Path(folder) / "qa.sqlite3")
         await db.initialize()
         cid = await db.create_character(1, 2, "Испытатель", "Заклинатель", "Заклинания молний", "Заклинания льда")
+        portraits = Path(folder) / "portraits"
+        portraits.mkdir()
+        shutil.copyfile(ROOT / "web/assets/npc-portraits/verse_sm.png", portraits / "qa.png")
+        await db.update_character_text(cid, "portrait_url", "local://qa.png")
         await db.create_character(1,3,'Получатель','Книгочей','Меч и щит','Дротик')
         await db.create_spell(cid, "Огненный взрыв", "Огонь", "Направленная сила", [], [], 0)
         await db.normalize_spell_slots(cid, fill_empty=True)
@@ -30,6 +35,7 @@ async def main():
         app["extended_talents"] = {"backgrounds": {}, "factions": []}
         app["training_sessions"], app["training_locks"] = {}, {}
         app.router.add_get("/api/archive", api.archive_list)
+        app.router.add_get("/media/portraits/{name}", api.portrait_media)
         app.router.add_get("/api/portal/{token}", api.portal_info)
         app.router.add_get("/api/portal/{token}/training", api.training_info)
         app.router.add_get("/api/portal/{token}/shop", api.portal_shop)
