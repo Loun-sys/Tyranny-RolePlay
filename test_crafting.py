@@ -8,6 +8,13 @@ from aiohttp import web
 from aiohttp.test_utils import TestClient,TestServer
 
 class CraftTests(CampaignTests):
+    def test_upgrade_keeps_artifact_abilities(self):
+        from artifact_rules import library as artifacts,equipped_artifacts
+        name=next(iter(artifacts()))
+        original=equipped_artifacts([{'name':name,'properties':{}}])
+        upgraded=equipped_artifacts([{'name':name+' (Безупречное)','properties':{'gameData':{'craftBaseName':name}}}])
+        self.assertEqual(len(original),len(upgraded))
+        self.assertEqual(original[0]['name'],upgraded[0]['name'])
     async def setup_crafter(self):
         async with self.db.connect() as c:
             await c.executescript(SCHEMA)

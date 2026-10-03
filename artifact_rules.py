@@ -14,7 +14,7 @@ def library():
 def equipped_artifacts(items):
     result=[]
     for item in items:
-        base=item['name'].split(' (вариант ')[0]
+        base=((item.get('properties') or {}).get('gameData',{}).get('craftBaseName') or item['name']).split(' (вариант ')[0]
         ability=library().get(base)
         if not ability: continue
         effects=adapted_effects(ability)
