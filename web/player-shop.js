@@ -1,7 +1,10 @@
 let playerShop=null,shopPending=false,playerShopKey='consumables',playerShopCategory='',playerShopQuality='',playerShopQuery='';
 function moneyText(w={}){return `${w.iron||0} железных · ${w.bronze||0} бронзовых · ${w.copper||0} медных колец`}
+function moneyIcons(w={}){
+ return `<span class="wallet-rings" aria-label="Кольца персонажа">${[['iron','Железные кольца','Iron'],['bronze','Бронзовые кольца','Bronze'],['copper','Медные кольца','Copper']].map(([key,label,icon])=>`<span class="wallet-ring" data-ring="${key}" tabindex="0" aria-label="${label}: ${esc(w[key]||0)}"><b>${esc(w[key]||0)}</b><img src="assets/item-icons/Imperial${icon}Ring_S.png" alt=""><span class="wallet-ring-tip" aria-hidden="true">${label}</span></span>`).join('')}</span>`;
+}
 const originalPlayerRenderCabinet=renderCabinet;
-renderCabinet=function(){originalPlayerRenderCabinet();$('#profile-head').insertAdjacentHTML('beforeend',`<div class="wallet-line">${moneyText(data.wallet)}<button data-tab="shop">МАГАЗИНЫ</button></div>`)};
+renderCabinet=function(){originalPlayerRenderCabinet();$('#profile-head').insertAdjacentHTML('beforeend',`<div class="wallet-line">${moneyIcons(data.wallet)}<button data-tab="shop">МАГАЗИНЫ</button></div>`)};
 const originalPlayerRenderTab=renderTab;
 renderTab=function(){if(tab==='shop'){renderPlayerShop();return}originalPlayerRenderTab()};
 function playerShopURL(){return `/api/portal/${encodeURIComponent(token)}/shop?${new URLSearchParams({shopKey:playerShopKey,category:playerShopCategory,quality:playerShopQuality,q:playerShopQuery})}`}

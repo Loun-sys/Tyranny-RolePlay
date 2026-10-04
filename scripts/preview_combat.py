@@ -45,11 +45,13 @@ async def main():
             await CampaignStore(db).set_wallet(cid,25000)
         token = await db.create_portal_token(1, 2)
         admin_token=await db.create_admin_token(1,99)
+        creation_token=await db.create_registration_token(1,4)
         app = web.Application(middlewares=[api.cors_middleware],client_max_size=7*1024*1024)
         app["db"], app["data_dir"] = db, Path(folder)
         app["extended_talents"] = {"backgrounds": {}, "factions": []}
         app["training_sessions"], app["training_locks"] = {}, {}
         app.router.add_get("/api/archive", api.archive_list)
+        app.router.add_get('/api/registration/{token}',api.registration_info)
         app.router.add_get("/media/portraits/{name}", api.portrait_media)
         app.router.add_get("/api/portal/{token}", api.portal_info)
         app.router.add_get("/api/portal/{token}/training", api.training_info)
@@ -69,6 +71,9 @@ async def main():
         async def admin_index(_):
             return web.Response(status=302,headers={'Location':f'/admin.html?api=http://127.0.0.1:{port}#token={admin_token}'})
         app.router.add_get('/qa-admin',admin_index)
+        async def creation_index(_):
+            return web.Response(status=302,headers={'Location':f'/index.html?api=http://127.0.0.1:{port}&token={creation_token}'})
+        app.router.add_get('/qa-create',creation_index)
         async def index(_):
             # API middleware formats raised HTTP exceptions as JSON; retain Location.
             return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:{port}#token={token}"})

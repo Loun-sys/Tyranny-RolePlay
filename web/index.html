@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#050506">
   <title>Редактор жителя Империи · Тирания</title>
-  <link rel="stylesheet" href="styles.css?v=20261003-commands">
+  <link rel="stylesheet" href="styles.css?v=20261004-8">
 </head>
 <body>
   <header class="hero">
@@ -46,13 +46,13 @@
       </section>
 
       <section class="wizard-step" data-screen="4" hidden>
-        <div class="screen-title"><small>ХАРАКТЕРИСТИКИ</small><h2>Распределите природные качества</h2><p>Все значения начинаются с 10. Доступно ещё 8 очков; минимум 8, максимум 18.</p></div>
-        <div class="choice-stage stats-stage"><div class="allocation"><div class="allocation-title"><div><p>ДОСТУПНЫЕ ОЧКИ</p><h2>Характеристики</h2></div><div id="attribute-counter" class="counter"></div></div><div id="attributes" class="rows"></div></div><aside id="attribute-detail" class="lore-panel"></aside></div>
+        <div class="screen-title"><small>ХАРАКТЕРИСТИКИ</small><h2>Распределите природные качества</h2><p id="attribute-budget-hint">Все значения начинаются с 10. Доступно ещё 8 очков; минимум 8, максимум 18.</p></div>
+        <div class="choice-stage stats-stage"><div class="allocation"><div class="allocation-title"><div><p>ДОСТУПНЫЕ ОЧКИ</p><h2>Характеристики</h2></div><div id="attribute-counter" class="counter" tabindex="0" aria-describedby="glossary-tooltip"></div></div><div id="attributes" class="rows"></div></div><aside id="attribute-detail" class="lore-panel"></aside></div>
       </section>
 
       <section class="wizard-step" data-screen="5" hidden>
-        <div class="screen-title"><small>НАВЫКИ</small><h2>Распределите подготовку</h2><p>База навыка вычисляется из характеристик и двух специализаций. Распределите ещё 20 очков.</p></div>
-        <div class="choice-stage stats-stage"><div class="allocation"><div class="allocation-title"><div><p>ДОСТУПНЫЕ ОЧКИ</p><h2>Навыки</h2></div><div id="skill-counter" class="counter"></div></div><div id="skills" class="rows skills"></div></div><aside id="skill-detail" class="lore-panel"></aside></div>
+        <div class="screen-title"><small>НАВЫКИ</small><h2>Распределите подготовку</h2><p>База навыка вычисляется из характеристик; к ней добавляются бонусы класса и двух специализаций. Распределите ещё 20 очков.</p></div>
+        <div class="choice-stage stats-stage"><div class="allocation"><div class="allocation-title"><div><p>ДОСТУПНЫЕ ОЧКИ</p><h2>Навыки</h2></div><div id="skill-counter" class="counter" tabindex="0" aria-describedby="glossary-tooltip"></div></div><div id="skills" class="rows skills"></div></div><aside id="skill-detail" class="lore-panel"></aside></div>
       </section>
 
       <section class="wizard-step" data-screen="6" hidden>
@@ -67,6 +67,6 @@
   <dialog id="tooltip" class="tooltip"><button id="tooltip-close" aria-label="Закрыть">×</button><p>АРХИВНАЯ СПРАВКА</p><h2 id="tooltip-title"></h2><div id="tooltip-text"></div></dialog>
   <div id="glossary-tooltip" class="glossary-tooltip" role="tooltip" hidden><b></b><p></p></div>
   <footer><b>ТИРАНИЯ</b><span>Лоун был здесь</span></footer>
-  <script src="app.js?v=20261003-commands" defer></script>
+  <script src="app.js?v=20261004-9" defer></script>
 </body>
 </html>

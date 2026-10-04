@@ -3,6 +3,17 @@ const nodes={},node=k=>nodes[k]??={innerHTML:'',hidden:false,value:'',insertAdja
 const shop={settings:{name:'Лавка',enabled:1},shops:[{key:'consumables',name:'Припасы'},{key:'weapons',name:'Оружие'},{key:'armor',name:'Броня'}],categories:['Луки'],qualities:['Обычное'],items:[{id:1,name:'Лук',category:'Луки',quality:'Обычное',value:100,buy_price:100,stock:4,image_url:'assets/test.png'}],saleOffers:[],wallet:{copper:50}};
 const context=vm.createContext({document:{querySelector:node,addEventListener(){}},$:node,URLSearchParams,renderCabinet(){},renderTab(){},esc:v=>String(v??''),data:{inventory:[],wallet:{}},tab:'shop',token:'test',toast(){},request(){return shop},base(){return '/api/admin/test'}});
 vm.runInContext(fs.readFileSync('web/player-shop.js','utf8'),context);
+const rings=context.moneyIcons({iron:5,bronze:12,copper:90});
+for(const [key,name,icon,count] of [['iron','Железные кольца','Iron',5],['bronze','Бронзовые кольца','Bronze',12],['copper','Медные кольца','Copper',90]]){
+ assert(rings.includes(`data-ring="${key}" tabindex="0" aria-label="${name}: ${count}"`));
+ assert(rings.includes(`Imperial${icon}Ring_S.png`));
+ assert(fs.existsSync(`web/assets/item-icons/Imperial${icon}Ring_S.png`));
+ assert(rings.includes(`aria-hidden="true">${name}</span>`));
+}
+assert.equal((context.moneyIcons().match(/<b>0<\/b>/g)||[]).length,3);
+context.renderCabinet();
+assert(node('#profile-head').innerHTML.includes('wallet-rings'));
+assert(!node('#profile-head').innerHTML.includes('0 железных ·'));
 vm.runInContext(`playerShop=${JSON.stringify(shop)};renderPlayerShop()`,context);
 assert(node('#panel').innerHTML.includes('data-player-merchant="weapons"'));
 assert(node('#panel').innerHTML.includes('player-shop-category'));

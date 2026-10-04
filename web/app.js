@@ -51,10 +51,41 @@ function escapeHtml(value) {
   })[character]);
 }
 
-const glossaryAliases = Object.entries(glossary).flatMap(([name, details]) => details.aliases.map((alias) => ({ alias, name })))
-  .sort((left, right) => right.alias.length - left.alias.length);
-const glossaryLookup = new Map(glossaryAliases.map(({ alias, name }) => [alias.toLocaleLowerCase("ru-RU"), name]));
-const glossaryPattern = glossaryAliases.map(({ alias }) => alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+let glossaryLookup = new Map(), glossaryPattern = "", activeHelpTerm = null, helpHideTimer = null;
+const glossaryKey = value => String(value || '').toLocaleLowerCase('ru-RU').replace(/ё/g,'е');
+function rebuildGlossary(){
+  const aliases=Object.entries(glossary).flatMap(([name,details])=>[name,...details.aliases].map(alias=>({alias,name}))).sort((a,b)=>b.alias.length-a.alias.length);
+  glossaryLookup=new Map();
+  for(const name of Object.keys(glossary))glossaryLookup.set(glossaryKey(name),name);
+  for(const {alias,name} of aliases)if(!glossaryLookup.has(glossaryKey(alias)))glossaryLookup.set(glossaryKey(alias),name);
+  glossaryPattern=[...new Set(aliases.map(({alias})=>alias.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[её]/gi,'[её]')))].join('|');
+}
+function glossaryText(value){return String(value||'').replace(/\[url=glossary:[^\]]+]([\s\S]*?)\[\/url]/gi,'$1').replace(/\[\/?[^\]]+]/g,'').trim()}
+function applyCreationGlossary(entries=[]){
+  for(const entry of entries){
+    if(![0,1,2,3,8].includes(Number(entry.category))||!entry.title||!entry.body)continue;
+    const previous=glossary[entry.title];
+    glossary[entry.title]={aliases:[...new Set([...(previous?.aliases||[]),...(entry.aliases||[]).filter(a=>/[а-яё]/i.test(a))])],text:glossaryText(entry.body)};
+  }
+  const sourceName={'Управление силой':'Управление силами'};
+  for(const name of state.config.skills){
+    const official=Object.entries(glossary).find(([key])=>glossaryKey(key)===glossaryKey(sourceName[name]||name))?.[1];
+    const text=official?.text||skillDescriptions[name]||`Навык применения заклинаний: ${name.replace('Управление ','')}. Определяет точность соответствующих атак.`;
+    glossary[name]={aliases:glossary[name]?.aliases||[name],text};skillDescriptions[name]=text;
+  }
+  for(const [name,detail] of Object.entries(state.config.attributeDetails)){
+    glossary[name]={aliases:glossary[name]?.aliases||[name],text:[detail.summary,detail.effects,`Основные навыки (×1,5): ${attributeRelated(name,0).join(', ')||'—'}.`,`Дополнительные навыки (×0,5): ${attributeRelated(name,1).join(', ')||'—'}.`].join('\n\n')};
+  }
+  rebuildGlossary();
+}
+async function loadCreationGlossary(){
+  try{const response=await fetch('data/encyclopedia.json?v=20261004-2');if(!response.ok)throw Error('Энциклопедия недоступна');applyCreationGlossary((await response.json()).entries)}
+  catch{applyCreationGlossary()}
+}
+function helpAttrs(title,text){return `data-help-title="${escapeHtml(title)}" data-help-text="${escapeHtml(text)}" aria-describedby="glossary-tooltip"`}
+function choiceHelp(detail){return [detail.description,Object.entries(detail.bonuses||{}).map(([name,value])=>`${name}: +${value}`).join('\n')].filter(Boolean).join('\n\n')}
+function abilityHelp(ability){return [ability.description,`Перезарядка: ${ability.cooldown}. Длительность: ${ability.duration}.`,...(ability.effects||[]),ability.requirements].filter(Boolean).join('\n\n')}
+rebuildGlossary();
 
 function annotateGlossary(root = $("#form")) {
   if (!root || !glossaryPattern) return;
@@ -62,7 +93,7 @@ function annotateGlossary(root = $("#form")) {
   const nodes = [];
   while (walker.nextNode()) {
     const parent = walker.currentNode.parentElement;
-    if (!parent || parent.closest(".glossary-term,.glossary-tooltip,script,style,textarea,input,option")) continue;
+    if (!parent || parent.closest(".glossary-term,.glossary-tooltip,[data-help-text]:not(.ability-choice),script,style,textarea,input,option")) continue;
     if (walker.currentNode.nodeValue.trim()) nodes.push(walker.currentNode);
   }
   const letters = "А-Яа-яЁёA-Za-z0-9";
@@ -75,7 +106,8 @@ function annotateGlossary(root = $("#form")) {
       fragment.append(text.slice(last, start));
       const term = document.createElement("span");
       term.className = "glossary-term"; term.tabIndex = 0; term.textContent = found;
-      term.dataset.glossary = glossaryLookup.get(found.toLocaleLowerCase("ru-RU"));
+      term.dataset.glossary = glossaryLookup.get(glossaryKey(found));
+      term.setAttribute('aria-describedby','glossary-tooltip');
       fragment.append(term); last = start + found.length; matcher.lastIndex = last; changed = true;
     }
     if (changed) { fragment.append(text.slice(last)); node.replaceWith(fragment); }
@@ -83,8 +115,10 @@ function annotateGlossary(root = $("#form")) {
 }
 
 function showGlossary(term) {
-  const entry = glossary[term.dataset.glossary]; if (!entry) return;
-  const tooltip = $("#glossary-tooltip"); tooltip.querySelector("b").textContent = term.dataset.glossary;
+  clearTimeout(helpHideTimer);
+  const entry = term.dataset.helpText ? {text:term.dataset.helpText} : glossary[term.dataset.glossary]; if (!entry) return;
+  activeHelpTerm=term;
+  const tooltip = $("#glossary-tooltip"); tooltip.querySelector("b").textContent = term.dataset.helpTitle||term.dataset.glossary;
   tooltip.querySelector("p").textContent = entry.text; tooltip.hidden = false;
   const rect = term.getBoundingClientRect(); const width = Math.min(420, innerWidth - 24);
   tooltip.style.width = `${width}px`; tooltip.style.left = `${Math.max(12, Math.min(innerWidth - width - 12, rect.left))}px`;
@@ -92,7 +126,8 @@ function showGlossary(term) {
   tooltip.style.top = `${below + height <= innerHeight - 10 ? below : Math.max(10, rect.top - height - 10)}px`;
 }
 
-function hideGlossary() { $("#glossary-tooltip").hidden = true; }
+function hideGlossary() { clearTimeout(helpHideTimer);$("#glossary-tooltip").hidden = true;activeHelpTerm=null; }
+function scheduleHideGlossary(){clearTimeout(helpHideTimer);helpHideTimer=setTimeout(()=>{if(!activeHelpTerm?.contains(document.activeElement))hideGlossary()},180)}
 
 function bonusesHtml(bonuses = {}) {
   const entries = Object.entries(bonuses);
@@ -110,7 +145,7 @@ function renderProgress() {
 function renderBackgrounds() {
   const details = state.config.backgroundDetails;
   $("#backgrounds").innerHTML = state.config.backgrounds.map((name) => `
-    <button type="button" class="choice-option ${state.background === name ? "selected" : ""}" data-background="${escapeHtml(name)}">
+    <button type="button" class="choice-option ${state.background === name ? "selected" : ""}" data-background="${escapeHtml(name)}" ${helpAttrs(name,choiceHelp(details[name]))}>
       <span>${escapeHtml(name)}</span>
     </button>`).join("");
   const name = state.background || state.config.backgrounds[0];
@@ -122,7 +157,7 @@ function renderSpecializations(slot) {
   const prefix = slot === 0 ? "primary" : "secondary";
   const selected = state.specs[slot];
   $("#" + prefix + "-specializations").innerHTML = state.config.specializations.map((name) => `
-    <button type="button" class="choice-option ${selected === name ? "selected" : ""}" data-spec-slot="${slot}" data-spec-name="${escapeHtml(name)}">
+    <button type="button" class="choice-option ${selected === name ? "selected" : ""}" data-spec-slot="${slot}" data-spec-name="${escapeHtml(name)}" ${helpAttrs(name,choiceHelp(state.config.specializationDetails[name]))}>
       <span>${escapeHtml(name)}</span>
     </button>`).join("");
   const name = selected || state.config.specializations[0];
@@ -131,9 +166,9 @@ function renderSpecializations(slot) {
     <p>${slot === 0 ? "ОСНОВНАЯ" : "ДОПОЛНИТЕЛЬНАЯ"} СПЕЦИАЛИЗАЦИЯ</p><h3>${escapeHtml(name)}</h3><div class="lore-rule"></div>
     <p class="lore-copy">${escapeHtml(detail.description)}</p><h4>БОНУСЫ К НАВЫКАМ</h4>${bonusesHtml(detail.bonuses)}
     <h4>ВЫБЕРИТЕ СТАРТОВУЮ СПОСОБНОСТЬ</h4><div class="ability-grid">${detail.abilities.map((ability) => `
-      <button type="button" class="ability-choice ${state.abilities[slot] === ability.name ? "selected" : ""}" data-ability-slot="${slot}" data-ability-name="${escapeHtml(ability.name)}">
-        <img src="${escapeHtml(ability.icon)}?v=20261002-game" alt="${escapeHtml(ability.name)}" title="${escapeHtml(ability.name)}" width="72" height="72" loading="lazy">
-        <span class="ability-body"><span class="ability-name">${escapeHtml(ability.name)}</span><span class="ability-type">${escapeHtml(ability.type)}</span>
+      <button type="button" class="ability-choice ${state.abilities[slot] === ability.name ? "selected" : ""}" data-ability-slot="${slot}" data-ability-name="${escapeHtml(ability.name)}" ${helpAttrs(ability.name,abilityHelp(ability))}>
+        <img src="${escapeHtml(ability.icon)}?v=20261002-game" alt="${escapeHtml(ability.name)}" ${helpAttrs(ability.name,abilityHelp(ability))} width="72" height="72" loading="lazy">
+        <span class="ability-body"><span class="ability-name" ${helpAttrs(ability.name,abilityHelp(ability))}>${escapeHtml(ability.name)}</span><span class="ability-type">${escapeHtml(ability.type)}</span>
           <span class="ability-description">${escapeHtml(ability.description)}</span>
           <span class="ability-meta"><span><i>ПЕРЕЗАРЯДКА</i><b>${escapeHtml(ability.cooldown)}</b></span><span><i>ДЛИТЕЛЬНОСТЬ</i><b>${escapeHtml(ability.duration)}</b></span></span>
           <span class="ability-effects">${ability.effects.map((effect) => `<em>${escapeHtml(effect)}</em>`).join("")}</span>
@@ -154,11 +189,14 @@ function attributeRelated(name, index) {
 function renderAttributes() {
   const used = Object.values(state.attributes).reduce((sum, value) => sum + value, 0);
   const left = creationAttributeTotal() - used;
+  $('#attribute-budget-hint').textContent=`Все значения начинаются с 10. Доступно ещё ${state.background==='Зверолюд'?12:8} очков; минимум ${state.config.attributeMin}${state.background==='Зверолюд'?'. Для Зверолюда верхний предел снят.':`, максимум ${state.config.attributeMax}.`}`;
   $("#attribute-counter").className = `counter ${left === 0 ? "done" : left < 0 ? "over" : ""}`;
   $("#attribute-counter").innerHTML = `<b>${left}</b><span>/ ${state.background==='Зверолюд'?12:8}</span><small>${left === 0 ? "РАСПРЕДЕЛЕНО" : "ОСТАЛОСЬ"}</small>`;
+  $('#attribute-counter').dataset.helpTitle='Очки характеристик';
+  $('#attribute-counter').dataset.helpText=`Распределите все ${state.background==='Зверолюд'?12:8} дополнительных очков. Можно уменьшать значения до ${state.config.attributeMin} и перераспределять освобождённые очки. ${state.background==='Зверолюд'?'Зверолюд получает 4 дополнительных очка и может превысить обычный предел.':`Максимум при создании: ${state.config.attributeMax}.`}`;
   $("#attributes").innerHTML = state.config.attributes.map((name) => `
     <div class="stat-row ${state.focusedAttribute === name ? "focused" : ""}" data-focus-kind="attribute" data-focus-name="${escapeHtml(name)}">
-      <span><b>${escapeHtml(name)}</b><small>${escapeHtml(state.config.attributeDetails[name].summary)}</small></span>
+      <span><b class="context-help" tabindex="0" ${helpAttrs(name,glossary[name].text)}>${escapeHtml(name)}</b><small>${escapeHtml(state.config.attributeDetails[name].summary)}</small></span>
       <div class="stepper"><button type="button" data-step-kind="attribute" data-step-name="${escapeHtml(name)}" data-delta="-1" ${state.attributes[name] <= state.config.attributeMin ? "disabled" : ""}>‹</button><output>${state.attributes[name]}</output><button type="button" data-step-kind="attribute" data-step-name="${escapeHtml(name)}" data-delta="1" ${(state.background!=='Зверолюд'&&state.attributes[name] >= state.config.attributeMax) || left <= 0 ? "disabled" : ""}>›</button></div>
     </div>`).join("");
   const name = state.focusedAttribute;
@@ -187,7 +225,7 @@ function skillRow(name) {
   const [primary, secondary] = state.config.skillAttributes[name];
   const left = state.config.skillPoints - Object.values(state.skills).reduce((sum, value) => sum + value, 0);
   return `<div class="stat-row ${state.focusedSkill === name ? "focused" : ""}" data-focus-kind="skill" data-focus-name="${escapeHtml(name)}">
-    <span><b>${escapeHtml(name)}</b><small>${escapeHtml(primary)} ×1,5 · ${escapeHtml(secondary)} ×0,5</small></span>
+    <span><b class="context-help" tabindex="0" ${helpAttrs(name,`${skillDescriptions[name]}\n\nБаза: ${primary} ×1,5 + ${secondary} ×0,5.\nТекущее значение: ${skillTotal(name)}.`)}>${escapeHtml(name)}</b><small>${escapeHtml(primary)} ×1,5 · ${escapeHtml(secondary)} ×0,5</small></span>
     <div class="stepper"><button type="button" data-step-kind="skill" data-step-name="${escapeHtml(name)}" data-delta="-1" ${state.skills[name] <= 0 ? "disabled" : ""}>‹</button><output>${skillTotal(name)}</output><button type="button" data-step-kind="skill" data-step-name="${escapeHtml(name)}" data-delta="1" ${left <= 0 ? "disabled" : ""}>›</button></div>
   </div>`;
 }
@@ -197,6 +235,8 @@ function renderSkills() {
   const left = state.config.skillPoints - used;
   $("#skill-counter").className = `counter ${left === 0 ? "done" : left < 0 ? "over" : ""}`;
   $("#skill-counter").innerHTML = `<b>${left}</b><span>/ ${state.config.skillPoints}</span><small>${left === 0 ? "РАСПРЕДЕЛЕНО" : "ОСТАЛОСЬ"}</small>`;
+  $('#skill-counter').dataset.helpTitle='Очки навыков';
+  $('#skill-counter').dataset.helpText=`Распределите все ${state.config.skillPoints} очков. Они добавляются к базе от характеристик, класса и двух специализаций. Можно убрать только распределённые вручную очки.`;
   const magicSkills = state.config.skills.filter((name) => !weaponSkills.includes(name) && !supportSkills.includes(name));
   $("#skills").innerHTML = `
     <div class="mundane-skills">
@@ -250,9 +290,12 @@ function renderNavigation() {
   $("#back").disabled = state.screen === 0;
   $("#next").hidden = state.screen === screens.length - 1;
   $("#step-status").textContent = `${state.screen + 1} / ${screens.length}`;
+  $('#next').dataset.helpTitle='Следующий шаг';
+  $('#next').dataset.helpText=canAdvance()?'Перейти к следующему этапу. Выбранные значения сохранятся.':`Сначала завершите текущий этап: ${validation()[state.screen][0]}.`;
 }
 
 function renderAll() {
+  hideGlossary();
   document.querySelectorAll(".wizard-step").forEach((element, index) => { element.hidden = index !== state.screen; });
   renderProgress(); renderBackgrounds(); renderSpecializations(0); renderSpecializations(1); renderIdentity(); renderAttributes(); renderSkills(); renderResult(); renderNavigation(); annotateGlossary();
 }
@@ -329,10 +372,14 @@ function bindEvents() {
   $("#back").addEventListener("click", () => moveTo(state.screen - 1));
   $("#next").addEventListener("click", () => canAdvance() ? moveTo(state.screen + 1) : pulseCurrent());
   $("#submit").addEventListener("click", submitCharacter);
-  document.addEventListener("pointerover", (event) => { const term = event.target.closest?.(".glossary-term"); if (term) showGlossary(term); });
-  document.addEventListener("pointerout", (event) => { const term = event.target.closest?.(".glossary-term"); if (term && !term.contains(event.relatedTarget)) hideGlossary(); });
-  document.addEventListener("focusin", (event) => { const term = event.target.closest?.(".glossary-term"); if (term) showGlossary(term); });
-  document.addEventListener("focusout", (event) => { if (event.target.closest?.(".glossary-term")) hideGlossary(); });
+  const helpSelector='.glossary-term,[data-help-text]';
+  document.addEventListener("pointerover",event=>{const term=event.target.closest?.(helpSelector);if(term)showGlossary(term);else if(event.target.closest?.('#glossary-tooltip'))clearTimeout(helpHideTimer)});
+  document.addEventListener("pointerout",event=>{const term=event.target.closest?.(helpSelector);if(term&&!term.contains(event.relatedTarget)&&!$('#glossary-tooltip').contains(event.relatedTarget))scheduleHideGlossary();if(event.target.closest?.('#glossary-tooltip')&&!$('#glossary-tooltip').contains(event.relatedTarget)&&!event.relatedTarget?.closest?.(helpSelector))scheduleHideGlossary()});
+  document.addEventListener("focusin",event=>{const term=event.target.closest?.(helpSelector);if(term)showGlossary(term)});
+  document.addEventListener("focusout",event=>{if(event.target.closest?.(helpSelector)&&!$('#glossary-tooltip').contains(event.relatedTarget))hideGlossary()});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')hideGlossary()});
+  document.addEventListener('scroll',event=>{if($('#glossary-tooltip').contains(event.target))return;if(activeHelpTerm?.contains(document.activeElement))showGlossary(activeHelpTerm);else hideGlossary()},true);
+  window.addEventListener('resize',hideGlossary);
 }
 
 async function boot() {
@@ -343,7 +390,9 @@ async function boot() {
     const data = await response.json(); state.config = data.config;
     state.config.attributes.forEach((name) => { state.attributes[name] = 10; });
     state.config.skills.forEach((name) => { state.skills[name] = 0; });
+    applyCreationGlossary();
     $("#connection").hidden = true; $("#form").hidden = false; bindEvents(); renderAll();
+    loadCreationGlossary().then(renderAll);
   } catch (error) { $("#connection").className = "connection error"; $("#connection").textContent = error.message; }
 }
 
