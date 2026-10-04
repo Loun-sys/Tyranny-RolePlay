@@ -11,12 +11,12 @@ from pathlib import Path
 from urllib.parse import quote
 
 from constants import TALENT_TREES
-from localization import localize_game_text
+from localization import localize_game_text, localize_player_text
 
 
 def _rows(tree: str, rows: list[tuple[int, str, str]]) -> list[dict]:
     return [
-        {"tree": tree, "tier": points, "name": name, "legacyName": name, "description": localize_game_text(description), "requires": ""}
+        {"tree": tree, "tier": points, "name": name, "legacyName": name, "description": localize_player_text(description), "requires": ""}
         for points, name, description in rows
     ]
 
@@ -206,7 +206,7 @@ for _talent in TALENTS:
         continue
     _talent["name"] = localize_game_text(_entity.get("name_ru") or _talent["name"])
     if _entity.get("description_ru"):
-        _talent["description"] = localize_game_text(_entity["description_ru"])
+        _talent["description"] = localize_player_text(_entity["description_ru"])
 
 TALENT_BY_NAME = {talent["name"].casefold(): talent for talent in TALENTS}
 TALENTS_BY_TREE = {tree: [talent for talent in TALENTS if talent["tree"] == tree] for tree in TALENT_TREES}

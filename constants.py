@@ -2,7 +2,7 @@
 
 from urllib.parse import unquote
 
-from localization import localize_game_text
+from localization import localize_player_text
 from official_localization import official_entity
 
 ATTRIBUTES = ("Сила", "Искусность", "Быстрота", "Живучесть", "Смекалка", "Стойкость")
@@ -109,56 +109,56 @@ ABILITY_DETAILS = {
         "description": "Ударьте цель щитом, надолго ошеломляя её и прерывая текущее действие.",
         "type": "Защита · активная", "cooldown": "30 сек.", "duration": "20 сек.",
         "effects": ("10–15 дробящего урона", "Ошеломление", "Прерывание"),
-        "requirements": "Вершитель Судеб · требуется щит",
+        "requirements": "Требуется щит",
         "icon": "assets/abilities/shield-slam.webp", "source": "https://tyranny.fandom.com/wiki/Shield_Slam",
     },
     "Раскол": {
         "description": "Нанесите мощный удар сверху, раскалывающий броню противника.",
         "type": "Сила · активная", "cooldown": "20 сек.", "duration": "20 сек.",
         "effects": ("150% урона оружия", "Цель получает состояние «Расколотая броня»"),
-        "requirements": "Вершитель Судеб · оружие ближнего боя",
+        "requirements": "Оружие ближнего боя",
         "icon": "assets/abilities/sunder.webp", "source": "https://tyranny.fandom.com/wiki/Sunder",
     },
     "Секущий удар": {
         "description": "Широкий размашистый удар поражает нескольких ближайших противников.",
         "type": "Сила · активная", "cooldown": "30 сек.", "duration": "Мгновенно",
         "effects": ("80% урона оружия", "+5 к пробиванию брони", "Конус 210° радиусом 1 м"),
-        "requirements": "Вершитель Судеб · двуручное оружие",
+        "requirements": "Двуручное оружие",
         "icon": "assets/abilities/cleave.webp", "source": "https://tyranny.fandom.com/wiki/Cleave",
     },
     "Выстрел в сердце": {
         "description": "Задержите выстрел, чтобы прицелиться в сердце: атака получает дополнительную точность и вызывает кровотечение.",
         "type": "Дальний бой · активная", "cooldown": "Не указано", "duration": "По эффекту кровотечения",
         "effects": ("120% урона оружия", "Дополнительная точность", "Кровотечение"),
-        "requirements": "Вершитель Судеб · лук или метательное оружие",
+        "requirements": "Лук или метательное оружие",
         "icon": "assets/abilities/heart-shot.webp", "source": "https://tyranny.fandom.com/wiki/Heart_Shot",
     },
     "Хромота": {
         "description": "Прицельтесь в ноги противника дальней атакой. При попадании цель получает состояние «Хромота».",
         "type": "Дальний бой · активная", "cooldown": "30 сек.", "duration": "По эффекту состояния",
         "effects": ("100% урона оружия", "Хромота: снижение скорости передвижения"),
-        "requirements": "Вершитель Судеб · лук или метательное оружие",
+        "requirements": "Лук или метательное оружие",
         "icon": "assets/abilities/hobble.webp", "source": "https://tyranny.fandom.com/wiki/Hobble",
     },
     "Шквал ударов": {
         "description": "Обрушьте на выбранную цель две быстрые последовательные атаки.",
         "type": "Ловкость · активная", "cooldown": "30 сек.", "duration": "Мгновенно",
         "effects": ("Две отдельные атаки по одной цели",),
-        "requirements": "Вершитель Судеб · парное оружие или безоружный бой",
+        "requirements": "Парное оружие или безоружный бой",
         "icon": "assets/abilities/flurry-of-blows.webp", "source": "https://tyranny.fandom.com/wiki/Flurry_of_Blows",
     },
     "Рассечение": {
         "description": "Точный удар вскрывает крупную артерию и оставляет цель истекать кровью.",
         "type": "Ловкость · активная", "cooldown": "20 сек.", "duration": "30 сек.",
         "effects": ("120% урона оружия", "Кровотечение"),
-        "requirements": "Вершитель Судеб · оружие ближнего боя",
+        "requirements": "Оружие ближнего боя",
         "icon": "assets/abilities/slice.webp", "source": "https://tyranny.fandom.com/wiki/Slice",
     },
     "Удар ладонью": {
         "description": "Сильный удар ладонью в грудь прерывает цель, отбрасывает её и лишает возможности колдовать.",
         "type": "Сила · активная", "cooldown": "Не указано", "duration": "Безмолвие: 15 сек.",
         "effects": ("14–28 дробящего урона против Парирования", "Отбрасывание на 3 м", "Прерывание", "Безмолвие"),
-        "requirements": "Вершитель Судеб · безоружный бой",
+        "requirements": "Безоружный бой",
         "icon": "assets/abilities/palm-strike.webp", "source": "https://tyranny.fandom.com/wiki/Palm_Strike",
     },
     "Заряженный кулак": {
@@ -198,8 +198,8 @@ for _details in ABILITY_DETAILS.values():
         _details["description"] = _official["description_ru"]
     for _field in ("description", "type", "cooldown", "duration", "requirements"):
         if _field in _details:
-            _details[_field] = localize_game_text(str(_details[_field]))
-    _details["effects"] = tuple(localize_game_text(str(value)) for value in _details.get("effects", ()))
+            _details[_field] = localize_player_text(str(_details[_field]))
+    _details["effects"] = tuple(localize_player_text(str(value)) for value in _details.get("effects", ()))
 
 ABILITY_DESCRIPTIONS = {name: details["description"] for name, details in ABILITY_DETAILS.items()}
 

@@ -13,7 +13,7 @@ from urllib.parse import quote, unquote, urlparse
 
 import aiohttp
 
-from localization import localize_game_text
+from localization import localize_game_text, localize_player_text
 from russian_translation import translate_title as translate_generic
 from official_localization import official_entity
 
@@ -227,7 +227,7 @@ def parse_talent_page(wikitext: str, background: str, page_title: str) -> list[d
             result.append({
                 "tree": tree, "tier": tier,
                 "name": localize_game_text(entity.get("name_ru") or _translate_title(english_name)),
-                "description": localize_game_text(entity.get("description_ru") or _translate_effect(effect)),
+                "description": localize_player_text(entity.get("description_ru") or _translate_effect(effect)),
                 "requires": _translate_effect(requirement), "background": background,
                 "automatic_level": tier if section_en == "Songs" and tier else 0,
                 "icon_url": _icon_url(icon.group(1)),
@@ -256,7 +256,7 @@ def parse_faction_talents(wikitext: str) -> list[dict[str, Any]]:
         entity = official_entity(english_name) or {}
         result.append({
             "name": localize_game_text(entity.get("name_ru") or _translate_title(english_name)),
-            "description": localize_game_text(entity.get("description_ru") or _translate_effect(_clean_wiki(cells[-2]))),
+            "description": localize_player_text(entity.get("description_ru") or _translate_effect(_clean_wiki(cells[-2]))),
             "faction": FACTION_TRANSLATIONS.get(faction_en, faction_en), "axis": axis,
             "tier": int(tier_match.group(1)),
             "icon_url": _icon_url(icon.group(1)),
@@ -269,6 +269,7 @@ def parse_faction_talents(wikitext: str) -> list[dict[str, Any]]:
 def _canonicalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
     for rows in [*payload.get("backgrounds", {}).values(), payload.get("factions", [])]:
         for talent in rows:
+            talent["description"] = localize_player_text(talent.get("description", ""))
             english_name = talent.get("name_en", "")
             if not english_name:
                 english_name = unquote(urlparse(talent.get("source_url", "")).path.rsplit("/", 1)[-1]).replace("_", " ")
@@ -279,7 +280,7 @@ def _canonicalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
             talent.setdefault('legacyName',talent.get('name',''))
             talent["name"] = localize_game_text(entity.get("name_ru") or talent.get("name", ""))
             if entity.get("description_ru"):
-                talent["description"] = localize_game_text(entity["description_ru"])
+                talent["description"] = localize_player_text(entity["description_ru"])
     return payload
 
 

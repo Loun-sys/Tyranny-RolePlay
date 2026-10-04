@@ -86,7 +86,7 @@ async def require_character(interaction: discord.Interaction, member: discord.Me
 def character_embed(character: dict) -> discord.Embed:
     embed = discord.Embed(title=character["name"], color=CRIMSON)
     embed.description = (
-        f'**Вершитель Судеб · {character["level"]} уровень**\n'
+        f'**Персонаж · {character["level"]} уровень**\n'
         f'Происхождение: **{character["background"]}**\n'
         f'Специализации: **{character["specialization_1"]}** и **{character["specialization_2"]}**'
     )
@@ -261,7 +261,7 @@ async def combat_command(interaction: discord.Interaction):
     session.message = await interaction.original_response()
 
 
-@bot.tree.command(name="регистрация", description="Получить личную ссылку на конструктор Вершителя Судеб")
+@bot.tree.command(name="регистрация", description="Получить личную ссылку на создание персонажа")
 async def registration(interaction: discord.Interaction):
     site_url = os.getenv("TYRANNY_REGISTRATION_URL", "").strip()
     api_url = os.getenv("TYRANNY_PUBLIC_API_URL", "").strip().rstrip("/")
@@ -274,7 +274,7 @@ async def registration(interaction: discord.Interaction):
     token = await bot.db.create_registration_token(guild_id(interaction), interaction.user.id)
     separator = "&" if "?" in site_url else "?"
     link = f"{site_url}{separator}{urlencode({'token': token, 'api': api_url})}"
-    embed = discord.Embed(title="Создание Вершителя Судеб", color=BRONZE)
+    embed = discord.Embed(title="Создание Персонажа", color=BRONZE)
     embed.description = (
         "Откройте личный конструктор, распределите характеристики и навыки, добавьте портрет и нажмите "
         "**«Создать персонажа»**.\n\nСсылка одноразовая, действует **2 часа** и привязана к вашему профилю в Дискорде."
@@ -411,7 +411,7 @@ async def talent_autocomplete(_: discord.Interaction, current: str):
     return [app_commands.Choice(name=f'{t["tree"]} · {t["name"]}', value=t["name"]) for t in TALENTS if folded in t["name"].casefold()][:25]
 
 
-@bot.tree.command(name="талант-добавить", description="Изучить талант Вершителя Судеб — мастерская команда")
+@bot.tree.command(name="талант-добавить", description="Изучить талант персонажа — мастерская команда")
 @app_commands.autocomplete(название=talent_autocomplete)
 async def add_talent(interaction: discord.Interaction, участник: discord.Member, название: str):
     if not is_master(interaction):
@@ -428,7 +428,7 @@ async def add_talent(interaction: discord.Interaction, участник: discord
     await interaction.response.send_message("Талант изучен." if added else "Этот талант уже изучен.", ephemeral=True)
 
 
-@bot.tree.command(name="таланты", description="Открыть русские деревья талантов Вершителя Судеб")
+@bot.tree.command(name="таланты", description="Открыть деревья талантов персонажа")
 @app_commands.choices(дерево=[app_commands.Choice(name=value, value=value) for value in TALENT_TREES])
 async def talents_catalog(interaction: discord.Interaction, дерево: app_commands.Choice[str]):
     embed = discord.Embed(title=f'Дерево талантов · {дерево.value}', color=BRONZE)
@@ -572,7 +572,7 @@ async def configure_spire(
     )
 
 
-@bot.tree.command(name="шпили", description="Показать сеть Шпилей Вершителя Судеб")
+@bot.tree.command(name="шпили", description="Показать сеть Шпилей")
 async def spires_command(interaction: discord.Interaction):
     rows = await bot.db.spires(guild_id(interaction))
     embed = discord.Embed(title="Шпили Терратуса", color=BRONZE)

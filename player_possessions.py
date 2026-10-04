@@ -6,19 +6,42 @@ CREATE TABLE IF NOT EXISTS possession_log(id INTEGER PRIMARY KEY, sender_id INTE
 """
 STARTS={
  'Книгочей':(300,[('WPN_1H_IR_Dagger_Lantry',1),('Cloth_Armor_Lantry',1),('Cloth_GLOVE_Lantry',1),('Cloth_BOOTS_Lantry',1)]),
- 'Заклинатель':(200,[('WPN_STF_WD_Staff_Starting_Shock',1),('Cloth_Armor_MageRobes_01',1)]),
+ 'Заклинатель':(200,[('Cloth_Armor_MageRobes_01',1)]),
  'Зверолюд':(0,[]),
- 'Певчий':(300,[('WPN_STF_WD_Staff_Starting_Frost',1),('Cloth_Armor_MageRobes_01',1)]),
- 'Танцующий':(200,[('WPN_1H_Starter_Sword',2),('Leather_Armor_02',1)]),
- 'Авангард':(300,[('WPN_SHLD_Starter_Buckler_Quartermaster_Store',1),('Bronze_Armor_02',1)]),
+ 'Певчий':(300,[('Cloth_Armor_MageRobes_01',1)]),
+ 'Танцующий':(200,[('Leather_Armor_02',1)]),
+ 'Авангард':(300,[('Bronze_Armor_02',1)]),
  'Скованный Ремеслом':(600,[('Cloth_Armor_MageRobes_01',1),('RES_SkyPillar_Ingot_Iron',10),('RES_SkyPillar_Ingot_Bronze',10),('RES_SkyPillar_Hide',10),('RES_SkyPillar_AlchemySupplies',15)]),
 }
+SPECIALIZATION_STARTS={
+ 'Меч и щит':[('WPN_1H_Starter_Sword',1),('WPN_SHLD_Starter_Buckler_Quartermaster_Store',1)],
+ 'Двуручный меч':[('WPN_2H_Starter_Sword',1)],
+ 'Короткий лук':[('WPN_BOW_WD_Shortbow_Starting',1)],
+ 'Заклинания молний':[('WPN_STF_WD_Staff_Starting_Shock',1)],
+ 'Заклинания рвения':[('WPN_STF_WD_Staff_Starting_Strength',1)],
+ 'Дротик':[('WPN_1H_Starter_Javelin',1)],
+ 'Парное оружие':[('WPN_1H_Starter_Dagger',2)],
+ 'Безоружные атаки':[],
+ 'Заклинания льда':[('WPN_STF_WD_Staff_Starting_Frost',1)],
+ 'Заклинания истощения':[('WPN_STF_WD_Staff_Starting_Weakness',1)],
+}
 STACKABLE={'Расходуемые предметы','Зелья','Еда','Материалы','Сигилы'}
+
+def starting_items(background,specializations):
+    """Class supplies plus both distinct specialization weapon kits."""
+    items=dict(STARTS.get(background,(0,[]))[1])
+    for specialization in dict.fromkeys(specializations):
+        for prefab,quantity in SPECIALIZATION_STARTS.get(specialization,[]):
+            items[prefab]=items.get(prefab,0)+quantity
+    return list(items.items())
 
 async def grant_start(conn,cid,background,allocate_start_bonus=True):
     if await conn.execute_fetchall('SELECT 1 FROM starting_grants WHERE character_id=?',(cid,)):return
     from item_texts import catalog_texts
-    coins,items=STARTS.get(background,(0,[]))
+    rows=await conn.execute_fetchall('SELECT specialization_1,specialization_2 FROM characters WHERE id=?',(cid,))
+    if not rows:raise ValueError('Персонаж не найден.')
+    coins=STARTS.get(background,(0,[]))[0]
+    items=starting_items(background,(rows[0]['specialization_1'],rows[0]['specialization_2']))
     for prefab,quantity in items:
         name=catalog_texts()[0][prefab]['name']
         rows=await conn.execute_fetchall('SELECT id,category FROM item_catalog WHERE name=?',(name,))

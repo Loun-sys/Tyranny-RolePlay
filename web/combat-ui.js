@@ -1,6 +1,6 @@
 /* Targeting and original-game HUD. All highlighted cells come from the server. */
 let armedCombatAction=null,combatAim=null,combatBusy=false,trainingMaps=[];
-let combatMapZoom=1.25,combatJournalOpen=false;
+let combatMapZoom=1.25,combatJournalOpen=false,combatInitiativeOpen=false;
 let combatZoomManual=false,combatFitMapKey='';
 let combatMapPan=null;
 function combatActionIsFree(action){return !!(action?.song||action?.freeAction||action?.consumesAction===false)}
@@ -68,6 +68,9 @@ function combatOrderPanel(t){
  const player=t.grid.tokens.find(x=>x.id==='player'),alive=new Map(t.grid.tokens.map(x=>[x.id,x]));
  return `<aside class="combat-turn-order" aria-label="Очередность ходов"><header>ОЧЕРЕДНОСТЬ · РАУНД ${t.round}</header>${(t.initiative||[]).map((row,index)=>{const token=alive.get(row.id),active=row.id===t.turn.actorId,portrait=token?.portraitUrl;return `<div class="turn-order-row ${active?'current':''} ${token?'':'defeated'}" data-ui-tip="${esc(row.name)}\nИнициатива: бросок ${row.roll} + бонус ${row.bonus} = ${row.total}${!token?'\nВыведен из боя':row.id!=='player'?'\nТренировочный манекен пропускает ход':''}"><b>${index+1}</b><span class="order-token ${row.id==='player'?'player':'enemy'}">${portrait?`<img src="${esc(portrait)}" alt="${esc(row.name)}">`:esc(row.id==='player'?(row.name||'?')[0]:'♟')}</span><span><strong>${esc(row.name)}</strong><small>${!token?'Выведен из боя':active?'Сейчас ходит':row.id==='player'?'Персонаж':'Пропускает ход'}</small></span><em title="Итоговая инициатива">${row.total}</em></div>`}).join('')}</aside>`;
 }
+function combatInitiative(t){return `<details class="combat-initiative" data-combat-initiative ${combatInitiativeOpen?'open':''}><summary aria-label="Очередность ходов · раунд ${t.round}" data-ui-tip="Инициатива · показать очередность ходов"><img src="${gameCombatRoot}icon_option_formation.png" alt=""><span>Раунд ${t.round}</span><i aria-hidden="true">▾</i></summary><div class="combat-initiative-panel">${combatOrderPanel(t)}</div></details>`}
+function setCombatInitiative(open){combatInitiativeOpen=!!open;const drawer=document.querySelector('[data-combat-initiative]');if(drawer)drawer.open=combatInitiativeOpen;document.querySelectorAll('[data-combat-picker="initiative"]').forEach(button=>button.setAttribute('aria-expanded',String(combatInitiativeOpen)))}
+function handleCombatInitiative(event){const button=event.target.closest('[data-combat-picker="initiative"]');if(!button||!training?.active)return;event.preventDefault();event.stopImmediatePropagation();hideCombatTooltip();setCombatInitiative(!combatInitiativeOpen)}
 function saveQuickbarBinding(slot,kind,name,sourceSlot=0){if(!Number.isInteger(slot)||slot<1||slot>9||!Number.isInteger(sourceSlot)||sourceSlot<0||sourceSlot>9)return;const bindings=Array.from({length:9},(_,i)=>{const action=quickbarAction(i+1,training.actions);return {slot:i+1,kind:action?.kind||'',name:action?.name||''}});const previous={...bindings[slot-1]};bindings[slot-1]={slot,kind,name};if(sourceSlot)bindings[sourceSlot-1]={...previous,slot:sourceSlot};return mutate('combat-quickbar',{bindings})}
 function combatGlyph(action){
  if(action.kind==='spell'){const spell=(data?.spells||[]).find(s=>s.name===action.name);if(spell)return spellCoreIcon(spell,'combat');return `<img src="${gameCombatRoot}${coreTexture[action.core]||'Core-Strength'}.png" alt="${esc(action.name)}">`}
@@ -80,7 +83,7 @@ renderTraining=function(panel,character){
  const oldViewport=panel.querySelector('.tactical-map-wrap'),scroll=oldViewport?{left:oldViewport.scrollLeft,top:oldViewport.scrollTop}:null;
  hideCombatTooltip();
  existingRenderTraining(panel,character);
- if(!training?.active){combatFitMapKey='';combatZoomManual=false;if(training&&trainingMaps.length)panel.querySelector('.training-start')?.insertAdjacentHTML('beforebegin',`<label class="training-map-select">Карта <select id="training-map"><option value="">${trainingMaps.some(m=>m.name.trim().toLowerCase()==='тренировочное поле')?'Тренировочное Поле (по умолчанию)':'Стандартная площадка'}</option>${trainingMaps.map(map=>`<option value="${map.id}">${esc(map.name)}</option>`).join('')}</select></label>`);return}
+ if(!training?.active){combatFitMapKey='';combatZoomManual=false;combatInitiativeOpen=false;if(training&&trainingMaps.length)panel.querySelector('.training-start')?.insertAdjacentHTML('beforebegin',`<label class="training-map-select">Карта <select id="training-map"><option value="">${trainingMaps.some(m=>m.name.trim().toLowerCase()==='тренировочное поле')?'Тренировочное Поле (по умолчанию)':'Стандартная площадка'}</option>${trainingMaps.map(map=>`<option value="${map.id}">${esc(map.name)}</option>`).join('')}</select></label>`);return}
  const t=training,d=t.derived||{},a=d.attack||{},turn=t.turn||{},player=(t.grid.tokens||[]).find(x=>x.id==='player'),hud=panel.querySelector('.tyranny-combat-hud');
  const stat=hudStat;
  const slots=Array.from({length:9},(_,i)=>{const x=quickbarAction(i+1,t.actions||[]);return `<button draggable="${!!x}" class="original-quick ${x?.remaining?'cooling':''}" data-quick-slot="${i+1}" data-ui-tip="${esc(x?.name||'Назначить действие')}\nНажатие — прицелиться. ПКМ — заменить. Перетащите на другую ячейку для обмена." ${x?`data-training-kind="${esc(x.kind)}" data-training-name="${esc(x.name)}"`:''} aria-label="Ячейка ${i+1}: ${esc(x?.name||'пусто')}" ${t.finished?'disabled':''}>${x?combatGlyph(x):'<span>+</span>'}<kbd>${i+1}</kbd>${x?.remaining?`<i>${x.remaining}</i>`:''}</button>`}).join('');
@@ -98,8 +101,9 @@ renderTraining=function(panel,character){
  // Controls belong to the arena sidebar, never to the scrolling map surface.
  const arena=panel.querySelector('.combat-arena'),sidebar=document.createElement('aside');
  sidebar.className='combat-sidebar';sidebar.setAttribute('aria-label','Управление боем');
- arena.prepend(sidebar);sidebar.innerHTML=combatOrderPanel(t);sidebar.append(hud);
- panel.querySelectorAll('.combat-picker,.combat-info-drawer').forEach(drawer=>sidebar.append(drawer));
+ arena.prepend(sidebar);sidebar.append(hud);
+ panel.querySelectorAll('.combat-picker').forEach(drawer=>sidebar.append(drawer));
+ panel.querySelectorAll('.combat-info-drawer').forEach(drawer=>drawer.remove());
  panel.querySelectorAll('.original-menus button').forEach(button=>{button.dataset.uiTip=button.title||button.textContent;button.querySelector('img')?.setAttribute('alt',button.title);button.removeAttribute('title');});
  const menus={ability:'icon_option_skilltree',spell:'icon_option_spell_creation',stance:'icon_hud_stance',initiative:'icon_option_formation',artifact:'icon_option_reputation'};
  hud.querySelectorAll('.original-menus [data-combat-picker]').forEach(button=>{button.querySelector('img').src=gameCombatRoot+menus[button.dataset.combatPicker]+'.png'});
@@ -120,15 +124,14 @@ renderTraining=function(panel,character){
  }
  const statuses=Object.values(t.conditions?.player||{});
  hud.querySelector('.original-turn').insertAdjacentHTML('beforebegin',`<div class="combat-hud-statuses" aria-label="Эффекты персонажа">${statuses.map(state=>`<span tabindex="0" data-ui-tip="${esc(state.name)}${state.stacks>1?` ×${state.stacks}`:''}">${esc(state.name)}</span>`).join('')}</div>`);
- const tools=document.createElement('div');tools.className='combat-map-tools';tools.innerHTML=`${combatJournal(t)}<div class="combat-zoom-controls" aria-label="Масштаб карты"><button data-combat-zoom="out" aria-label="Уменьшить карту">−</button><output class="combat-zoom-value"></output><button data-combat-zoom="in" aria-label="Увеличить карту">+</button></div>`;arena.append(tools);
- panel.querySelector('.combat-info-drawer ol')?.remove();
- const initiativeButton=hud.querySelector('[data-combat-picker="initiative"]');if(initiativeButton){initiativeButton.dataset.uiTip='Инициатива';initiativeButton.setAttribute('aria-label','Инициатива')}
+ const tools=document.createElement('div');tools.className='combat-map-tools';tools.innerHTML=`${combatJournal(t)}<div class="combat-zoom-controls" aria-label="Масштаб карты"><button data-combat-zoom="out" aria-label="Уменьшить карту">−</button><output class="combat-zoom-value"></output><button data-combat-zoom="in" aria-label="Увеличить карту">+</button></div>${combatInitiative(t)}`;arena.append(tools);
+ const initiativeButton=hud.querySelector('[data-combat-picker="initiative"]');if(initiativeButton){initiativeButton.dataset.uiTip='Инициатива';initiativeButton.setAttribute('aria-label','Инициатива');initiativeButton.setAttribute('aria-expanded',String(combatInitiativeOpen))}
  applyCombatMapZoom(panel,t);
  const mapChanged=fitCombatMap(panel,t),viewport=panel.querySelector('.tactical-map-wrap');if(scroll&&viewport&&!mapChanged){viewport.scrollLeft=scroll.left;viewport.scrollTop=scroll.top}
  panel.querySelector('.combat-game-screen')?.setAttribute('aria-busy',String(combatBusy));
  if(armedCombatAction){armedCombatAction=(t.actions||[]).find(x=>x.kind===armedCombatAction.kind&&x.name===armedCombatAction.name)||null;if(combatActionBlock(armedCombatAction))clearCombatAim();else showCombatAim(combatAim||{x:player.x,y:player.y})}
 };
-document.addEventListener('toggle',event=>{if(event.target.matches?.('[data-combat-journal]'))combatJournalOpen=event.target.open},true);
+document.addEventListener('toggle',event=>{if(event.target.matches?.('[data-combat-journal]'))combatJournalOpen=event.target.open;if(event.target.matches?.('[data-combat-initiative]'))setCombatInitiative(event.target.open)},true);
 function handleCombatMapZoom(event){
  const button=event.target.closest('[data-combat-zoom]');if(!button||!training?.active)return;
  event.preventDefault();event.stopImmediatePropagation();
@@ -253,6 +256,8 @@ document.addEventListener('click',e=>{
  if(!['attack','ability','spell','artifact','item','tactic'].includes(button.dataset.trainingKind))return;
  const action=training.actions.find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(action){e.preventDefault();e.stopImmediatePropagation();armCombatAction(action)}
 },true);
+document.addEventListener('click',handleCombatInitiative,true);
+document.addEventListener('click',event=>{if(combatInitiativeOpen&&!event.target.closest('[data-combat-initiative],[data-combat-picker="initiative"]'))setCombatInitiative(false)});
 document.addEventListener('pointerover',e=>{if(!armedCombatAction)return;const cell=e.target.closest('[data-cell]');if(cell){const [x,y]=cell.dataset.cell.split(':').map(Number);showCombatAim({x,y})}},true);
 document.addEventListener('contextmenu',e=>{if(combatBusy&&e.target.closest('.combat-game-screen')){e.preventDefault();e.stopImmediatePropagation();return}if(armedCombatAction&&e.target.closest('.combat-game-screen')){e.preventDefault();e.stopImmediatePropagation();clearCombatAim();return}const slot=e.target.closest('[data-quick-slot]');if(slot){e.preventDefault();e.stopImmediatePropagation();quickbarEditing=+slot.dataset.quickSlot;combatPicker='ability';renderTraining($('#panel'),data.character)}},true);
 document.addEventListener('keydown',e=>{
@@ -264,6 +269,7 @@ document.addEventListener('keydown',e=>{
  const slot=Number(e.key),action=quickbarAction(slot,training.actions||[]);
  if(action)armCombatAction(action);else{clearCombatAim();quickbarEditing=slot;combatPicker='ability';renderTraining($('#panel'),data.character)}
 },true);
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&combatInitiativeOpen&&!armedCombatAction&&!combatPicker){setCombatInitiative(false);hideCombatTooltip();event.preventDefault()}});
 document.addEventListener('dragstart',e=>{if(combatBusy&&e.target.closest('.combat-game-screen')){e.preventDefault();e.stopImmediatePropagation();return}const slot=e.target.closest('[data-quick-slot]');if(!slot?.dataset.trainingKind)return;e.stopImmediatePropagation();e.dataTransfer.setData('application/json',JSON.stringify({kind:slot.dataset.trainingKind,name:slot.dataset.trainingName,sourceSlot:+slot.dataset.quickSlot}));e.dataTransfer.effectAllowed='move'},true);
 document.addEventListener('drop',async e=>{
  const slot=e.target.closest('[data-quick-slot]');if(!slot)return;e.preventDefault();e.stopImmediatePropagation();slot.classList.remove('drop-ready');

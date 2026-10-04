@@ -431,11 +431,13 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
             {"name": "Чернильница суда", "category": "Прочее", "weight": .1},
             {"name": "Тяжёлый трофей", "category": "Прочее", "weight": 2},
         ])
+        starting_used = (await self.db.inventory_capacity(character_id))["used"]
+        self.assertEqual(starting_used, 3)  # Sword, shield and the secondary two-handed sword.
         self.assertTrue(await self.db.give_item(character_id, "Чернильница суда", 5))
         capacity = await self.db.inventory_capacity(character_id)
-        self.assertEqual(capacity["used"], 0)
+        self.assertEqual(capacity["used"], starting_used)
         self.assertEqual(capacity["capacity"], 8 + capacity["athletics"] // 5)
-        self.assertTrue(await self.db.give_item(character_id, "Тяжёлый трофей", capacity["capacity"]))
+        self.assertTrue(await self.db.give_item(character_id, "Тяжёлый трофей", capacity["capacity"] - starting_used))
         self.assertFalse(await self.db.give_item(character_id, "Тяжёлый трофей"))
 
     async def test_background_and_faction_wiki_talent_parsers(self):

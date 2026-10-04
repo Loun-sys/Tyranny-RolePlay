@@ -234,14 +234,14 @@ class CombatSession:
         inventory = await self.db.inventory(character["id"])
         spells = [spell for spell in await self.db.spells(character["id"]) if spell.get("equipped_slot") is not None]
         unit = Combatant(
-            key=key, name=character["name"], team="Вершители Судеб",
+            key=key, name=character["name"], team="Персонажи",
             user_id=character["user_id"], character_id=character["id"],
             health=character["health"], health_max=character["health_max"],
             attributes=character["attributes"],
             skills={name: data["value"] for name, data in character["skills"].items()},
             talents=character["talents"], spells=spells, inventory=inventory,
         )
-        player_count = sum(1 for row in self.combatants.values() if row.team == "Вершители Судеб")
+        player_count = sum(1 for row in self.combatants.values() if row.team == "Персонажи")
         unit.x, unit.y = 1, min(self.grid.height - 1, 2 + player_count * 2)
         from consumable_store import states
         unit.consumable_states=await states(self.db,character['id'])

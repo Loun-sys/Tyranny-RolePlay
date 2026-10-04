@@ -84,6 +84,22 @@ def neutralize_companion_names(value: str) -> str:
     return result
 
 
+def neutralize_player_reference(value: str) -> str:
+    """Adapt references to the original protagonist, without renaming lore entities."""
+    endings={'ь':'персонаж','я':'персонажа','ю':'персонажу','ем':'персонажем','е':'персонаже',
+             'и':'персонажи','ей':'персонажей','ям':'персонажам','ями':'персонажами','ях':'персонажах'}
+    def replace(match: re.Match[str]) -> str:
+        result=endings[match.group(1).casefold()]
+        return result.capitalize() if match.group(0)[0].isupper() else result
+    result=re.sub(r'\bВершител(ями|ям|ях|ей|ем|ь|я|ю|е|и)\b(?!\s+победы\b)(?:\s+Судеб\b)?',replace,value or '',flags=re.I)
+    return re.sub(r"\bFatebinder(?:['’]s)?\b",lambda m:'персонажа' if m.group(0).endswith(("'s",'’s')) else 'персонаж',result,flags=re.I)
+
+
 def localize_game_text(value: str) -> str:
     result = neutralize_companion_names(turnify_text(value))
     return re.sub(r"\bTyranny\b", "Тирания", result, flags=re.I)
+
+
+def localize_player_text(value: str) -> str:
+    """Gameplay prose only; item names and historical lore keep their identities."""
+    return neutralize_player_reference(localize_game_text(value))

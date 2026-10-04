@@ -30,7 +30,10 @@ def refresh_ability(a):
 
 @lru_cache(maxsize=1)
 def legacy_abilities():
-    return json.loads((Path(__file__).parent/'catalog/npc_abilities.json').read_text(encoding='utf-8'))['abilities']
+    from localization import neutralize_player_reference
+    rows=json.loads((Path(__file__).parent/'catalog/npc_abilities.json').read_text(encoding='utf-8'))['abilities']
+    for row in rows:row['description']=neutralize_player_reference(row.get('description',''))
+    return rows
 
 def ability_page(query='',kind='',offset=0):
     rows=[a for a in ability_library() if (not kind or a['passive']==(kind=='passive')) and

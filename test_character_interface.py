@@ -10,6 +10,27 @@ from test_consumables import character
 
 
 class CharacterInterfaceTests(unittest.TestCase):
+    def test_registration_and_gameplay_text_do_not_label_players_fatebinders(self):
+        from constants import ABILITY_DETAILS
+        from ability_rules import library
+        from npc_store import ability_library
+        from localization import neutralize_player_reference, localize_game_text, localize_player_text
+        import bot
+        registration=bot.bot.tree.get_command('регистрация')
+        self.assertEqual(registration.description,'Получить личную ссылку на создание персонажа')
+        self.assertNotIn('Вершител',Path('web/archive.js').read_text(encoding='utf-8'))
+        for detail in ABILITY_DETAILS.values():self.assertNotIn('Вершител',detail['requirements'])
+        for row in [*library(),*ability_library()]:
+            self.assertNotRegex(row['description'],r'(?i)Вершител\w*\b(?!\s+победы\b)')
+        for original,expected in [('Вершитель Судеб','Персонаж'),('к Вершителю судеб','к Персонажу'),('Вершителя Судеб','Персонажа'),('Вершителем Судеб','Персонажем'),('вершители судеб','персонажи')]:
+            self.assertEqual(neutralize_player_reference(original),expected)
+        self.assertEqual(neutralize_player_reference('Вершитель победы'),'Вершитель победы')
+        self.assertEqual(neutralize_player_reference('оружие Вершителя'),'оружие Персонажа')
+        self.assertEqual(neutralize_player_reference('над Вершителем'),'над Персонажем')
+        self.assertEqual(neutralize_player_reference("Fatebinder's weapon"),'персонажа weapon')
+        self.assertEqual(localize_game_text('Печать Вершителя Судеб'),'Печать Вершителя Судеб')
+        self.assertEqual(localize_player_text('оружие Вершителя Судеб'),'оружие Персонажа')
+
     def test_discord_allowlist_and_one_button(self):
         import bot
         commands = list(bot.bot.tree.get_commands())

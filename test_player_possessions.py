@@ -2,7 +2,7 @@ import asyncio,copy,json,tempfile,unittest
 from pathlib import Path
 from database import Database,SCHEMA as BASE_SCHEMA
 from campaign_store import SCHEMA as CAMPAIGN_SCHEMA,CampaignStore
-from player_possessions import SCHEMA,STARTS,operate,grant_start
+from player_possessions import SCHEMA,STARTS,SPECIALIZATION_STARTS,starting_items,operate,grant_start
 from item_texts import catalog_texts
 from registration_api import _validate_payload,_configuration
 
@@ -22,13 +22,14 @@ class PossessionTests(unittest.IsolatedAsyncioTestCase):
             await conn.execute("INSERT INTO skills(character_id,name,value) VALUES(2,'Атлетика',20)")
             await conn.commit()
         prefabs={k for _,items in STARTS.values() for k,_ in items}
+        prefabs.update(k for items in SPECIALIZATION_STARTS.values() for k,_ in items)
         await self.db.upsert_catalog([copy.deepcopy(catalog_texts()[0][k]) for k in prefabs])
     async def asyncTearDown(self):self.tmp.cleanup()
     async def test_every_start_exactly_once(self):
         for n,(origin,(coins,items)) in enumerate(STARTS.items(),10):
             cid=await self.db.create_character(1,n,origin,origin,'Меч и щит','Дротик')
             before=await self.db.inventory(cid)
-            self.assertEqual(sum(i['quantity'] for i in before),sum(q for _,q in items))
+            self.assertEqual(sum(i['quantity'] for i in before),sum(q for _,q in starting_items(origin,('Меч и щит','Дротик'))))
             self.assertEqual((await CampaignStore(self.db).wallet(cid))['totalCopper'],coins)
             self.assertEqual((await self.db.get_character_by_id(cid))['attribute_points'],4 if origin=='Зверолюд' else 0)
             async with self.db.connect() as conn:await grant_start(conn,cid,origin);await conn.commit()
@@ -41,11 +42,44 @@ class PossessionTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue((await self.db.spend_attribute_point(cid,'Сила'))[0])
         self.assertEqual((await self.db.get_character_by_id(cid))['attributes']['Сила'],31)
         await self.db.admin_give_item(cid,'Одежда из ткани')
-        inv=(await self.db.inventory(cid))[0]
+        inv=next(i for i in await self.db.inventory(cid) if i['name']=='Одежда из ткани')
         self.assertFalse((await self.db.equip(cid,inv['inventory_id'],'Торс'))[0])
         normal=await self.db.create_character(1,21,'Человек','Книгочей','Меч и щит','Дротик')
         await self.db.set_attribute(normal,'Сила',100)
         self.assertEqual((await self.db.get_character_by_id(normal))['attributes']['Сила'],30)
+    def test_all_specialization_kits_are_normal_game_items(self):
+        from constants import SPECIALIZATIONS
+        self.assertEqual(set(SPECIALIZATION_STARTS),set(SPECIALIZATIONS))
+        for specialization,items in SPECIALIZATION_STARTS.items():
+            for prefab,quantity in items:
+                row=catalog_texts()[0][prefab]
+                self.assertEqual(row['quality'],'Обычное',specialization)
+                self.assertTrue(row['image_url'],specialization)
+                self.assertLessEqual(row['value'],375,specialization)
+        self.assertEqual(SPECIALIZATION_STARTS['Безоружные атаки'],[])
+        self.assertEqual(SPECIALIZATION_STARTS['Парное оружие'],[('WPN_1H_Starter_Dagger',2)])
+        for origin,(_,items) in STARTS.items():
+            weapons=[key for key,_ in items if key.startswith('WPN_')]
+            self.assertEqual(weapons,['WPN_1H_IR_Dagger_Lantry'] if origin=='Книгочей' else [],origin)
+    async def test_both_specializations_grant_exact_weapon_kits(self):
+        from collections import Counter
+        specs=list(SPECIALIZATION_STARTS)
+        for n,first in enumerate(specs,100):
+            second=specs[(n-100+1)%len(specs)]
+            cid=await self.db.create_character(1,n,'Испытатель','Заклинатель',first,second)
+            expected=Counter({catalog_texts()[0][prefab]['name']:q for prefab,q in starting_items('Заклинатель',(first,second))})
+            actual=Counter()
+            for item in await self.db.inventory(cid):actual[item['name']]+=item['quantity']
+            self.assertEqual(actual,expected,(first,second))
+    async def test_existing_characters_are_not_regranted_or_stripped(self):
+        cid=await self.db.create_character(1,200,'Хранитель','Книгочей','Парное оружие','Заклинания рвения')
+        await self.db.admin_give_item(cid,'Бронзовый меч')
+        before=await self.db.inventory(cid)
+        async with self.db.connect() as conn:
+            await conn.execute("UPDATE characters SET specialization_1='Короткий лук',specialization_2='Заклинания льда' WHERE id=?",(cid,))
+            await grant_start(conn,cid,'Книгочей');await conn.commit()
+        self.assertEqual(await self.db.inventory(cid),before)
+        self.assertEqual((await CampaignStore(self.db).wallet(cid))['totalCopper'],300)
     async def test_money_atomic_transfer_destroy_and_scope(self):
         store=CampaignStore(self.db);await store.set_wallet(1,300)
         results=await asyncio.gather(*(operate(self.db,1,{'action':'transfer','kind':'money','quantity':200,'recipientId':2}) for _ in range(2)),return_exceptions=True)

@@ -3,7 +3,7 @@ import copy,json,math
 from functools import lru_cache
 from pathlib import Path
 from item_effects import STATS
-from localization import localize_game_text
+from localization import localize_game_text, neutralize_player_reference
 
 SKILLS={2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',34:'Исполнение',37:'Дротики'}
 CONTROL={'dazed':'daze','prone':'prone','stun':'stun','paralyzed':'paralyze','petrified':'petrif','frozen':'freeze','asleep':'sleep','rooted':'root','hobbled':'hobble','Silenced':'silence','Disarm':'disarm','blinded':'blind','terrified':'fear','fear':'fear','confused':'confus','taunted':'taunt'}
@@ -12,7 +12,9 @@ RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,
 @lru_cache(maxsize=1)
 def library():
     path=Path(__file__).parent/'catalog/ability_rules.json'
-    return json.loads(path.read_text(encoding='utf-8'))['abilities'] if path.exists() else []
+    rows=json.loads(path.read_text(encoding='utf-8'))['abilities'] if path.exists() else []
+    for row in rows:row['description']=neutralize_player_reference(row.get('description',''))
+    return rows
 
 @lru_cache(maxsize=1)
 def index():
@@ -45,6 +47,7 @@ def resolve(value):
     return copy.deepcopy(index().get(english.casefold()))
 
 def normalize_talent(talent):
+    talent={**talent,'description':neutralize_player_reference(talent.get('description',''))}
     row=resolve(talent)
     return {**talent,'legacyName':talent.get('legacyName',talent['name']),'name':row['name'],'description':row['description'] or talent.get('description',''),'prefab':row['key'],'icon_url':row['icon'],'mechanics':talent_mechanics(row)} if row else {**talent,'mechanics':{'effects':[],'limitation':'Не найдено соответствие в игровых файлах; механика требует проверки.'}}
 
