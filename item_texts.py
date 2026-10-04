@@ -12,6 +12,7 @@ def catalog_texts():
     rows = json.loads((Path(__file__).parent/'catalog/game_items.json').read_text(encoding='utf-8'))
     for row in rows:
         if row['properties']['gameData']['prefab']=='WPN_1H_IR_Dagger_Lantry':row['name']='Перо Книгочея'
+        if row['category']=='Одноручное оружие' and row['hands']==2:row['category']='Двуручное оружие'
     return {r['properties']['gameData']['prefab']:r for r in rows}, {r['name'].casefold():r for r in rows}
 
 def clean_copy(text):
@@ -43,6 +44,7 @@ def normalize_item_text(item):
             p = {k:v for k,v in p.items() if k == 'gameData' or not re.search(r'[А-Яа-яA-Za-z]', str(v))}
     if canonical:
         item['category']=canonical['category']
+        item['hands'],item['slot']=canonical['hands'],canonical['slot']
         item['description'], item['lore'] = canonical['description'], canonical['lore']
         source=canonical['properties']['gameData']
         if source.get('statsVersion')==2 and game.get('statsVersion')!=2:
@@ -68,4 +70,6 @@ def normalize_item_text(item):
     if game.get('statsVersion')==2:
         from consumables import refresh_consumable
         refresh_consumable(item)
+    if item.get('category') in {'Одноручное оружие','Двуручное оружие','Парное оружие','Луки','Метательное оружие','Посохи','Щиты'}:
+        item['properties']['Хват']='Двуручное оружие · занимает обе руки' if int(item.get('hands') or 0)>=2 else ('Щит · занимает одну руку' if item['category']=='Щиты' else 'Одноручное оружие · занимает одну руку')
     return item

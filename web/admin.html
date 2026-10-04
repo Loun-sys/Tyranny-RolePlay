@@ -2,9 +2,9 @@
 <html lang="ru"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#070708"><title>Мастерская Тунона · Тирания</title>
-  <link rel="stylesheet" href="admin.css?v=20260930-2">
+  <link rel="stylesheet" href="admin.css?v=20261004-5">
   <link rel="stylesheet" href="campaign.css?v=20261003-4">
-  <link rel="stylesheet" href="crafting.css?v=20261003-1">
+  <link rel="stylesheet" href="crafting.css?v=20261004-5">
   <link rel="stylesheet" href="npc-editor.css?v=20261003-1">
   <style>.admin-talent-icon{width:42px;height:42px;display:grid;place-items:center;position:relative;background:#151217;border:1px solid #48353b;color:#d11a32;overflow:hidden}.admin-talent-icon>*{grid-area:1/1}.admin-talent-icon img{width:100%;height:100%;object-fit:contain;border:0;position:relative;background:#151217}.admin-talent-icon i{font:20px Georgia}</style>
 </head><body>
@@ -14,7 +14,15 @@
     <section class="workspace"><div id="empty"><i>⚖</i><h2>Выберите личное дело</h2><p>Все изменения сразу сохраняются в общей базе бота и отображаются игроку.</p></div><div id="editor" hidden></div></section>
   </main>
   <div id="toast"></div><div id="loading">ПРОВЕРЯЕМ ПОЛНОМОЧИЯ…</div>
-  <script src="admin.js?v=20261003-9" defer></script>
+  <dialog id="delete-character-dialog" class="character-delete-dialog" aria-labelledby="delete-character-title">
+    <h2 id="delete-character-title">Удалить персонажа?</h2>
+    <p>Будут удалены <b id="delete-character-name"></b>, его инвентарь, деньги и личные ссылки. Это действие необратимо.</p>
+    <label class="field">Введите точное имя персонажа<input id="delete-character-confirm-name" autocomplete="off"></label>
+    <p id="delete-character-error" role="alert"></p>
+    <div class="box-actions"><button class="dark-button" data-cancel-character-delete>ОТМЕНА</button><button id="delete-character-submit" class="dark-button danger" disabled>УДАЛИТЬ НАВСЕГДА</button></div>
+  </dialog>
+  <script src="admin.js?v=20261004-6" defer></script>
+  <script src="admin-character-tools.js?v=20261004-5" defer></script>
   <script src="admin-campaign.js?v=20261003-6" defer></script>
   <script src="admin-catalog.js?v=20261003-6" defer></script>
   <script src="admin-npcs.js?v=20261003-4" defer></script>

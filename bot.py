@@ -233,7 +233,7 @@ class TyrannyBot(commands.Bot):
 
 def restrict_commands(tree):
     """The site owns gameplay; Discord only issues access links."""
-    allowed = {"админ", "регистрация", "персонаж"}
+    allowed = {"админ", "регистрация", "персонаж", "удалить-персонажа"}
     for command in list(tree.get_commands()):
         if command.name not in allowed:
             tree.remove_command(command.name)
@@ -759,12 +759,16 @@ async def catalog_sync(interaction: discord.Interaction):
 
 
 @bot.tree.command(name="удалить-персонажа", description="Безвозвратно удалить собственного персонажа")
+@app_commands.describe(подтверждение="Введите удалить. Личное дело, предметы, деньги и доступ будут удалены.")
 async def delete_character_command(interaction: discord.Interaction, подтверждение: str):
-    if подтверждение.casefold() != "удалить":
-        await interaction.response.send_message("Для подтверждения введите слово `удалить`.", ephemeral=True)
+    server = guild_id(interaction)
+    if подтверждение.strip().casefold() != "удалить":
+        await interaction.response.send_message("Удаление необратимо: исчезнут личное дело, предметы, деньги и ссылка доступа. Для подтверждения введите слово `удалить`.", ephemeral=True)
         return
-    deleted = await bot.db.delete_character(guild_id(interaction), interaction.user.id)
-    await interaction.response.send_message("Персонаж удалён." if deleted else "Персонаж не найден.", ephemeral=True)
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    character = await bot.db.get_character(server, interaction.user.id)
+    deleted = bool(character) and await bot.db.delete_character(server, interaction.user.id, expected_character_id=character['id'])
+    await interaction.followup.send("Персонаж удалён. Нового можно создать через `/регистрация`." if deleted else "Персонаж не найден.", ephemeral=True)
 
 
 @bot.tree.error

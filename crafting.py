@@ -96,13 +96,16 @@ class CraftingStore:
             recipes.append({**r,'originalHours':r['hours'],'hours':0,'outputItem':output,'ingredients':ingredients,'known':not r['unlocks'] or r['key'] in known})
         for inv in inventory:
             r=upgrade_recipe(inv)
-            if r and not inv['equipped_slot'] and all(x['prefab'] in items for x in r['ingredients']):
+            if r and inv['equipped_slot']!='Мастерская' and inv['quantity']==1 and all(x['prefab'] in items for x in r['ingredients']):
                 upgrades.append({'inventoryId':inv['inventory_id'],'item':normalize_quality(inv),'recipe':{**r,'originalHours':r['hours'],'hours':0},
-                    'result':normalize_quality(inv,r['to']),'ingredients':[{**x,'item':items.get(x['prefab'])} for x in r['ingredients']]})
+                    'result':normalize_quality(inv,r['to']),'ingredients':[{**x,'item':items.get(x['prefab'])} for x in r['ingredients']
+                        if x['consumed'] or x['prefab']!=prefab(inv)]})
             matches=[r for r in recipes if prefab(inv) in r['scrolls']]
             if matches:scrolls.append({'inventoryId':inv['inventory_id'],'item':inv,'recipes':[r['key'] for r in matches],'known':all(r['known'] for r in matches)})
         for j in jobs:j['ready']=True
-        return {'recipes':recipes,'upgrades':upgrades,'scrolls':scrolls,'jobs':jobs}
+        materials=[{**normalize_quality(i),'quantity':sum(v['quantity'] for v in inventory if v['id']==i['id'] and not v['equipped_slot'])}
+                   for key,i in items.items() if key.startswith('RES_SkyPillar_')]
+        return {'recipes':recipes,'upgrades':upgrades,'scrolls':scrolls,'jobs':jobs,'materials':materials}
     async def act(self,cid,payload):
         async with self.db.connect() as c:
             await c.execute('BEGIN IMMEDIATE');await self._check(c,cid)
@@ -126,14 +129,14 @@ class CraftingStore:
             if not 1<=quantity<=15:raise ValueError('Количество: 1–15.')
             if action=='upgrade':
                 inv=await c.execute_fetchall('SELECT item_catalog.*,inventory.id AS inventory_id,inventory.equipped_slot,inventory.quantity FROM inventory JOIN item_catalog ON item_id=item_catalog.id WHERE inventory.id=? AND character_id=?',(int(payload.get('inventoryId',0)),cid))
-                if not inv or inv[0]['equipped_slot'] or inv[0]['quantity']!=1:raise ValueError('Сначала снимите предмет. Улучшается один экземпляр.')
+                if not inv or inv[0]['equipped_slot']=='Мастерская' or inv[0]['quantity']!=1:raise ValueError('Предмет недоступен. Улучшается один экземпляр.')
                 item=dict(inv[0]);recipe=upgrade_recipe(item);quantity=1
                 if not recipe:raise ValueError('Нет доступного улучшения для этого предмета.')
                 result=normalize_quality(item,recipe['to']);game=result['properties']['gameData']
                 game.setdefault('craftBaseName',item['name']);game.setdefault('craftBaseId',item['id'])
                 result['name']=game['craftBaseName']+' ('+result['quality']+')'
                 result['source_url']='craft://'+hashlib.sha256((str(game['craftBaseId'])+':'+str(recipe['to'])).encode()).hexdigest()
-                job={'kind':'upgrade','inventoryId':item['inventory_id'],'result':result,'name':item['name']}
+                job={'kind':'upgrade','inventoryId':item['inventory_id'],'result':result,'name':item['name'],'equippedSlot':item['equipped_slot']}
             else:
                 recipe=next((r for r in library()['recipes'] if r['key']==payload.get('recipeKey') and r['kind']=='consumable'),None)
                 if not recipe:raise ValueError('Рецепт не найден.')
@@ -156,7 +159,7 @@ class CraftingStore:
                     if used==stack['quantity']:await c.execute('DELETE FROM inventory WHERE id=?',(stack['id'],))
                     else:await c.execute('UPDATE inventory SET quantity=quantity-? WHERE id=?',(used,stack['id']))
                     if not need:break
-            # Reserve the upgraded item so it cannot be sold/equipped while work is underway.
+            # Reservation and immediate delivery share the same write transaction.
             if action=='upgrade':await c.execute('UPDATE inventory SET equipped_slot=? WHERE id=?',('Мастерская',job['inventoryId']))
             await c.execute('UPDATE wallets SET copper=copper-? WHERE character_id=?',(cost,cid))
             await self._deliver(c,cid,copy.deepcopy(job))
@@ -174,7 +177,7 @@ class CraftingStore:
             else:
                 if await c.execute_fetchall('SELECT id FROM item_catalog WHERE name=?',(result['name'],)):result['name']+=' · '+result['source_url'][-8:]
                 cursor=await c.execute('INSERT INTO item_catalog('+','.join(cols)+') VALUES('+','.join('?' for _ in cols)+')',[result.get(k,'') for k in cols]);item_id=cursor.lastrowid
-            await c.execute('UPDATE inventory SET item_id=?,equipped_slot=NULL WHERE id=? AND character_id=?',(item_id,job['inventoryId'],cid))
+            await c.execute('UPDATE inventory SET item_id=?,equipped_slot=? WHERE id=? AND character_id=?',(item_id,job.get('equippedSlot'),job['inventoryId'],cid))
         else:
             inventory=await c.execute_fetchall('SELECT item_catalog.*,inventory.equipped_slot FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=?',(cid,))
             athletics=await c.execute_fetchall("SELECT value FROM skills WHERE character_id=? AND name='Атлетика'",(cid,))

@@ -42,7 +42,7 @@ const ingredient={item:material,quantity:2,consumed:true};
 ctx.data.inventory=[{id:7,quantity:99,equipped_slot:'Торс'},{id:7,quantity:1,equipped_slot:null}];
 vm.runInContext(`craftingData.upgrades[0].ingredients=${JSON.stringify([ingredient])};renderCrafting()`,ctx);
 assert(node('#panel').innerHTML.includes('Недостаточно материала: Кожа'));
-assert(node('#panel').innerHTML.includes('1 / 2'));
+assert(node('#panel').innerHTML.includes('title="Кожа"><b>2</b>'));
 ctx.data.inventory[1].quantity=2;
 vm.runInContext('renderCrafting()',ctx);
 assert.doesNotMatch(node('#panel').innerHTML,/data-craft-action="upgrade"[^>]+disabled/);

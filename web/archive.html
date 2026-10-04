@@ -2,14 +2,14 @@
 <html lang="ru"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#080708"><title>Архив Империи · Тирания</title>
-  <link rel="stylesheet" href="archive.css?v=20261004-2">
-  <link rel="stylesheet" href="archive-icons.css?v=20261003-15">
+  <link rel="stylesheet" href="archive.css?v=20261004-5">
+  <link rel="stylesheet" href="archive-icons.css?v=20261004-7">
   <link rel="stylesheet" href="combat-ui.css?v=20261004-3">
   <link rel="stylesheet" href="combat-layout.css?v=20261004-3">
   <link rel="stylesheet" href="combat-polish.css?v=20261004-3">
   <link rel="stylesheet" href="combat-tactics.css?v=20261004-4">
   <link rel="stylesheet" href="campaign.css?v=20261003-4">
-  <link rel="stylesheet" href="crafting.css?v=20261004-2">
+  <link rel="stylesheet" href="crafting.css?v=20261004-5">
 </head><body>
   <header class="topbar"><a class="brand" href="./">ТИРАНИЯ <span>РОЛЕВАЯ ИГРА</span></a><nav><button data-view="archive">АРХИВ</button><button data-view="encyclopedia">ЭНЦИКЛОПЕДИЯ</button><button id="cabinet-nav" data-view="cabinet" hidden>ЛИЧНОЕ ДЕЛО</button></nav><i id="sync">СИНХРОНИЗАЦИЯ</i></header>
   <main>
@@ -36,16 +36,24 @@
   <dialog id="record"><button class="close">×</button><div id="record-body"></div></dialog>
   <dialog id="talent-dialog" class="talent-dialog"><button class="close">×</button><div id="talent-dialog-body"></div></dialog>
   <dialog id="item-dialog" class="item-dialog"><button class="close">×</button><div id="item-dialog-body"></div></dialog>
+  <dialog id="portrait-dialog" class="portrait-dialog" aria-labelledby="portrait-dialog-title">
+    <h2 id="portrait-dialog-title">Портрет персонажа</h2>
+    <label class="portrait-file-label">Выберите PNG, JPEG или WEBP до 5 МБ<input id="portrait-file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+    <img id="portrait-preview" alt="Предпросмотр портрета" hidden>
+    <p id="portrait-error" role="alert"></p>
+    <div class="portrait-dialog-actions"><button data-portrait-cancel>НАЗАД</button><button id="portrait-save" class="action" disabled>СОХРАНИТЬ</button></div>
+  </dialog>
   <div id="encyclopedia-popover" class="encyclopedia-popover" hidden></div>
   <footer>IMPERIUM · LEX · KYROS <span>Лоун был здесь</span></footer>
-<script src="archive.js?v=20261004-2" defer></script>
+<script src="archive.js?v=20261004-6" defer></script>
+  <script src="player-portrait.js?v=20261004-5" defer></script>
   <script src="game-spell-icons.js?v=20261002-game" defer></script>
   <script src="combat-ui.js?v=20261004-4" defer></script>
   <script src="combat-feedback.js?v=20261004-4" defer></script>
   <script src="combat-tactics.js?v=20261004-4" defer></script>
   <script src="equipment-stats.js?v=20261003-7" defer></script>
   <script src="player-shop.js?v=20261003-6" defer></script>
-  <script src="item-descriptions.js?v=20261003-8" defer></script>
+  <script src="item-descriptions.js?v=20261004-6" defer></script>
   <script src="player-possessions.js?v=20261003-1" defer></script>
-  <script src="player-crafting.js?v=20261004-2" defer></script>
+  <script src="player-crafting.js?v=20261004-6" defer></script>
 </body></html>

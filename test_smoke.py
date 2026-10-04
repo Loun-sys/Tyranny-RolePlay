@@ -93,7 +93,8 @@ class TyrannySmokeTest(unittest.IsolatedAsyncioTestCase):
         session = TrainingSession(character_id=1)
         session.consumable_inventory=[{'category':'Щиты','equipped_slot':'Оружие I — левая рука','hands':1,'properties':{}}]
         stance = session.act({"kind": "stance", "name": "Стойка: Страж"}, character, derived, [], 2)
-        self.assertEqual(session.active_stance, "Стойка: Страж")
+        # Legacy input is accepted, but the stored/UI name uses game localization.
+        self.assertEqual(session.active_stance, "Стойка: стражник")
         self.assertIn("принимает стойку", stance["line"])
         session.act({"kind": "move", "x": 7, "y": 4}, character, derived, [], 2)
         self.assertEqual(session.movement_remaining, 0)

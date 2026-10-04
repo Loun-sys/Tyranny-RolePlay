@@ -15,7 +15,7 @@ class CharacterInterfaceTests(unittest.TestCase):
         commands = list(bot.bot.tree.get_commands())
         try:
             bot.restrict_commands(bot.bot.tree)
-            self.assertEqual({c.name for c in bot.bot.tree.get_commands()}, {'админ','регистрация','персонаж'})
+            self.assertEqual({c.name for c in bot.bot.tree.get_commands()}, {'админ','регистрация','персонаж','удалить-персонажа'})
         finally:
             for command in commands:
                 bot.bot.tree.add_command(command, override=True)
@@ -35,6 +35,16 @@ class CharacterInterfaceTests(unittest.TestCase):
         with Image.open(result) as image:
             self.assertEqual(image.size, (1100,1090))
             self.assertGreater(len(result.getvalue()), 10000)
+
+    def test_inventory_portrait_fills_equipment_and_quickbar_background(self):
+        from unittest.mock import patch
+        c=character();c['portrait_url']='local://fixture'
+        with patch('card_renderer._load_portrait',return_value=Image.new('RGB',(400,300),'#287c5a')):
+            result=render_inventory_card(c,[],_derived(c,[]),{'quickSlots':4,'weaponSets':2})
+        with Image.open(result) as image:
+            for point in [(310,85),(1068,85),(310,890),(1068,890),(700,400),(750,775)]:
+                self.assertEqual(image.getpixel(point),(40,124,90),point)
+            self.assertEqual(image.getpixel((410,128)),(0,0,0)) # head label backplate
 
     def test_details_preserve_source_and_modifiers(self):
         row = next(r for r in __import__('ability_rules').library() if r['passive'] and r.get('abilityClass')=='GenericAbility' and

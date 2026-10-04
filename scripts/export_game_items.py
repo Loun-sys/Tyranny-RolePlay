@@ -67,6 +67,7 @@ def main():
                 'Аксессуары' if slot else 'Материалы' if item.get('IsIngredient') else
                 'Расходуемые предметы' if item.get('MaxStackSize',1)>1 else entry.get('category','Прочее'))
             if item.get('SecondaryWeaponSlot') and not item.get('PrimaryWeaponSlot'): category='Щиты'
+            if category=='Одноручное оружие' and item.get('BothPrimaryAndSecondarySlot'):category='Двуручное оружие'
             attack = next((t for t in trees if 'DamageData' in t), {})
             armor = next((t for t in trees if 'DamageThreshold' in t), {})
             image = entry.get('image_url','')

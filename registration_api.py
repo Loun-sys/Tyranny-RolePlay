@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import asyncio
 import io
+import hashlib
 import os
 import re
 from pathlib import Path
@@ -126,7 +127,7 @@ def _validate_payload(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, s
 def _save_portrait(data_url: str, data_dir: Path, guild_id: int, user_id: int) -> str:
     if not data_url:
         return ""
-    if not data_url.startswith("data:image/") or ";base64," not in data_url:
+    if not isinstance(data_url, str) or not data_url.startswith(('data:image/png;base64,', 'data:image/jpeg;base64,', 'data:image/webp;base64,')):
         raise ValueError("Портрет должен быть изображением PNG, JPEG или WEBP.")
     header, encoded = data_url.split(",", 1)
     try:
@@ -137,6 +138,8 @@ def _save_portrait(data_url: str, data_dir: Path, guild_id: int, user_id: int) -
         raise ValueError("Портрет превышает лимит 5 МБ.")
     try:
         image = Image.open(io.BytesIO(raw))
+        if image.format not in {'PNG','JPEG','WEBP'} or image.width*image.height>20_000_000:
+            raise ValueError('Изображение слишком большое или имеет неподдерживаемый формат.')
         image.verify()
         image = Image.open(io.BytesIO(raw)).convert("RGB")
     except Exception as error:
@@ -144,7 +147,7 @@ def _save_portrait(data_url: str, data_dir: Path, guild_id: int, user_id: int) -
     image.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
     portraits = data_dir / "portraits"
     portraits.mkdir(parents=True, exist_ok=True)
-    path = portraits / f"{guild_id}_{user_id}.webp"
+    path = portraits / f"{guild_id}_{user_id}_{hashlib.sha256(raw).hexdigest()[:16]}.webp"
     image.save(path, "WEBP", quality=90, method=6)
     return f"local://{path.resolve().as_posix()}"
 
@@ -441,6 +444,22 @@ async def _portal_payload(request: web.Request) -> tuple[int, dict[str, Any]]:
     return character_id, payload
 
 
+async def portal_portrait(request: web.Request) -> web.Response:
+    cid, payload = await _portal_payload(request)
+    if not isinstance(payload, dict) or not payload.get('portrait'):
+        raise web.HTTPBadRequest(reason='Выберите изображение PNG, JPEG или WEBP.')
+    db = request.app['db']
+    character = await db.get_character_by_id(cid)
+    if not character:
+        raise web.HTTPGone(reason='Персонаж больше не существует.')
+    try:
+        portrait = await asyncio.to_thread(_save_portrait, payload['portrait'], request.app['data_dir'], character['guild_id'], character['user_id'])
+    except ValueError as error:
+        raise web.HTTPBadRequest(reason=str(error)) from error
+    await db.update_character_text(cid, 'portrait_url', portrait)
+    return web.json_response({'ok': True, 'message': 'Портрет обновлён.', **await _dashboard(request,cid)})
+
+
 async def portal_attribute(request: web.Request) -> web.Response:
     cid, payload = await _portal_payload(request)
     ok, message = await request.app["db"].spend_attribute_point(cid, str(payload.get("name", "")))
@@ -705,10 +724,25 @@ async def admin_mutation(request: web.Request) -> web.Response:
         payload = await request.json()
     except Exception as error:
         raise web.HTTPBadRequest(reason="Некорректные данные.") from error
+    if not isinstance(payload, dict):
+        raise web.HTTPBadRequest(reason="Ожидается объект с данными.")
     action = str(payload.get("action", ""))
     db = request.app["db"]
     message = "Изменения сохранены."
-    if action == "character":
+    if action == "character_delete":
+        original = await db.get_character_by_id(cid)
+        if not original:
+            raise web.HTTPNotFound(reason="Персонаж не найден.")
+        if payload.get('confirmName') != original['name']:
+            raise web.HTTPBadRequest(reason="Для удаления введите точное имя персонажа.")
+        deleted = await db.delete_character(guild_id, original['user_id'], expected_character_id=cid, admin_user_id=admin_user_id)
+        if not deleted:
+            raise web.HTTPConflict(reason="Персонаж изменился. Обновите список и подтвердите удаление заново.")
+        request.app.get('training_sessions', {}).pop(cid, None)
+        request.app.get('training_locks', {}).pop(cid, None)
+        return web.json_response({'ok': True, 'deletedId': cid, 'message': 'Персонаж удалён.',
+                                  'characters': await db.admin_characters(guild_id)})
+    elif action == "character":
         values = dict(payload.get("values") or {})
         if "background" in values and values["background"] not in BACKGROUNDS:
             raise web.HTTPBadRequest(reason="Неизвестная предыстория.")
@@ -934,7 +968,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-4"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-4", "characterToolsVersion":"20261004-5"})
 
 
 async def _player_maps(request,cid):
@@ -1038,6 +1072,7 @@ async def portal_crafting(request):
         r['item']=clean(r['item']);r['result']=clean(r['result'])
         for i in r['ingredients']:i['item']=clean(i['item'])
     for r in result['scrolls']:r['item']=clean(r['item'])
+    result['materials']=[clean(i) for i in result['materials']]
     return web.json_response({'ok':True,**result,'wallet':await CampaignStore(request.app['db']).wallet(cid),'message':message})
 
 async def portal_use_item(request):
@@ -1065,6 +1100,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_get("/api/archive/{character_id}", archive_character)
     app.router.add_get("/api/portal/{token}", portal_info)
     app.router.add_post("/api/portal/{token}/attribute", portal_attribute)
+    app.router.add_post('/api/portal/{token}/portrait', portal_portrait)
     app.router.add_post("/api/portal/{token}/talent", portal_talent)
     app.router.add_post("/api/portal/{token}/spell", portal_spell)
     app.router.add_post("/api/portal/{token}/spell/equip", portal_spell_equip)

@@ -41,8 +41,11 @@ async def main():
                 for ingredient in upgrade_recipe(sample)['ingredients']:
                     if ingredient['consumed']:
                         await db.admin_give_item(cid,items[ingredient['prefab']]['name'],ingredient['quantity']*3)
+            from campaign_store import CampaignStore
+            await CampaignStore(db).set_wallet(cid,25000)
         token = await db.create_portal_token(1, 2)
-        app = web.Application(middlewares=[api.cors_middleware])
+        admin_token=await db.create_admin_token(1,99)
+        app = web.Application(middlewares=[api.cors_middleware],client_max_size=7*1024*1024)
         app["db"], app["data_dir"] = db, Path(folder)
         app["extended_talents"] = {"backgrounds": {}, "factions": []}
         app["training_sessions"], app["training_locks"] = {}, {}
@@ -58,6 +61,14 @@ async def main():
         app.router.add_post('/api/portal/{token}/possessions',api.portal_possessions)
         app.router.add_get('/api/portal/{token}/crafting',api.portal_crafting)
         app.router.add_post('/api/portal/{token}/crafting',api.portal_crafting)
+        app.router.add_post('/api/portal/{token}/portrait',api.portal_portrait)
+        app.router.add_post('/api/portal/{token}/equipment',api.portal_equip)
+        app.router.add_get('/api/admin/{token}',api.admin_home)
+        app.router.add_get('/api/admin/{token}/character/{character_id}',api.admin_character)
+        app.router.add_post('/api/admin/{token}/character/{character_id}',api.admin_mutation)
+        async def admin_index(_):
+            return web.Response(status=302,headers={'Location':f'/admin.html?api=http://127.0.0.1:{port}#token={admin_token}'})
+        app.router.add_get('/qa-admin',admin_index)
         async def index(_):
             # API middleware formats raised HTTP exceptions as JSON; retain Location.
             return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:{port}#token={token}"})

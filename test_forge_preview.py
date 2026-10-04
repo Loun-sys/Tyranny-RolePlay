@@ -16,6 +16,46 @@ class ForgePreviewTests(unittest.IsolatedAsyncioTestCase):
     setup_crafter = fixtures.CraftTests.setup_crafter
     give_materials = fixtures.CraftTests.give_materials
 
+    async def test_equipped_item_is_visible_and_keeps_its_slot_after_upgrade(self):
+        await self.setup_crafter()
+        async with self.db.connect() as connection:
+            items=await self.craft._items(connection)
+        original=next(i for i in items.values() if i['slot']=='Торс' and (quality_info(i) or {}).get('kind')=='armor' and upgrade_recipe(i))
+        await self.db.admin_give_item(1,original['name'])
+        inventory=next(i for i in await self.db.inventory(1) if i['id']==original['id'])
+        self.assertTrue((await self.db.equip(1,inventory['inventory_id'],'Торс'))[0])
+        recipe=upgrade_recipe(inventory)
+        await self.give_materials(recipe['ingredients'],3)
+        preview=next(u for u in (await self.craft.snapshot(1))['upgrades'] if u['inventoryId']==inventory['inventory_id'])
+        self.assertEqual(preview['item']['equipped_slot'],'Торс')
+        await self.craft.act(1,{'action':'upgrade','inventoryId':inventory['inventory_id']})
+        delivered=next(i for i in await self.db.inventory(1) if i['inventory_id']==inventory['inventory_id'])
+        self.assertEqual(delivered['equipped_slot'],'Торс')
+        self.assertEqual(delivered['armor'],preview['result']['armor'])
+        second=next(u for u in (await self.craft.snapshot(1))['upgrades'] if u['inventoryId']==inventory['inventory_id'])
+        self.assertEqual(second['item']['quality'],delivered['quality'])
+        self.assertEqual(quality_info(second['result'])['level'],recipe['to']+1)
+
+    async def test_owned_item_is_not_a_second_required_material(self):
+        from crafting import prefab
+        await self.setup_crafter()
+        async with self.db.connect() as connection:
+            items=await self.craft._items(connection)
+        original=next(i for i in items.values() if upgrade_recipe(i))
+        await self.db.admin_give_item(1,original['name'])
+        inventory=next(i for i in await self.db.inventory(1) if i['id']==original['id'])
+        recipe=upgrade_recipe(inventory)
+        await self.give_materials([x for x in recipe['ingredients'] if x['consumed']],1)
+        # Some item-specific recipes retain a base-item requirement. Exercise
+        # the equivalent equipped/private-item case without needing a duplicate.
+        from unittest.mock import patch
+        recipe={**recipe,'ingredients':[*recipe['ingredients'],{'prefab':prefab(inventory),'quantity':1,'consumed':False}]}
+        with patch('crafting.upgrade_recipe',return_value=recipe):
+            preview=next(u for u in (await self.craft.snapshot(1))['upgrades'] if u['inventoryId']==inventory['inventory_id'])
+            self.assertFalse(any(not x['consumed'] and x['prefab']==prefab(inventory) for x in preview['ingredients']))
+            await self.craft.act(1,{'action':'upgrade','inventoryId':inventory['inventory_id']})
+        self.assertTrue((await self.craft.snapshot(1))['materials'])
+
     async def test_server_preview_matches_delivered_weapon_and_armor(self):
         await self.setup_crafter()
         async with self.db.connect() as connection:

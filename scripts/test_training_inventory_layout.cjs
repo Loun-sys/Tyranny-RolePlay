@@ -11,6 +11,8 @@ assert(intro.includes('training-start'));
 assert(!source.includes('Наведение показывает дальность'));
 assert(!source.includes('ПОШАГОВЫЙ БОЙ · 1 КЛЕТКА = 1 МЕТР · НАГРАДЫ ОТКЛЮЧЕНЫ'));
 assert.match(css, /\.paperdoll-character\s*\{[^}]*object-fit:\s*cover/);
+assert.match(css, /\.paperdoll-character\s*\{[^}]*inset:\s*0;\s*width:\s*100%;\s*height:\s*100%/);
+assert.equal((css.match(/\.paperdoll-character\s*\{/g)||[]).length,1,'mobile must not shrink portrait again');
 assert.match(css, /\.paper-slot b\s*\{[^}]*background:\s*rgba\(0,0,0,\.82\)/);
 assert(!css.includes('.paper-slot b{display:none}'));
 console.log('Training intro, arena text, portrait fill and slot-label backplates: OK');

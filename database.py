@@ -360,8 +360,8 @@ class Database:
                 item = normalize_item_text(dict(row))
                 from crafting import normalize_quality
                 item = normalize_quality(item)
-                await db.execute('UPDATE item_catalog SET description=?,lore=?,properties=?,armor=?,damage_min=?,damage_max=?,recovery=?,category=? WHERE id=?',
-                    (item['description'],item['lore'],json.dumps(item['properties'],ensure_ascii=False),item['armor'],item['damage_min'],item['damage_max'],item['recovery'],item['category'],row['id']))
+                await db.execute('UPDATE item_catalog SET description=?,lore=?,properties=?,armor=?,damage_min=?,damage_max=?,recovery=?,category=?,hands=?,slot=? WHERE id=?',
+                    (item['description'],item['lore'],json.dumps(item['properties'],ensure_ascii=False),item['armor'],item['damage_min'],item['damage_max'],item['recovery'],item['category'],item['hands'],item['slot'],row['id']))
             await db.commit()
         from npc_store import SCHEMA as NPC_SCHEMA
         async with self.connect() as db:
@@ -736,9 +736,32 @@ class Database:
             )
             return [dict(row) for row in rows]
 
-    async def delete_character(self, guild_id: int, user_id: int) -> bool:
+    async def delete_character(self, guild_id: int, user_id: int, *,
+                               expected_character_id: int | None = None,
+                               admin_user_id: int | None = None) -> bool:
+        """Delete the confirmed owner/character atomically, retaining an audit entry."""
         async with self.connect() as db:
-            cursor = await db.execute("DELETE FROM characters WHERE guild_id=? AND user_id=?", (guild_id, user_id))
+            await db.execute('BEGIN IMMEDIATE')
+            rows = await db.execute_fetchall('SELECT id,name,background,level FROM characters WHERE guild_id=? AND user_id=?', (guild_id, user_id))
+            if not rows or (expected_character_id is not None and rows[0]['id'] != expected_character_id):
+                return False
+            character = dict(rows[0])
+            # Map placements are JSON, not foreign keys. Remove only this player's
+            # placements; maps, NPCs and other players remain intact.
+            for row in await db.execute_fetchall('SELECT id,spec FROM battle_maps WHERE guild_id=?', (guild_id,)):
+                spec = json.loads(row['spec'])
+                tokens = spec.get('tokens', [])
+                remaining = [t for t in tokens if not (t.get('kind') == 'player' and t.get('id') == character['id'])]
+                if len(remaining) != len(tokens):
+                    spec['tokens'] = remaining
+                    await db.execute('UPDATE battle_maps SET spec=?,updated_at=CURRENT_TIMESTAMP WHERE id=?', (json.dumps(spec, ensure_ascii=False), row['id']))
+            await db.execute('DELETE FROM registration_tokens WHERE guild_id=? AND user_id=?', (guild_id, user_id))
+            await db.execute('INSERT INTO admin_audit(guild_id,admin_user_id,character_id,action,details) VALUES(?,?,?,?,?)',
+                             (guild_id, admin_user_id if admin_user_id is not None else user_id, character['id'],
+                              'character_delete_admin' if admin_user_id is not None else 'character_delete_self',
+                              json.dumps({**character, 'user_id': str(user_id)}, ensure_ascii=False)))
+            # All character-owned tables (including portal links) cascade here.
+            cursor = await db.execute('DELETE FROM characters WHERE id=? AND guild_id=? AND user_id=?', (character['id'], guild_id, user_id))
             await db.commit()
             return bool(cursor.rowcount)
 
@@ -1219,6 +1242,8 @@ class Database:
             if not rows:
                 return False, "Предмет не найден в инвентаре."
             category = rows[0]["category"]
+            if category=='Щиты' and slot.startswith('Оружие') and 'правая рука' in slot:
+                return False,'Щит экипируется в левую руку.'
             if slot.startswith("Оружие") and category not in {
                 "Одноручное оружие", "Двуручное оружие", "Парное оружие", "Луки", "Метательное оружие", "Посохи", "Щиты"
             }:

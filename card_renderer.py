@@ -141,13 +141,15 @@ def render_inventory_card(character, inventory, derived, limits):
     gold, muted = '#dfc790', '#a99874'
     root = Path(__file__).parent / 'web'
 
-    def icon(path, xy, size):
+    def icon(path, xy, size, brightness=1):
         # Icons are shipped game assets, not remote images or user-supplied paths.
         asset = (root / path).resolve()
         if root.resolve() not in asset.parents or not asset.is_file():
             return
         with Image.open(asset) as original:
             pic = ImageOps.contain(original.convert('RGBA'), (size, size))
+            if brightness != 1:
+                pic = ImageEnhance.Brightness(pic).enhance(brightness)
             image.paste(pic, (xy[0] + (size-pic.width)//2, xy[1] + (size-pic.height)//2), pic)
 
     draw.rectangle((12, 12, 1087, 1077), outline='#6a512a', width=2)
@@ -177,11 +179,22 @@ def render_inventory_card(character, inventory, derived, limits):
     stat_rows([('armor','Поглощение',derived.get('armor',0)),('deflection','Отражение',f"{derived.get('deflection',0)}%")], y+44)
     portrait = _load_portrait(character.get('portrait_url',''))
     if portrait:
-        pic = ImageOps.contain(portrait, (500, 450))
-        image.paste(pic, (690-pic.width//2, 280+(450-pic.height)//2))
+        # Same full equipment-panel cover as the web inventory; slots are drawn
+        # on top, including the quickbar, rather than outside a small portrait.
+        pic = ImageOps.fit(portrait, (766, 814), centering=(.5, .5))
+        image.paste(pic, (307, 81))
     else:
         draw.text((690, 460), character['name'][:22], font=_font(25), fill=muted, anchor='mm')
     by_slot = {i['equipped_slot']: i for i in inventory if i.get('equipped_slot')}
+    active_roman=['I','II','III','IV'][derived.get('activeWeaponSet',1)-1]
+    two_handed=by_slot.get(f'Оружие {active_roman} — правая рука')
+    if two_handed and int(two_handed.get('hands') or 0)>=2:
+        by_slot[f'Оружие {active_roman} — левая рука']=two_handed
+
+    def backed_label(xy, text, font, anchor=None):
+        box = draw.textbbox(xy, text, font=font, anchor=anchor)
+        draw.rectangle((box[0]-5, box[1]-3, box[2]+5, box[3]+3), fill='#000000')
+        draw.text(xy, text, font=font, fill=gold, anchor=anchor)
 
     def slot(key, label, x, y, label_side='right'):
         draw.rectangle((x, y, x+66, y+66), fill='#161416', outline='#993040', width=2)
@@ -191,10 +204,12 @@ def render_inventory_card(character, inventory, derived, limits):
             draw.rectangle((x+5,y+5,x+61,y+61), outline=quality_color, width=2)
             icon(item.get('image_url',''), (x+8,y+8), 50)
         else:
-            draw.polygon([(x+33,y+19),(x+47,y+33),(x+33,y+47),(x+19,y+33)], outline='#625a4c', width=2)
-        if label_side=='right': draw.text((x+80,y+24), label, font=_font(17,True), fill=gold)
-        elif label_side=='left': draw.text((x-14,y+24), label, font=_font(17,True), fill=gold, anchor='ra')
-        elif label: draw.text((x+33,y+74), label, font=_font(16,True), fill=gold, anchor='ma')
+            kind={'Голова':'head','Торс':'torso','Руки':'hands','Ноги':'feet'}.get(key)
+            kind=kind or ('accessory' if key.startswith('Аксессуар') else 'quick' if key.startswith('Быстрый') else 'shield' if 'левая рука' in key else 'weapon')
+            icon(f'assets/inventory-icons/slot-{kind}.png',(x+3,y+3),60,.45)
+        if label_side=='right': backed_label((x+80,y+24), label, _font(17,True))
+        elif label_side=='left': backed_label((x-14,y+24), label, _font(17,True), 'ra')
+        elif label: backed_label((x+33,y+74), label, _font(16,True), 'ma')
 
     for n,(left,right,ll,rl) in enumerate([('Голова','Руки','Голова','Руки'),('Торс','Ноги','Торс','Ноги'),('Аксессуар 1','Аксессуар 2','Аксессуар','Аксессуар')]):
         slot(left,ll,325,102+n*84)
@@ -202,7 +217,7 @@ def render_inventory_card(character, inventory, derived, limits):
     roman = ['I','II','III','IV'][derived.get('activeWeaponSet',1)-1]
     slot(f'Оружие {roman} — правая рука','П. рука',390,685,'bottom')
     slot(f'Оружие {roman} — левая рука','Л. рука',923,685,'bottom')
-    draw.text((690,790), 'Быстрый доступ', font=_font(22,True), fill=gold, anchor='mm')
+    backed_label((690,790), 'Быстрый доступ', _font(22,True), 'mm')
     quick_count = int(limits.get('quickSlots',4))
     for n in range(quick_count):
         columns = min(6,quick_count)

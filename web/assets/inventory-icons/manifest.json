@@ -1,0 +1,131 @@
+{
+  "source": "resources.assets/Fallen_UI",
+  "sprites": {
+    "slot-head": {
+      "sprite": "Inventory-ItemSlot-Helm",
+      "bounds": [
+        981,
+        727,
+        1019,
+        783
+      ]
+    },
+    "slot-torso": {
+      "sprite": "Inventory-ItemSlot-Torso",
+      "bounds": [
+        406,
+        632,
+        444,
+        676
+      ]
+    },
+    "slot-hands": {
+      "sprite": "Inventory-ItemSlot-Glove",
+      "bounds": [
+        282,
+        328,
+        331,
+        370
+      ]
+    },
+    "slot-feet": {
+      "sprite": "Inventory-ItemSlot-Boots",
+      "bounds": [
+        638,
+        730,
+        684,
+        783
+      ]
+    },
+    "slot-accessory": {
+      "sprite": "Inventory-ItemSlot-Accessories",
+      "bounds": [
+        209,
+        116,
+        263,
+        168
+      ]
+    },
+    "slot-weapon": {
+      "sprite": "Inventory-ItemSlot-Weapon",
+      "bounds": [
+        928,
+        912,
+        965,
+        947
+      ]
+    },
+    "slot-shield": {
+      "sprite": "Inventory-ItemSlot-Shield",
+      "bounds": [
+        341,
+        3,
+        369,
+        42
+      ]
+    },
+    "slot-quick": {
+      "sprite": "Inventory_EmptyItemSlot",
+      "bounds": [
+        602,
+        678,
+        644,
+        720
+      ]
+    },
+    "filter-all": {
+      "sprite": "icon_inventory_all",
+      "bounds": [
+        889,
+        912,
+        927,
+        947
+      ]
+    },
+    "filter-weapons": {
+      "sprite": "icon_inventory_weapons",
+      "bounds": [
+        378,
+        54,
+        412,
+        86
+      ]
+    },
+    "filter-armor": {
+      "sprite": "icon_inventory_armor",
+      "bounds": [
+        378,
+        268,
+        409,
+        305
+      ]
+    },
+    "filter-consumables": {
+      "sprite": "icon_inventory_consumables",
+      "bounds": [
+        414,
+        203,
+        438,
+        240
+      ]
+    },
+    "filter-other": {
+      "sprite": "icon_inventory_other",
+      "bounds": [
+        893,
+        636,
+        924,
+        676
+      ]
+    },
+    "filter-materials": {
+      "sprite": "icon_inventory_ingredients",
+      "bounds": [
+        746,
+        640,
+        783,
+        676
+      ]
+    }
+  }
+}
