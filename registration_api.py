@@ -678,11 +678,18 @@ async def _admin_character(request: web.Request) -> tuple[int, int, int]:
     return guild_id, admin_user_id, character_id
 
 
+async def _admin_roster(request: web.Request, guild_id: int) -> list[dict[str, Any]]:
+    rows = await request.app['db'].admin_characters(guild_id)
+    for row in rows:
+        row['portrait_url'] = _portrait_url(request, row.get('portrait_url', ''))
+    return rows
+
+
 async def admin_home(request: web.Request) -> web.Response:
     guild_id, admin_user_id = await _admin_owner(request)
     return web.json_response({
         "ok": True, "adminUserId": str(admin_user_id),
-        "characters": await request.app["db"].admin_characters(guild_id),
+        "characters": await _admin_roster(request, guild_id),
     })
 
 
@@ -741,7 +748,7 @@ async def admin_mutation(request: web.Request) -> web.Response:
         request.app.get('training_sessions', {}).pop(cid, None)
         request.app.get('training_locks', {}).pop(cid, None)
         return web.json_response({'ok': True, 'deletedId': cid, 'message': 'Персонаж удалён.',
-                                  'characters': await db.admin_characters(guild_id)})
+                                  'characters': await _admin_roster(request, guild_id)})
     elif action == "character":
         values = dict(payload.get("values") or {})
         if "background" in values and values["background"] not in BACKGROUNDS:
@@ -968,7 +975,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-4", "characterToolsVersion":"20261004-5"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-4", "characterToolsVersion":"20261004-7"})
 
 
 async def _player_maps(request,cid):

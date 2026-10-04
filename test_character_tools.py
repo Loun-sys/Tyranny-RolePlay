@@ -13,7 +13,7 @@ from PIL import Image
 from crafting import SCHEMA as CRAFT_SCHEMA
 from player_possessions import SCHEMA as POSSESSION_SCHEMA
 from consumable_store import SCHEMA as EFFECT_SCHEMA
-from registration_api import admin_mutation,portal_portrait,portal_info,cors_middleware
+from registration_api import admin_home,admin_mutation,portal_portrait,portal_info,cors_middleware
 from test_campaign import CampaignTests
 
 
@@ -50,6 +50,7 @@ class CharacterToolsTests(unittest.IsolatedAsyncioTestCase):
         app['db']=self.db;app['data_dir']=Path(self.temp.name)
         app['extended_talents']={'backgrounds':{},'factions':[]}
         app['training_sessions']={1:object()};app['training_locks']={1:object()}
+        app.router.add_get('/api/admin/{token}',admin_home)
         app.router.add_post('/api/admin/{token}/character/{character_id}',admin_mutation)
         app.router.add_post('/api/portal/{token}/portrait',portal_portrait)
         app.router.add_get('/api/portal/{token}',portal_info)
@@ -77,8 +78,11 @@ class CharacterToolsTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_admin_delete_requires_exact_confirmation_and_guild_authority(self):
         await self.prepare()
+        await self.db.update_character_text(2,'portrait_url','local://fixture.webp')
         async with await self.client() as client:
             path=f'/api/admin/{self.admin}/character/1'
+            initial=await (await client.get(f'/api/admin/{self.admin}')).json()
+            self.assertTrue(next(c for c in initial['characters'] if c['id']==2)['portrait_url'].endswith('/media/portraits/fixture.webp'))
             self.assertEqual((await client.post('/api/admin/invalid/character/1',json={'action':'character_delete','confirmName':'Герой'})).status,410)
             self.assertEqual((await client.post(f'/api/admin/{self.portal}/character/1',json={'action':'character_delete','confirmName':'Герой'})).status,410)
             self.assertEqual((await client.post(f'/api/admin/{self.admin}/character/3',json={'action':'character_delete','confirmName':'Другой сервер'})).status,404)
@@ -90,6 +94,7 @@ class CharacterToolsTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(response.status,200)
             result=await response.json();self.assertEqual(result['deletedId'],1)
             self.assertEqual([c['id'] for c in result['characters']],[2])
+            self.assertEqual(result['characters'][0]['portrait_url'],next(c for c in initial['characters'] if c['id']==2)['portrait_url'])
             self.assertNotIn(1,client.app['training_sessions'])
             self.assertNotIn(1,client.app['training_locks'])
             self.assertEqual((await client.get(f'/api/portal/{self.portal}')).status,410)
