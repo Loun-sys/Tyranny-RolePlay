@@ -1,7 +1,7 @@
 // Regression checks for the deliberately minimal training intro and portrait layout.
 const fs = require('node:fs');
 const assert = require('node:assert/strict');
-const source = fs.readFileSync('web/archive.js', 'utf8');
+const source = fs.readFileSync('web/archive.js', 'utf8') + fs.readFileSync('web/combat-base.js', 'utf8');
 const css = fs.readFileSync('web/archive-icons.css', 'utf8');
 const intro = source.match(/if\(!training\.active\)\{p\.innerHTML=`([^`]+)`;return\}/)[1];
 assert(intro.includes('Выводит токен персонажа на арену с манекенами, где можно зарамсится и посмотреть че делают кнопки.'));

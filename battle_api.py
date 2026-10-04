@@ -55,15 +55,24 @@ async def admin_battles(request):
                 'maps':await CampaignStore(request.app['db']).maps(guild,owner),
                 'npcs':await NPCStore(request.app['db']).list(guild,owner)})
         ident=int(request.match_info['battle_id'])
-        if request.method=='POST':row=await store.action(ident,guild,owner=owner,payload=await request.json())
+        if request.method=='DELETE':
+            if request.query.get('mode')=='play':raise ValueError('Удаление боя доступно только в администрировании.')
+            p=await request.json()
+            await store.delete(ident,guild,owner,p.get('confirmName'),p.get('revision'))
+            return web.json_response({'ok':True,'message':'Бой удалён. Персонажи, карта и архив НПС сохранены.'})
+        if request.method=='POST':
+            p=await request.json()
+            if request.query.get('mode')=='play':p['mode']='play'
+            row=await store.action(ident,guild,owner=owner,payload=p)
         else:
             row=await store.get(ident,guild,owner)
             if request.query.get('afterRevision')==str(row['revision']):return web.json_response({'ok':True,'unchanged':True})
         actor=request.query.get('actorId','')
-        result=await store.view(row,actor_id=actor,master=True)
+        result=await store.view(row,actor_id=actor,master=True,play=request.query.get('mode')=='play')
         for token in result.get('tokens',[]):token['portrait']=battle_portrait(request,token.get('portrait',''))
         if result.get('training'):
             for token in result['training']['grid']['tokens']:token['portraitUrl']=battle_portrait(request,token.get('portraitUrl',''))
+            result['training']['character']['portraitUrl']=battle_portrait(request,result['training']['character'].get('portraitUrl',''))
         return web.json_response({'ok':True,'battle':result,'message':'Бой обновлён.'})
     except (ValueError,TypeError,KeyError) as e:raise web.HTTPConflict(reason=str(e)) from e
 
@@ -76,3 +85,4 @@ def register_battle_routes(app):
     app.router.add_post('/api/admin/{token}/battles',admin_battles)
     app.router.add_get('/api/admin/{token}/battles/{battle_id}',admin_battles)
     app.router.add_post('/api/admin/{token}/battles/{battle_id}',admin_battles)
+    app.router.add_delete('/api/admin/{token}/battles/{battle_id}',admin_battles)

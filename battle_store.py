@@ -55,6 +55,17 @@ class BattleStore:
         if cid is not None and str(cid) not in row['state']['participants']:raise ValueError('Персонаж не приглашён в этот бой.')
         return row
 
+    async def delete(self,ident,guild,owner,confirmation,revision):
+        """Delete only the selected scene, never its map, PCs or NPC archive."""
+        async with self.lock(ident):
+            row=await self.get(ident,guild,owner)
+            if confirmation!=row['name']:raise ValueError('Введите точное название боя для удаления.')
+            if revision is None or int(revision)!=row['revision']:raise ValueError('Бой изменился. Обновите экран и подтвердите удаление заново.')
+            async with self.db.connect() as c:
+                cur=await c.execute('DELETE FROM live_battles WHERE id=? AND guild_id=? AND owner_id=? AND revision=?',(ident,guild,owner,row['revision']))
+                if cur.rowcount!=1:raise ValueError('Бой изменился. Обновите экран и подтвердите удаление заново.')
+                await c.commit()
+
     async def create(self,guild,owner,map_id,participants):
         from campaign_store import CampaignStore
         from npc_store import NPCStore
@@ -229,8 +240,8 @@ class BattleStore:
         for k in e.targets:
             s['tokens'][k].update(x=e.target_positions[k][0],y=e.target_positions[k][1],health=e.target_healths[k],healthMax=e.targets[k]['healthMax'])
         s['conditions']={key if k=='player' else k:v for k,v in e.conditions.items()}
-        s['personal'][key]={f:list(getattr(e,f)) if isinstance(getattr(e,f,None),set) else copy.deepcopy(getattr(e,f))
-            for f in PERSONAL if hasattr(e,f)}
+        s['personal'][key]={**s['personal'].get(key,{}),**{f:list(getattr(e,f)) if isinstance(getattr(e,f,None),set) else copy.deepcopy(getattr(e,f))
+            for f in PERSONAL if hasattr(e,f)}}
         s['log'].extend(line.replace('Манекен разрушен.','Цель выведена из боя.').replace(' (тренировка — настоящий предмет не расходуется).','.') for line in e.log)
         s['log']=s['log'][-100:]
         if presentation:
@@ -282,7 +293,26 @@ class BattleStore:
             row=await self.get(ident,guild,owner,cid);s=row['state'];p=payload or {};operation=p.get('operation','act')
             if p.get('revision') is not None and int(p['revision'])!=row['revision']:raise ValueError('Бой изменился. Обновите экран.')
             if row['status']=='ended':raise ValueError('Бой завершён.')
+            s['events']=[];s.pop('movementPath',None)
             profiles=await self._profiles(row);deltas=[]
+            if owner is not None and p.get('mode')=='play':
+                key=str(p.get('actorId',''))
+                if row['status']!='active':raise ValueError('Мастер ещё не запустил бой или завершил его.')
+                if key!=s['currentId'] or key not in s['tokens']:raise ValueError('Сейчас ход другого участника. Обновите боевой экран.')
+                if s['tokens'][key]['kind']!='npc':raise ValueError('Сейчас ход игрока. Мастер наблюдает за боем.')
+                if operation not in {'act','quickbar'}:raise ValueError('Правки сцены доступны только в администрировании.')
+            if owner is not None and operation=='quickbar':
+                key=str(p.get('actorId',''));bindings=p.get('bindings')
+                if p.get('mode')!='play' or not isinstance(bindings,list) or len(bindings)!=9:raise ValueError('Укажите девять быстрых ячеек текущего НПС.')
+                e=self._engine(row,key,profiles);c,d,inv,spells,limits=profiles[key]
+                actions=e.view(c,d,spells,limits['weaponSets'])['actions']
+                valid={(a['kind'],a['name']) for a in actions};seen=set();saved=[]
+                for binding in bindings:
+                    slot=int(binding.get('slot',0));kind=str(binding.get('kind',''));name=str(binding.get('name',''))
+                    if not 1<=slot<=9 or slot in seen or (kind,name)!=('','') and (kind,name) not in valid:raise ValueError('Быстрая ячейка содержит недоступное действие.')
+                    seen.add(slot);saved.append({'slot':slot,'action_kind':kind,'action_name':name})
+                s['personal'].setdefault(key,{})['quickbar']=saved
+                await self._save(row);return row
             if owner is not None and operation!='act':
                 await self._master_edit(row,p,profiles)
                 # Scene edits can add/remove actors and change their modifiers.
@@ -320,8 +350,10 @@ class BattleStore:
                         e.selected_target_id=target or e.selected_target_id
                         e.aim_point=e.player_position if rule['targeting']=='self' else self._cell(s,p) if 'x' in p and 'y' in p else e.target_positions.get(e.selected_target_id)
                         if e.aim_point is None:raise ValueError('Выберите цель способности.')
-                        e._execute_ability(rule,d,inv);e.action_available=False
+                        e._execute_ability(rule,d,inv)
+                        if not rule.get('song'):e.action_available=False
                         e._break_stealth('Применение способности раскрывает токен.')
+                        if e.target_healths.get(e.selected_target_id,0)<=0 and e._alive_targets():e.selected_target_id=e._alive_targets()[0]
                     else:e.act(data,actor,d,spells,limits['weaponSets'])
                     if s['tokens'][key]['kind']=='player':
                         deltas=[(int(i),count-before.get(i,0),s['tokens'][key]['characterId']) for i,count in getattr(e,'consumable_used',{}).items() if count>before.get(i,0)]
@@ -430,13 +462,15 @@ class BattleStore:
     def _vacant(self,s,key,x,y):
         if any(k!=key and t['health']>0 and (t['x'],t['y'])==(x,y) for k,t in s['tokens'].items()):raise ValueError('Клетка занята другим токеном.')
 
-    async def view(self,row,cid=None,actor_id=None,master=False):
+    async def view(self,row,cid=None,actor_id=None,master=False,play=False):
         s=row['state'];profiles=await self._profiles(row)
-        key=actor_id if master and actor_id in s['tokens'] else f'pc_{cid}' if cid is not None else s['currentId'] or next(iter(s['tokens']),'')
+        key=actor_id if master and not play and actor_id in s['tokens'] else f'pc_{cid}' if cid is not None else s['currentId'] or next(iter(s['tokens']),'')
         result={k:row[k] for k in ('id','name','status','revision')};result.update(round=s['round'],participants=s['participants'],currentId=s['currentId'],initiative=s['initiative'],
             log=s['log'][-40:][::-1],map=s['map'],tokens=list({**t,'id':k,'portrait':profiles[k][0].get('portrait_url','')} for k,t in s['tokens'].items()),conditions=s['conditions'])
         if not key or key not in s['tokens']:return result
         e=self._engine(row,key,profiles);c,d,inv,spells,limits=profiles[key]
+        if play and s['personal'].get(e.selected_target_id,{}).get('stealthed'):
+            e.selected_target_id=next((k for k in e._alive_targets() if not s['personal'].get(k,{}).get('stealthed')),'')
         view=e.view(c,d,spells,limits['weaponSets'])
         view['derived'].pop('_baseDerived',None)
         remap=lambda k:'player' if k==key else k
@@ -446,10 +480,24 @@ class BattleStore:
         view.update(mode='battle',battleId=row['id'],revision=row['revision'],viewerId=key,log=s['log'][-40:][::-1],finished=row['status']=='ended')
         if s.get('movementPath'):
             view['movementPath']=s['movementPath']['path'] if s['movementPath']['actorId']==key else []
-        your_turn=master or row['status']=='active' and s['currentId']==key and self._eligible(s,key)
+        your_turn=row['status']=='active' and self._eligible(s,key) and (master and not play or s['currentId']==key and (not play or s['tokens'][key]['kind']=='npc'))
         if not your_turn:
             view['turn']['actionAvailable']=False;view['grid']['reachable']=[];view['grid']['movementPreviews']={}
-            for a in view['actions']:a['disabledReason']='Ожидание своего хода' if row['status']=='active' else 'Мастер ещё не запустил бой'
-        view['grid']['tokens']=[t for t in view['grid']['tokens'] if master or t['id']=='player' or not (s['tokens'][t['id']]['team']!=s['tokens'][key]['team'] and s['personal'].get(t['id'],{}).get('stealthed'))]
+            reason='Сейчас ход игрока — мастер наблюдает' if play and row['status']=='active' else 'Ожидание своего хода' if row['status']=='active' else 'Мастер ещё не запустил бой'
+            for a in view['actions']:a['disabledReason']=reason
+        view['grid']['tokens']=[t for t in view['grid']['tokens'] if master and not play or t['id']=='player' or not (s['tokens'][t['id']]['team']!=s['tokens'][key]['team'] and s['personal'].get(t['id'],{}).get('stealthed'))]
+        for token in view['grid']['tokens']:token['kind']=s['tokens'][key if token['id']=='player' else token['id']]['kind']
+        if master and play:
+            result['controller']={'actorId':key,'name':c['name'],'level':c.get('level',1),'kind':s['tokens'][key]['kind'],'canAct':your_turn}
+            result['combatQuickbar']=s['personal'].get(key,{}).get('quickbar',[])
+            view['grid']['controllerId']=key
+            hidden={k for k,t in s['tokens'].items() if t['team']!=s['tokens'][key]['team'] and s['personal'].get(k,{}).get('stealthed')}
+            view['targets']=[t for t in view['targets'] if t['id'] not in hidden]
+            if view['dummy'].get('id') in hidden:view['dummy']={'name':'Цель не выбрана','health':0,'healthMax':1,'armor':0}
+            for action in view['actions']:
+                if action.get('targeting')=='unit':
+                    for aim in action.get('aims',{}).values():
+                        if any(t in hidden for t in aim.get('targetIds',[])):
+                            aim.update(valid=False,targetIds=[],previews=[],reason='Цель скрыта и не обнаружена.')
         result['training']=view
         return result

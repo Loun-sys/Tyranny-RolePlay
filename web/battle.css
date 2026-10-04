@@ -1,4 +1,7 @@
 .battle-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+.battle-play-link{text-decoration:none}
+.battle-scene-row{display:flex;align-items:stretch;gap:6px;width:100%}
+.battle-scene-row>[data-open-battle]{flex:1;text-align:left}
 .battle-scenes,.battle-abilities{display:flex;flex-wrap:wrap;gap:6px}
 .battle-participant-choices{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
 .master-battle-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}

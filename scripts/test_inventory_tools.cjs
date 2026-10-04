@@ -1,5 +1,5 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const source=fs.readFileSync('web/archive.js','utf8');
+const source=fs.readFileSync('web/archive.js','utf8')+'\n'+fs.readFileSync('web/combat-base.js','utf8');
 const funcs=['itemVisual','emptyEquipmentIcon','equipmentSlot','compatibleSlots','inventoryCategoryMatches','inventoryFilters','talentIcon','sigilIcon'];
 const ctx=vm.createContext({esc:v=>String(v??'').replaceAll('<','&lt;'),localTalentIcon:v=>v,data:{equipmentLimits:{weaponSets:2,quickSlots:4}},inventoryCategory:'all',inventoryGroups:[['all','Все','all'],['weapons','Оружие','weapons']]});
 for(const name of funcs)vm.runInContext(source.split('\n').find(line=>line.startsWith(`function ${name}(`)),ctx);

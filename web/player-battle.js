@@ -58,5 +58,10 @@ setInterval(async()=>{
  sharedBattlePollPending=true;
  try{const j=await requestBeforeBattle(`/api/portal/${encodeURIComponent(token)}/battles/${sharedBattleId}?afterRevision=${sharedBattle?.revision||0}`);
   if(!j.unchanged&&j.battle.revision!==sharedBattle?.revision){const old=training?.grid;sharedBattle=j.battle;training=sharedBattle.training||{active:false};renderSharedBattle();if(old&&training.grid)await animateTokenMovement(old,training.grid,training.movementPath)}
- }catch(e){toast(e.message)}finally{sharedBattlePollPending=false}
+ }catch(e){
+  if(e.message.includes('не принадлежит')){
+   sharedBattle=null;sharedBattleId=0;training={active:false};clearCombatAim();
+   $('#panel').innerHTML='<section class="box"><h2>Бой удалён или недоступен</h2><p>Мастер может пригласить вас в другой бой. Ваш персонаж и инвентарь сохранены.</p></section>';
+  }else toast(e.message);
+ }finally{sharedBattlePollPending=false}
 },2000);

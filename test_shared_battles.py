@@ -174,11 +174,13 @@ class SharedBattleTests(unittest.IsolatedAsyncioTestCase):
         from npc_store import ability_library
         a=next(a for a in ability_library() if a['key']=='ABL_DIS_BloodBound_DisablingKick')
         row=await self.start();row['state']['tokens']['npc_1']['abilities']=[a];await self.store._save(row)
+        await self.edit(operation='health',tokenId='pc_1',health=1)
         await self.edit(operation='move',tokenId='npc_1',x=1,y=2)
         with patch('training_combat.random.randint',return_value=100):
             row=await self.edit(operation='act',actorId='npc_1',kind='ability',name=a['key'],targetId='pc_1',x=1,y=1)
         self.assertLess(row['state']['tokens']['pc_1']['health'],100)
         self.assertFalse(row['state']['personal']['npc_1']['action_available'])
+        self.assertEqual(row['state']['personal']['npc_1']['selected_target_id'],'pc_2')
         with self.assertRaises(ValueError):await self.edit(operation='act',actorId='npc_1',kind='ability',name=a['key'],targetId='pc_1',x=1,y=1)
 
     async def test_hidden_token_unit_attack_rejected_and_contact_drag_reveals(self):
@@ -229,6 +231,108 @@ class SharedBattleTests(unittest.IsolatedAsyncioTestCase):
             data=await r.json();r=await client.get(f'/api/admin/{admin}/battles/{self.ident}?afterRevision={data["battle"]["revision"]}')
             self.assertTrue((await r.json())['unchanged'])
             r=await client.get('/api/admin/invalid/battles');self.assertEqual(r.status,410)
+
+
+    async def test_master_play_follows_initiative_not_admin_selection(self):
+        await self.start();await self.edit(operation='turn',tokenId='npc_1')
+        row=await self.store.get(self.ident,1,99)
+        play=await self.store.view(row,actor_id='pc_1',master=True,play=True)
+        self.assertEqual(play['controller']['actorId'],'npc_1');self.assertTrue(play['controller']['canAct'])
+        self.assertEqual(play['training']['grid']['controllerId'],'npc_1')
+        await self.edit(operation='turn',tokenId='pc_1')
+        row=await self.store.get(self.ident,1,99);play=await self.store.view(row,master=True,play=True)
+        self.assertFalse(play['controller']['canAct']);self.assertFalse(play['training']['turn']['actionAvailable'])
+        self.assertFalse(play['training']['grid']['reachable'])
+        self.assertTrue(all(a['disabledReason'] for a in play['training']['actions']))
+        admin=await self.store.view(row,actor_id='npc_1',master=True)
+        self.assertEqual(admin['training']['viewerId'],'npc_1')
+
+    async def test_master_play_cannot_override_actor_turn_or_scene(self):
+        await self.start();await self.edit(operation='turn',tokenId='npc_1')
+        for payload in [{'actorId':'pc_1','kind':'end_turn'},{'actorId':'npc_1','operation':'health','tokenId':'pc_1','health':1}]:
+            with self.assertRaises(ValueError):await self.edit(mode='play',**payload)
+        await self.edit(operation='turn',tokenId='pc_1')
+        with self.assertRaisesRegex(ValueError,'игрока'):await self.edit(mode='play',actorId='pc_1',kind='end_turn')
+        row=await self.edit(operation='health',tokenId='pc_1',health=90)
+        self.assertEqual(row['state']['tokens']['pc_1']['health'],90)
+
+    async def test_master_play_movement_attack_budget_and_next_npc(self):
+        await self.start();await self.edit(operation='add_npc',npcId=self.npc,x=7,y=5)
+        await self.edit(operation='order',order=['npc_1','npc_2','pc_1','pc_2'])
+        await self.edit(operation='turn',tokenId='npc_1')
+        row=await self.edit(mode='play',actorId='npc_1',kind='move',x=3,y=1)
+        self.assertEqual(row['state']['personal']['npc_1']['movement_remaining'],3)
+        with patch('training_combat.random.randint',return_value=100):
+            row=await self.edit(mode='play',actorId='npc_1',kind='attack',targetId='pc_2',x=2,y=1)
+        self.assertFalse(row['state']['personal']['npc_1']['action_available'])
+        with self.assertRaises(ValueError):await self.edit(mode='play',actorId='npc_1',kind='attack',targetId='pc_2',x=2,y=1)
+        row=await self.edit(mode='play',actorId='npc_1',kind='end_turn')
+        self.assertFalse(row['state']['events'],'Changing turns must not replay the previous attack VFX')
+        play=await self.store.view(row,master=True,play=True)
+        self.assertEqual(play['controller']['actorId'],'npc_2');self.assertTrue(play['controller']['canAct'])
+        self.assertEqual(play['training']['turn']['movementRemaining'],5)
+        with self.assertRaises(ValueError):await self.edit(mode='play',actorId='npc_1',kind='end_turn')
+        row=await self.edit(mode='play',actorId='npc_2',kind='end_turn')
+        self.assertEqual(row['state']['currentId'],'pc_1')
+        self.assertFalse((await self.store.view(row,master=True,play=True))['controller']['canAct'])
+
+    async def test_master_play_quickbar_is_per_npc_and_survives_actions(self):
+        await self.start();await self.edit(operation='add_npc',npcId=self.npc,x=7,y=5)
+        await self.edit(operation='turn',tokenId='npc_1')
+        bindings=[{'slot':n,'kind':'attack' if n==2 else '', 'name':'Обычная атака' if n==2 else ''} for n in range(1,10)]
+        await self.edit(mode='play',operation='quickbar',actorId='npc_1',bindings=bindings)
+        row=await self.edit(mode='play',actorId='npc_1',kind='move',x=5,y=2)
+        self.assertEqual((await self.store.view(row,master=True,play=True))['combatQuickbar'][1]['action_name'],'Обычная атака')
+        row=await self.edit(operation='turn',tokenId='npc_2')
+        self.assertEqual((await self.store.view(row,master=True,play=True))['combatQuickbar'],[])
+        invalid=copy.deepcopy(bindings);invalid[0]['slot']=2
+        with self.assertRaises(ValueError):await self.edit(mode='play',operation='quickbar',actorId='npc_2',bindings=invalid)
+
+    async def test_master_play_hides_unrevealed_enemy_but_admin_sees_it(self):
+        await self.start();await self.edit(operation='turn',tokenId='pc_1')
+        await self.store.action(self.ident,1,cid=1,payload={'kind':'tactic','name':'Уйти в скрытность','x':1,'y':1})
+        row=await self.edit(operation='turn',tokenId='npc_1')
+        play=await self.store.view(row,master=True,play=True);admin=await self.store.view(row,master=True)
+        self.assertNotIn('pc_1',[t['id'] for t in play['training']['grid']['tokens']])
+        self.assertIn('pc_1',[t['id'] for t in admin['training']['grid']['tokens']])
+        self.assertNotIn('pc_1',[t['id'] for t in play['training']['targets']])
+
+    async def test_delete_requires_scope_name_revision_and_preserves_other_data(self):
+        with self.assertRaises(ValueError):await self.store.delete(self.ident,1,100,'Поле',self.row['revision'])
+        with self.assertRaises(ValueError):await self.store.delete(self.ident,2,99,'Поле',self.row['revision'])
+        with self.assertRaises(ValueError):await self.store.delete(self.ident,1,99,'Неверное название',self.row['revision'])
+        await self.start();row=await self.store.get(self.ident,1,99)
+        with self.assertRaisesRegex(ValueError,'изменился'):await self.store.delete(self.ident,1,99,'Поле',self.row['revision'])
+        await self.store.delete(self.ident,1,99,'Поле',row['revision'])
+        self.assertFalse(await self.store.list(1,99))
+        self.assertIsNotNone(await self.db.get_character_by_id(1))
+        self.assertEqual(len(await CampaignStore(self.db).maps(1,99)),1)
+        self.assertEqual(len(await self.npcs.list(1,99)),1)
+        row=await self.store.create(1,99,self.map_id,[1]);await self.store.join(row['id'],1,1)
+
+    async def test_deleting_map_preserves_running_scene_snapshot(self):
+        await self.start();await CampaignStore(self.db).delete_map(1,99,self.map_id)
+        row=await self.store.get(self.ident,1,99)
+        self.assertEqual((await self.store.view(row,master=True,play=True))['map']['name'],'Поле')
+        self.assertFalse(await CampaignStore(self.db).maps(1,99))
+
+    async def test_play_and_delete_api_authority_and_cors(self):
+        await self.start();await self.edit(operation='turn',tokenId='npc_1')
+        admin=await self.db.create_admin_token(1,99);player=await self.db.create_portal_token(1,1)
+        app=web.Application(middlewares=[cors_middleware]);app['db']=self.db;register_battle_routes(app)
+        async with TestClient(TestServer(app)) as client:
+            path=f'/api/admin/{admin}/battles/{self.ident}'
+            r=await client.get(path+'?mode=play&actorId=pc_1');play=(await r.json())['battle']
+            self.assertEqual(play['controller']['actorId'],'npc_1')
+            r=await client.post(path+'?mode=play',json={'operation':'health','actorId':'npc_1','tokenId':'npc_1','health':1})
+            self.assertEqual(r.status,409)
+            r=await client.delete(path+'?mode=play',json={'confirmName':'Поле','revision':play['revision']});self.assertEqual(r.status,409)
+            r=await client.delete(f'/api/portal/{player}/battles/{self.ident}',json={});self.assertNotEqual(r.status,200)
+            r=await client.options(path,headers={'Origin':'https://loun-sys.github.io','Access-Control-Request-Method':'DELETE'})
+            self.assertIn('DELETE',r.headers['Access-Control-Allow-Methods'])
+            r=await client.delete(path,json={'confirmName':'Поле','revision':play['revision']})
+            self.assertEqual(r.status,200);self.assertTrue((await r.json())['ok'])
+            r=await client.get(path);self.assertEqual(r.status,409)
 
 
 if __name__=='__main__':unittest.main()

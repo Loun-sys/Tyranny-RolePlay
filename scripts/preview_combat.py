@@ -60,8 +60,11 @@ async def main():
             'abilities':[next(a for a in ability_library() if a['key']=='ABL_DIS_BloodBound_DisablingKick')]}})
         second=(await db.get_character(1,3))['id']
         second_token=await db.create_portal_token(1,3)
+        qa_second_npc=await NPCStore(db).save(1,99,{'spec':{'name':'Ратник','level':2,'healthMax':120,'portrait':'assets/npc-portraits/barik_sm.png',
+            'attributes':{'Быстрота':10},'skills':{'Атлетика':40},'attack':{'accuracy':30,'damageMin':5,'damageMax':8,'range':1},
+            'abilities':[next(a for a in ability_library() if a['key']=='ABL_DIS_BloodBound_DisablingKick')]}})
         qa_map=await CampaignStore(db).save_map(1,99,{'spec':{'name':'Проверка общего боя','width':13,'height':9,
-            'image':'','tokens':[{'kind':'player','id':cid,'x':2,'y':4},{'kind':'player','id':second,'x':2,'y':6},{'kind':'npc','id':qa_npc,'x':6,'y':4}]}})
+            'image':'','tokens':[{'kind':'player','id':cid,'x':2,'y':4},{'kind':'player','id':second,'x':2,'y':6},{'kind':'npc','id':qa_npc,'x':6,'y':4},{'kind':'npc','id':qa_second_npc,'x':8,'y':6}]}})
         qa_battle=await BattleStore(db).create(1,99,qa_map,[cid,second])
         await BattleStore(db).join(qa_battle['id'],1,cid)
         await BattleStore(db).join(qa_battle['id'],1,second)
@@ -81,11 +84,18 @@ async def main():
         app.router.add_post('/api/portal/{token}/portrait',api.portal_portrait)
         app.router.add_post('/api/portal/{token}/equipment',api.portal_equip)
         app.router.add_get('/api/admin/{token}',api.admin_home)
+        app.router.add_get('/api/admin/{token}/maps',api.admin_maps)
+        app.router.add_post('/api/admin/{token}/maps',api.admin_maps)
+        app.router.add_get('/api/admin/{token}/npcs',api.admin_npcs)
+        app.router.add_post('/api/admin/{token}/npcs',api.admin_npcs)
         app.router.add_get('/api/admin/{token}/character/{character_id}',api.admin_character)
         app.router.add_post('/api/admin/{token}/character/{character_id}',api.admin_mutation)
         async def admin_index(_):
             return web.Response(status=302,headers={'Location':f'/admin.html?api=http://127.0.0.1:{port}#token={admin_token}'})
         app.router.add_get('/qa-admin',admin_index)
+        async def master_combat_index(_):
+            return web.Response(status=302,headers={'Location':f'/master-combat.html?api=http://127.0.0.1:{port}&battle={qa_battle["id"]}#token={admin_token}'})
+        app.router.add_get('/qa-master-combat',master_combat_index)
         async def creation_index(_):
             return web.Response(status=302,headers={'Location':f'/index.html?api=http://127.0.0.1:{port}&token={creation_token}'})
         app.router.add_get('/qa-create',creation_index)

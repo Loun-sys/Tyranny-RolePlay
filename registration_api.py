@@ -42,7 +42,7 @@ def _cors(request: web.Request, response: web.StreamResponse) -> web.StreamRespo
     if allowed == "*" or origin in {item.strip() for item in allowed.split(",")}:
         response.headers["Access-Control-Allow-Origin"] = origin or "*"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Allow-Methods"] = "GET,POST,PATCH,OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,PATCH,DELETE,OPTIONS"
     response.headers["Vary"] = "Origin"
     return response
 
@@ -975,7 +975,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-5", "characterToolsVersion":"20261004-11", "sharedBattlesVersion":"20261004-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-5", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
 
 
 async def _player_maps(request,cid):
