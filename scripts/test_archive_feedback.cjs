@@ -1,0 +1,13 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('web/archive.js','utf8');
+const entries=[{key:'a',title:'Посох',aliases:['Точность']},{key:'b',title:'Точность',aliases:[]}];
+const ctx=vm.createContext({encyclopedia:{entries},encyclopediaLookup:new Map(),normalizeTerm:s=>String(s||'').toLowerCase()});
+vm.runInContext(source.split('\n').find(s=>s.startsWith('function indexEncyclopedia()')),ctx);
+vm.runInContext('indexEncyclopedia()',ctx);
+assert.equal(ctx.encyclopediaLookup.get('точность').key,'b');
+const html=fs.readFileSync('web/archive.html','utf8'),css=fs.readFileSync('web/archive.css','utf8');
+assert(html.indexOf('id="toast"')>html.indexOf('<main>')&&html.indexOf('id="toast"')<html.indexOf('id="archive-view"'));
+assert(css.includes('main > #toast { position:static;'));
+assert(css.includes('pointer-events:none!important'));
+assert(source.includes('clearTimeout(toastTimer)'));
+console.log('Archive feedback: canonical encyclopedia names win; notifications do not overlay talent buttons');

@@ -1,5 +1,6 @@
 /* Targeting and original-game HUD. All highlighted cells come from the server. */
 let armedCombatAction=null,combatAim=null,combatBusy=false,trainingMaps=[];
+let combatMapZoom=1.25,combatJournalOpen=false;
 const gameCombatRoot='assets/game-combat/';
 const coreTexture={Огонь:'Core-Fire',Холод:'Core-Frost',Молния:'Core-Shock',Жизнь:'Core-Heal',Истощение:'Core-Weaken',Эмоции:'Core-Passion',Рвение:'Core-Strength',Сила:'Core-Gravity',Камень:'Core-Stone',Терратус:'Core-Gravelight',Иллюзия:'Core-Illusion'};
 const originalLocalTalentIcon=localTalentIcon;
@@ -23,6 +24,17 @@ function hudSongStatus(songs){
  const details=active.map(song=>`${song.name}${song.phraseName?` — ${song.phraseName}`:''}`).join('\n');
  return `<div class="original-turn combat-song-status" tabindex="0" aria-label="${esc(label)}" data-ui-tip="${esc(label)}${details?`\n${esc(details)}`:''}">${esc(label)}</div>`;
 }
+function combatJournal(t){
+ const lines=t.log||[],latest=lines[0]||'—';
+ return `<details class="combat-journal" data-combat-journal ${combatJournalOpen?'open':''}><summary aria-label="Раскрыть или свернуть журнал боя"><span class="combat-journal-latest">${esc(latest)}</span><span class="combat-journal-arrow" aria-hidden="true">▾</span></summary><ol>${lines.map(line=>`<li>${esc(line)}</li>`).join('')}</ol></details>`;
+}
+function applyCombatMapZoom(panel,t){
+ const map=panel.querySelector('.tactical-map');if(!map)return;
+ const size=t.grid.layout?.cellSize||48;
+ map.style.width=`${t.grid.width*size*combatMapZoom}px`;map.style.height=`${t.grid.height*size*combatMapZoom}px`;
+ panel.querySelectorAll('[data-combat-zoom]').forEach(button=>{button.disabled=button.dataset.combatZoom==='in'?combatMapZoom>=2.5:combatMapZoom<=.75});
+ const label=panel.querySelector('.combat-zoom-value');if(label)label.textContent=`${Math.round(combatMapZoom*100)}%`;
+}
 statIcon=function(file,label,value,help=''){const canonical=statNames[file.replace('.png','')]||label;return `<div class="combat-stat" tabindex="0" data-ui-tip="${esc(canonical)}: ${esc(value)}${help?`\n${esc(help)}`:''}" aria-label="${esc(canonical)}: ${esc(value)}"><img src="assets/stat-icons/${file}?v=20261002-atlas" alt="${esc(canonical)}"><span>${esc(label)}</span><b>${esc(value)}</b></div>`};
 const originalStatsBox=statsBox;
 const attributeSprites={Сила:'might',Искусность:'finesse',Быстрота:'quickness',Живучесть:'health',Смекалка:'wits',Стойкость:'resolve'};
@@ -40,6 +52,7 @@ function combatGlyph(action){
  return `<img src="assets/stat-icons/${action.kind==='attack'?'damage':'accuracy'}.png" alt="">`;
 }
 renderTraining=function(panel,character){
+ hideCombatTooltip();
  existingRenderTraining(panel,character);
  if(!training?.active){if(training&&trainingMaps.length)panel.querySelector('.training-start')?.insertAdjacentHTML('beforebegin',`<label class="training-map-select">Карта <select id="training-map"><option value="">${trainingMaps.some(m=>m.name.trim().toLowerCase()==='тренировочное поле')?'Тренировочное Поле (по умолчанию)':'Стандартная площадка'}</option>${trainingMaps.map(map=>`<option value="${map.id}">${esc(map.name)}</option>`).join('')}</select></label>`);return}
  const t=training,d=t.derived||{},a=d.attack||{},turn=t.turn||{},player=(t.grid.tokens||[]).find(x=>x.id==='player'),hud=panel.querySelector('.tyranny-combat-hud');
@@ -70,8 +83,36 @@ renderTraining=function(panel,character){
  // Distant targets must not prevent entering targeting mode.
  panel.querySelectorAll('[data-training-kind]').forEach(button=>{const x=(t.actions||[]).find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(x){button.disabled=!!t.finished;button.setAttribute('aria-disabled',String(!!(x.remaining||!turn.actionAvailable)));button.removeAttribute('data-effect-cells');button.removeAttribute('title');const status=button.querySelector('em');if(status)status.textContent=x.remaining?`Готово через ${x.remaining} раунд.`:`Дальность: ${x.range||0} м · выберите цель`;}});
  panel.querySelectorAll('[data-action-kind]').forEach(button=>{const x=(t.actions||[]).find(x=>x.kind===button.dataset.actionKind&&x.name===button.dataset.actionName);if(x)button.querySelector('img, .sigil-icon, span')?.replaceWith(document.createRange().createContextualFragment(combatGlyph(x)))});
+ const rail=document.createElement('nav');rail.className='combat-hud-rail';rail.setAttribute('aria-label','Разделы боевых действий');
+ for(const key of ['ability','spell','artifact','item']){const button=hud.querySelector(`.original-menus [data-combat-picker="${key}"]`);if(button)rail.append(button.cloneNode(true))}
+ hud.prepend(rail);
+ const bottom=hud.querySelector('.original-menus'),resource=hud.querySelector('.original-turn');
+ resource.classList.add('combat-turn-resources');resource.innerHTML=`<span>${resource.innerHTML}</span>`;resource.append(end);
+ const move=document.createElement('button');move.dataset.combatMove='1';move.dataset.uiTip='Передвижение';move.setAttribute('aria-label','Передвижение');move.innerHTML='<img src="assets/stat-icons/dodge.png" alt="Передвижение">';
+ for(const key of ['ability','spell','artifact','stance','move','attack','item','initiative']){
+  const button=key==='move'?move:key==='attack'?bottom.querySelector('[data-training-kind="attack"]'):bottom.querySelector(`[data-combat-picker="${key}"]`);if(button)bottom.append(button);
+ }
+ const statuses=Object.values(t.conditions?.player||{});
+ hud.querySelector('.original-turn').insertAdjacentHTML('beforebegin',`<div class="combat-hud-statuses" aria-label="Эффекты персонажа">${statuses.map(state=>`<span tabindex="0" data-ui-tip="${esc(state.name)}${state.stacks>1?` ×${state.stacks}`:''}">${esc(state.name)}</span>`).join('')}</div>`);
+ const tools=document.createElement('div');tools.className='combat-map-tools';tools.innerHTML=`${combatJournal(t)}<div class="combat-zoom-controls" aria-label="Масштаб карты"><button data-combat-zoom="out" aria-label="Уменьшить карту">−</button><output class="combat-zoom-value"></output><button data-combat-zoom="in" aria-label="Увеличить карту">+</button></div>`;arena.append(tools);
+ panel.querySelector('.combat-info-drawer ol')?.remove();
+ const initiativeButton=hud.querySelector('[data-combat-picker="initiative"]');if(initiativeButton){initiativeButton.dataset.uiTip='Инициатива';initiativeButton.setAttribute('aria-label','Инициатива')}
+ applyCombatMapZoom(panel,t);
  if(armedCombatAction){armedCombatAction=(t.actions||[]).find(x=>x.kind===armedCombatAction.kind&&x.name===armedCombatAction.name)||null;if(!armedCombatAction||(!turn.actionAvailable&&!armedCombatAction.freeOnSelf)||armedCombatAction.remaining)clearCombatAim();else showCombatAim(combatAim||{x:player.x,y:player.y})}
 };
+document.addEventListener('toggle',event=>{if(event.target.matches?.('[data-combat-journal]'))combatJournalOpen=event.target.open},true);
+function handleCombatMapZoom(event){
+ const button=event.target.closest('[data-combat-zoom]');if(!button||!training?.active)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ hideCombatTooltip();
+ combatMapZoom=Math.max(.75,Math.min(2.5,combatMapZoom+(button.dataset.combatZoom==='in'?.25:-.25)));
+ applyCombatMapZoom($('#panel'),training);
+}
+function handleCombatMovement(event){
+ const button=event.target.closest('[data-combat-move]');if(!button||!training?.active)return;
+ event.preventDefault();event.stopImmediatePropagation();hideCombatTooltip();clearCombatAim();
+ combatPicker='';quickbarEditing=0;renderTraining($('#panel'),data.character);
+}
 function clearCombatAim(){armedCombatAction=null;combatAim=null;document.querySelectorAll('.aim-range,.aim-effect,.aim-target,.aim-invalid').forEach(e=>e.classList.remove('aim-range','aim-effect','aim-target','aim-invalid'));document.querySelectorAll('[data-aim-enabled]').forEach(cell=>{cell.disabled=true;delete cell.dataset.aimEnabled});document.querySelector('.tactical-map')?.classList.remove('targeting');const banner=document.querySelector('.combat-targeting-banner');if(banner)banner.hidden=true;document.querySelector('.spell-trajectory')?.classList.remove('visible')}
 function renderPersistentAreas(panel,t){
  const map=panel.querySelector('.tactical-map'),layout=t.grid.layout||{};
@@ -192,3 +233,6 @@ document.addEventListener('pointerout',e=>{const target=combatTooltipTarget(e.ta
 document.addEventListener('focusout',hideCombatTooltip);
 document.addEventListener('dragstart',hideCombatTooltip);
 document.addEventListener('click',hideCombatTooltip);
+document.addEventListener('scroll',hideCombatTooltip,true);
+document.addEventListener('click',handleCombatMapZoom,true);
+document.addEventListener('click',handleCombatMovement,true);

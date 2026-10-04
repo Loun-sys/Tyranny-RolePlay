@@ -17,7 +17,8 @@ async def main():
     with tempfile.TemporaryDirectory(prefix="tyranny-combat-qa-") as folder:
         db = Database(Path(folder) / "qa.sqlite3")
         await db.initialize()
-        cid = await db.create_character(1, 2, "Испытатель", "Заклинатель", "Заклинания молний", "Заклинания льда")
+        background='Скованный Ремеслом' if 'craft' in sys.argv[2:] else 'Заклинатель'
+        cid = await db.create_character(1, 2, "Испытатель", background, "Заклинания молний", "Заклинания льда")
         portraits = Path(folder) / "portraits"
         portraits.mkdir()
         shutil.copyfile(ROOT / "web/assets/npc-portraits/verse_sm.png", portraits / "qa.png")
@@ -29,6 +30,17 @@ async def main():
             await db.admin_give_item(cid,name,2)
         helmet=next(i for i in await db.inventory(cid) if i['name']=='Тяжелый бронзовый шлем с гребнем')
         await db.equip(cid,helmet['inventory_id'],'Голова')
+        if background=='Скованный Ремеслом':
+            from crafting import CraftingStore,quality_info,upgrade_recipe
+            craft=CraftingStore(db)
+            async with db.connect() as connection:
+                items=await craft._items(connection)
+            for kind in ['armor','weapon']:
+                sample=next(i for i in items.values() if (quality_info(i) or {}).get('kind')==kind and upgrade_recipe(i))
+                await db.admin_give_item(cid,sample['name'])
+                for ingredient in upgrade_recipe(sample)['ingredients']:
+                    if ingredient['consumed']:
+                        await db.admin_give_item(cid,items[ingredient['prefab']]['name'],ingredient['quantity']*3)
         token = await db.create_portal_token(1, 2)
         app = web.Application(middlewares=[api.cors_middleware])
         app["db"], app["data_dir"] = db, Path(folder)
@@ -44,6 +56,8 @@ async def main():
         app.router.add_post("/api/portal/{token}/combat-quickbar", api.portal_combat_quickbar)
         app.router.add_post('/api/portal/{token}/item/use',api.portal_use_item)
         app.router.add_post('/api/portal/{token}/possessions',api.portal_possessions)
+        app.router.add_get('/api/portal/{token}/crafting',api.portal_crafting)
+        app.router.add_post('/api/portal/{token}/crafting',api.portal_crafting)
         async def index(_):
             # API middleware formats raised HTTP exceptions as JSON; retain Location.
             return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:{port}#token={token}"})

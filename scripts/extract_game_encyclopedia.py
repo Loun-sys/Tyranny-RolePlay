@@ -104,6 +104,24 @@ def clean_title(value: str) -> str:
     return TAG_RE.sub("", value).strip()
 
 
+def entry_aliases(title_ru: str, title_en: str, asset: str,
+                  title_ru_raw: str = "", title_en_raw: str = "") -> list[str]:
+    """An article's links are references, not aliases for that article.
+
+    Including body-link targets here made e.g. Accuracy open Magic Staff and
+    Critical Hit open Deflection: the browser keeps the first matching alias.
+    Title markup may contain the official glossary spelling of this entry.
+    """
+    aliases = {title_ru, title_en, asset}
+    for text in (title_ru_raw, title_en_raw):
+        for match in LINK_RE.finditer(text or ""):
+            if normalize(clean_title(match.group(2))) in {
+                normalize(title_ru), normalize(title_en)
+            }:
+                aliases.update((match.group(1), clean_title(match.group(2))))
+    return sorted({alias for alias in aliases if alias}, key=str.casefold)
+
+
 def load_table(root: Path, filename: str) -> dict[int, str]:
     matches = list(root.rglob(filename))
     if not matches:
@@ -173,11 +191,8 @@ def main() -> None:
             body_ru = body_ru.replace("к Вершителю судеб", "к Персонажу игрока").replace("к Вершителю", "к Персонажу игрока").replace("Вершителю судеб", "Персонажу игрока").replace("Вершителя судеб", "Персонажа игрока")
         if source.get("m_Name") == "GL_Boon_Quality_Alone_Time":
             body_ru = body_ru.replace("с одноручным оружием", "с оружием")
-        aliases = {title_ru, title_en, source.get("m_Name", "")}
-        for text in (title_ru_raw, body_ru, title_en_raw, body_en):
-            for match in LINK_RE.finditer(text or ""):
-                aliases.update((match.group(1), clean_title(match.group(2))))
-        aliases = sorted({alias for alias in aliases if alias}, key=str.casefold)
+        aliases = entry_aliases(title_ru, title_en, source.get("m_Name", ""),
+                                title_ru_raw, title_en_raw)
         category = int(source.get("Category", 0))
         entries.append({
             "key": key_by_path[path_id],

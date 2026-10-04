@@ -1,0 +1,46 @@
+/* Player arena: fixed HUD geometry; scrolling/zooming never moves its controls. */
+.combat-game-screen .combat-arena{position:relative;grid-template-columns:560px minmax(0,1fr);gap:18px;padding:14px;align-items:start}
+.combat-sidebar{gap:14px;padding:0}
+.combat-sidebar .tyranny-combat-hud{order:-1;display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:10px;padding:12px;background:#09080bf5;border-color:#92263b;box-shadow:0 5px 22px #000}
+.combat-sidebar .original-hud-name{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.combat-sidebar .combat-hud-rail{grid-column:1;grid-row:1 / span 3;display:flex;flex-direction:column;align-items:center;gap:10px;padding:7px 5px;border-right:1px solid #622332}
+.combat-hud-rail button{width:34px;height:38px;padding:5px;border:1px solid #622332;background:#0b080c;cursor:pointer}
+.combat-hud-rail img{width:100%;height:100%;object-fit:contain}
+.combat-sidebar .original-hotkeys{grid-column:2;grid-row:1;grid-template-columns:repeat(9,minmax(0,1fr)) 20px;gap:3px;padding-bottom:11px}
+.combat-sidebar .original-quick{max-width:48px;width:48px;border-color:#9b2a40;background:#100a0f}
+.combat-sidebar .original-hud-body{grid-column:2;grid-row:2;gap:12px;padding-top:7px;align-items:stretch}
+.combat-sidebar .original-portrait{width:96px;height:148px;padding:4px 8px 4px 4px}
+.combat-sidebar .original-stat-row{gap:4px 9px;margin-bottom:4px}
+.combat-sidebar .original-stat-row>span{font-size:12px;color:#e0c9ad}
+.combat-sidebar .original-stat-row img{width:16px;height:16px}
+.combat-sidebar .original-menus{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;align-items:center;padding-top:6px;margin-top:0}
+.combat-sidebar .original-menus button{width:40px;height:40px;border-color:#99283b;background:#100a0f;padding:6px}
+.combat-turn-resources{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.combat-turn-resources>span{flex:1;min-width:0}
+.combat-turn-resources .combat-end-turn{width:auto;flex:none;min-width:90px;padding:5px 7px;border:1px solid #ba3048;border-radius:2px;background:#8d1830;color:#fff;font:10px Georgia,serif;cursor:pointer}
+.combat-sidebar .original-sets{grid-column:2;grid-row:3;gap:7px;margin-top:6px}
+.combat-sidebar .original-sets button{width:30px;height:28px;background:#100a0f;border-color:#96253a}
+.combat-sidebar .original-sets small{font-size:12px}
+.combat-hud-statuses{display:flex;flex-wrap:wrap;gap:4px;min-height:20px;padding:3px 0;max-height:52px;overflow-y:auto;border-top:1px solid #50212e}
+.combat-hud-statuses>span{max-width:100%;padding:2px 5px;border:1px solid #632031;background:#110b10;color:#d6c6c8;font:11px/1.3 Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.combat-hud-rail button:hover,.combat-sidebar .original-menus button:hover{border-color:#ee455f;box-shadow:0 0 7px #8e183b}
+.combat-sidebar .combat-turn-order{max-height:240px}
+.combat-game-screen .tactical-map-wrap{position:relative;margin-top:60px;max-height:calc(100dvh - 195px);min-height:420px;overflow:auto;background:#050506}
+.combat-game-screen .tactical-map{flex:none;min-width:0;min-height:0;max-width:none;max-height:none}
+.combat-map-tools{position:absolute;top:14px;right:14px;left:592px;z-index:30;display:flex;justify-content:flex-end;align-items:flex-start;gap:10px;pointer-events:none}
+.combat-map-tools>*{pointer-events:auto}
+.combat-journal{width:min(460px,calc(100% - 125px));min-width:180px;background:#0a080cf5;border:1px solid #842438;color:#eadfe2;box-shadow:0 4px 15px #0008;font:12px/1.45 Georgia,serif}
+.combat-journal summary{display:flex;align-items:center;gap:9px;padding:9px 11px;cursor:pointer;list-style:none}
+.combat-journal summary::-webkit-details-marker{display:none}
+.combat-journal-latest{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.combat-journal-arrow{flex:none;font-size:17px;color:#ef4965}
+.combat-journal[open] .combat-journal-arrow{transform:rotate(180deg)}
+.combat-journal ol{max-height:270px;overflow:auto;margin:0;padding:10px 12px 10px 30px;border-top:1px solid #50212e}
+.combat-journal li{padding:4px 0;overflow-wrap:anywhere}
+.combat-zoom-controls{display:flex;align-items:center;background:#0a080cf5;border:1px solid #842438;color:#eadfe2;padding:3px;gap:4px}
+.combat-zoom-controls button{width:30px;height:30px;padding:0;border:1px solid #7d2235;background:#170c12;color:#fff;font-size:20px;cursor:pointer}
+.combat-zoom-controls button:disabled{opacity:.4;cursor:default}
+.combat-zoom-value{min-width:39px;text-align:center;font:11px Arial,sans-serif}
+@media(max-width:1250px){.combat-game-screen .combat-arena{grid-template-columns:440px minmax(0,1fr);gap:12px}.combat-map-tools{left:466px}.combat-sidebar .original-portrait{width:82px;height:148px}.combat-sidebar .original-quick{width:100%;max-width:36px}.combat-sidebar .original-menus{gap:3px}.combat-sidebar .original-menus button{width:28px;height:28px;padding:4px}}
+@media(max-width:900px){.combat-game-screen .combat-arena{display:flex;flex-direction:column;padding:10px}.combat-sidebar{width:100%}.combat-sidebar .tyranny-combat-hud{width:min(560px,100%)!important;align-self:flex-start}.combat-sidebar .combat-turn-order{display:flex;max-height:none;overflow-x:auto}.combat-sidebar .turn-order-row{flex:0 0 160px}.combat-map-tools{position:relative;inset:auto;order:1;width:100%;justify-content:space-between}.combat-game-screen .tactical-map-wrap{order:2;margin-top:0;min-height:350px;max-height:70dvh}.combat-journal{width:calc(100% - 125px)}.combat-sidebar .combat-picker{max-height:300px}}
+@media(max-width:480px){.combat-sidebar .tyranny-combat-hud{grid-template-columns:32px minmax(0,1fr);gap:6px;padding:9px 7px}.combat-sidebar .combat-hud-rail{padding:5px 2px;gap:10px}.combat-hud-rail button{width:28px;height:32px;padding:3px}.combat-sidebar .original-portrait{width:62px;height:140px}.combat-sidebar .original-hud-body{gap:7px}.combat-sidebar .original-stat-row>span{font-size:11px}.combat-sidebar .original-stat-row img{width:15px;height:15px}.combat-sidebar .original-menus{gap:3px;grid-template-columns:repeat(4,minmax(0,1fr))}.combat-sidebar .original-menus button{width:28px;height:28px;padding:4px}.combat-turn-resources{flex-wrap:wrap}.combat-turn-resources .combat-end-turn{height:29px;min-width:86px;font-size:10px}.combat-sidebar .original-sets small{font-size:10px}.combat-sidebar .original-turn{font-size:11px}}
