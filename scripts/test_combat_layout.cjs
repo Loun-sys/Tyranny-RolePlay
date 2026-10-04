@@ -23,7 +23,7 @@ assert.equal(map.style.width,'975px');assert.equal(map.style.height,'675px');ass
 function zoom(direction){context.testEvent={target:{closest:()=>({dataset:{combatZoom:direction}})},preventDefault(){},stopImmediatePropagation(){}};vm.runInContext('handleCombatMapZoom(testEvent)',context)}
 zoom('in');assert.equal(label.textContent,'150%');assert.equal(map.style.width,'1170px');assert.equal(map.style.height,'810px');
 for(let i=0;i<20;i++)zoom('in');assert.equal(label.textContent,'250%');assert.equal(inside.disabled,true);
-for(let i=0;i<20;i++)zoom('out');assert.equal(label.textContent,'75%');assert.equal(out.disabled,true);
+for(let i=0;i<20;i++)zoom('out');assert.equal(label.textContent,'50%');assert.equal(out.disabled,true);
 assert(source.includes("['ability','spell','artifact','item']"),'Ability categories belong in the vertical rail');
 assert(source.includes("rail.className='combat-hud-rail'"));
 assert(source.includes('combat-hud-statuses'),'HUD has an effect strip below its stats');

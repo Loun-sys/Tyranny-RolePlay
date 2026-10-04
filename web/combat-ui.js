@@ -1,6 +1,19 @@
 /* Targeting and original-game HUD. All highlighted cells come from the server. */
 let armedCombatAction=null,combatAim=null,combatBusy=false,trainingMaps=[];
 let combatMapZoom=1.25,combatJournalOpen=false;
+let combatZoomManual=false,combatFitMapKey='';
+let combatMapPan=null;
+function combatActionIsFree(action){return !!(action?.song||action?.freeAction||action?.consumesAction===false)}
+function combatActionBlock(action){
+ if(!action)return 'Действие недоступно';
+ if(training?.finished)return 'Бой завершён';
+ if(action.limitation)return action.limitation;
+ if(action.remaining)return `Перезарядка: ${action.remaining} раунд.`;
+ if(!training?.turn?.actionAvailable&&!action.freeOnSelf&&!combatActionIsFree(action))return 'Основное действие потрачено';
+ const reason=action.disabledReason||'';
+ return reason.startsWith('Цель вне дальности')||reason.startsWith('Цель полностью закрыта')||(reason==='Основное действие потрачено'&&(action.freeOnSelf||combatActionIsFree(action)))?'':reason;
+}
+function setCombatBusy(value){combatBusy=value;hideCombatTooltip();document.querySelector('.combat-game-screen')?.setAttribute('aria-busy',String(value))}
 const gameCombatRoot='assets/game-combat/';
 const coreTexture={Огонь:'Core-Fire',Холод:'Core-Frost',Молния:'Core-Shock',Жизнь:'Core-Heal',Истощение:'Core-Weaken',Эмоции:'Core-Passion',Рвение:'Core-Strength',Сила:'Core-Gravity',Камень:'Core-Stone',Терратус:'Core-Gravelight',Иллюзия:'Core-Illusion'};
 const originalLocalTalentIcon=localTalentIcon;
@@ -32,8 +45,20 @@ function applyCombatMapZoom(panel,t){
  const map=panel.querySelector('.tactical-map');if(!map)return;
  const size=t.grid.layout?.cellSize||48;
  map.style.width=`${t.grid.width*size*combatMapZoom}px`;map.style.height=`${t.grid.height*size*combatMapZoom}px`;
- panel.querySelectorAll('[data-combat-zoom]').forEach(button=>{button.disabled=button.dataset.combatZoom==='in'?combatMapZoom>=2.5:combatMapZoom<=.75});
+ panel.querySelectorAll('[data-combat-zoom]').forEach(button=>{button.disabled=button.dataset.combatZoom==='in'?combatMapZoom>=2.5:combatMapZoom<=.5});
  const label=panel.querySelector('.combat-zoom-value');if(label)label.textContent=`${Math.round(combatMapZoom*100)}%`;
+}
+function fitCombatMap(panel,t,force=false){
+ const grid=t.grid,key=[grid.id||grid.mapId||'',grid.name||'',grid.image||'',grid.width,grid.height,grid.layout?.cellSize||48].join('|'),changed=key!==combatFitMapKey;
+ if(changed)combatZoomManual=false;
+ const viewport=panel.querySelector('.tactical-map-wrap');if(!viewport||!viewport.clientWidth||!viewport.clientHeight)return changed;
+ combatFitMapKey=key;
+ if(!combatZoomManual&&(changed||force)){
+  const size=grid.layout?.cellSize||48;
+  combatMapZoom=Math.max(.5,Math.min(2.5,(viewport.clientWidth-2)/(grid.width*size),(viewport.clientHeight-28)/(grid.height*size)));
+  applyCombatMapZoom(panel,t);viewport.scrollLeft=0;viewport.scrollTop=0;
+ }
+ return changed;
 }
 statIcon=function(file,label,value,help=''){const canonical=statNames[file.replace('.png','')]||label;return `<div class="combat-stat" tabindex="0" data-ui-tip="${esc(canonical)}: ${esc(value)}${help?`\n${esc(help)}`:''}" aria-label="${esc(canonical)}: ${esc(value)}"><img src="assets/stat-icons/${file}?v=20261002-atlas" alt="${esc(canonical)}"><span>${esc(label)}</span><b>${esc(value)}</b></div>`};
 const originalStatsBox=statsBox;
@@ -43,7 +68,7 @@ function combatOrderPanel(t){
  const player=t.grid.tokens.find(x=>x.id==='player'),alive=new Map(t.grid.tokens.map(x=>[x.id,x]));
  return `<aside class="combat-turn-order" aria-label="Очередность ходов"><header>ОЧЕРЕДНОСТЬ · РАУНД ${t.round}</header>${(t.initiative||[]).map((row,index)=>{const token=alive.get(row.id),active=row.id===t.turn.actorId,portrait=token?.portraitUrl;return `<div class="turn-order-row ${active?'current':''} ${token?'':'defeated'}" data-ui-tip="${esc(row.name)}\nИнициатива: бросок ${row.roll} + бонус ${row.bonus} = ${row.total}${!token?'\nВыведен из боя':row.id!=='player'?'\nТренировочный манекен пропускает ход':''}"><b>${index+1}</b><span class="order-token ${row.id==='player'?'player':'enemy'}">${portrait?`<img src="${esc(portrait)}" alt="${esc(row.name)}">`:esc(row.id==='player'?(row.name||'?')[0]:'♟')}</span><span><strong>${esc(row.name)}</strong><small>${!token?'Выведен из боя':active?'Сейчас ходит':row.id==='player'?'Персонаж':'Пропускает ход'}</small></span><em title="Итоговая инициатива">${row.total}</em></div>`}).join('')}</aside>`;
 }
-function saveQuickbarBinding(slot,kind,name,sourceSlot=0){const bindings=Array.from({length:9},(_,i)=>{const action=quickbarAction(i+1,training.actions);return {slot:i+1,kind:action?.kind||'',name:action?.name||''}});const previous={...bindings[slot-1]};bindings[slot-1]={slot,kind,name};if(sourceSlot)bindings[sourceSlot-1]={...previous,slot:sourceSlot};return mutate('combat-quickbar',{bindings})}
+function saveQuickbarBinding(slot,kind,name,sourceSlot=0){if(!Number.isInteger(slot)||slot<1||slot>9||!Number.isInteger(sourceSlot)||sourceSlot<0||sourceSlot>9)return;const bindings=Array.from({length:9},(_,i)=>{const action=quickbarAction(i+1,training.actions);return {slot:i+1,kind:action?.kind||'',name:action?.name||''}});const previous={...bindings[slot-1]};bindings[slot-1]={slot,kind,name};if(sourceSlot)bindings[sourceSlot-1]={...previous,slot:sourceSlot};return mutate('combat-quickbar',{bindings})}
 function combatGlyph(action){
  if(action.kind==='spell'){const spell=(data?.spells||[]).find(s=>s.name===action.name);if(spell)return spellCoreIcon(spell,'combat');return `<img src="${gameCombatRoot}${coreTexture[action.core]||'Core-Strength'}.png" alt="${esc(action.name)}">`}
  if(action.icon)return `<img src="${esc(localTalentIcon(action.icon))}" alt="" onerror="this.remove()">`;
@@ -52,9 +77,10 @@ function combatGlyph(action){
  return `<img src="assets/stat-icons/${action.kind==='attack'?'damage':'accuracy'}.png" alt="">`;
 }
 renderTraining=function(panel,character){
+ const oldViewport=panel.querySelector('.tactical-map-wrap'),scroll=oldViewport?{left:oldViewport.scrollLeft,top:oldViewport.scrollTop}:null;
  hideCombatTooltip();
  existingRenderTraining(panel,character);
- if(!training?.active){if(training&&trainingMaps.length)panel.querySelector('.training-start')?.insertAdjacentHTML('beforebegin',`<label class="training-map-select">Карта <select id="training-map"><option value="">${trainingMaps.some(m=>m.name.trim().toLowerCase()==='тренировочное поле')?'Тренировочное Поле (по умолчанию)':'Стандартная площадка'}</option>${trainingMaps.map(map=>`<option value="${map.id}">${esc(map.name)}</option>`).join('')}</select></label>`);return}
+ if(!training?.active){combatFitMapKey='';combatZoomManual=false;if(training&&trainingMaps.length)panel.querySelector('.training-start')?.insertAdjacentHTML('beforebegin',`<label class="training-map-select">Карта <select id="training-map"><option value="">${trainingMaps.some(m=>m.name.trim().toLowerCase()==='тренировочное поле')?'Тренировочное Поле (по умолчанию)':'Стандартная площадка'}</option>${trainingMaps.map(map=>`<option value="${map.id}">${esc(map.name)}</option>`).join('')}</select></label>`);return}
  const t=training,d=t.derived||{},a=d.attack||{},turn=t.turn||{},player=(t.grid.tokens||[]).find(x=>x.id==='player'),hud=panel.querySelector('.tyranny-combat-hud');
  const stat=hudStat;
  const slots=Array.from({length:9},(_,i)=>{const x=quickbarAction(i+1,t.actions||[]);return `<button draggable="${!!x}" class="original-quick ${x?.remaining?'cooling':''}" data-quick-slot="${i+1}" data-ui-tip="${esc(x?.name||'Назначить действие')}\nНажатие — прицелиться. ПКМ — заменить. Перетащите на другую ячейку для обмена." ${x?`data-training-kind="${esc(x.kind)}" data-training-name="${esc(x.name)}"`:''} aria-label="Ячейка ${i+1}: ${esc(x?.name||'пусто')}" ${t.finished?'disabled':''}>${x?combatGlyph(x):'<span>+</span>'}<kbd>${i+1}</kbd>${x?.remaining?`<i>${x.remaining}</i>`:''}</button>`}).join('');
@@ -81,7 +107,7 @@ renderTraining=function(panel,character){
  hud.querySelector('.original-menus').insertAdjacentHTML('beforeend',menu('item',gameCombatRoot+'icon_option_inventory.png','Расходники'));
  hud.querySelectorAll('[data-training-set]').forEach(button=>{button.dataset.uiTip=`Комплект оружия ${button.dataset.trainingSet}`;button.innerHTML=`<img src="${gameCombatRoot}icon_weaponset_${button.dataset.trainingSet}.png" alt="Комплект ${button.dataset.trainingSet}">`});
  // Distant targets must not prevent entering targeting mode.
- panel.querySelectorAll('[data-training-kind]').forEach(button=>{const x=(t.actions||[]).find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(x){button.disabled=!!t.finished;button.setAttribute('aria-disabled',String(!!(x.remaining||!turn.actionAvailable)));button.removeAttribute('data-effect-cells');button.removeAttribute('title');const status=button.querySelector('em');if(status)status.textContent=x.remaining?`Готово через ${x.remaining} раунд.`:`Дальность: ${x.range||0} м · выберите цель`;}});
+ panel.querySelectorAll('[data-training-kind]').forEach(button=>{const x=(t.actions||[]).find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(x){button.disabled=!!t.finished;button.setAttribute('aria-disabled',String(!!combatActionBlock(x)));button.removeAttribute('data-effect-cells');button.removeAttribute('title');const status=button.querySelector('em');if(status)status.textContent=x.remaining?`Готово через ${x.remaining} раунд.`:`Дальность: ${x.range||0} м · выберите цель`;}});
  panel.querySelectorAll('[data-action-kind]').forEach(button=>{const x=(t.actions||[]).find(x=>x.kind===button.dataset.actionKind&&x.name===button.dataset.actionName);if(x)button.querySelector('img, .sigil-icon, span')?.replaceWith(document.createRange().createContextualFragment(combatGlyph(x)))});
  const rail=document.createElement('nav');rail.className='combat-hud-rail';rail.setAttribute('aria-label','Разделы боевых действий');
  for(const key of ['ability','spell','artifact','item']){const button=hud.querySelector(`.original-menus [data-combat-picker="${key}"]`);if(button)rail.append(button.cloneNode(true))}
@@ -98,22 +124,27 @@ renderTraining=function(panel,character){
  panel.querySelector('.combat-info-drawer ol')?.remove();
  const initiativeButton=hud.querySelector('[data-combat-picker="initiative"]');if(initiativeButton){initiativeButton.dataset.uiTip='Инициатива';initiativeButton.setAttribute('aria-label','Инициатива')}
  applyCombatMapZoom(panel,t);
- if(armedCombatAction){armedCombatAction=(t.actions||[]).find(x=>x.kind===armedCombatAction.kind&&x.name===armedCombatAction.name)||null;if(!armedCombatAction||(!turn.actionAvailable&&!armedCombatAction.freeOnSelf)||armedCombatAction.remaining)clearCombatAim();else showCombatAim(combatAim||{x:player.x,y:player.y})}
+ const mapChanged=fitCombatMap(panel,t),viewport=panel.querySelector('.tactical-map-wrap');if(scroll&&viewport&&!mapChanged){viewport.scrollLeft=scroll.left;viewport.scrollTop=scroll.top}
+ panel.querySelector('.combat-game-screen')?.setAttribute('aria-busy',String(combatBusy));
+ if(armedCombatAction){armedCombatAction=(t.actions||[]).find(x=>x.kind===armedCombatAction.kind&&x.name===armedCombatAction.name)||null;if(combatActionBlock(armedCombatAction))clearCombatAim();else showCombatAim(combatAim||{x:player.x,y:player.y})}
 };
 document.addEventListener('toggle',event=>{if(event.target.matches?.('[data-combat-journal]'))combatJournalOpen=event.target.open},true);
 function handleCombatMapZoom(event){
  const button=event.target.closest('[data-combat-zoom]');if(!button||!training?.active)return;
  event.preventDefault();event.stopImmediatePropagation();
  hideCombatTooltip();
- combatMapZoom=Math.max(.75,Math.min(2.5,combatMapZoom+(button.dataset.combatZoom==='in'?.25:-.25)));
- applyCombatMapZoom($('#panel'),training);
+ const panel=$('#panel'),viewport=panel.querySelector('.tactical-map-wrap'),oldZoom=combatMapZoom;
+ const center=viewport?{x:(viewport.scrollLeft+viewport.clientWidth/2)/oldZoom,y:(viewport.scrollTop+viewport.clientHeight/2)/oldZoom}:null;
+ combatZoomManual=true;combatMapZoom=Math.max(.5,Math.min(2.5,combatMapZoom+(button.dataset.combatZoom==='in'?.25:-.25)));
+ applyCombatMapZoom(panel,training);
+ if(center){viewport.scrollLeft=center.x*combatMapZoom-viewport.clientWidth/2;viewport.scrollTop=center.y*combatMapZoom-viewport.clientHeight/2}
 }
 function handleCombatMovement(event){
  const button=event.target.closest('[data-combat-move]');if(!button||!training?.active)return;
  event.preventDefault();event.stopImmediatePropagation();hideCombatTooltip();clearCombatAim();
  combatPicker='';quickbarEditing=0;renderTraining($('#panel'),data.character);
 }
-function clearCombatAim(){armedCombatAction=null;combatAim=null;document.querySelectorAll('.aim-range,.aim-effect,.aim-target,.aim-invalid').forEach(e=>e.classList.remove('aim-range','aim-effect','aim-target','aim-invalid'));document.querySelectorAll('[data-aim-enabled]').forEach(cell=>{cell.disabled=true;delete cell.dataset.aimEnabled});document.querySelector('.tactical-map')?.classList.remove('targeting');const banner=document.querySelector('.combat-targeting-banner');if(banner)banner.hidden=true;document.querySelector('.spell-trajectory')?.classList.remove('visible')}
+function clearCombatAim(){armedCombatAction=null;combatAim=null;document.querySelectorAll('.aim-range,.aim-effect,.aim-target,.aim-invalid,.original-quick.armed').forEach(e=>e.classList.remove('aim-range','aim-effect','aim-target','aim-invalid','armed'));document.querySelectorAll('[data-aim-enabled]').forEach(cell=>{cell.disabled=true;delete cell.dataset.aimEnabled});document.querySelector('.tactical-map')?.classList.remove('targeting');const banner=document.querySelector('.combat-targeting-banner');if(banner)banner.hidden=true;document.querySelector('.spell-trajectory')?.classList.remove('visible')}
 function renderPersistentAreas(panel,t){
  const map=panel.querySelector('.tactical-map'),layout=t.grid.layout||{};
  if(t.grid.source==='Карта мастера'){
@@ -134,42 +165,48 @@ async function animateTokenMovement(oldGrid,newGrid,path=[]){
  }));
 }
 trainingMutate=async function(path,body={}){
- if(combatBusy)return;combatBusy=true;const oldGrid=training?.grid;
+ if(combatBusy)return;setCombatBusy(true);const oldGrid=training?.grid;
  if(path==='start'){const selected=document.querySelector('#training-map')?.value;if(selected)body.mapId=Number(selected)}
- try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/${path}`,{method:'POST',body:JSON.stringify(body)});training=j.training||{active:false};if(tab==='training'){renderTraining($('#panel'),data.character);if(path==='start')document.querySelector('.combat-game-screen')?.scrollIntoView({block:'start',behavior:'instant'})}await animateTokenMovement(oldGrid,training.grid,training.movementPath);toast(j.message)}catch(error){toast(error.message)}finally{combatBusy=false}
+ try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/${path}`,{method:'POST',body:JSON.stringify(body)});training=j.training||{active:false};if(path==='start'){combatFitMapKey='';combatZoomManual=false}if(tab==='training'){renderTraining($('#panel'),data.character);if(path==='start')document.querySelector('.combat-game-screen')?.scrollIntoView({block:'start',behavior:'instant'})}await animateTokenMovement(oldGrid,training.grid,training.movementPath);toast(j.message)}catch(error){toast(error.message)}finally{setCombatBusy(false)}
 };
 const originalLoadTraining=loadTraining;
 loadTraining=async function(){await originalLoadTraining();try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training`);trainingMaps=j.maps||[];if(tab==='training'&&!training?.active)renderTraining($('#panel'),data.character)}catch{}};
 function showCombatAim(point){
  if(!armedCombatAction||!training?.active)return;
  combatAim=point;const action=armedCombatAction,aim=action.aims?.[`${point.x}:${point.y}`],player=training.grid.tokens.find(t=>t.id==='player'),map=document.querySelector('.tactical-map');
+ if(!map||!player)return;
+ document.querySelectorAll('[data-quick-slot]').forEach(slot=>slot.classList.toggle('armed',slot.dataset.trainingKind===action.kind&&slot.dataset.trainingName===action.name));
  map.classList.add('targeting');map.dataset.previewTargeting=action.targeting||'unit';
  document.querySelectorAll('.aim-range,.aim-effect,.aim-target,.aim-invalid').forEach(e=>e.classList.remove('aim-range','aim-effect','aim-target','aim-invalid'));
  document.querySelectorAll('[data-cell]').forEach(cell=>{if(cell.disabled){cell.dataset.aimEnabled='1';cell.disabled=false}const [x,y]=cell.dataset.cell.split(':').map(Number);if(Math.max(Math.abs(x-player.x),Math.abs(y-player.y))<=(action.range||0))cell.classList.add('aim-range')});
  for(const cell of aim?.cells||[])document.querySelector(`[data-cell="${cell.x}:${cell.y}"]`)?.classList.add('aim-effect');
  document.querySelector(`[data-cell="${point.x}:${point.y}"]`)?.classList.add(aim?.valid?'aim-target':'aim-invalid');
- const banner=document.querySelector('.combat-targeting-banner');banner.hidden=false;banner.classList.toggle('invalid',!aim?.valid);banner.textContent=`${action.displayName||action.name} · ${aim?.valid?'Нажмите для применения':'Недоступная цель или клетка'} · Esc / ПКМ — отмена`;
+ const affected=(aim?.targetIds||[]).map(id=>training.grid.tokens.find(token=>token.id===id)?.name).filter(Boolean),names=affected.slice(0,3).map(name=>name.length>24?name.slice(0,23)+'…':name).join(', ');
+ const banner=document.querySelector('.combat-targeting-banner');banner.hidden=false;banner.classList.toggle('invalid',!aim?.valid);banner.textContent=`${action.displayName||action.name} · ${aim?.valid?'Нажмите для применения':'Недоступная цель или клетка'}${names?` · ${names}${affected.length>3?` +${affected.length-3}`:''}`:''} · Esc / ПКМ — отмена`;
  const line=document.querySelector('.spell-trajectory line');if(line){line.setAttribute('x2',point.x+.5);line.setAttribute('y2',point.y+.5);line.parentElement.classList.add('visible')}
 }
-function armCombatAction(action){if(combatBusy)return;if(action.limitation){toast(action.limitation);return}if(action.remaining||(!training.turn.actionAvailable&&!action.freeOnSelf)){toast(action.remaining?`Перезарядка: ${action.remaining} раунд.`:'Основное действие потрачено');return}armedCombatAction=action;combatPicker='';quickbarEditing=0;renderTraining($('#panel'),data.character);const player=training.grid.tokens.find(t=>t.id==='player');showCombatAim(action.targeting==='self'||action.targeting==='aura'||action.freeOnSelf?player:training.grid.tokens.find(t=>t.selected)||player)}
+function ensureCombatMapVisible(){const viewport=document.querySelector('.tactical-map-wrap'),rect=viewport?.getBoundingClientRect?.();if(rect&&(rect.bottom<48||rect.top>=(globalThis.innerHeight||900)-64))viewport.scrollIntoView({block:'nearest',behavior:'smooth'})}
+function armCombatAction(action){if(combatBusy)return;const blocked=combatActionBlock(action);if(blocked){toast(blocked);return}armedCombatAction=action;combatPicker='';quickbarEditing=0;hideCombatTooltip();renderTraining($('#panel'),data.character);const player=training.grid.tokens.find(t=>t.id==='player');showCombatAim(action.targeting==='self'||action.targeting==='aura'||action.freeOnSelf?player:training.grid.tokens.find(t=>t.selected)||player);ensureCombatMapVisible()}
 async function confirmCombatAim(point){
  if(combatBusy||!armedCombatAction)return;const action=armedCombatAction,aim=action.aims?.[`${point.x}:${point.y}`];if(!aim?.valid){toast('Выберите доступную цель или клетку.');return}
- const target=training.grid.tokens.find(t=>t.x===point.x&&t.y===point.y&&t.team==='enemy');
- const oldGrid=training.grid;combatBusy=true;
- try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id})});training=j.training;clearCombatAim();renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);await playCombatEffect(action,point,oldGrid,aim.cells||[]);toast(j.message)}catch(error){toast(error.message)}finally{combatBusy=false}
+ const blocked=combatActionBlock(action);if(blocked){toast(blocked);return}
+ const target=training.grid.tokens.find(t=>t.x===point.x&&t.y===point.y);
+ if(!training.turn.actionAvailable&&action.freeOnSelf&&!combatActionIsFree(action)&&target?.id!=='player'){toast('Основное действие потрачено');return}
+ const oldGrid=training.grid;setCombatBusy(true);
+ try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id})});training=j.training;clearCombatAim();if(tab==='training'){renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);await playCombatEffect(action,point,oldGrid,aim.cells||[])}toast(j.message)}catch(error){toast(error.message)}finally{setCombatBusy(false)}
 }
 async function playCombatEffect(action,point,grid,cells){
  const layer=document.querySelector('.combat-vfx-layer');if(!layer)return;
  const player=grid.tokens.find(t=>t.id==='player'),core=action.core||'Сила',reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const colors={Огонь:'#ff682b',Холод:'#8ceeff',Молния:'#75baff',Истощение:'#c673ff',Терратус:'#58edd0',Жизнь:'#98f58e',Рвение:'#ff6274',Камень:'#d6b38b',Сила:'#97baff',Эмоции:'#f4a6eb'};
  const color=colors[core]||'#dfdcce',x=(point.x+.5)/grid.width*100,y=(point.y+.5)/grid.height*100,sx=(player.x+.5)/grid.width*100,sy=(player.y+.5)/grid.height*100;
- const bounds=layer.getBoundingClientRect(),dx=(x-sx)*bounds.width/100,dy=(y-sy)*bounds.height/100,angle=Math.atan2(dy,dx),nodes=[];
+ const bounds=layer.getBoundingClientRect(),dx=(x-sx)*bounds.width/100,dy=(y-sy)*bounds.height/100,angle=Math.atan2(dy,dx),nodes=[];let casterAnimation=null;
  layer.style.setProperty('--vfx-color',color);
  function make(className,px,py){const node=document.createElement('div');node.className=className;node.style.left=px+'%';node.style.top=py+'%';layer.append(node);nodes.push(node);return node}
  async function animate(node,frames,options){try{await node.animate(frames,options).finished}catch{}}
  try{
  const caster=document.querySelector(`[data-cell="${player.x}:${player.y}"] .combat-token`);
- if(caster&&!reduced)caster.animate([{transform:'translateX(0)'},{transform:`translate(${Math.cos(angle)*5}px,${Math.sin(angle)*5}px)`,offset:.4},{transform:'translateX(0)'}],{duration:320});
+ if(caster&&!reduced){casterAnimation=caster.animate([{transform:'translate(-50%,-50%)'},{transform:`translate(calc(-50% + ${Math.cos(angle)*5}px),calc(-50% + ${Math.sin(angle)*5}px))`,offset:.4},{transform:'translate(-50%,-50%)'}],{duration:320});casterAnimation.finished?.catch(()=>{})}
  const ranged=action.range>2,shooting=action.kind==='attack'&&['Луки','Дротики'].includes(action.weaponSkill);
  if(action.kind==='attack'&&!ranged){
  const slash=make('combat-slash',x,y);
@@ -197,7 +234,7 @@ async function playCombatEffect(action,point,grid,cells){
  const cell=document.querySelector(`[data-cell="${p.x}:${p.y}"]`);
  cell?.animate([{boxShadow:`inset 0 0 20px ${color}`,background:color+'66'},{boxShadow:'none',background:'transparent'}],{duration:700});
  }
- }finally{nodes.forEach(node=>node.remove())}
+ }finally{casterAnimation?.cancel();nodes.forEach(node=>node.remove())}
 }
 document.addEventListener('click',e=>{
  if(tab!=='training'||!training?.active)return;
@@ -213,13 +250,30 @@ document.addEventListener('click',e=>{
  const action=training.actions.find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(action){e.preventDefault();e.stopImmediatePropagation();armCombatAction(action)}
 },true);
 document.addEventListener('pointerover',e=>{if(!armedCombatAction)return;const cell=e.target.closest('[data-cell]');if(cell){const [x,y]=cell.dataset.cell.split(':').map(Number);showCombatAim({x,y})}},true);
-document.addEventListener('contextmenu',e=>{if(armedCombatAction&&e.target.closest('.combat-game-screen')){e.preventDefault();e.stopImmediatePropagation();clearCombatAim();return}const slot=e.target.closest('[data-quick-slot]');if(slot){e.preventDefault();e.stopImmediatePropagation();quickbarEditing=+slot.dataset.quickSlot;combatPicker='ability';renderTraining($('#panel'),data.character)}},true);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&armedCombatAction){e.preventDefault();clearCombatAim()}},true);
-document.addEventListener('dragstart',e=>{const slot=e.target.closest('[data-quick-slot]');if(!slot?.dataset.trainingKind)return;e.stopImmediatePropagation();e.dataTransfer.setData('application/json',JSON.stringify({kind:slot.dataset.trainingKind,name:slot.dataset.trainingName,sourceSlot:+slot.dataset.quickSlot}));e.dataTransfer.effectAllowed='move'},true);
-document.addEventListener('drop',async e=>{const slot=e.target.closest('[data-quick-slot]');if(!slot)return;let action;try{action=JSON.parse(e.dataTransfer.getData('application/json'))}catch{return}e.preventDefault();e.stopImmediatePropagation();slot.classList.remove('drop-ready');const destination=+slot.dataset.quickSlot;if(destination===action.sourceSlot)return;clearCombatAim();await saveQuickbarBinding(destination,action.kind,action.name,action.sourceSlot||0)},true);
+document.addEventListener('contextmenu',e=>{if(combatBusy&&e.target.closest('.combat-game-screen')){e.preventDefault();e.stopImmediatePropagation();return}if(armedCombatAction&&e.target.closest('.combat-game-screen')){e.preventDefault();e.stopImmediatePropagation();clearCombatAim();return}const slot=e.target.closest('[data-quick-slot]');if(slot){e.preventDefault();e.stopImmediatePropagation();quickbarEditing=+slot.dataset.quickSlot;combatPicker='ability';renderTraining($('#panel'),data.character)}},true);
+document.addEventListener('keydown',e=>{
+ if(tab!=='training'||!training?.active||e.repeat||e.altKey||e.ctrlKey||e.metaKey||e.target?.matches?.('input,textarea,select')||e.target?.closest?.('[contenteditable="true"]'))return;
+ if(e.key==='Escape'&&(armedCombatAction||combatPicker)){e.preventDefault();e.stopImmediatePropagation?.();clearCombatAim();hideCombatTooltip();if(combatPicker){combatPicker='';quickbarEditing=0;renderTraining($('#panel'),data.character)}return}
+ if(!/^[1-9]$/.test(e.key))return;
+ if(document.querySelector('dialog[open]'))return;
+ e.preventDefault();e.stopImmediatePropagation?.();if(combatBusy)return;
+ const slot=Number(e.key),action=quickbarAction(slot,training.actions||[]);
+ if(action)armCombatAction(action);else{clearCombatAim();quickbarEditing=slot;combatPicker='ability';renderTraining($('#panel'),data.character)}
+},true);
+document.addEventListener('dragstart',e=>{if(combatBusy&&e.target.closest('.combat-game-screen')){e.preventDefault();e.stopImmediatePropagation();return}const slot=e.target.closest('[data-quick-slot]');if(!slot?.dataset.trainingKind)return;e.stopImmediatePropagation();e.dataTransfer.setData('application/json',JSON.stringify({kind:slot.dataset.trainingKind,name:slot.dataset.trainingName,sourceSlot:+slot.dataset.quickSlot}));e.dataTransfer.effectAllowed='move'},true);
+document.addEventListener('drop',async e=>{
+ const slot=e.target.closest('[data-quick-slot]');if(!slot)return;e.preventDefault();e.stopImmediatePropagation();slot.classList.remove('drop-ready');
+ if(combatBusy||!training?.active)return;
+ try{const action=JSON.parse(e.dataTransfer.getData('application/json')),destination=Number(slot.dataset.quickSlot),source=Number(action.sourceSlot||0);
+  if(!(training.actions||[]).some(x=>x.kind===action.kind&&x.name===action.name)||!Number.isInteger(destination)||destination<1||destination>9||!Number.isInteger(source)||source<0||source>9)return;
+  if(source){const previous=quickbarAction(source,training.actions);if(previous?.kind!==action.kind||previous?.name!==action.name)return}
+  if(destination===source)return;clearCombatAim();hideCombatTooltip();await saveQuickbarBinding(destination,action.kind,action.name,source);
+ }catch(error){toast('Не удалось назначить действие.')}
+},true);
 function combatTooltipTarget(element){return element.closest('[data-training-kind]')||element.closest('[data-ui-tip]')}
 function hideCombatTooltip(){const tip=document.querySelector('.game-icon-tooltip');if(tip)tip.hidden=true}
 function showIconTooltip(target){
+ if(combatBusy){hideCombatTooltip();return}
  if(!target){hideCombatTooltip();return}
  const action=(training?.actions||[]).find(x=>x.kind===target.dataset.trainingKind&&x.name===target.dataset.trainingName);
  const content=action?`${action.name}\n\n${action.description||''}\n\nДальность: ${action.range||0} м${action.area?` · область ${action.area} м`:''}\n${action.remaining?`Перезарядка: ${action.remaining} раунд.`:'Нажмите, затем выберите цель на карте.'}${target.dataset.quickSlot?'\nПеретащите на другую ячейку для обмена.':''}`:target.dataset.uiTip;
@@ -236,3 +290,14 @@ document.addEventListener('click',hideCombatTooltip);
 document.addEventListener('scroll',hideCombatTooltip,true);
 document.addEventListener('click',handleCombatMapZoom,true);
 document.addEventListener('click',handleCombatMovement,true);
+document.addEventListener('dragend',()=>document.querySelectorAll('.drop-ready').forEach(slot=>slot.classList.remove('drop-ready')));
+document.addEventListener('pointerdown',e=>{
+ const viewport=e.target.closest('.tactical-map-wrap');if(e.button!==1||!viewport)return;
+ e.preventDefault();hideCombatTooltip();combatMapPan={viewport,x:e.clientX,y:e.clientY,left:viewport.scrollLeft,top:viewport.scrollTop};viewport.style.cursor='grabbing';
+},true);
+document.addEventListener('pointermove',e=>{if(!combatMapPan)return;e.preventDefault();const p=combatMapPan;p.viewport.scrollLeft=p.left+p.x-e.clientX;p.viewport.scrollTop=p.top+p.y-e.clientY},true);
+function finishCombatMapPan(){if(combatMapPan)combatMapPan.viewport.style.cursor='';combatMapPan=null}
+document.addEventListener('pointerup',finishCombatMapPan,true);
+document.addEventListener('pointercancel',finishCombatMapPan,true);
+function handleCombatViewportResize(){if(training?.active&&!combatZoomManual)fitCombatMap($('#panel'),training,true)}
+globalThis.addEventListener?.('resize',handleCombatViewportResize);
