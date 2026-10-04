@@ -39,12 +39,14 @@
 .tactical-map .spell-trajectory path{fill:#d984a1}
 .combat-chance-bar{height:3px;background:#411520}
 .combat-chance-bar i{display:block;height:100%;background:#b9aa79}
-.combat-ready-label{display:block;font-size:11px;color:#e4c5d2;margin-bottom:7px}
-.combat-ready-label select{width:100%;margin-top:5px;padding:7px;background:#0a080c;border:1px solid #823448;color:#ebd9e1;font:11px Arial,sans-serif}
-.combat-ready-overlay{pointer-events:auto;position:absolute;top:76px;left:12px;width:calc(100% - 24px);max-width:360px;padding:8px 10px;box-sizing:border-box;background:#100910f2;border:1px solid #823448;z-index:1}
 .combat-token.enemy.active:not(.is-current){box-shadow:0 0 0 1px #cd5368,0 2px 5px #0009}
 .combat-token.ally{border-color:#92b694;box-shadow:0 0 0 1px #4a7253}
-.combat-token.player{border-color:#d1b783}
+.combat-token.player{border-color:#ead3a0;opacity:1;box-shadow:0 0 0 1px #0a080a,0 2px 7px #000b}
+.combat-token.player.is-stealthed{border-color:#b6afd6;box-shadow:0 0 0 2px #8a81ad,0 2px 7px #000b}
+.combat-token-stealth{position:absolute;right:-6px;top:-5px;width:14px;height:14px;background:#16121fee;border:1px solid #9b91bb;border-radius:50%;color:#e4ddf3;font:700 14px/12px Arial,sans-serif;pointer-events:auto}
+.combat-token-stealth img{width:12px;height:12px;object-fit:contain}
+.combat-suspicion-ring{position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(var(--suspicion-color) var(--suspicion),#17121bdd 0);mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1.5px));pointer-events:none}
+.combat-stealth-status{border-color:#8a81ad!important;color:#ddd6ee!important}
 .combat-token.is-current{box-shadow:0 0 0 2px #e5c798,0 0 10px #c6964430}
 .combat-token.is-current:after{content:'';position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid #e5c798}
 .combat-token-health{position:absolute;left:1px;right:1px;bottom:-5px;height:3px;background:linear-gradient(to right,#bd6678 var(--token-health),#29151f var(--token-health));border:1px solid #08070b;border-radius:1px}

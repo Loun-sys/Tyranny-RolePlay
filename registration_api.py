@@ -619,7 +619,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
             valid = valid or (kind == 'artifact' and name in artifacts)
             valid = valid or (kind == 'item' and name in usable)
             valid = valid or (kind == 'disengage' and name == 'Осторожный отход')
-            valid = valid or (kind == 'tactic' and name in {'Защита','Спринт','Подготовить атаку'})
+            valid = valid or (kind == 'tactic' and name in {'Защита','Спринт','Уйти в скрытность'})
             if not valid:
                 raise web.HTTPConflict(reason='Это действие сейчас недоступно персонажу.')
             try:
@@ -646,7 +646,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         valid = valid or kind == "ability" and name in owned
         valid = valid or kind == "spell" and name in spells
         valid = valid or kind == "disengage" and name == "Осторожный отход"
-        valid = valid or kind == 'tactic' and name in {'Защита','Спринт','Подготовить атаку'}
+        valid = valid or kind == 'tactic' and name in {'Защита','Спринт','Уйти в скрытность'}
         inventory=_clean_inventory(await request.app['db'].inventory(cid))
         from consumables import profile
         valid = valid or kind=='item' and any(str(i['inventory_id'])==name and profile(i) for i in inventory)
@@ -960,7 +960,7 @@ async def admin_training(request: web.Request) -> web.Response:
             except (TypeError,ValueError) as error:raise web.HTTPConflict(reason=str(error)) from error
         from ability_rules import profile
         from npc_store import refresh_ability
-        npcs=[{'id':key,'name':n['name'],'abilities':[{k:v for k,v in profile(refresh_ability(a)).items() if k in {'key','name','description','icon','details','supported','limitation'}} for a in n.get('abilities',[]) if not a.get('passive')]}
+        npcs=[{'id':key,'name':n['name'],'visibleTargetIds':[t for t,h in session.target_healths.items() if h>0]+(['player'] if session.visible_to(key) else []),'abilities':[{k:v for k,v in profile(refresh_ability(a)).items() if k in {'key','name','description','icon','details','supported','limitation'}} for a in n.get('abilities',[]) if not a.get('passive')]}
               for key,n in session.targets.items() if n.get('kind')=='npc']
         return web.json_response({'ok':True,'active':True,'message':message,'npcs':npcs,'training':session.view(actor,_derived(actor,inventory),spells,limits['weaponSets'])})
 
@@ -975,7 +975,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-4", "characterToolsVersion":"20261004-10"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-5", "characterToolsVersion":"20261004-11", "sharedBattlesVersion":"20261004-1"})
 
 
 async def _player_maps(request,cid):
@@ -1140,6 +1140,8 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app.router.add_post("/api/admin/{token}/character/{character_id}", admin_mutation)
     app.router.add_get('/api/admin/{token}/character/{character_id}/training',admin_training)
     app.router.add_post('/api/admin/{token}/character/{character_id}/training',admin_training)
+    from battle_api import register_battle_routes
+    register_battle_routes(app)
     app.router.add_options("/api/admin/{token}/character/{character_id}", lambda _: web.Response(status=204))
     app.router.add_get("/media/portraits/{name}", portrait_media)
     app.router.add_route("OPTIONS", "/api/{tail:.*}", lambda _: web.Response(status=204))

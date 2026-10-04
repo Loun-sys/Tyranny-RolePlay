@@ -233,7 +233,7 @@ class TyrannyBot(commands.Bot):
 
 def restrict_commands(tree):
     """The site owns gameplay; Discord only issues access links."""
-    allowed = {"админ", "регистрация", "персонаж", "удалить-персонажа"}
+    allowed = {"админ", "регистрация", "персонаж", "удалить-персонажа", "старт-боя", "начать-бой"}
     for command in list(tree.get_commands()):
         if command.name not in allowed:
             tree.remove_command(command.name)
@@ -781,6 +781,10 @@ async def command_error(interaction: discord.Interaction, error: app_commands.Ap
         await interaction.followup.send(message, ephemeral=True)
     else:
         await interaction.response.send_message(message, ephemeral=True)
+
+
+from discord_battles import register_commands as register_battle_commands
+register_battle_commands(bot,is_master,guild_id,archive_site_url)
 
 
 def main() -> None:

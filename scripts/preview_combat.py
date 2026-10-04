@@ -50,6 +50,21 @@ async def main():
         app["db"], app["data_dir"] = db, Path(folder)
         app["extended_talents"] = {"backgrounds": {}, "factions": []}
         app["training_sessions"], app["training_locks"] = {}, {}
+        from battle_api import register_battle_routes
+        register_battle_routes(app)
+        from battle_store import BattleStore
+        from campaign_store import CampaignStore
+        from npc_store import NPCStore,ability_library
+        qa_npc=await NPCStore(db).save(1,99,{'spec':{'name':'Разбойник','level':1,'healthMax':100,'portrait':'assets/npc-portraits/verse_sm.png',
+            'attributes':{'Быстрота':10},'skills':{'Атлетика':40},'attack':{'accuracy':30,'damageMin':5,'damageMax':8,'range':1},
+            'abilities':[next(a for a in ability_library() if a['key']=='ABL_DIS_BloodBound_DisablingKick')]}})
+        second=(await db.get_character(1,3))['id']
+        second_token=await db.create_portal_token(1,3)
+        qa_map=await CampaignStore(db).save_map(1,99,{'spec':{'name':'Проверка общего боя','width':13,'height':9,
+            'image':'','tokens':[{'kind':'player','id':cid,'x':2,'y':4},{'kind':'player','id':second,'x':2,'y':6},{'kind':'npc','id':qa_npc,'x':6,'y':4}]}})
+        qa_battle=await BattleStore(db).create(1,99,qa_map,[cid,second])
+        await BattleStore(db).join(qa_battle['id'],1,cid)
+        await BattleStore(db).join(qa_battle['id'],1,second)
         app.router.add_get("/api/archive", api.archive_list)
         app.router.add_get('/api/registration/{token}',api.registration_info)
         app.router.add_get("/media/portraits/{name}", api.portrait_media)
@@ -74,6 +89,9 @@ async def main():
         async def creation_index(_):
             return web.Response(status=302,headers={'Location':f'/index.html?api=http://127.0.0.1:{port}&token={creation_token}'})
         app.router.add_get('/qa-create',creation_index)
+        async def second_index(_):
+            return web.Response(status=302,headers={'Location':f'/archive.html?api=http://127.0.0.1:{port}&battle={qa_battle["id"]}#token={second_token}'})
+        app.router.add_get('/qa-second',second_index)
         async def index(_):
             # API middleware formats raised HTTP exceptions as JSON; retain Location.
             return web.Response(status=302, headers={"Location": f"/archive.html?api=http://127.0.0.1:{port}#token={token}"})

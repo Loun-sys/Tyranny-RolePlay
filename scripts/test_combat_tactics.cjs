@@ -25,8 +25,8 @@ context.aim={previews:[{name:'<Цель>',accuracy:20,defenseName:'Магия',d
 const html=vm.runInContext('combatPreviewMarkup(aim,{kind:"spell"})',context);
 assert(html.includes('&lt;Цель>'));assert(html.includes('60%'));assert(html.includes('Магия 30 + укрытие 15'));
 assert(html.includes('3–12'));assert(html.includes('2 удара'));assert(html.includes('Бросок выполняется только после применения'));
-const ready=vm.runInContext('combatPreviewMarkup(aim,{kind:"tactic",name:"Подготовить атаку",weaponRange:1})',context);
-assert(ready.includes('combat-ready-trigger'));assert(ready.includes('После враждебного умения по мне'));
+assert(!fs.readFileSync('web/combat-tactics.js','utf8').includes('combat-ready-trigger'));
+assert(fs.readFileSync('web/combat-tactics.js','utf8').includes('training.stealth?.active'));
 vm.runInContext('showCombatRoute({x:5,y:1})',context);
 assert(appended.some(html=>html.includes('Атака по возможности: &lt;Враг>')));
 assert(appended.some(html=>html.includes('danger')&&html.includes('polyline')));
@@ -43,4 +43,4 @@ const page=fs.readFileSync('web/archive.html','utf8'),css=fs.readFileSync('web/c
 assert(page.indexOf('combat-tactics.js')>page.indexOf('combat-feedback.js'));
 assert(css.includes('vector-effect:non-scaling-stroke'));assert(css.includes('.combat-token-states'));
 assert(css.includes('.combat-token.is-current:after'));assert(css.includes('prefers-reduced-motion'));
-console.log('Combat tactics: external contours, escaped probability previews, conditional ready attack and confirmed dangerous movement OK');
+console.log('Combat tactics: contours, probability previews, stealth indicators and confirmed dangerous movement OK');

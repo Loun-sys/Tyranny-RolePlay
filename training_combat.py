@@ -113,8 +113,10 @@ class TrainingSession:
     targets: dict[str, Any] = field(default_factory=lambda: {k: copy.deepcopy(v) for k,v in TRAINING_TARGETS.items()})
     custom_map: dict[str, Any] | None = None
     events: list[dict[str, Any]] = field(default_factory=list)
-    readied_attack: dict[str, Any] | None = None
     dash_used: bool = False
+    stealthed: bool = False
+    suspicion: dict[str, dict[str, float]] = field(default_factory=dict)
+    stealth_elapsed: float = 0.0
 
     def __post_init__(self) -> None:
         spec = self.custom_map or TACTICAL_MAPS[self.map_key]
@@ -441,13 +443,11 @@ class TrainingSession:
         previous=copy.deepcopy(self.__dict__)
         try:
             self.events=[]
-            old_positions=copy.deepcopy(self.target_positions)
+            old_health=self.player_health
             result=self._master_npc_ability(actor_id,ability_key,target_id,player,player_derived)
-            reaction=self._trigger_readied_attack(actor_id,old_positions.get(actor_id),hostile=target_id=='player')
-            for key,point in self.target_positions.items():
-                if key!=actor_id and point!=old_positions.get(key):
-                    reaction=self._trigger_readied_attack(key,old_positions.get(key)) or reaction
-            if reaction:result={**result,'line':result['line']+' '+reaction['line'],'reaction':reaction}
+            if self.player_health<old_health:
+                self._break_stealth('Полученный урон раскрывает персонажа.')
+            self._advance_stealth(0)
             return result
         except Exception:
             self.__dict__.clear();self.__dict__.update(previous)
@@ -467,9 +467,11 @@ class TrainingSession:
         derived={'attack':npc.get('attack',{}),'effectiveSkills':npc.get('skills',{}),'effectiveAttributes':npc.get('attributes',{}),
                  'cooldownMultiplier':max(.1,1-(npc.get('attributes',{}).get('Быстрота',10)-10)*.03)}
         rule=profile(refresh_ability(ability),derived,npc.get('attack',{}).get('range',1))
+        if target_id=='player' and rule['targeting'] in {'unit','ally'} and not self.visible_to(actor_id):
+            raise ValueError('Персонаж скрыт и не обнаружен: НПС не может выбрать его прямой целью.')
         if rule.get('song'):raise ValueError('Автоматическое пение НПС ещё не подключено; эта песня доступна персонажу игрока.')
         clone=copy.deepcopy(self);player_target='master_player'
-        clone.events=[];clone.readied_attack=None
+        clone.events=[];clone.stealthed=False;clone.suspicion={}
         clone.targets={k:v for k,v in clone.targets.items() if k!=actor_id}
         for n in clone.targets.values():n['team']='ally' if n.get('team','enemy')==npc.get('team','enemy') else 'enemy'
         clone.targets[player_target]={'name':player['name'],'healthMax':self.player_health_max,'armor':player_derived['armor'],
@@ -665,8 +667,8 @@ class TrainingSession:
         if kind=='ability' and (action.get('targetTeam')=='ally' or not action.get('attackCount')):return None
         if kind=='spell' and action.get('persistent',{}):
             if action['persistent']['effect'] not in {'fire','stone'}:return None
-        if kind in {'item','disengage'} or kind=='tactic' and action['name']!='Подготовить атаку':return None
-        ordinary=kind in {'attack','tactic'}
+        if kind in {'item','disengage','tactic'}:return None
+        ordinary=kind=='attack'
         if ordinary:
             accuracy=weapon.get('accuracy',0);low=weapon.get('damageMin',1);high=weapon.get('damageMax',2)
             mode=weapon_mode(weapon);defense='Парирование' if mode=='melee' else 'Уклонение'
@@ -714,7 +716,7 @@ class TrainingSession:
     def _opportunity_controllers(self, path):
         if self.disengaged or self.player_health<=0 or any(s.get('source',{}).get('AffectsStat') in {24,151,2145}
                 for s in self.conditions.get('player',{}).values()):return []
-        return [key for key in self._alive_targets() if key not in self.opportunity_used
+        return [key for key in self._alive_targets() if key not in self.opportunity_used and self.visible_to(key)
                 and float(self.targets[key].get('attack',{}).get('range',1))<=1
                 and not any(self.conditions.get(key,{}).get(state) for state in
                     ('sleep','prone','freeze','stun','paralyze','petrif','disarm','special:freeze','special:frozen','special:stun','special:paralyze','special:petrif','special:disarm'))
@@ -724,39 +726,90 @@ class TrainingSession:
     def _movement_previews(self):
         occupied={p for key,p in self.target_positions.items() if self.target_healths[key]>0}
         rooted=any(self.conditions.get('player',{}).get(k) for k in ('root','stun','paralyze','petrif','freeze','sleep','prone'))
-        reachable=self.grid.reachable(self.player_position,0 if rooted else self.movement_remaining,occupied)
+        budget=self.movement_remaining//2 if self.stealthed else self.movement_remaining
+        reachable=self.grid.reachable(self.player_position,0 if rooted else budget,occupied)
         previews={}
         for point,cost in reachable.items():
             if not cost:continue
             path=self.grid.path(self.player_position,point,occupied)
-            controllers=self._opportunity_controllers(path)
-            previews[f'{point[0]}:{point[1]}']={'cost':cost,'path':[{'x':x,'y':y} for x,y in path],
+            simulation=copy.copy(self)
+            simulation.suspicion=copy.deepcopy(self.suspicion);simulation.log=[]
+            controllers,charge=simulation._walk_stealth_path(path)
+            previews[f'{point[0]}:{point[1]}']={'cost':charge,'distance':cost,'stealthDetected':self.stealthed and not simulation.stealthed,
+                'path':[{'x':x,'y':y} for x,y in path],
                 'opportunities':[{'id':key,'name':self.targets[key]['name']} for key in controllers]}
         return reachable,previews
 
-    def _trigger_readied_attack(self, actor_id, previous_position=None, hostile=False):
-        ready=self.readied_attack
-        if not ready or actor_id!=ready['targetId'] or actor_id not in self._alive_targets() or self.player_health<=0:return None
-        if any(self.conditions.get('player',{}).get(k) for k in ('stun','paralyze','petrif','freeze','sleep','disarm')):return None
-        point=self.target_positions[actor_id];weapon=ready['derived']['attack'];distance=self._weapon_range(weapon)
-        if self.grid.distance(self.player_position,point)>distance or not self.grid.line_of_sight(self.player_position,point):return None
-        if ready['trigger']=='approach':
-            if previous_position is None or (self.grid.distance(self.player_position,previous_position)<=distance
-                    and self.grid.line_of_sight(self.player_position,previous_position)):return None
-        elif not hostile:return None
-        self.readied_attack=None
-        previous=(getattr(self,'talent_runtime',{}),getattr(self,'runtime_derived',{}))
-        self.runtime_derived=ready['derived'];self.talent_runtime={int(k):v for k,v in ready['derived'].get('talentRuntime',{}).items()}
-        try:
-            from talent_runtime import weapon_mode
-            mode=weapon_mode(weapon);defense='Парирование' if mode=='melee' else 'Уклонение'
-            result=self._roll_attack(name='Подготовленная атака',accuracy=int(weapon.get('accuracy',0)),
-                low=int(weapon.get('damageMin',1)),high=int(weapon.get('damageMax',2)),target_id=actor_id,
-                defense=self._defense(defense,actor_id),armor=self.targets[actor_id]['armor'],
-                penetration=round(weapon.get('penetration',0)),cover_bonus=self.grid.cover(self.player_position,point)[1] if distance>1 else 0,
-                attack_mode=mode,defense_name=defense)
-            return result
-        finally:self.talent_runtime,self.runtime_derived=previous
+    def visible_to(self, observer_id):
+        """Owner/allies/master see the token; hostile NPC direct targeting does not."""
+        return not self.stealthed or self.targets.get(observer_id,{}).get('team','enemy')!='enemy'
+
+    def _observer_rate(self, key, point=None, derived=None):
+        from stealth_rules import observer_profile,detection_rate
+        npc=self.targets[key]
+        if npc.get('kind')!='npc' or npc.get('team','enemy')!='enemy' or self.target_healths.get(key,0)<=0:return 0
+        if any(self.conditions.get(key,{}).get(k) for k in ('sleep','freeze','stun','paralyze','petrif','blind')):return 0
+        point=point or self.player_position
+        if not self.grid.line_of_sight(self.target_positions[key],point):return 0
+        info=observer_profile(npc)
+        distance=self.grid.distance(self.target_positions[key],point)
+        skill=(derived or getattr(self,'runtime_derived',{})).get('effectiveSkills',{}).get('Хитроумие',0)
+        return detection_rate(distance,info['radius'],info['perception'],float(skill))
+
+    def _hide_reason(self, derived=None):
+        if self.stealthed:return ''
+        for key in self.targets:
+            rate=self._observer_rate(key,derived=derived)
+            if math.isinf(rate) or rate>0 and self.suspicion.get(key,{}).get('value',0)>=200:
+                return 'Враг видит вас вблизи. Сначала отойдите или скройтесь за преградой.'
+        return ''
+
+    def _break_stealth(self, reason):
+        if self.stealthed:
+            self.stealthed=False
+            self.log.append(reason)
+
+    def _advance_stealth(self, seconds):
+        from stealth_rules import advance_memory,DETECTED
+        for key in self.targets:
+            rate=self._observer_rate(key) if self.stealthed else 0
+            memory=advance_memory(self.suspicion.get(key,{}),seconds,rate)
+            if memory['value']>0:self.suspicion[key]=memory
+            else:self.suspicion.pop(key,None)
+        if self.stealthed:
+            detected=next((key for key,row in self.suspicion.items() if row['value']>=DETECTED),None)
+            if detected:self._break_stealth(f"«{self.targets[detected]['name']}» обнаруживает персонажа.")
+        if self.player_health<=0:self._break_stealth('Персонаж выведен из боя.')
+
+    def _walk_stealth_path(self, path):
+        """Evaluate every traversed cell; previews run this on a shallow isolated copy."""
+        controllers=[];charge=0
+        for a,b in zip(path,path[1:]):
+            self.player_position=a
+            step_cost=2 if self.stealthed else 1
+            elapsed=min(10-self.stealth_elapsed,step_cost*2)
+            self._advance_stealth(elapsed/2)
+            controllers.extend(k for k in self._opportunity_controllers([a,b]) if k not in controllers)
+            self.player_position=b
+            self._advance_stealth(elapsed/2)
+            self.stealth_elapsed+=elapsed
+            charge+=step_cost
+        return controllers,charge
+
+    def _stealth_view(self, derived):
+        from stealth_rules import observer_profile
+        observers=[]
+        for key,npc in self.targets.items():
+            if npc.get('kind')!='npc' or npc.get('team','enemy')!='enemy' or self.target_healths.get(key,0)<=0:continue
+            value=self.suspicion.get(key,{}).get('value',0)
+            rate=self._observer_rate(key,derived=derived)
+            observers.append({'id':key,'name':npc['name'],'suspicion':round(value,1),
+                'state':'detected' if value>=200 else 'investigating' if value>=100 else 'unaware',
+                'radius':observer_profile(npc)['radius'],'watching':rate>0,
+                'visibleTargetIds':[t for t,h in self.target_healths.items() if h>0]+(['player'] if self.visible_to(key) else [])})
+        return {'active':self.stealthed,'skill':derived.get('effectiveSkills',{}).get('Хитроумие',0),
+                'suspicion':round(max((r['suspicion'] for r in observers),default=0),1),
+                'movementCost':2 if self.stealthed else 1,'observers':observers}
 
     def _roll_attack(
         self, *, name: str, accuracy: int, low: int, high: int, defense: int,
@@ -837,6 +890,8 @@ class TrainingSession:
         return {"result": result, "damage": damage, "roll": roll, "line": line}
 
     def _end_turn(self) -> dict[str, Any]:
+        self._advance_stealth(max(0,10-self.stealth_elapsed))
+        self.stealth_elapsed=0
         self._advance_songs()
         line = f"Раунд {self.round_number}: ход персонажа завершён."
         self.log.append(line)
@@ -878,7 +933,6 @@ class TrainingSession:
         self.action_available = True
         self.disengaged = False
         self.opportunity_used.clear()
-        self.readied_attack=None
         self.dash_used=False
         return {"result": "Новый раунд", "damage": 0, "line": line}
 
@@ -974,10 +1028,9 @@ class TrainingSession:
                     if not aimed or target_id and str(target_id)!=aimed:raise ValueError('Выберите вражеский токен для атаки.')
                     self.selected_target_id=aimed
             result=self._act(payload, character, derived, spells, weapon_sets)
-            for key,point in self.target_positions.items():
-                if point!=previous['target_positions'].get(key):
-                    reaction=self._trigger_readied_attack(key,previous['target_positions'].get(key))
-                    if reaction:result={**result,'line':result['line']+' '+reaction['line'],'reaction':reaction}
+            if kind in {'attack','spell','artifact','ability','item'}:
+                self._break_stealth('Применение способности или предмета раскрывает персонажа.')
+            self._advance_stealth(0)
             return result
         except Exception:
             self.__dict__.clear();self.__dict__.update(previous)
@@ -1005,7 +1058,8 @@ class TrainingSession:
         multiplier = float(derived.get("cooldownMultiplier", 1))
         if kind=='tactic':
             self._require_action(0)
-            if name not in {'Защита','Спринт','Подготовить атаку'}:raise ValueError('Неизвестный тактический приём.')
+            if name not in {'Защита','Спринт','Уйти в скрытность'}:raise ValueError('Неизвестный тактический приём.')
+            if self.aim_point is not None and self.aim_point!=self.player_position:raise ValueError('Тактический приём применяется на себя.')
             if name=='Защита':
                 if self.aim_point is not None and self.aim_point!=self.player_position:raise ValueError('Защита применяется на себя.')
                 self.conditions.setdefault('player',{})['tactical:guard']={'name':'Защита: защиты ×1,2',
@@ -1015,19 +1069,15 @@ class TrainingSession:
                 if self.aim_point is not None and self.aim_point!=self.player_position:raise ValueError('Спринт применяется на себя.')
                 if self.dash_used:raise ValueError('Спринт уже использован в этом ходу.')
                 if any(controls.get(k) for k in ('root','stun','paralyze','petrif','freeze','sleep','prone')):raise ValueError('Персонаж обездвижен.')
+                self._break_stealth('Спринт раскрывает персонажа.')
                 self.movement_remaining+=BASE_MOVEMENT;self.dash_used=True
                 line='Спринт: +5 м передвижения за основное действие; атаки по возможности остаются активными.'
             else:
-                target=str(payload.get('targetId') or self.selected_target_id)
-                if self.aim_point is not None:
-                    target=next((k for k in self._alive_targets() if self.target_positions[k]==self.aim_point),'')
-                    if payload.get('targetId') and payload['targetId']!=target:raise ValueError('Цель не совпадает с выбранной клеткой.')
-                if target not in self._alive_targets() or not self.grid.line_of_sight(self.player_position,self.target_positions[target]):raise ValueError('Выберите видимую вражескую цель.')
-                trigger=payload.get('trigger','approach')
-                if trigger not in {'approach','hostile'}:raise ValueError('Неизвестное условие подготовленной атаки.')
-                self.readied_attack={'targetId':target,'trigger':trigger,'until':self.round_number,'derived':copy.deepcopy(derived)}
-                condition='войдёт в дальность оружия' if trigger=='approach' else 'применит враждебное умение на персонажа'
-                line=f"Подготовлен один удар по «{self.targets[target]['name']}», когда цель {condition}. До следующего хода; нужны дальность и видимость."
+                if self.stealthed:raise ValueError('Персонаж уже скрывается.')
+                reason=self._hide_reason(derived)
+                if reason:raise ValueError(reason)
+                self.stealthed=True
+                line='Персонаж уходит в скрытность. Хитроумие замедляет обнаружение; движение стоит 2 м за клетку. Атаки и спринт раскрывают персонажа.'
             self.action_available=False;self.log.append(line)
             return {'result':name,'damage':0,'line':line}
         if kind=='item':
@@ -1070,16 +1120,15 @@ class TrainingSession:
                 raise ValueError('Персонаж обездвижен: перемещение недоступно.')
             target = self._cell(payload)
             occupied = {p for key,p in self.target_positions.items() if self.target_healths[key]>0}
-            reachable = self.grid.reachable(self.player_position, self.movement_remaining, occupied)
+            budget=self.movement_remaining//2 if self.stealthed else self.movement_remaining
+            reachable = self.grid.reachable(self.player_position, budget, occupied)
             if target not in reachable or target == self.player_position:
                 raise ValueError("Эта клетка недостижима в текущем ходу.")
-            spent = reachable[target]
             old_position = self.player_position
             self.movement_path = self.grid.path(old_position, target, occupied)
-            self.player_position = target
+            controllers,spent = self._walk_stealth_path(self.movement_path)
             self.movement_remaining -= spent
-            line = f"Раунд {self.round_number}: персонаж перемещается на {spent} м."
-            controllers = self._opportunity_controllers(self.movement_path)
+            line = f"Раунд {self.round_number}: персонаж перемещается на {reachable[target]} м"+(' в скрытности' if self.stealthed else '')+f' (потрачено {spent} м передвижения).'
             for controller in controllers:
                 if self.player_health<=0 or self.disengaged or any(s.get('source',{}).get('AffectsStat') in {24,151,2145} for s in self.conditions.get('player',{}).values()):continue
                 self.opportunity_used.add(controller)
@@ -1122,9 +1171,6 @@ class TrainingSession:
             if not 1 <= number <= weapon_sets:
                 raise ValueError("Этот комплект оружия недоступен.")
             self.active_weapon_set = number
-            if self.readied_attack:
-                self.readied_attack=None
-                self.log.append('Смена оружия отменяет подготовленную атаку.')
             line = f"Раунд {self.round_number}: выбран комплект оружия {number}; основное действие не потрачено."
             self.log.append(line)
             return {"result": "Комплект сменён", "damage": 0, "line": line}
@@ -1374,7 +1420,7 @@ class TrainingSession:
                             "disabledReason": "Основное действие потрачено" if not self.action_available else "",
                             "cells": [{"x": x, "y": y} for x, y in self._spell_cells(profile)]})
 
-        controlled = self.grid.control_zone(self.target_positions[key] for key in self._alive_targets())
+        controlled = self.grid.control_zone(self.target_positions[key] for key in self._alive_targets() if self.visible_to(key))
         if self.player_position in controlled:
             actions.insert(0, {"kind": "disengage", "name": "Осторожный отход",
                                "description": "Отключает атаки по возможности до конца текущего хода.",
@@ -1385,12 +1431,13 @@ class TrainingSession:
         for name,description,icon in [
             ('Защита','Основное действие: все пять защит ×1,2 до следующего хода.','parry'),
             ('Спринт','Основное действие: +5 м передвижения. Не защищает от атак по возможности. Один раз за ход.','dodge'),
-            ('Подготовить атаку','Основное действие: один удар при выбранном условии до следующего хода. Оружие фиксируется; смена комплекта отменяет подготовку.','damage')]:
-            actions.append({'kind':'tactic','name':name,'description':description,'icon':f'assets/stat-icons/{icon}.png',
-                'targeting':'unit' if name=='Подготовить атаку' else 'self',
-                'range':max(self.grid.width,self.grid.height) if name=='Подготовить атаку' else 0,
+            ('Уйти в скрытность','Основное действие: скрыться от противников. Хитроумие замедляет подозрение: 100 — поиск, 200 — обнаружение. Вплотную враг обнаружит сразу. Преграды закрывают обзор. Движение стоит 2 м за клетку; атака, предмет или спринт раскрывают персонажа.','dodge')]:
+            actions.append({'kind':'tactic','name':name,'description':description,'icon':'assets/game-combat/icon_option_stealth.png' if name=='Уйти в скрытность' else f'assets/stat-icons/{icon}.png',
+                'targeting':'self','range':0,
                 'weaponRange':weapon_range,'remaining':0,'cells':[],
-                'disabledReason':('Спринт уже использован' if name=='Спринт' and self.dash_used else reason(0))})
+                'disabledReason':('Персонаж уже скрывается' if name=='Уйти в скрытность' and self.stealthed else
+                    self._hide_reason(derived) if name=='Уйти в скрытность' and self._hide_reason(derived) else
+                    'Спринт уже использован' if name=='Спринт' and self.dash_used else reason(0))})
 
         # The client previews these server-computed shapes without spending an action.
         for action in actions:
@@ -1481,7 +1528,7 @@ class TrainingSession:
                      "movementMax": self._movement_limit()+(BASE_MOVEMENT if self.dash_used else 0), "actionAvailable": self.action_available,
                      "distanceToTarget": distance, "inControlZone": self.player_position in controlled,
                      "cover": cover_name, "coverBonus": cover_bonus, "disengaged": self.disengaged},
-            "readiedAttack":{k:v for k,v in self.readied_attack.items() if k!='derived'} if self.readied_attack else None,
+            "stealth":self._stealth_view(derived),
             "events":self.events,
             "initiative": self.initiative, "grid": grid_payload,
             "songs": {"available":any(a.get('song') or a.get('breathCost') for a in actions),

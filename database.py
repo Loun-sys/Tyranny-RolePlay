@@ -233,6 +233,8 @@ class Database:
                 await db.commit()
             from campaign_store import SCHEMA as CAMPAIGN_SCHEMA
             await db.executescript(CAMPAIGN_SCHEMA)
+            from battle_store import SCHEMA as BATTLE_SCHEMA
+            await db.executescript(BATTLE_SCHEMA)
             from crafting import SCHEMA as CRAFTING_SCHEMA
             await db.executescript(CRAFTING_SCHEMA)
             shop_columns={r['name'] for r in await db.execute_fetchall('PRAGMA table_info(shop_stock)')}

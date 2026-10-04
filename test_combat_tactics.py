@@ -129,58 +129,36 @@ class TacticalCombatTests(unittest.TestCase):
         s.opportunity_used.clear();s.conditions['enemy']={'stun':{'until':1}};self.assertEqual(s._opportunity_controllers(path),[])
         s.conditions['enemy']={};s.targets['enemy']['attack']={'range':12};self.assertEqual(s._opportunity_controllers(path),[])
 
-    def test_prepared_attack_spends_action_but_waits_for_approach(self):
-        c,d,s=self.battle();s.target_positions['enemy']=(5,1)
-        self.act(c,d,s,kind='tactic',name='Подготовить атаку',targetId='enemy',x=5,y=1,trigger='approach')
-        self.assertFalse(s.action_available);self.assertEqual(s.target_healths['enemy'],1000);self.assertFalse(s.events)
-        self.assertIsNone(s._trigger_readied_attack('enemy',(5,1)))
-        s.target_positions['enemy']=(2,1)
-        with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi):result=s._trigger_readied_attack('enemy',(5,1))
-        self.assertGreater(result['damage'],0);self.assertIsNone(s.readied_attack)
-        self.assertIsNone(s._trigger_readied_attack('enemy',(5,1)));self.assertFalse(s.action_available)
-
-    def test_ready_hostile_trigger_range_visibility_and_expiry(self):
-        c,d,s=self.battle();self.act(c,d,s,kind='tactic',name='Подготовить атаку',targetId='enemy',trigger='hostile')
-        self.assertIsNone(s._trigger_readied_attack('enemy',hostile=False))
-        s.target_positions['enemy']=(5,1);self.assertIsNone(s._trigger_readied_attack('enemy',hostile=True))
-        self.act(c,d,s,kind='end_turn');self.assertIsNone(s.readied_attack)
-
-    def test_ready_invalid_target_or_trigger_rolls_back(self):
+    def test_prepared_attack_removed_and_rejected_atomically(self):
         c,d,s=self.battle()
-        for payload in [{'targetId':'player'},{'targetId':'missing'},{'targetId':'enemy','trigger':'invalid'}, {'x':3,'y':3}]:
-            with self.assertRaises(ValueError):self.act(c,d,s,kind='tactic',name='Подготовить атаку',**payload)
-            self.assertTrue(s.action_available);self.assertIsNone(s.readied_attack)
-
-    def test_switching_weapon_set_cancels_prepared_attack(self):
-        c,d,s=self.battle();self.act(c,d,s,kind='tactic',name='Подготовить атаку',targetId='enemy')
-        self.act(c,d,s,kind='weapon_set',number=2);self.assertIsNone(s.readied_attack)
+        self.assertNotIn('Подготовить атаку',[a['name'] for a in s.view(c,d,[],2)['actions']])
+        with self.assertRaises(ValueError):self.act(c,d,s,kind='tactic',name='Подготовить атаку')
+        self.assertTrue(s.action_available)
 
     def test_rooted_actor_has_no_reachable_preview(self):
         c,d,s=self.battle();s.conditions['player']={'root':{'until':1,'name':'Корни'}}
         grid=s.view(c,d,[],2)['grid'];self.assertEqual(grid['reachable'],[]);self.assertEqual(grid['movementPreviews'],{})
 
-    def test_actual_master_npc_attack_triggers_readied_response_once(self):
+    def test_actual_master_npc_attack_does_not_trigger_removed_reaction(self):
         from npc_store import ability_library
         ability=next(a for a in ability_library() if a['key']=='ABL_DIS_BloodBound_DisablingKick')
         c,d,s=self.battle()
         s.targets['enemy'].update(kind='npc',abilities=[ability],attributes=c['attributes'],skills={'Атлетика':80},
             attack={'accuracy':20,'damageMin':4,'damageMax':8,'range':1})
-        self.act(c,d,s,kind='tactic',name='Подготовить атаку',targetId='enemy',trigger='hostile')
         with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi):
             result=s.master_npc_ability('enemy',ability['key'],'player',c,d)
-        self.assertIn('reaction',result);self.assertLess(s.target_healths['enemy'],1000)
-        self.assertIsNone(s.readied_attack);self.assertFalse(s.action_available)
+        self.assertNotIn('reaction',result);self.assertEqual(s.target_healths['enemy'],1000)
+        self.assertTrue(s.action_available)
         self.assertTrue(any(e['targetId']=='player' and e['sourceId']=='enemy' for e in s.events))
-        self.assertTrue(any(e['targetId']=='enemy' and e['sourceId']=='player' for e in s.events))
 
-    def test_master_guard_matches_preview_defense_and_failed_reaction_is_atomic(self):
+    def test_master_guard_and_failed_detection_update_is_atomic(self):
         from npc_store import ability_library
         ability=next(a for a in ability_library() if a['key']=='ABL_DIS_BloodBound_DisablingKick')
         c,d,s=self.battle();s.targets['enemy'].update(kind='npc',abilities=[ability],attributes=c['attributes'],
             skills={'Атлетика':80},attack={'accuracy':20,'damageMin':4,'damageMax':8,'range':1})
         self.act(c,d,s,kind='tactic',name='Защита')
         before=copy.deepcopy(s.__dict__)
-        with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi),patch.object(TrainingSession,'_trigger_readied_attack',side_effect=RuntimeError('reaction failed')):
+        with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi),patch.object(TrainingSession,'_advance_stealth',side_effect=RuntimeError('detection failed')):
             with self.assertRaises(RuntimeError):s.master_npc_ability('enemy',ability['key'],'player',c,d)
         for field in ['player_health','target_healths','conditions','log','events','action_available']:
             self.assertEqual(getattr(s,field),before[field])

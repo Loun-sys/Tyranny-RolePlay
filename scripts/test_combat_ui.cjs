@@ -65,6 +65,19 @@ async function main(){
  assert.equal(bindings[0].bindings[4].kind,'','Empty slots must remain intentionally empty');
  vm.runInContext('saveQuickbarBinding(9,testAction.kind,testAction.name)',context);
  assert.equal(bindings[1].bindings[0].name,action.name,'Assigning one slot preserves the other defaults');
+ // Self tactics must execute immediately at OUR cell, even with an enemy selected.
+ const tactics=['Спринт','Защита','Уйти в скрытность'];
+ for(const name of tactics){
+  context.training={active:true,turn:{actionAvailable:true},grid:{tokens:[{id:'player',x:2,y:4},{id:'enemy',x:10,y:2,selected:true}]}};
+  context.selfTactic={kind:'tactic',name,targeting:'self',aims:{'2:4':{valid:true,cells:[]}}};
+  const count=requests.length;
+  await vm.runInContext('armCombatAction(selfTactic)',context);
+  assert.equal(requests.length,count+1);assert.equal(requests.at(-1).targetId,'player');
+  assert.equal(requests.at(-1).name,name);assert.equal(requests.at(-1).x,2);
+ }
+ const css=fs.readFileSync('web/combat-polish.css','utf8');
+ assert(css.includes('.tactical-cell:disabled{opacity:1;'));
+ assert(!css.includes('button:disabled{cursor:not-allowed;opacity:.48}'));
  console.log('Combat UI: selection, invalid aim, explicit confirmation, target ID, Esc and right-click OK');
 }
 main().catch(error=>{console.error(error);process.exitCode=1});

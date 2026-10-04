@@ -109,7 +109,8 @@ body:has(.combat-game-screen) main>#toast{height:32px;margin:4px 0;padding:6px 1
 .combat-game-screen button:not(.tactical-cell):hover:not(:disabled){background-color:#2c101b;border-color:#d74a68;box-shadow:0 0 0 1px #98283f33}
 .combat-game-screen button:not(.tactical-cell):active:not(:disabled){background-color:#421524}
 .combat-game-screen button:focus-visible,.combat-game-screen summary:focus-visible,.combat-game-screen [tabindex]:focus-visible{outline:2px solid #ef8097;outline-offset:3px}
-.combat-game-screen button:disabled{cursor:not-allowed;opacity:.48}
+.combat-game-screen button:not(.tactical-cell):disabled{cursor:not-allowed;opacity:.48}
+.combat-game-screen .tactical-cell:disabled{opacity:1;cursor:default}
 .combat-game-screen [aria-disabled="true"]{opacity:.67;filter:saturate(.4)}
 .combat-game-screen[aria-busy="true"] .tactical-map{cursor:progress}
 .combat-sidebar .original-quick.armed,.combat-sidebar .original-quick.drop-ready{border-color:#ff6885!important;box-shadow:0 0 0 2px #a9304b!important;background:#401326!important;opacity:1}

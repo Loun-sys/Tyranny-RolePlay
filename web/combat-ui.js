@@ -189,14 +189,14 @@ function showCombatAim(point){
  const line=document.querySelector('.spell-trajectory line');if(line){line.setAttribute('x2',point.x+.5);line.setAttribute('y2',point.y+.5);line.parentElement.classList.add('visible')}
 }
 function ensureCombatMapVisible(){const viewport=document.querySelector('.tactical-map-wrap'),rect=viewport?.getBoundingClientRect?.();if(rect&&(rect.bottom<48||rect.top>=(globalThis.innerHeight||900)-64))viewport.scrollIntoView({block:'nearest',behavior:'smooth'})}
-function armCombatAction(action){if(combatBusy)return;const blocked=combatActionBlock(action);if(blocked){toast(blocked);return}armedCombatAction=action;combatPicker='';quickbarEditing=0;hideCombatTooltip();renderTraining($('#panel'),data.character);const player=training.grid.tokens.find(t=>t.id==='player');showCombatAim(action.targeting==='self'||action.targeting==='aura'||action.freeOnSelf?player:training.grid.tokens.find(t=>t.selected)||player);ensureCombatMapVisible()}
+function armCombatAction(action){if(combatBusy)return;const blocked=combatActionBlock(action);if(blocked){toast(blocked);return}armedCombatAction=action;combatPicker='';quickbarEditing=0;hideCombatTooltip();const player=training.grid.tokens.find(t=>t.id==='player');if(action.kind==='tactic'&&action.targeting==='self')return confirmCombatAim(player);renderTraining($('#panel'),data.character);showCombatAim(action.targeting==='self'||action.targeting==='aura'||action.freeOnSelf?player:training.grid.tokens.find(t=>t.selected)||player);ensureCombatMapVisible()}
 async function confirmCombatAim(point){
  if(combatBusy||!armedCombatAction)return;const action=armedCombatAction,aim=action.aims?.[`${point.x}:${point.y}`];if(!aim?.valid){toast('Выберите доступную цель или клетку.');return}
  const blocked=combatActionBlock(action);if(blocked){toast(blocked);return}
  const target=training.grid.tokens.find(t=>t.x===point.x&&t.y===point.y);
  if(!training.turn.actionAvailable&&action.freeOnSelf&&!combatActionIsFree(action)&&target?.id!=='player'){toast('Основное действие потрачено');return}
  const oldGrid=training.grid;setCombatBusy(true);
- try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id,trigger:typeof combatReadyTrigger==='undefined'?'approach':combatReadyTrigger})});training=j.training;clearCombatAim();if(tab==='training'){renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);await playCombatEffect(action,point,oldGrid,aim.cells||[])}toast(j.message)}catch(error){toast(error.message)}finally{setCombatBusy(false)}
+ try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id})});training=j.training;clearCombatAim();if(tab==='training'){renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);await playCombatEffect(action,point,oldGrid,aim.cells||[])}toast(j.message)}catch(error){toast(error.message)}finally{setCombatBusy(false)}
 }
 async function playCombatEffect(action,point,grid,cells){
  if(action.kind==='tactic')return;

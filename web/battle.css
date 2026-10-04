@@ -1,0 +1,23 @@
+.battle-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+.battle-scenes,.battle-abilities{display:flex;flex-wrap:wrap;gap:6px}
+.battle-participant-choices{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+.master-battle-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+.master-battle-board{min-width:0;position:sticky;top:70px}
+.master-battle-viewport{overflow:auto;max-height:76vh;background:#060609;border:1px solid #79263e}
+.master-battle-grid{display:grid;background-repeat:no-repeat}
+.master-battle-cell{position:relative;width:var(--battle-size);height:var(--battle-size);padding:0!important;min-width:0!important;border:1px solid #eee2;background:transparent!important;cursor:pointer}
+.master-battle-cell.blocked{background:#841e3444!important;cursor:not-allowed;opacity:1}
+.master-battle-cell.sight-blocked{box-shadow:inset 0 0 0 1px #baa47855}
+.master-battle-cell.selected{outline:2px solid #ead3a0;outline-offset:-2px;z-index:2}
+.master-battle-token{position:absolute;inset:5px;display:grid;place-items:center;border-radius:50%;border:2px solid #b82748;background:#160a0e;cursor:grab;box-shadow:0 2px 6px #000a}
+.master-battle-token.party{border-color:#d4bd88}.master-battle-token.defeated{filter:grayscale(1);opacity:.6}
+.master-battle-token img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.master-battle-token small{position:absolute;top:100%;left:50%;transform:translateX(-50%);font:9px Arial,sans-serif;background:#080609;color:#eee;white-space:nowrap;z-index:3}
+.master-battle-controls .admin-box{margin-top:0}.master-battle-controls .field select{width:100%}
+.master-battle-controls{position:sticky;top:70px;max-height:calc(100vh - 90px);overflow:auto;overscroll-behavior:contain;scrollbar-color:#8e3148 #130c12}
+.battle-order-row{display:grid;grid-template-columns:minmax(0,1fr) 28px 28px;gap:3px;margin:5px 0}
+.battle-order-row button{background:#130c12;border:1px solid #733043;color:#ddd;padding:5px;cursor:pointer;text-align:left}
+.battle-order-row.current{outline:1px solid #cc3458}.battle-order-row button:disabled{opacity:.4}
+.battle-effect{display:flex;gap:5px;justify-content:space-between;padding:5px;border-bottom:1px solid #652135}
+.battle-effect button{background:#260c15;border:1px solid #8e3148;color:#eee;cursor:pointer}
+@media(max-width:1100px){.master-battle-layout{grid-template-columns:1fr}.master-battle-board{position:static}.master-battle-controls{position:static;max-height:none;overflow:visible;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}}
