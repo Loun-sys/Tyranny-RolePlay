@@ -112,6 +112,9 @@ class TrainingSession:
     movement_path: list[tuple[int, int]] = field(default_factory=list)
     targets: dict[str, Any] = field(default_factory=lambda: {k: copy.deepcopy(v) for k,v in TRAINING_TARGETS.items()})
     custom_map: dict[str, Any] | None = None
+    events: list[dict[str, Any]] = field(default_factory=list)
+    readied_attack: dict[str, Any] | None = None
+    dash_used: bool = False
 
     def __post_init__(self) -> None:
         spec = self.custom_map or TACTICAL_MAPS[self.map_key]
@@ -222,16 +225,18 @@ class TrainingSession:
         return {**row, "id": key, "health": self.target_healths[key],
                 "x": self.target_positions[key][0], "y": self.target_positions[key][1]}
 
-    def _defense(self, name, target_id=None):
+    def _defense(self, name, target_id=None, include_guard=True):
         target=target_id or self.selected_target_id
         base=self.targets[target]['defenses'].get(name,30)
         from consumables import virtual_equipment
         from registration_api import _apply_property
         base=_apply_property(base,virtual_equipment(self.conditions.get(target,{}),self.round_number),name)
+        guard=1
         for state in self.conditions.get(target,{}).values():
             if state.get('kind')==name:
                 value=state['value'];base=base*(1+value) if abs(value)<1 else base+value
-        return max(0,round(base))
+            elif state.get('kind')=='guard':guard*=state['value']
+        return max(0,round(base*(guard if include_guard else 1)))
 
     def _apply_special(self, effect, target):
         from talent_runtime import hostile_duration
@@ -433,6 +438,22 @@ class TrainingSession:
                 self._song_phrase(song,index,derived,offset)
 
     def master_npc_ability(self, actor_id, ability_key, target_id, player, player_derived):
+        previous=copy.deepcopy(self.__dict__)
+        try:
+            self.events=[]
+            old_positions=copy.deepcopy(self.target_positions)
+            result=self._master_npc_ability(actor_id,ability_key,target_id,player,player_derived)
+            reaction=self._trigger_readied_attack(actor_id,old_positions.get(actor_id),hostile=target_id=='player')
+            for key,point in self.target_positions.items():
+                if key!=actor_id and point!=old_positions.get(key):
+                    reaction=self._trigger_readied_attack(key,old_positions.get(key)) or reaction
+            if reaction:result={**result,'line':result['line']+' '+reaction['line'],'reaction':reaction}
+            return result
+        except Exception:
+            self.__dict__.clear();self.__dict__.update(previous)
+            raise
+
+    def _master_npc_ability(self, actor_id, ability_key, target_id, player, player_derived):
         """Master-only simulation; NPCs use the same executor as player abilities."""
         import copy
         from ability_rules import profile
@@ -448,6 +469,7 @@ class TrainingSession:
         rule=profile(refresh_ability(ability),derived,npc.get('attack',{}).get('range',1))
         if rule.get('song'):raise ValueError('Автоматическое пение НПС ещё не подключено; эта песня доступна персонажу игрока.')
         clone=copy.deepcopy(self);player_target='master_player'
+        clone.events=[];clone.readied_attack=None
         clone.targets={k:v for k,v in clone.targets.items() if k!=actor_id}
         for n in clone.targets.values():n['team']='ally' if n.get('team','enemy')==npc.get('team','enemy') else 'enemy'
         clone.targets[player_target]={'name':player['name'],'healthMax':self.player_health_max,'armor':player_derived['armor'],
@@ -481,6 +503,9 @@ class TrainingSession:
             if key!=actor_id:
                 self.target_healths[key]=clone.target_healths[key];self.target_positions[key]=clone.target_positions[key];self.conditions[key]=clone.conditions.get(key,{})
         self.log.extend(f"{npc['name']}: {line}" for line in clone.log[before_log:])
+        for event in clone.events:
+            remap=lambda key:actor_id if key=='player' else 'player' if key==player_target else key
+            self.events.append({**event,'sourceId':remap(event['sourceId']),'targetId':remap(event['targetId'])})
         self.npc_cooldowns={**getattr(self,'npc_cooldowns',{}),actor_id:clone.cooldowns}
         self.npc_spent={**getattr(self,'npc_spent',{}),actor_id:self.round_number}
         return result
@@ -494,6 +519,7 @@ class TrainingSession:
         self.equipment_movement_multiplier=result.get('movementMultiplier',1)
         attrs=result.setdefault('effectiveAttributes',{})
         attack=result.setdefault('attack',{})
+        guard=1
         for state in self.conditions.get('player',{}).values():
             kind,value=state.get('kind'),state.get('value',0)
             if kind in {'Сила','Искусность','Быстрота','Живучесть','Смекалка','Стойкость'}:
@@ -509,6 +535,12 @@ class TrainingSession:
             elif kind=='accuracy':attack['accuracy']=attack.get('accuracy',20)+round(value)
             elif kind=='armor':result['armor']=max(0,result.get('armor',0)+round(value))
             elif kind=='cooldown':result['cooldownMultiplier']=result.get('cooldownMultiplier',1)*value
+            elif kind in {'Парирование','Уклонение','Выносливость','Воля','Магия'}:
+                base=result.setdefault('defenses',{}).get(kind,20)
+                result['defenses'][kind]=max(0,round(base*(1+value) if abs(value)<1 else base+value))
+            elif kind=='guard':guard*=value
+        for defense in ['Парирование','Уклонение','Выносливость','Воля','Магия']:
+            if guard!=1:result.setdefault('defenses',{})[defense]=round(result.get('defenses',{}).get(defense,20)*guard)
         if any(s.get('source',{}).get('AffectsStat')==2129 for s in self.conditions.get('player',{}).values()):
             result['equipmentRecovery']=0
             attack['recovery']=0
@@ -563,13 +595,9 @@ class TrainingSession:
         if distance > 1 and not self.grid.line_of_sight(self.player_position, target):
             raise ValueError("Линию обзора перекрывает препятствие.")
 
-    def _roll_attack(
-        self, *, name: str, accuracy: int, low: int, high: int, defense: int,
-        armor: int, penetration: int = 0, multiplier: float = 1.0, damage_type: str = "физического",
-        target_id: str | None = None, cover_bonus: int = 0,
-        attack_mode: str = 'melee', defense_name: str | None = None,
-    ) -> dict[str, Any]:
-        target_id = target_id or self.selected_target_id
+    def _attack_parameters(self, *, accuracy, defense, armor, target_id, multiplier=1,
+                           damage_type='физического', attack_mode='melee', defense_name=None):
+        """Shared, read-only attack modifiers for preview and execution."""
         statuses = self.conditions.get(target_id, {})
         from talent_runtime import incoming_defense,incoming_conversions,reflection_chance
         defender_rules=self._target_talent_rules(target_id)
@@ -579,7 +607,7 @@ class TrainingSession:
                     and self.targets[key].get('team','enemy')!=self.targets[target_id].get('team','enemy'))
         if self.grid.distance(self.target_positions[target_id],self.player_position)<=1:engaged+=1
         if defense_name:
-            defenses={name:self._defense(name,target_id) for name in self.targets[target_id]['defenses']}
+            defenses={name:self._defense(name,target_id,include_guard=False) for name in self.targets[target_id]['defenses']}
             defense=incoming_defense(defender_rules,defenses,defense_name,attack_mode,engaged)
         from talent_runtime import attack_context
         context=attack_context(getattr(self,'talent_runtime',{}),statuses,
@@ -593,26 +621,12 @@ class TrainingSession:
         armor+=sum(armor_by_type(i).get(damage_key,0) for i in virtual_equipment(statuses,self.round_number))
         defense = max(0, defense - statuses.get('decay', {}).get('stacks', 0) * 2)
         armor = max(0, armor - statuses.get('decay', {}).get('stacks', 0))
-        if statuses.get('prone') and defense == self._defense('Парирование',target_id):
+        if statuses.get('prone') and (defense_name=='Парирование' or not defense_name and defense == self._defense('Парирование',target_id)):
             defense = max(0,defense-10)
+        if defense_name:
+            for state in statuses.values():
+                if state.get('kind')=='guard':defense=round(defense*state['value'])
         accuracy += 10 if self.conditions.get('player', {}).get('guidance') else 0
-        self.conditions.get(target_id, {}).pop('sleep', None)
-        target_name = self.targets[target_id]["name"]
-        roll = random.randint(1, 100)
-        score = roll + accuracy - defense - cover_bonus
-        if score <= 15:
-            result, quality = "Промах", 0
-        elif score <= 50:
-            result, quality = "Скользящий удар", .5
-        elif score <= 100:
-            result, quality = "Попадание", 1
-        else:
-            result, quality = "Критическое попадание", context['criticalMultiplier']
-        critical_chance=getattr(self,'runtime_derived',{}).get('attack',{}).get('criticalChance',0)
-        if result=='Попадание' and critical_chance and random.randint(1,100)<=critical_chance:
-            result,quality='Критическое попадание',context['criticalMultiplier']
-        if result=='Скользящий удар' and getattr(self,'talent_runtime',{}).get(102,0):
-            if random.random()<self.talent_runtime[102]:result,quality='Попадание',1
         from item_effects import equip_modifiers
         conversions=dict(self.targets[target_id].get('incomingConversions',{}))
         for key,value in incoming_conversions(defender_rules,attack_mode).items():
@@ -621,30 +635,174 @@ class TrainingSession:
             mods=equip_modifiers(item)['flat']
             for key,label in [('critToHit','Отражение критических ударов'),('hitToGraze','Отражение попаданий'),('grazeToMiss','Отражение промахов')]:
                 conversions[key]=conversions.get(key,0)+mods.get(label,0)
+        return {'accuracy':accuracy,'defense':defense,'armor':armor,'multiplier':multiplier,
+                'criticalMultiplier':context['criticalMultiplier'],'conversions':conversions,
+                'reflections':{i:reflection_chance(defender_rules,attack_mode,result) for i,result in
+                    enumerate(['Промах','Скользящий удар','Попадание','Критическое попадание']) if i}}
+
+    def _attack_damage(self, raw, quality, parameters, penetration, target_id, mutate=False):
+        statuses=self.conditions.get(target_id,{})
+        armor=parameters['armor']
+        raw=max(1,round(raw*quality*parameters['multiplier'])) if raw>0 else 0
+        for state in statuses.values():
+            if state.get('kind')=='incoming':raw=round(raw*state['value'])
+            if state.get('kind')=='armor':armor=max(0,armor+round(state['value']))
+        for state in self.conditions.get('player',{}).values():
+            if state.get('kind')=='extraDamage':raw+=round(raw*state['value']/100)
+        effective_armor=max(0,armor-penetration)
+        damage=max(1,round(raw-effective_armor)) if raw else 0
+        from consumables import receive_damage
+        damage=receive_damage(statuses if mutate else copy.deepcopy(statuses),damage)
+        return damage,effective_armor
+
+    def _attack_preview(self, action, target, derived):
+        """A single strike, excluding follow-up procs; shares the runtime modifiers."""
+        from talent_runtime import weapon_mode
+        from item_effects import DAMAGE_TYPES
+        from combat_math import outcome_distribution
+        if target=='player' or target not in self.targets:return None
+        kind=action['kind'];weapon=derived['attack'];factor=action.get('weaponMultiplier',0)
+        if kind=='ability' and (action.get('targetTeam')=='ally' or not action.get('attackCount')):return None
+        if kind=='spell' and action.get('persistent',{}):
+            if action['persistent']['effect'] not in {'fire','stone'}:return None
+        if kind in {'item','disengage'} or kind=='tactic' and action['name']!='Подготовить атаку':return None
+        ordinary=kind in {'attack','tactic'}
+        if ordinary:
+            accuracy=weapon.get('accuracy',0);low=weapon.get('damageMin',1);high=weapon.get('damageMax',2)
+            mode=weapon_mode(weapon);defense='Парирование' if mode=='melee' else 'Уклонение'
+            penetration=round(weapon.get('penetration',0));damage_type='физического'
+        elif kind=='artifact':
+            accuracy=weapon.get('accuracy',20);low=action['damageMin'] or round(weapon.get('damageMin',2)*factor)
+            high=action['damageMax'] or round(weapon.get('damageMax',4)*factor)
+            mode='melee';defense='Магия';penetration=action['penetration'];damage_type='физического'
+        else:
+            accuracy=action['accuracy'];low=round(weapon['damageMin']*factor) if factor else action['damageMin']
+            high=round(weapon['damageMax']*factor) if factor else action['damageMax']
+            mode=weapon_mode(weapon,action) if factor else 'spell';defense=action['defense'];penetration=action.get('penetration',0)
+            damage_type=CORE_DAMAGE.get(action.get('core'),'магического') if kind=='spell' else DAMAGE_TYPES.get(action.get('damageType'),'физического').lower()
+            if kind=='ability':
+                engaged=sum(self.grid.distance(self.player_position,self.target_positions[k])<=1 for k in self._alive_targets())
+                for effect in action.get('effects',[]):
+                    if effect.get('AffectsStat')==2072 and self.grid.distance(self.player_position,self.target_positions[target])<=1:
+                        low=round(low*effect['Value']);high=round(high*effect['Value'])
+                    elif effect.get('AffectsStat')==2013:
+                        mult=1+effect['Value']/100*engaged;low=round(low*mult);high=round(high*mult)
+            if kind=='spell' and action.get('persistent'):
+                defense='Магия';penetration=0
+        cover=self.grid.cover(self.player_position,self.target_positions[target])[1]
+        uses_cover=(ordinary and self._weapon_range(weapon)>1 or kind=='ability' and action['targeting']=='unit' and action['range']>1
+                    or kind=='spell' and not action.get('persistent') and action['targeting'] in {'unit','line'})
+        cover=cover if uses_cover else 0
+        parameters=self._attack_parameters(accuracy=accuracy,defense=self._defense(defense,target) if defense!='Нет' else 0,
+            armor=self.targets[target]['armor'],target_id=target,attack_mode=mode,
+            defense_name=defense if kind!='artifact' else None,damage_type=damage_type)
+        distribution=outcome_distribution(parameters['accuracy'],parameters['defense']+cover,
+            derived.get('attack',{}).get('criticalChance',0),
+            getattr(self,'talent_runtime',{}).get(102,0),parameters['conversions'],parameters['reflections'])
+        bounds=[]
+        for label,quality in [('graze',.5),('hit',1),('critical',parameters['criticalMultiplier'])]:
+            if distribution[label]>0:
+                bounds.extend(self._attack_damage(raw,quality,parameters,penetration,target)[0]
+                              for raw in [max(1,low) if high>0 else 0,max(1,low,high) if high>0 else 0])
+        return {'targetId':target,'name':self.targets[target]['name'],'accuracy':parameters['accuracy'],
+                'defenseName':defense,'defense':parameters['defense'],'cover':cover,
+                'hitChance':round((1-distribution['miss']-distribution['reflected'])*100,1),
+                'outcomes':{k:round(v*100,1) for k,v in distribution.items()},
+                'damageMin':min(bounds,default=0),'damageMax':max(bounds,default=0),
+                'strikeCount':action.get('attackCount',1),'note':'За один удар при попадании, без дополнительных эффектов.'}
+
+    def _opportunity_controllers(self, path):
+        if self.disengaged or self.player_health<=0 or any(s.get('source',{}).get('AffectsStat') in {24,151,2145}
+                for s in self.conditions.get('player',{}).values()):return []
+        return [key for key in self._alive_targets() if key not in self.opportunity_used
+                and float(self.targets[key].get('attack',{}).get('range',1))<=1
+                and not any(self.conditions.get(key,{}).get(state) for state in
+                    ('sleep','prone','freeze','stun','paralyze','petrif','disarm','special:freeze','special:frozen','special:stun','special:paralyze','special:petrif','special:disarm'))
+                and any(self.grid.distance(a,self.target_positions[key])<=1 and self.grid.distance(b,self.target_positions[key])>1
+                        and self.grid.line_of_sight(self.target_positions[key],a) for a,b in zip(path,path[1:]))]
+
+    def _movement_previews(self):
+        occupied={p for key,p in self.target_positions.items() if self.target_healths[key]>0}
+        rooted=any(self.conditions.get('player',{}).get(k) for k in ('root','stun','paralyze','petrif','freeze','sleep','prone'))
+        reachable=self.grid.reachable(self.player_position,0 if rooted else self.movement_remaining,occupied)
+        previews={}
+        for point,cost in reachable.items():
+            if not cost:continue
+            path=self.grid.path(self.player_position,point,occupied)
+            controllers=self._opportunity_controllers(path)
+            previews[f'{point[0]}:{point[1]}']={'cost':cost,'path':[{'x':x,'y':y} for x,y in path],
+                'opportunities':[{'id':key,'name':self.targets[key]['name']} for key in controllers]}
+        return reachable,previews
+
+    def _trigger_readied_attack(self, actor_id, previous_position=None, hostile=False):
+        ready=self.readied_attack
+        if not ready or actor_id!=ready['targetId'] or actor_id not in self._alive_targets() or self.player_health<=0:return None
+        if any(self.conditions.get('player',{}).get(k) for k in ('stun','paralyze','petrif','freeze','sleep','disarm')):return None
+        point=self.target_positions[actor_id];weapon=ready['derived']['attack'];distance=self._weapon_range(weapon)
+        if self.grid.distance(self.player_position,point)>distance or not self.grid.line_of_sight(self.player_position,point):return None
+        if ready['trigger']=='approach':
+            if previous_position is None or (self.grid.distance(self.player_position,previous_position)<=distance
+                    and self.grid.line_of_sight(self.player_position,previous_position)):return None
+        elif not hostile:return None
+        self.readied_attack=None
+        previous=(getattr(self,'talent_runtime',{}),getattr(self,'runtime_derived',{}))
+        self.runtime_derived=ready['derived'];self.talent_runtime={int(k):v for k,v in ready['derived'].get('talentRuntime',{}).items()}
+        try:
+            from talent_runtime import weapon_mode
+            mode=weapon_mode(weapon);defense='Парирование' if mode=='melee' else 'Уклонение'
+            result=self._roll_attack(name='Подготовленная атака',accuracy=int(weapon.get('accuracy',0)),
+                low=int(weapon.get('damageMin',1)),high=int(weapon.get('damageMax',2)),target_id=actor_id,
+                defense=self._defense(defense,actor_id),armor=self.targets[actor_id]['armor'],
+                penetration=round(weapon.get('penetration',0)),cover_bonus=self.grid.cover(self.player_position,point)[1] if distance>1 else 0,
+                attack_mode=mode,defense_name=defense)
+            return result
+        finally:self.talent_runtime,self.runtime_derived=previous
+
+    def _roll_attack(
+        self, *, name: str, accuracy: int, low: int, high: int, defense: int,
+        armor: int, penetration: int = 0, multiplier: float = 1.0, damage_type: str = "физического",
+        target_id: str | None = None, cover_bonus: int = 0,
+        attack_mode: str = 'melee', defense_name: str | None = None,
+    ) -> dict[str, Any]:
+        from combat_math import roll_quality
+        target_id=target_id or self.selected_target_id
+        parameters=self._attack_parameters(accuracy=accuracy,defense=defense,armor=armor,target_id=target_id,
+            multiplier=multiplier,damage_type=damage_type,attack_mode=attack_mode,defense_name=defense_name)
+        accuracy,defense=parameters['accuracy'],parameters['defense']
+        statuses=self.conditions.get(target_id,{})
+        statuses.pop('sleep',None)
+        target_name=self.targets[target_id]['name']
+        roll=random.randint(1,100)
+        index=roll_quality(roll+accuracy-defense-cover_bonus)
+        result=['Промах','Скользящий удар','Попадание','Критическое попадание'][index]
+        quality=[0,.5,1,parameters['criticalMultiplier']][index]
+        critical_chance=getattr(self,'runtime_derived',{}).get('attack',{}).get('criticalChance',0)
+        if result=='Попадание' and critical_chance and random.randint(1,100)<=critical_chance:
+            result,quality='Критическое попадание',parameters['criticalMultiplier']
+        if result=='Скользящий удар' and getattr(self,'talent_runtime',{}).get(102,0):
+            if random.random()<self.talent_runtime[102]:result,quality='Попадание',1
+        conversions=parameters['conversions']
         for current,key,new,new_quality in [('Критическое попадание','critToHit','Попадание',1),('Попадание','hitToGraze','Скользящий удар',.5),('Скользящий удар','grazeToMiss','Промах',0)]:
             if result==current and conversions.get(key,0) and random.randint(1,100)<=conversions[key]:result,quality=new,new_quality
         self.attacks += 1
         if not quality:
             line = f"Раунд {self.round_number}: {name} по цели «{target_name}» — промах ({roll} + {accuracy} − {defense + cover_bonus})."
             self.log.append(line)
+            self.events.append({'sourceId':'player','targetId':target_id,'result':'Промах','damage':0})
             return {"result": result, "damage": 0, "roll": roll, "line": line}
-        raw = max(1, round(random.randint(max(1, low), max(1, low, high)) * quality * multiplier)) if high>0 else 0
-        for state in statuses.values():
-            if state.get('kind')=='incoming':raw=round(raw*state['value'])
-            if state.get('kind')=='armor':armor=max(0,armor+round(state['value']))
-        for state in self.conditions.get('player',{}).values():
-            if state.get('kind')=='extraDamage':raw+=round(raw*state['value']/100)
-        effective_armor = max(0, armor - penetration)
-        damage = max(1,round(raw - effective_armor)) if raw else 0
+        raw=random.randint(max(1,low),max(1,low,high)) if high>0 else 0
+        damage,effective_armor=self._attack_damage(raw,quality,parameters,penetration,target_id,mutate=True)
         from consumables import receive_damage
-        damage=receive_damage(statuses,damage)
-        chance=reflection_chance(defender_rules,attack_mode,result)
+        chance=parameters['reflections'][{'Скользящий удар':1,'Попадание':2,'Критическое попадание':3}[result]]
         if chance and random.random()<chance:
             reflected=receive_damage(self.conditions.setdefault('player',{}),damage)
             self.player_health=max(0,self.player_health-reflected)
             line=f"Раунд {self.round_number}: «{target_name}» отражает «{name}»: атакующий получает {reflected} урона."
             self.log.append(line)
+            self.events.append({'sourceId':'player','targetId':target_id,'result':'Отражено','damage':0})
             return {'result':'Отражено','damage':0,'roll':roll,'line':line}
+        self.events.append({'sourceId':'player','targetId':target_id,'result':result,'damage':damage,
+                            'absorbed':damage==0 and high>0})
         self.target_healths[target_id] = max(0, self.target_healths[target_id] - damage)
         if target_id == "dummy":
             self.dummy_health = self.target_healths[target_id]
@@ -720,6 +878,8 @@ class TrainingSession:
         self.action_available = True
         self.disengaged = False
         self.opportunity_used.clear()
+        self.readied_attack=None
+        self.dash_used=False
         return {"result": "Новый раунд", "damage": 0, "line": line}
 
     def _pulse_area(self, area):
@@ -794,16 +954,17 @@ class TrainingSession:
     ) -> dict[str, Any]:
         previous=copy.deepcopy(self.__dict__)
         self.movement_path = []
+        self.events=[]
         kind = str(payload.get("kind", ""))
         target_id = payload.get("targetId")
         try:
-            if kind in {'ability','spell','artifact'} and target_id=='player':
+            if kind in {'ability','spell','artifact','tactic'} and target_id=='player':
                 self.aim_point=self.player_position
-            elif kind in {"attack", "ability", "spell", "artifact"} and target_id:
+            elif kind in {"attack", "ability", "spell", "artifact", "tactic"} and target_id:
                 if target_id not in (self._alive_targets() if kind=='attack' else self.target_healths):
                     raise ValueError("Эта цель недоступна.")
                 self.selected_target_id = str(target_id)
-            if kind in {"attack","spell", "artifact", "ability", "item","move"} and ('x' in payload or 'y' in payload):
+            if kind in {"attack","spell", "artifact", "ability", "item","move","tactic"} and ('x' in payload or 'y' in payload):
                 point = self._cell(payload)
                 if not self.grid.inside(point) or point in self.grid.blocked:
                     raise ValueError("Нельзя применить заклинание в этой клетке.")
@@ -812,7 +973,12 @@ class TrainingSession:
                     aimed=next((k for k in self._alive_targets() if self.target_positions[k]==point),None)
                     if not aimed or target_id and str(target_id)!=aimed:raise ValueError('Выберите вражеский токен для атаки.')
                     self.selected_target_id=aimed
-            return self._act(payload, character, derived, spells, weapon_sets)
+            result=self._act(payload, character, derived, spells, weapon_sets)
+            for key,point in self.target_positions.items():
+                if point!=previous['target_positions'].get(key):
+                    reaction=self._trigger_readied_attack(key,previous['target_positions'].get(key))
+                    if reaction:result={**result,'line':result['line']+' '+reaction['line'],'reaction':reaction}
+            return result
         except Exception:
             self.__dict__.clear();self.__dict__.update(previous)
             raise
@@ -826,6 +992,7 @@ class TrainingSession:
         self.runtime_talents=character.get('talents',[])
         self.runtime_derived=derived
         derived=self._combat_derived(derived)
+        self.runtime_derived=derived
         self._initialize({**character,'attributes':derived.get('effectiveAttributes',character.get('attributes',{})),'health_max':derived.get('healthMax',character.get('health_max',character.get('health',20)))})
         if self.finished:
             raise ValueError("Манекен уже разрушен. Начните новую тренировку.")
@@ -836,6 +1003,33 @@ class TrainingSession:
         attack = derived["attack"]
         attrs = derived.get("effectiveAttributes", character.get("attributes", {}))
         multiplier = float(derived.get("cooldownMultiplier", 1))
+        if kind=='tactic':
+            self._require_action(0)
+            if name not in {'Защита','Спринт','Подготовить атаку'}:raise ValueError('Неизвестный тактический приём.')
+            if name=='Защита':
+                if self.aim_point is not None and self.aim_point!=self.player_position:raise ValueError('Защита применяется на себя.')
+                self.conditions.setdefault('player',{})['tactical:guard']={'name':'Защита: защиты ×1,2',
+                    'kind':'guard','value':1.2,'until':self.round_number,'beneficial':True}
+                line='Защита: Парирование, Уклонение, Выносливость, Воля и Магия ×1,2 до следующего хода.'
+            elif name=='Спринт':
+                if self.aim_point is not None and self.aim_point!=self.player_position:raise ValueError('Спринт применяется на себя.')
+                if self.dash_used:raise ValueError('Спринт уже использован в этом ходу.')
+                if any(controls.get(k) for k in ('root','stun','paralyze','petrif','freeze','sleep','prone')):raise ValueError('Персонаж обездвижен.')
+                self.movement_remaining+=BASE_MOVEMENT;self.dash_used=True
+                line='Спринт: +5 м передвижения за основное действие; атаки по возможности остаются активными.'
+            else:
+                target=str(payload.get('targetId') or self.selected_target_id)
+                if self.aim_point is not None:
+                    target=next((k for k in self._alive_targets() if self.target_positions[k]==self.aim_point),'')
+                    if payload.get('targetId') and payload['targetId']!=target:raise ValueError('Цель не совпадает с выбранной клеткой.')
+                if target not in self._alive_targets() or not self.grid.line_of_sight(self.player_position,self.target_positions[target]):raise ValueError('Выберите видимую вражескую цель.')
+                trigger=payload.get('trigger','approach')
+                if trigger not in {'approach','hostile'}:raise ValueError('Неизвестное условие подготовленной атаки.')
+                self.readied_attack={'targetId':target,'trigger':trigger,'until':self.round_number,'derived':copy.deepcopy(derived)}
+                condition='войдёт в дальность оружия' if trigger=='approach' else 'применит враждебное умение на персонажа'
+                line=f"Подготовлен один удар по «{self.targets[target]['name']}», когда цель {condition}. До следующего хода; нужны дальность и видимость."
+            self.action_available=False;self.log.append(line)
+            return {'result':name,'damage':0,'line':line}
         if kind=='item':
             from consumables import apply,profile
             item=next((i for i in getattr(self,'consumable_inventory',[]) if str(i['inventory_id'])==name),None)
@@ -885,15 +1079,7 @@ class TrainingSession:
             self.player_position = target
             self.movement_remaining -= spent
             line = f"Раунд {self.round_number}: персонаж перемещается на {spent} м."
-            controllers = [
-                key for key in self._alive_targets()
-                if key not in self.opportunity_used
-                and float(self.targets[key].get('attack',{}).get('range',1))<=1
-                and any(self.grid.distance(a,self.target_positions[key])<=1 and self.grid.distance(b,self.target_positions[key])>1
-                        and self.grid.line_of_sight(self.target_positions[key],a)
-                        for a,b in zip(self.movement_path,self.movement_path[1:]))
-                and not any(self.conditions.get(key,{}).get(state) for state in ('sleep','prone','freeze','stun','paralyze','petrif','disarm','special:freeze','special:frozen','special:stun','special:paralyze','special:petrif','special:disarm'))
-            ]
+            controllers = self._opportunity_controllers(self.movement_path)
             for controller in controllers:
                 if self.player_health<=0 or self.disengaged or any(s.get('source',{}).get('AffectsStat') in {24,151,2145} for s in self.conditions.get('player',{}).values()):continue
                 self.opportunity_used.add(controller)
@@ -913,10 +1099,12 @@ class TrainingSession:
                         if state.get('kind')=='shield':
                             absorbed=min(damage,max(0,round(state['value'])));damage-=absorbed;state['value']-=absorbed
                     self.player_health = max(0, self.player_health - damage)
+                    self.events.append({'sourceId':controller,'targetId':'player','result':'Попадание','damage':damage,'opportunity':True})
                     retaliation=self.conditions.get('player',{}).get('special:retaliateParalyze')
                     if retaliation:self._apply_special({**retaliation,'kind':'paralyze','name':'Паралич','side':'enemy'},controller)
                     line += f" {attacker} проводит атаку по возможности и наносит {damage} урона."
                 else:
+                    self.events.append({'sourceId':controller,'targetId':'player','result':'Промах','damage':0,'opportunity':True})
                     line += f" {attacker} проводит атаку по возможности, но промахивается."
             self.log.append(line)
             return {"result": "Перемещение", "damage": 0, "line": line}
@@ -934,6 +1122,9 @@ class TrainingSession:
             if not 1 <= number <= weapon_sets:
                 raise ValueError("Этот комплект оружия недоступен.")
             self.active_weapon_set = number
+            if self.readied_attack:
+                self.readied_attack=None
+                self.log.append('Смена оружия отменяет подготовленную атаку.')
             line = f"Раунд {self.round_number}: выбран комплект оружия {number}; основное действие не потрачено."
             self.log.append(line)
             return {"result": "Комплект сменён", "damage": 0, "line": line}
@@ -1174,6 +1365,7 @@ class TrainingSession:
                             "core": spell["core"], "angle": profile.get("angle", 90),
                             "cooldown": profile["cooldown"], "damageMin": profile["damage_min"],
                             "damageMax": profile["damage_max"], "defense": profile["defense"],
+                            "accuracy":profile['accuracy'],"penetration":profile['penetration'],
                             "description": f"{spell['core']} + {spell['expression']}" +
                                 (f" · {persistent_profile(spell)['description']} · {persistent_profile(spell)['rounds']} раунда" if persistent_profile(spell) else ''),
                             "persistent": persistent_profile(spell),
@@ -1190,9 +1382,20 @@ class TrainingSession:
                                "disabledReason": "Основное действие потрачено" if not self.action_available else "",
                                 "cells": []})
 
+        for name,description,icon in [
+            ('Защита','Основное действие: все пять защит ×1,2 до следующего хода.','parry'),
+            ('Спринт','Основное действие: +5 м передвижения. Не защищает от атак по возможности. Один раз за ход.','dodge'),
+            ('Подготовить атаку','Основное действие: один удар при выбранном условии до следующего хода. Оружие фиксируется; смена комплекта отменяет подготовку.','damage')]:
+            actions.append({'kind':'tactic','name':name,'description':description,'icon':f'assets/stat-icons/{icon}.png',
+                'targeting':'unit' if name=='Подготовить атаку' else 'self',
+                'range':max(self.grid.width,self.grid.height) if name=='Подготовить атаку' else 0,
+                'weaponRange':weapon_range,'remaining':0,'cells':[],
+                'disabledReason':('Спринт уже использован' if name=='Спринт' and self.dash_used else reason(0))})
+
         # The client previews these server-computed shapes without spending an action.
         for action in actions:
             action["aims"] = {}
+            attack_previews={}
             for y in range(self.grid.height):
                 for x in range(self.grid.width):
                     point = (x, y)
@@ -1235,18 +1438,25 @@ class TrainingSession:
                         else:affected=[k for k in affected if self.grid.cover(self.player_position,self.target_positions[k])[0]!='полное']
                     if action['kind']=='item':affected=[recipient] if recipient else []
                     if targeting=='self' and not (action['kind']=='ability' and affected):affected=['player']
-                    action["aims"][f"{x}:{y}"] = {"valid": valid, "targetIds":affected,"cells": [{"x": cx, "y": cy} for cx, cy in sorted(shape)]}
+                    previews=[]
+                    if valid:
+                        for target in affected:
+                            if target not in attack_previews:attack_previews[target]=self._attack_preview(action,target,derived)
+                            if attack_previews[target]:previews.append(attack_previews[target])
+                    action["aims"][f"{x}:{y}"] = {"valid": valid, "targetIds":affected,"previews":previews,
+                        "cells": [{"x": cx, "y": cy} for cx, cy in sorted(shape)]}
             self.aim_point = None
 
         map_spec = self.custom_map or TACTICAL_MAPS[self.map_key]
         occupied = {p for key,p in self.target_positions.items() if self.target_healths[key]>0}
-        reachable = self.grid.reachable(self.player_position, self.movement_remaining, occupied)
+        reachable,movement_previews=self._movement_previews()
         grid_payload = self.grid.payload()
         grid_payload.update({
             "name": map_spec["name"], "image": map_spec["image"], "source": map_spec.get("source", "Карта мастера"),
             "layout": {key:map_spec.get(key,default) for key,default in [('cellSize',48),('offsetX',0),('offsetY',0),('imageScale',1),('gridOpacity',.3)]},
             "movementPerTurn": BASE_MOVEMENT,
             "reachable": [{"x": x, "y": y, "cost": cost} for (x, y), cost in reachable.items() if cost],
+            "movementPreviews":movement_previews,
             "controlZones": [{"x": x, "y": y} for x, y in controlled],
             "selectedTargetId": self.selected_target_id,
             "tokens": [
@@ -1268,9 +1478,11 @@ class TrainingSession:
                           "health": self.player_health, "healthMax": self.player_health_max,
                           "activeWeaponSet": self.active_weapon_set, "weaponSets": weapon_sets},
             "turn": {"actorId": "player", "movementRemaining": self.movement_remaining,
-                     "movementMax": self._movement_limit(), "actionAvailable": self.action_available,
+                     "movementMax": self._movement_limit()+(BASE_MOVEMENT if self.dash_used else 0), "actionAvailable": self.action_available,
                      "distanceToTarget": distance, "inControlZone": self.player_position in controlled,
                      "cover": cover_name, "coverBonus": cover_bonus, "disengaged": self.disengaged},
+            "readiedAttack":{k:v for k,v in self.readied_attack.items() if k!='derived'} if self.readied_attack else None,
+            "events":self.events,
             "initiative": self.initiative, "grid": grid_payload,
             "songs": {"available":any(a.get('song') or a.get('breathCost') for a in actions),
                       "breath":self.breath,"limit":breath_limit(character.get('talents',[])),"capacity":song_capacity,

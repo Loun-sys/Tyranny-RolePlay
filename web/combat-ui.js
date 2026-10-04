@@ -26,7 +26,7 @@ const originalCombatPickerPanel=combatPickerPanel;
 combatPickerPanel=function(t){
  if(!combatPicker||combatPicker==='initiative')return '';
  if(combatPicker==='stance')return originalCombatPickerPanel(t);
- const actions=(t.actions||[]).filter(x=>combatPicker==='item'?x.kind==='item':combatPicker==='spell'?x.kind==='spell':combatPicker==='artifact'?x.kind==='artifact':['ability','disengage'].includes(x.kind));
+ const actions=(t.actions||[]).filter(x=>combatPicker==='item'?x.kind==='item':combatPicker==='spell'?x.kind==='spell':combatPicker==='artifact'?x.kind==='artifact':['ability','disengage','tactic'].includes(x.kind));
  return `<div class="combat-picker"><header><b>${combatPicker==='item'?'РАСХОДНИКИ':combatPicker==='spell'?'ГРИМУАР':combatPicker==='artifact'?'СПОСОБНОСТИ АРТЕФАКТОВ':'УМЕНИЯ'}</b><button data-combat-picker-close aria-label="Закрыть">×</button></header><nav class="combat-picker-tabs"><button data-combat-picker="ability">Умения</button><button data-combat-picker="spell">Заклинания</button><button data-combat-picker="item">Расходники</button></nav><p>${quickbarEditing?`Выберите действие для ячейки ${quickbarEditing} или перетащите его.`:'Нажмите для прицеливания. Перетащите в быстрые ячейки 1–9.'}</p><div class="combat-picker-list">${actions.map(x=>`<div class="combat-choice">${combatActionButton(x,'data-picker-action="1"')}</div>`).join('')||'<p>Нет доступных действий.</p>'}</div></div>`;
 };
 const statNames={health:'Здоровье',critical:'Критический шанс',accuracy:'Точность',damage:'Урон оружия',recovery:'Восстановление',endurance:'Защита Выносливостью',will:'Защита Волей',magic:'Защита Магией',dodge:'Уклонение',parry:'Парирование',armor:'Поглощение брони',deflection:'Отражение'};
@@ -193,9 +193,10 @@ async function confirmCombatAim(point){
  const target=training.grid.tokens.find(t=>t.x===point.x&&t.y===point.y);
  if(!training.turn.actionAvailable&&action.freeOnSelf&&!combatActionIsFree(action)&&target?.id!=='player'){toast('Основное действие потрачено');return}
  const oldGrid=training.grid;setCombatBusy(true);
- try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id})});training=j.training;clearCombatAim();if(tab==='training'){renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);await playCombatEffect(action,point,oldGrid,aim.cells||[])}toast(j.message)}catch(error){toast(error.message)}finally{setCombatBusy(false)}
+ try{const j=await request(`/api/portal/${encodeURIComponent(token)}/training/action`,{method:'POST',body:JSON.stringify({kind:action.kind,name:action.name,x:point.x,y:point.y,targetId:target?.id,trigger:typeof combatReadyTrigger==='undefined'?'approach':combatReadyTrigger})});training=j.training;clearCombatAim();if(tab==='training'){renderTraining($('#panel'),data.character);await animateTokenMovement(oldGrid,training.grid,training.movementPath);await playCombatEffect(action,point,oldGrid,aim.cells||[])}toast(j.message)}catch(error){toast(error.message)}finally{setCombatBusy(false)}
 }
 async function playCombatEffect(action,point,grid,cells){
+ if(action.kind==='tactic')return;
  const layer=document.querySelector('.combat-vfx-layer');if(!layer)return;
  const player=grid.tokens.find(t=>t.id==='player'),core=action.core||'Сила',reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const colors={Огонь:'#ff682b',Холод:'#8ceeff',Молния:'#75baff',Истощение:'#c673ff',Терратус:'#58edd0',Жизнь:'#98f58e',Рвение:'#ff6274',Камень:'#d6b38b',Сила:'#97baff',Эмоции:'#f4a6eb'};
@@ -228,11 +229,14 @@ async function playCombatEffect(action,point,grid,cells){
  }
  }
  if(!layer.isConnected)return;
+ const events=typeof training==='undefined'?[]:training?.events||[],misses=events.length&&events.every(event=>['Промах','Отражено'].includes(event.result));
+ if(!misses&&action.kind!=='tactic'){
  const impact=make(shooting||action.kind==='attack'?'combat-hit-spark':'combat-spell-bloom',x,y);
- await animate(impact,[{opacity:0,transform:'translate(-50%,-50%) scale(.2)'},{opacity:1,offset:.15},{opacity:0,transform:'translate(-50%,-50%) scale(1.5)'}],{duration:reduced?150:650});
+ await animate(impact,[{opacity:0,transform:'translate(-50%,-50%) scale(.2)'},{opacity:.7,offset:.15},{opacity:0,transform:'translate(-50%,-50%) scale(1.3)'}],{duration:reduced?150:450});
+ }
  if(!reduced)for(const p of cells){
  const cell=document.querySelector(`[data-cell="${p.x}:${p.y}"]`);
- cell?.animate([{boxShadow:`inset 0 0 20px ${color}`,background:color+'66'},{boxShadow:'none',background:'transparent'}],{duration:700});
+ cell?.animate([{boxShadow:`inset 0 0 10px ${color}`,background:color+'22'},{boxShadow:'none',background:'transparent'}],{duration:500});
  }
  }finally{casterAnimation?.cancel();nodes.forEach(node=>node.remove())}
 }
@@ -246,7 +250,7 @@ document.addEventListener('click',e=>{
  const button=e.target.closest('[data-training-kind]');if(!button||button.disabled)return;
  if(['end_turn','wait','disengage'].includes(button.dataset.trainingKind))clearCombatAim();
  if(button.matches('[data-picker-action]')&&quickbarEditing)return;
- if(!['attack','ability','spell','artifact','item'].includes(button.dataset.trainingKind))return;
+ if(!['attack','ability','spell','artifact','item','tactic'].includes(button.dataset.trainingKind))return;
  const action=training.actions.find(x=>x.kind===button.dataset.trainingKind&&x.name===button.dataset.trainingName);if(action){e.preventDefault();e.stopImmediatePropagation();armCombatAction(action)}
 },true);
 document.addEventListener('pointerover',e=>{if(!armedCombatAction)return;const cell=e.target.closest('[data-cell]');if(cell){const [x,y]=cell.dataset.cell.split(':').map(Number);showCombatAim({x,y})}},true);
@@ -276,7 +280,9 @@ function showIconTooltip(target){
  if(combatBusy){hideCombatTooltip();return}
  if(!target){hideCombatTooltip();return}
  const action=(training?.actions||[]).find(x=>x.kind===target.dataset.trainingKind&&x.name===target.dataset.trainingName);
- const content=action?`${action.name}\n\n${action.description||''}\n\nДальность: ${action.range||0} м${action.area?` · область ${action.area} м`:''}\n${action.remaining?`Перезарядка: ${action.remaining} раунд.`:'Нажмите, затем выберите цель на карте.'}${target.dataset.quickSlot?'\nПеретащите на другую ячейку для обмена.':''}`:target.dataset.uiTip;
+ if(action&&armedCombatAction?.kind===action.kind&&armedCombatAction?.name===action.name){hideCombatTooltip();return}
+ const reach=action?.weaponRange!==undefined?`Дальность реакции: ${action.weaponRange} м. Выберите видимого противника.`:`Дальность: ${action?.range||0} м${action?.area?` · область ${action.area} м`:''}`;
+ const content=action?`${action.name}\n\n${action.description||''}\n\n${reach}\n${action.remaining?`Перезарядка: ${action.remaining} раунд.`:'Нажмите, затем выберите цель на карте.'}${target.dataset.quickSlot?'\nПеретащите на другую ячейку для обмена.':''}`:target.dataset.uiTip;
  if(!content){hideCombatTooltip();return}
  let popover=document.querySelector('.game-icon-tooltip');if(!popover){popover=document.createElement('div');popover.className='game-icon-tooltip';popover.setAttribute('role','tooltip');document.body.append(popover)}
  popover.textContent=content;popover.hidden=false;const rect=target.getBoundingClientRect(),width=Math.min(360,innerWidth-24);popover.style.width=`${width}px`;popover.style.maxHeight=`${innerHeight-24}px`;popover.style.left=`${Math.max(12,Math.min(rect.left,innerWidth-width-12))}px`;const above=rect.top-popover.offsetHeight-10;popover.style.top=`${above>=12?above:Math.max(12,Math.min(rect.bottom+10,innerHeight-popover.offsetHeight-12))}px`;

@@ -56,6 +56,10 @@ async function showCombatHealthFeedback(before,after){
   const node=document.createElement('span');node.className='combat-floating-result '+(change.delta>0?'healing':'damage');
   node.textContent=(change.delta>0?'+':'−')+Math.abs(change.delta);node.setAttribute('aria-hidden','true');
   node.style.left=(change.x+.5)/after.width*100+'%';node.style.top=(change.y+.5)/after.height*100+'%';layer.append(node);
+  if(change.delta>0){
+   const ring=document.createElement('i');ring.className='combat-healing-ring';ring.style.left=node.style.left;ring.style.top=node.style.top;layer.append(ring);
+   ring.animate(reduced?[{opacity:.6},{opacity:0}]:[{opacity:0,transform:'translate(-50%,-50%) scale(.8)'},{opacity:.6,offset:.3},{opacity:0,transform:'translate(-50%,-50%) scale(1.25)'}],{duration:reduced?200:600}).finished.catch(()=>{}).finally(()=>ring.remove());
+  }
   try{await node.animate(reduced?[{opacity:1},{opacity:0}]:[{opacity:0,transform:'translate(-50%,-70%)'},{opacity:1,offset:.15},{opacity:1,offset:.65},{opacity:0,transform:'translate(-50%,-150%)'}],{duration:reduced?350:950,easing:'ease-out'}).finished}catch{}finally{node.remove()}
  }));
 }

@@ -1,0 +1,64 @@
+/* Low-noise tactical layers; background art remains legible. */
+.combat-game-screen .tactical-cell{border-color:#dacdd10a!important}
+.combat-game-screen .tactical-cell.reachable{background:#94ab7610;border-color:#aac78420!important}
+.combat-game-screen .tactical-cell.controlled{box-shadow:none;background:#a2394910}
+.combat-game-screen .tactical-cell.blocked{background:#14111b42}
+.tactical-map.targeting .tactical-cell.aim-range{background:#8b9ca510!important;border-color:#b7c3ca14!important}
+.tactical-map.targeting .tactical-cell.aim-effect{background:#b750781c!important;box-shadow:none;border-color:#f0b1c012!important}
+.combat-shape-outline,.combat-route-svg{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;overflow:visible}
+.combat-shape-outline path{fill:none;stroke:var(--shape-color);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linecap:round;opacity:.8}
+.combat-shape-outline.area-outline{z-index:2}
+.area-outline path{stroke-width:1.5;opacity:.55;stroke-dasharray:5 4}
+.persistent-area-cell{animation:none!important;box-shadow:none;background:color-mix(in srgb,var(--area-color) 5%,transparent)}
+.persistent-area-label{font-size:9px;opacity:.8;max-width:170px;transform:translate(-50%,20px)}
+.combat-route-svg polyline{fill:none;stroke:#b6cfa1;stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-dasharray:5 4}
+.combat-route-svg.danger polyline{stroke:#f27587}
+.combat-game-screen .tactical-cell.route-step{background:#9fcf9525!important}
+.combat-game-screen .tactical-cell.route-danger{background:#d3455528!important}
+.route-attacker{outline:2px dashed #f27587;outline-offset:5px}
+.combat-aim-overlay{pointer-events:none}
+.combat-route-note{pointer-events:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;background:#0a100def;border:1px solid #65806a;color:#d9e5d0;font:12px/1.4 Arial,sans-serif;max-width:100%;box-sizing:border-box}
+.combat-route-note.danger{background:#241017f2;border-color:#a43b52;color:#ffd5dc}
+.combat-route-note>span{min-width:0;overflow-wrap:anywhere}
+.combat-route-note>div{display:flex;gap:6px;flex:none}
+.combat-route-note button,.combat-tactical-controls button{background:#130b11;border:1px solid #923147;color:#f1dce4;cursor:pointer;padding:6px 10px;border-radius:3px;font:12px Arial,sans-serif}
+.combat-route-note button:hover,.combat-tactical-controls button:hover{background:#471427;border-color:#df5578}
+.combat-tactical-controls{order:-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.combat-tactical-controls button{display:flex;gap:7px;align-items:center;justify-content:center;min-height:36px;padding:6px;min-width:0}
+.combat-tactical-controls img{width:20px;height:20px;object-fit:contain;flex:none}
+.combat-tactical-controls [aria-disabled=true]{opacity:.5}
+.combat-intent-panel{order:0;border:1px solid #833449;background:#120c13;color:#ebd9e1;padding:10px 12px;font:11px/1.45 Arial,sans-serif;max-height:270px;overflow:auto;scrollbar-width:thin}
+.combat-intent-panel[hidden]{display:none}
+.combat-intent-panel article+article{margin-top:10px;padding-top:10px;border-top:1px solid #572535}
+.combat-intent-panel header{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:5px}
+.combat-intent-panel header strong{color:#d9bb9b;font-size:18px;white-space:nowrap}
+.combat-intent-panel p{margin:4px 0;font-size:11px}
+.combat-intent-panel small,.combat-intent-panel footer{display:block;color:#b59da9;font:10px/1.5 Arial,sans-serif}
+.combat-intent-panel footer{display:block;margin:8px 0 0;padding:7px 0 0;border-top:1px solid #572535;background:transparent;text-align:left;letter-spacing:0}
+.tactical-map .spell-trajectory line{stroke:#d984a1;stroke-width:.035}
+.tactical-map .spell-trajectory path{fill:#d984a1}
+.combat-chance-bar{height:3px;background:#411520}
+.combat-chance-bar i{display:block;height:100%;background:#b9aa79}
+.combat-ready-label{display:block;font-size:11px;color:#e4c5d2;margin-bottom:7px}
+.combat-ready-label select{width:100%;margin-top:5px;padding:7px;background:#0a080c;border:1px solid #823448;color:#ebd9e1;font:11px Arial,sans-serif}
+.combat-ready-overlay{pointer-events:auto;position:absolute;top:76px;left:12px;width:calc(100% - 24px);max-width:360px;padding:8px 10px;box-sizing:border-box;background:#100910f2;border:1px solid #823448;z-index:1}
+.combat-token.enemy.active:not(.is-current){box-shadow:0 0 0 1px #cd5368,0 2px 5px #0009}
+.combat-token.ally{border-color:#92b694;box-shadow:0 0 0 1px #4a7253}
+.combat-token.player{border-color:#d1b783}
+.combat-token.is-current{box-shadow:0 0 0 2px #e5c798,0 0 10px #c6964430}
+.combat-token.is-current:after{content:'';position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid #e5c798}
+.combat-token-health{position:absolute;left:1px;right:1px;bottom:-5px;height:3px;background:linear-gradient(to right,#bd6678 var(--token-health),#29151f var(--token-health));border:1px solid #08070b;border-radius:1px}
+.combat-token.ally .combat-token-health,.combat-token.player .combat-token-health{background:linear-gradient(to right,#9cba7d var(--token-health),#29151f var(--token-health))}
+.combat-token em{bottom:-20px!important}
+.combat-token-states{position:absolute;left:50%;bottom:calc(100% + 15px);transform:translateX(-50%);display:flex;gap:2px;white-space:nowrap;pointer-events:auto;z-index:5}
+.combat-token-states>span{display:flex;gap:3px;align-items:center;background:#210c16ed;border:1px solid #9c4660;padding:2px 3px;border-radius:2px;color:#efd4dd;font:7px/1.2 Arial,sans-serif;box-shadow:0 1px 3px #000}
+.combat-token-states>span.beneficial{background:#0d1b13ed;border-color:#67876b;color:#d6e8d3}
+.combat-token-states b{font:700 9px/1 Arial,sans-serif}
+.combat-outcome{position:absolute;z-index:5;color:#dec2ce;font:600 11px Arial,sans-serif;text-shadow:0 1px 3px #000,0 0 5px #000;white-space:nowrap;pointer-events:none;padding:3px 5px;border-radius:3px}
+.combat-outcome.critical{color:#ffd28b;background:#21160dde}
+.combat-outcome.block{color:#b7d9f0;background:#0c1726de;border:1px solid #5682a6}
+.combat-outcome.miss{color:#c4b7bf;background:#151116c9}
+.combat-outcome.hit{width:44px;height:44px;border-radius:50%;box-shadow:inset 0 0 7px #a1475d55}
+.combat-healing-ring{position:absolute;width:48px;height:48px;border:1px solid #a7d1a1;border-radius:50%;box-shadow:0 0 8px #80b77633;pointer-events:none}
+@media(max-width:480px){.combat-route-note{font-size:10px;gap:6px;padding:6px}.combat-route-note button{padding:6px;font-size:10px}.combat-tactical-controls button{font-size:10px;gap:4px}.combat-intent-panel{max-height:200px}}
+@media(prefers-reduced-motion:reduce){.combat-outcome{box-shadow:none}.combat-shape-outline path{stroke-dasharray:none}}

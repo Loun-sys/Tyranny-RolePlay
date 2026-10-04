@@ -600,6 +600,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
             valid = valid or (kind == 'artifact' and name in artifacts)
             valid = valid or (kind == 'item' and name in usable)
             valid = valid or (kind == 'disengage' and name == 'Осторожный отход')
+            valid = valid or (kind == 'tactic' and name in {'Защита','Спринт','Подготовить атаку'})
             if not valid:
                 raise web.HTTPConflict(reason='Это действие сейчас недоступно персонажу.')
             try:
@@ -617,7 +618,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         raise web.HTTPBadRequest(reason="Некорректная ячейка быстрого доступа.") from error
     kind, name = str(payload.get("kind", "")).strip(), str(payload.get("name", "")).strip()
     if kind or name:
-        if kind not in {"attack", "ability", "spell", "disengage", "artifact", "item"} or not name:
+        if kind not in {"attack", "ability", "spell", "disengage", "artifact", "item", "tactic"} or not name:
             raise web.HTTPBadRequest(reason="Неизвестное боевое действие.")
         character = await request.app["db"].get_character_by_id(cid)
         owned = {row["name"] for row in character.get("talents", [])}
@@ -626,6 +627,7 @@ async def portal_combat_quickbar(request: web.Request) -> web.Response:
         valid = valid or kind == "ability" and name in owned
         valid = valid or kind == "spell" and name in spells
         valid = valid or kind == "disengage" and name == "Осторожный отход"
+        valid = valid or kind == 'tactic' and name in {'Защита','Спринт','Подготовить атаку'}
         inventory=_clean_inventory(await request.app['db'].inventory(cid))
         from consumables import profile
         valid = valid or kind=='item' and any(str(i['inventory_id'])==name and profile(i) for i in inventory)
@@ -932,7 +934,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-4"})
 
 
 async def _player_maps(request,cid):
