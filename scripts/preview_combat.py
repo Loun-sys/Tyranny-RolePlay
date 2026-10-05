@@ -70,6 +70,7 @@ async def main():
         await BattleStore(db).join(qa_battle['id'],1,second)
         app.router.add_get("/api/archive", api.archive_list)
         app.router.add_get('/api/registration/{token}',api.registration_info)
+        app.router.add_post('/api/registration/{token}',api.registration_submit)
         app.router.add_get("/media/portraits/{name}", api.portrait_media)
         app.router.add_get("/api/portal/{token}", api.portal_info)
         app.router.add_get("/api/portal/{token}/training", api.training_info)

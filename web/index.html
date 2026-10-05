@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#050506">
   <title>Редактор жителя Империи · Тирания</title>
-  <link rel="stylesheet" href="styles.css?v=20261004-8">
+  <link rel="stylesheet" href="styles.css?v=20261005-1">
 </head>
 <body>
   <header class="hero">
@@ -17,7 +17,10 @@
   </header>
 
   <main id="builder" class="builder">
-    <div id="connection" class="connection loading">Проверяем личную ссылку…</div>
+    <div id="connection" class="connection loading" role="status" aria-live="polite">
+      <span id="connection-status">Проверяем личную ссылку…</span>
+      <button id="connection-retry" class="nav-button secondary" type="button" hidden>ПОВТОРИТЬ</button>
+    </div>
     <div id="form" class="creation" hidden>
       <nav id="creation-progress" class="creation-progress" aria-label="Этапы создания персонажа"></nav>
 
@@ -67,6 +70,7 @@
   <dialog id="tooltip" class="tooltip"><button id="tooltip-close" aria-label="Закрыть">×</button><p>АРХИВНАЯ СПРАВКА</p><h2 id="tooltip-title"></h2><div id="tooltip-text"></div></dialog>
   <div id="glossary-tooltip" class="glossary-tooltip" role="tooltip" hidden><b></b><p></p></div>
   <footer><b>ТИРАНИЯ</b><span>Лоун был здесь</span></footer>
-  <script src="app.js?v=20261004-9" defer></script>
+  <script src="registration-network.js?v=20261005-1" defer></script>
+  <script src="app.js?v=20261005-1" defer></script>
 </body>
 </html>

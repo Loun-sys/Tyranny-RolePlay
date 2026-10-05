@@ -39,6 +39,7 @@ const skillDescriptions = Object.fromEntries(Object.entries(glossary).map(([name
 const state = {
   config: null, screen: 0, furthest: 0, background: "", specs: ["", ""], abilities: ["", ""],
   name: "", portrait: "", attributes: {}, skills: {}, focusedAttribute: "Сила", focusedSkill: "Одноручное оружие",
+  submissionPending: false, submissionComplete: false,
 };
 
 const params = new URLSearchParams(location.search);
@@ -276,7 +277,7 @@ function canAdvance(screen = state.screen) {
 function renderResult() {
   const rules = validation();
   $("#checks").innerHTML = rules.map(([label, ok]) => `<span class="${ok ? "ok" : ""}">${ok ? "✓" : "×"} ${escapeHtml(label)}</span>`).join("");
-  $("#submit").disabled = !rules.every(([, ok]) => ok);
+  $("#submit").disabled = state.submissionPending || state.submissionComplete || !rules.every(([, ok]) => ok);
   const strongest = [...state.config.skills].sort((a, b) => skillTotal(b) - skillTotal(a)).slice(0, 6);
   $("#summary").textContent = [
     state.name.trim() || "Безымянный житель Империи", `Происхождение: ${state.background || "—"}`, "",
@@ -313,27 +314,24 @@ function pulseCurrent() {
 }
 
 async function submitCharacter() {
-  if (!canAdvance(6)) return;
+  if (state.submissionPending || state.submissionComplete || !canAdvance(6)) return;
   const button = $("#submit"); const status = $("#submit-status");
+  state.submissionPending = true;
   button.disabled = true; status.textContent = "Сохраняем личное дело…";
   try {
-    const response = await fetch(`${apiBase}/api/registration/${encodeURIComponent(token)}`, {
+    const result = await RegistrationNetwork.request(`${apiBase}/api/registration/${encodeURIComponent(token)}`, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
         name: state.name.trim(), background: state.background, specialization1: state.specs[0], specialization2: state.specs[1],
         ability1: state.abilities[0], ability2: state.abilities[1], attributes: state.attributes, skills: state.skills, portrait: state.portrait,
       }),
     });
-    if (!response.ok) {
-      const problem = await response.json().catch(() => ({}));
-      throw new Error(problem.error || problem.reason || `Ошибка ${response.status}`);
-    }
-    const result = await response.json();
+    state.submissionComplete = true;
     $("#result-title").textContent = "Личное дело сохранено";
     $("#result-text").textContent = `Персонаж ${result.name} уже доступен в Дискорде по команде /персонаж.`;
     status.textContent = "Готово. Эту одноразовую страницу можно закрыть."; button.textContent = "СОХРАНЕНО";
   } catch (error) {
     status.textContent = error.message || "Не удалось сохранить персонажа."; button.disabled = false;
-  }
+  } finally { state.submissionPending = false; }
 }
 
 function bindEvents() {
@@ -382,18 +380,36 @@ function bindEvents() {
   window.addEventListener('resize',hideGlossary);
 }
 
+let connectionPending = false;
 async function boot() {
-  if (!token) { $("#connection").className = "connection error"; $("#connection").textContent = "Откройте личную ссылку, которую бот выдаёт командой /регистрация."; return; }
+  if (connectionPending || state.config) return;
+  const connection = $("#connection"), message = $("#connection-status"), retry = $("#connection-retry");
+  retry.hidden = true;
+  if (!token) { connection.className = "connection error"; message.textContent = "Откройте личную ссылку, которую бот выдаёт командой /регистрация."; return; }
+  connectionPending = true;
+  connection.className = "connection loading";
+  message.textContent = "Проверяем личную ссылку…";
   try {
-    const response = await fetch(`${apiBase}/api/registration/${encodeURIComponent(token)}`);
-    if (!response.ok) throw new Error(response.status === 410 ? "Ссылка уже использована или истекла." : "Не удалось проверить личную ссылку.");
-    const data = await response.json(); state.config = data.config;
+    const data = await RegistrationNetwork.request(`${apiBase}/api/registration/${encodeURIComponent(token)}`, {}, (attempt, attempts) => {
+      message.textContent = `Восстанавливаем соединение… Попытка ${attempt} из ${attempts}.`;
+    });
+    if (!data.config || !Array.isArray(data.config.attributes) || !Array.isArray(data.config.skills)) {
+      throw Object.assign(new Error("Не удалось загрузить настройки конструктора. Нажмите «Повторить»."), { retryable: true });
+    }
+    state.config = data.config;
     state.config.attributes.forEach((name) => { state.attributes[name] = 10; });
     state.config.skills.forEach((name) => { state.skills[name] = 0; });
     applyCreationGlossary();
     $("#connection").hidden = true; $("#form").hidden = false; bindEvents(); renderAll();
     loadCreationGlossary().then(renderAll);
-  } catch (error) { $("#connection").className = "connection error"; $("#connection").textContent = error.message; }
+  } catch (error) {
+    connection.className = "connection error";
+    message.textContent = error.status === 410
+      ? "Ссылка недействительна, уже использована или истекла. Получите новую командой /регистрация в Дискорде."
+      : error.message;
+    retry.hidden = !error.retryable;
+  } finally { connectionPending = false; }
 }
 
+$("#connection-retry").addEventListener("click", boot);
 boot();

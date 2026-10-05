@@ -6,6 +6,7 @@ import base64
 import asyncio
 import io
 import hashlib
+import logging
 import os
 import re
 from pathlib import Path
@@ -55,6 +56,11 @@ async def cors_middleware(request: web.Request, handler):
         response = await handler(request)
     except web.HTTPException as error:
         response = web.json_response({"ok": False, "error": error.reason}, status=error.status)
+    except Exception:
+        # Keep CORS on error responses too: otherwise browsers hide a real 500
+        # behind the same "Failed to fetch" as a broken network connection.
+        logging.getLogger(__name__).exception("Ошибка обработчика HTTP API")
+        response = web.json_response({"ok": False, "error": "Ошибка сервера. Попробуйте ещё раз чуть позже."}, status=500)
     return _cors(request, response)
 
 
