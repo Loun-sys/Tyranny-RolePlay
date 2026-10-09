@@ -6,7 +6,7 @@ import math
 
 SUPPORTED={27,101,137,70,2053,2052,112,2106,28,2157,80,2057,
            2108,2109,2012,102,213,2054,2120,2116,2146,2143,2147,2148,2138,2121,2099,2101,2102,2103,2044,2150,
-           20,24,2145,105,75,2125,2126,2113}
+           20,24,2145,105,75,2125,2126,2113,22,23,160,2174}
 DISPLAY_ONLY={184,2001,2011,2172,225}
 
 def attribute_skill_delta(name,base,effective):
@@ -49,6 +49,7 @@ def effects(talents,inventory=None,active_set=1):
         row=resolve(talent)
         if not row or not row['passive'] or row.get('modal') or row.get('isTalentUpgrade'):continue
         if row.get('abilityClass') in {'TriggeredOnKillAbility','TriggeredOnDeathAbility'}:continue
+        if row['key']=='ABL_HH_Sentinel_Last_Stand':continue
         if inventory is not None and weapon_requirement(row,inventory,active_set):continue
         for node in row['nodes']:
             if node['phase']!='root' or node['side']!='self':continue
@@ -99,6 +100,9 @@ def riposte_chance(rules,inventory,attack,states,active_set=1):
     """2044 has a different weapon filter from the 2150 accuracy bonus."""
     from item_effects import active_equipment
     weapons=[i for i in active_equipment(inventory,active_set) if i.get('equipped_slot','').startswith('Оружие')]
+    if 2174 in rules and weapon_mode(attack)=='melee':
+        if any(key.removeprefix('special:') in {'stun','prone','sleep','freeze','paralyze','petrif','disarm'} for key in states):return 0
+        return max(0,min(1,rules[2174]/100))
     if len(weapons)!=1 or 'правая рука' not in weapons[0]['equipped_slot']:return 0
     if weapons[0].get('category') not in {'Одноручное оружие','Метательное оружие'} or weapon_mode(attack)!='melee':return 0
     blocked={'stun','prone','sleep','freeze','frozen','paralyze','paralyzed','petrif','petrified','disarm'}

@@ -164,7 +164,7 @@ class BattleStore:
                 from talent_reactions import actor_inventory,npc_derived
                 inventory=actor_inventory(t)
                 actor={'id':0,'name':t['name'],'attributes':t.get('attributes',{}),'talents':t.get('abilities',[]),
-                       'health':t['health'],'health_max':t['healthMax'],'portrait_url':t.get('portrait',''),'level':t.get('level',1)}
+                       'health':t['health'],'health_max':t['healthMax'],'portrait_url':t.get('portrait',''),'level':t.get('level',1),'wounds':t.get('wounds',0)}
                 states=row['state']['conditions'].get(key,{})
                 derived=npc_derived(t,effects(t.get('abilities',[]),inventory),inventory,states,row['state']['round'])
                 spells=[];limits={'weaponSets':1}
@@ -192,6 +192,9 @@ class BattleStore:
             else:delta=attribute_skill_delta(name,old,attrs)
             d['defenses'][name]=round(_apply_property(value+delta,items,name))
         d['armor']=max(0,_apply_property(d['armor'],items,'Броня'))
+        armor_bonus=sum(float(e.get('Value',0)) for item in items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('AffectsStat')==32)
+        d['armor']+=derived.get('armor',0)*armor_bonus
+        d['armorByType']={k:v*(1+armor_bonus) for k,v in derived.get('armorByType',{}).items()}
         d['healthMax']=max(1,round(_apply_property(d['healthMax']+attrs.get('Живучесть',10)-old.get('Живучесть',10),items,'Максимум здоровья')))
         d['cooldownMultiplier']=max(.1,1-(attrs.get('Быстрота',10)-10)*.03)*_apply_property(1,items,'Перезарядка')
         d['movementMultiplier']=_apply_property(1,items,'Передвижение')
@@ -267,7 +270,15 @@ class BattleStore:
             s['round']+=1;s['acted']=[]
             for key,t in s['tokens'].items():
                 states=s['conditions'].get(key,{})
+                before=t['health']
                 t['health']=pulse(states,s['round'],t['health'],t['healthMax'])
+                if before>t['health']:
+                    from talent_batch_two import on_damage
+                    from talent_reactions import react_to_damage
+                    e=self._engine(row,key,profiles);e.round_number=s['round']-1
+                    on_damage(e,'player',before-t['health']);react_to_damage(e,'player')
+                    self._collect(row,key,e,presentation=False)
+                    states=s['conditions'].get(key,{})
                 for name,effect in list(states.items()):
                     if effect.get('masterTick') and effect.get('until',0)>=s['round']-1 and t['health']>0:
                         value=round(effect.get('value',0))

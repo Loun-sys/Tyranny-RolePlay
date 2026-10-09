@@ -72,7 +72,7 @@ def try_riposte(session,target_id):
     return free_attack(session,target_id,'player','Ответный удар')
 
 
-def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,ability=None):
+def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,ability=None,opportunity=False):
     """A free primary strike; both directions share rolls, shields and procs."""
     from talent_runtime import weapon_mode
     if source_id=='player':
@@ -87,9 +87,12 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
         if any(k.removeprefix('special:') in {'stun','prone','freeze','sleep','paralyze','petrif','disarm'} for k in states):return None
         if session.grid.distance(session.player_position,session.target_positions[target_id])>session._weapon_range(attack):return None
         if not session.grid.line_of_sight(session.player_position,session.target_positions[target_id]) or chance<1 and random.random()>=chance:return None
-        hit=session._roll_attack(name=name,accuracy=attack.get('accuracy',20),low=attack.get('damageMin',2)+damage_bonus,
-            high=attack.get('damageMax',4)+damage_bonus,defense=session._defense('Парирование',target_id),
-            defense_name='Парирование',armor=session.targets[target_id].get('armor',0),target_id=target_id,
+        if opportunity:damage_bonus+=session.talent_runtime.get(23,0)
+        accuracy_bonus=session.talent_runtime.get(22,0) if opportunity else 0
+        defense_bonus=session._target_talent_rules(target_id).get(160,0) if opportunity else 0
+        hit=session._roll_attack(name=name,accuracy=attack.get('accuracy',20)+accuracy_bonus,low=attack.get('damageMin',2)+damage_bonus,
+            high=attack.get('damageMax',4)+damage_bonus,defense=session._defense('Парирование',target_id)+defense_bonus,
+            defense_name=None if opportunity else 'Парирование',armor=session.targets[target_id].get('armor',0),target_id=target_id,
             penetration=attack.get('penetration',0),allow_reactions=False)
         session.events[-1]['reaction']=True
         session._weapon_talent_procs(target_id,hit['result'])
@@ -140,11 +143,15 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
     clone.resolving_talent_proc=False;before_log=len(clone.log)
     attack=clone._combat_derived(derived)['attack']
     if ability:
-        clone.selected_target_id=victim;clone.aim_point=clone.player_position
+        clone.selected_target_id=victim
+        clone.aim_point=clone.target_positions[victim] if ability['targeting']=='unit' else clone.player_position
         hit=clone._execute_ability({**ability,'freeReaction':True},derived,inventory)
     else:
-        hit=clone._roll_attack(name=name,accuracy=attack.get('accuracy',20),low=attack.get('damageMin',2)+damage_bonus,high=attack.get('damageMax',4)+damage_bonus,
-            defense=clone._defense('Парирование',victim),defense_name='Парирование',armor=clone.targets[victim]['armor'],
+        if opportunity:damage_bonus+=rules.get(23,0)
+        accuracy_bonus=rules.get(22,0) if opportunity else 0
+        defense_bonus=clone._target_talent_rules(victim).get(160,0) if opportunity else 0
+        hit=clone._roll_attack(name=name,accuracy=attack.get('accuracy',20)+accuracy_bonus,low=attack.get('damageMin',2)+damage_bonus,high=attack.get('damageMax',4)+damage_bonus,
+            defense=clone._defense('Парирование',victim)+defense_bonus,defense_name=None if opportunity else 'Парирование',armor=clone.targets[victim]['armor'],
             penetration=attack.get('penetration',0),target_id=victim,attack_mode='melee',allow_reactions=False)
         clone._weapon_talent_procs(victim,hit['result'])
     session.player_health=clone.target_healths[victim];session.conditions['player']=clone.conditions.get(victim,{})

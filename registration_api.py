@@ -309,6 +309,10 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     armor = round(_apply_property(armor, active_items, "Броня", "Armor"),4)
     from item_effects import armor_by_type,DAMAGE_TYPES
     typed_armor={name:round(sum(armor_by_type(item)[name] for item in active_items),4) for name in DAMAGE_TYPES.values()}
+    armor_bonus=sum(float(e.get('Value',0)) for item in active_items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('AffectsStat')==32)
+    actual_armor=[i for i in active_items if __import__('item_effects').game_data(i).get('armor')]
+    armor+=sum(float(i.get('armor',0)) for i in actual_armor)*armor_bonus
+    for name in typed_armor:typed_armor[name]+=sum(armor_by_type(i)[name] for i in actual_armor)*armor_bonus
     deflection = max(0, attrs.get("Искусность", 10) - 10)
     deflection = round(_apply_property(deflection, active_items, "Отражение", "Deflection"))
     deflection=round(deflection+shield_bonuses.get('Отражение',0))
@@ -990,7 +994,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261009-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261010-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
 
 
 async def _player_maps(request,cid):

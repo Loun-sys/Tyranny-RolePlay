@@ -6,8 +6,10 @@ from item_effects import STATS
 from localization import localize_game_text, neutralize_player_reference
 
 SKILLS={1:'Хитроумие',2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',34:'Исполнение',37:'Дротики'}
+SKILLS.update({24:'Управление эмоциями',26:'Управление эмоциями',27:'Управление могильным светом'})
 CONTROL={'dazed':'daze','prone':'prone','stun':'stun','paralyzed':'paralyze','petrified':'petrif','frozen':'freeze','asleep':'sleep','rooted':'root','hobbled':'hobble','Silenced':'silence','Disarm':'disarm','blinded':'blind','terrified':'fear','fear':'fear','confused':'confus','taunted':'taunt'}
 RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166,2129,2168,2127,2128}
+RAW_SUPPORTED|={32,61,87,101,110,124,2170}
 
 @lru_cache(maxsize=1)
 def library():
@@ -82,14 +84,16 @@ def talent_mechanics(row):
         result['effects'].extend(implemented)
         from talent_runtime import SUPPORTED,DISPLAY_ONLY
         recognized=set(STATS)|SUPPORTED|DISPLAY_ONLY|{7,8,9,14,107,104,74,140,2000,181,2166,45,153,226,188,169,2046,2005,2168,2172,2122,2123,2161}
+        from talent_batch_two import BATCH_KEYS as SECOND_BATCH,conditional_supported
+        if row['key'] in SECOND_BATCH:recognized|={22,23,87,109,150,160,2174}
         procs=proc_profiles(row)
         if procs:recognized|={2156,2159}
         missing=any(s.get('AffectsStat') not in recognized for s in root)
         from talent_batch_one import BATCH_KEYS
-        if any(s['AffectsStat']==2113 for s in root) and row['key'] not in BATCH_KEYS:missing=True
+        if any(s['AffectsStat']==2113 for s in root) and row['key'] not in (*BATCH_KEYS,*SECOND_BATCH):missing=True
         from talent_runtime import equipment_condition_supported
         from talent_batch_one import condition_supported
-        conditional=any(not equipment_condition_supported(e) and not condition_supported(e) for e in equip_modifiers(item)['conditional'])
+        conditional=any(not equipment_condition_supported(e) and not condition_supported(e) and not (row['key'] in SECOND_BATCH and conditional_supported(e)) for e in equip_modifiers(item)['conditional'])
         result['limitation']='Есть условные или специальные эффекты, ещё не подключённые к расчётам.' if missing or conditional else ''
     for node in row['nodes']:
         if node.get('tag') in CONTROL:
@@ -115,6 +119,9 @@ def talent_mechanics(row):
     if row['key']=='PSV_Comp_RngMagic_SurgingWaters':
         result['effects'].append('Автоматически при живом персонаже с ХП ниже 35%, один раз за бой: 10–14 ледяного урона, отталкивание 7 клеток, обездвиживание на 1 раунд, радиус 5 клеток. Без действия.')
         result['limitation']=profile(row)['limitation']
+    from talent_batch_two import describe,HEALTH_REACTION
+    if row['key']==HEALTH_REACTION:result['limitation']=profile(row)['limitation']
+    if describe(row):result['effects'].append(describe(row))
     if 2150 in source_stats:
         result['effects'].append('Бонус точности действует на атаки и способности только с одноручным оружием в правой руке и пустой левой рукой. Старший ранг заменяет младший.')
     if 2044 in source_stats:
@@ -154,7 +161,12 @@ def profile(row,derived=None,weapon_range=1):
     if row.get('song'):
         from song_rules import song_profile
         return song_profile(row,derived)
-    row=copy.deepcopy(row);derived=derived or {};skills=derived.get('effectiveSkills',{})
+    row=copy.deepcopy(row);derived=derived or {}
+    from talent_batch_two import profile_prepared
+    if not row.get('graphResolved'):
+        prepared=profile_prepared(row,derived)
+        if prepared is not row:return prepared
+    skills=derived.get('effectiveSkills',{})
     attack=derived.get('attack',{});row['range']=max(1,weapon_range) if row.get('weaponRange') else row.get('range',0)
     if row['targeting']=='cone':row['range']=max(row['range'],row.get('area',0))
     runtime={int(k):v for k,v in derived.get('talentRuntime',{}).items()}
@@ -165,14 +177,35 @@ def profile(row,derived=None,weapon_range=1):
     row['effects']=[];unsupported=[];seen=set()
     from ability_graphs import upgrade_launches,UPGRADE_GRAPH_KEYS
     row['launches']=[] if row.get('graphResolved') else upgrade_launches(row,derived)
+    # Active conditional launch wrappers are reviewed independently of passives.
+    from talent_batch_two import GRAPH_ACTIVE,HEALTH_REACTION
+    if row['key'] in GRAPH_ACTIVE|{HEALTH_REACTION}:
+        from ability_graphs import branch
+        for node in row['nodes']:
+            if node['phase']!='root':continue
+            for s in node['statuses']:
+                if s['AffectsStat'] not in {178,2159}:continue
+                child=branch(resolve(row['key']) or row,s.get('AttackPrefabKey',''),derived)
+                if child:
+                    child['launchCondition']=s.get('ApplicationPrerequisites',[])
+                    child['onWeaponHit']=s['AffectsStat']==2159
+                    child['launchOrigin']='caster' if node['side']=='self' and s['AffectsStat']==178 else 'target'
+                    row['launches'].append(child)
     primary=next((n['attack'] for n in row.get('nodes',[]) if n.get('attack') and n['phase'] in {'root','attack'}),{})
     row['targetType']=primary.get('ValidTargets',1)
     row['targetTeam']='ally' if row['targetType'] in {2,3,11,12,13,19,102,104} else 'enemy'
     for node in row.get('nodes',[]):
         if not row.get('graphResolved') and node['prefab'] in {p['prefab'] for launch in row['launches'] for p in launch['nodes']}:continue
+        # References are metadata; retaliation does not apply its child's debuff
+        # to the protected ally at the time of casting.
+        retaliation_children={s.get('AttackPrefabKey') for n in row['nodes'] for s in n['statuses'] if s['AffectsStat']==87}
+        if node['prefab'] in retaliation_children:continue
         for s in node.get('statuses',[]):
+            if row['key'] in GRAPH_ACTIVE|{HEALTH_REACTION} and s['AffectsStat'] in {178,2159}:continue
             if node['phase']=='upgrade' and node['prefab'] in UPGRADE_GRAPH_KEYS and s['AffectsStat'] in {178,2159}:continue
-            if s['AffectsStat'] in RAW_SUPPORTED and not s.get('ApplicationPrerequisites') and not s.get('TriggerAdjustment',{}).get('Type'):
+            conditional_transfer=s['AffectsStat']==61 and all(p['Type']==22 for p in s.get('ApplicationPrerequisites',[]))
+            conditional_seal=s['AffectsStat']==116 and s.get('TriggerAdjustment',{}).get('Type')==2 and row['key']=='Abl_Comp_Lantry_EraseTheRecord'
+            if s['AffectsStat'] in RAW_SUPPORTED and (conditional_transfer or conditional_seal or not s.get('ApplicationPrerequisites') and not s.get('TriggerAdjustment',{}).get('Type')):
                 identity=(node['side'],s['AffectsStat'],s.get('Value'),s.get('Duration'),s.get('affliction'),s.get('DmgType'),s.get('DefType'),s.get('Skill'))
                 if identity not in seen:
                     from consumables import effect_text
@@ -186,6 +219,9 @@ def profile(row,derived=None,weapon_range=1):
     row['supported']=bool(row.get('damageMax') or row.get('weaponMultiplier') or row['effects'] or row.get('push') or row['movementEffect'] or row['launches'])
     row['limitation']='Для этой способности ещё нет боевого обработчика.' if not row['supported'] else ''
     row['unsupportedStats']=sorted(set(unsupported))
+    from talent_batch_two import BATCH_KEYS as SECOND_BATCH
+    if any(e.get('AffectsStat') in {32,61,87,124,2170} for e in row['effects']) and row.get('sourceAbilityKey',row['key']) not in SECOND_BATCH and not row.get('upgrades'):
+        unsupported.append('unreviewed-event-graph')
     if unsupported:
         row['supported']=False
         row['limitation']='Эта способность содержит условные эффекты, для которых ещё нет боевого обработчика.'
@@ -248,6 +284,7 @@ def passive_equipment(talents, inventory=None, active_set=1):
         row=resolve(talent)
         if not row or not row['passive'] or row.get('modal'):continue
         if row.get('abilityClass') in {'TriggeredOnKillAbility','TriggeredOnDeathAbility'}:continue
+        if row['key']=='ABL_HH_Sentinel_Last_Stand':continue
         if inventory is not None and weapon_requirement(row,inventory,active_set):continue
         for node in row['nodes']:
             if node['side']!='self' or node['phase']!='root':continue
@@ -287,6 +324,7 @@ def stance_equipment(name):
     effects=[s for n in row['nodes'] if n['side']=='self' and n['phase']=='root' for s in n['statuses'] if s['AffectsStat'] not in {184,2001,2011}]
     allowed=set(STATS)|{7,8,9,14,107,104,74,140,2000,181,2166,45,153,226,188,169,2046,2114}
     if proc_profiles(row):allowed|={2156,2159}
+    if row['key']=='Abl_Comp_Defender_Stance_Phalanx_02':allowed.add(87)
     if not effects or any(not unconditional(s) or s['AffectsStat'] not in allowed for s in effects):return []
     return [{'name':row['name'],'category':'Эффекты','equipped_slot':'Эффект','armor':0,'properties':{'gameData':{'statusEffects':effects}}}]
 

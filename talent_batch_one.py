@@ -33,7 +33,7 @@ def skill_xp_bonuses(talents):
                    26:'Управление эмоциями',27:'Управление могильным светом'}
     ranks={}
     for row,effect in roots(talents):
-        if effect['AffectsStat']!=2113 or row['key'] not in BATCH_KEYS:continue
+        if effect['AffectsStat']!=2113 or row['key'] not in (*BATCH_KEYS,'PSV_Comp_RngMagic_RunicTeacher_1of2'):continue
         name=source_skills.get(effect.get('Skill'))
         if name:
             key=(family(row['key']),name)
@@ -61,6 +61,6 @@ def reactive_profiles(talents,derived):
     from ability_rules import resolve,profile
     for talent in talents:
         row=resolve(talent)
-        if not row or row['key']!='PSV_Comp_RngMagic_SurgingWaters':continue
+        if not row or row['key'] not in {'PSV_Comp_RngMagic_SurgingWaters','PSV_Comp_RngMagic_CallToTheGrave'}:continue
         rule=profile(row,derived)
         if rule['supported']:yield rule,float(row['source']['activation'][0]['Value'])

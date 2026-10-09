@@ -5,8 +5,10 @@ GRAPH_KEYS={
  'PSV_PC_Defense_PinningStrike','PSV_PC_Power_ExposeWeakness','PSV_PC_Leadership_SeizeTheInitiative',
  'PSV_PC_Magic_EnfeeblingTouch','PSV_PC_Agility_UnseenAdvantage','PSV_PC_Ranged_TerrorShot',
  'PSV_Comp_Beastwoman_TasteOfBlood','PSV_Comp_Lantry_ChargedThrow',
+ 'PSV_Comp_Verse_BloodCallsToBlood',
 }
 UPGRADE_GRAPH_KEYS={'Abl_PC_Defense_StaggeringForce','Abl_PC_Leadership_ToArms','Abl_Comp_Defender_SoundOfWar'}
+UPGRADE_GRAPH_KEYS|={'PSV_Comp_Sirin_RevivingSong','TLN_Comp_Lantry_ArcaneJudgment'}
 
 def branch(row,key,derived=None):
     from ability_rules import profile
@@ -26,18 +28,23 @@ def branch(row,key,derived=None):
     if not attack:return None
     damage=attack.get('DamageData',{});target=attack.get('ValidTargets',1);radius=attack.get('BlastRadius',0)
     child={**copy.deepcopy(row),'nodes':nodes,'graphResolved':True,'passive':False,'modal':False,
+        'key':key,'prefab':key,'sourceAbilityKey':row.get('sourceAbilityKey',row['key']),
         'isTalentUpgrade':False,'source':{},'range':0 if target==101 else max(1,row.get('range',1)),
         'targeting':'self' if target==101 else 'area' if radius else 'unit','area':radius,
-        'weaponRange':False,'angle':360,'excludeTarget':bool(attack.get('ExcludeTarget')),'damageMin':damage.get('Minimum',0),'damageMax':damage.get('Maximum',0),
+        'weaponRange':False,'angle':attack.get('DamageAngleDegrees',360),'excludeTarget':bool(attack.get('ExcludeTarget')),'damageMin':damage.get('Minimum',0),'damageMax':damage.get('Maximum',0),
         'weaponMultiplier':damage.get('WeaponDamageMult',0)*attack.get('DamageMultiplier',1),
         'accuracyBonus':attack.get('AccuracyBonus',0),'skills':attack.get('m_attackSkills',[]),
         'defense':{0:'Парирование',1:'Выносливость',2:'Воля',3:'Магия',5:'Нет'}.get(attack.get('DefendedBy',0),'Парирование'),
         'damageType':damage.get('Type',9),'penetration':attack.get('DTBypass',0),'push':attack.get('PushDistance',0)}
+    if key!=row['key']:child.update(breathCost=0,cooldown=0,cooldownSeconds=0,oncePerBattle=False,weaponMask=0)
     result=profile(child,derived)
     if attack.get('BaseInterruptValue'):
         result['effects'].append({'control':'interrupt','name':'Подготовка атаки прервана','side':'target','Duration':.1,'rounds':1})
         result['supported']=True;result['limitation']=''
     result['secondaryGraphs']=[p for k in extra if (p:=branch(row,k,derived))]
+    if row['key'] in {'Abl_PC_Magic_ChannelStrength','Abl_Comp_RngMagic_Gravestrike'}:
+        for p in result['secondaryGraphs']:
+            p['launchPhase']='followup' if 'FollowUp' in p['prefab'] else 'extra'
     return result
 
 def procs(row,derived=None):
@@ -52,6 +59,7 @@ def procs(row,derived=None):
             if not child or not child['supported']:return []
             child.update(triggerStat=trigger['AffectsStat'],weaponTrigger=trigger.get('AttackTypeTriggerForLaunchAttack',2),
                          stealthOnly=stealth,maxTriggers=trigger.get('TriggerAdjustment',{}).get('MaxTriggerCount',0))
+            if row['key']=='PSV_Comp_Verse_BloodCallsToBlood':child['meleeOnly']=True
             result.append(child)
     return result
 

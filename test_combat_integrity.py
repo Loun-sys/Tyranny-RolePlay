@@ -177,8 +177,10 @@ class CombatIntegrityTests(unittest.TestCase):
         self.assertEqual(s.target_healths['ally'],100);self.assertEqual(s.player_health,s.player_health_max)
 
     def test_unsupported_aria_preview_invalid_and_executor_preserves_all_resources(self):
-        key='Abl_Comp_Sirin_AriaOfResolve'
-        c,s,d=self.setup_battle(key);s.breath=5
+        # Resolve now has a handler. Summoning is still unsupported in this
+        # stage; it must retain the same resource-preserving rejection path.
+        key='Abl_Comp_Sirin_AriaOfMemories'
+        c,s,d=self.setup_battle(key);s.breath=8
         action=next(a for a in s.view(c,d,[],2)['actions'] if a.get('key')==key)
         self.assertFalse(action['supported']);self.assertTrue(action['disabledReason'])
         self.assertTrue(all(not aim['valid'] for aim in action['aims'].values()))

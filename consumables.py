@@ -36,7 +36,10 @@ LABELS.update({70:'Точность по целям дальше 5 клеток'
  2121:'Вероятность отражения скользящей дистанционной атаки',
  2012:'Вместо Парирования используется Уклонение',2013:'Дополнительный урон за каждого соседнего противника',
  2072:'Урон по противнику в своей зоне контроля',2108:'Бонус урона пропорционально потерянному здоровью',
- 2109:'Снижение перезарядки пропорционально потерянному здоровью',225:'Урон подходящего оружия ближнего боя'})
+  2109:'Снижение перезарядки пропорционально потерянному здоровью',225:'Урон подходящего оружия ближнего боя'})
+LABELS.update({22:'Точность атаки по возможности',23:'Урон атаки по возможности',32:'Дополнительная броня экипировки',
+              61:'Вытягивание здоровья',87:'Ответная атака при попадании в ближнем бою',109:'Добавочный стихийный урон оружия',
+              124:'Продление действующих полезных эффектов',2170:'Точность атак по меченой цели',2174:'Ответный удар при промахе'})
 MULTIPLIERS.update({80,2072,225})
 MULTIPLIERS.update({28,45,112,137,172,2057,2113,2115,2116,2120,2172})
 
@@ -62,6 +65,9 @@ def effect_text(e):
     if stat==2168:return f"Вероятность {int(v)} ударов базовой атакой: {float(e.get('ExtraValue',0)):g}%"
     if stat==2126:return f"Атака при вступлении в бой: уровень {int(v)}, шанс {e.get('ExtraValue',0):g}%"
     if stat==105:return f"Критические попадания становятся обычными: {v:g}%"
+    if stat==32:return f"Дополнительная броня экипировки: {v*100:+g}%"
+    if stat==109:return f"Добавочный урон оружия ({DAMAGE_TYPES.get(e.get('DmgType'),'стихия')}): {v:g}% исходного урона"
+    if stat==61:return f"Вытягивает {v:g} ХП; восстанавливает {v*float(e.get('ExtraValue',1)):g} ХП применившему"
     if stat==2172 and not v:return ''  # Display-only marker, not a -100% multiplier.
     if stat==2046:name=SKILLS.get(e.get('Skill'),'Все навыки магии')
     if stat==14:name='Броня'+(' ('+DAMAGE_TYPES[e['DmgType']].lower()+')' if e.get('DmgType') in DAMAGE_TYPES else '')
@@ -117,7 +123,7 @@ def virtual_equipment(states,round_number):
     for state in states.values():
         if state.get('consumable') and state['until']>=round_number:
             e=state.get('source',{})
-            if e.get('AffectsStat') in STATS or e.get('AffectsStat') in {7,8,9,14,84,140,2046,226,2166,2000,181,45,153,188,169}:
+            if e.get('AffectsStat') in STATS or e.get('AffectsStat') in {7,8,9,14,32,84,140,2046,226,2166,2000,181,45,153,188,169}:
                 e=copy.deepcopy(e);e['Apply']=0;e['ApplicationPrerequisites']=[];e['TriggerAdjustment']={}
                 if e['AffectsStat']==2046 and not e.get('Skill'):
                     for skill_id in {2030,2031,2032,2034,2035,2036,2037,2040,2045,2064,2065}:
@@ -133,7 +139,7 @@ def apply(item,states,round_number,health,health_max):
     healing=math.prod(s.get('source',{}).get('Value',1) for s in states.values() if s.get('source',{}).get('AffectsStat')==169)
     for n,e in enumerate(info['effects']):
         stat=e.get('AffectsStat');v=float(e.get('Value',0));rounds=duration(e)
-        if stat==116 and not e.get('IntervalRate'):health=min(health_max,health+math.ceil(health_max*v*healing));continue
+        if stat==116 and not e.get('IntervalRate') and not e.get('TriggerAdjustment',{}).get('Type'):health=min(health_max,health+math.ceil(health_max*v*healing));continue
         if stat==176:
             if health>0:raise ValueError('Воскрешение применяется к павшему союзнику.')
             health=0;revived=True;continue
