@@ -21,6 +21,10 @@ from sigil_data import SIGILS_BY_KEY, sigil_key_from_scroll_url, starting_sigils
 
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS skill_xp_remainders (
+ character_id INTEGER NOT NULL,name TEXT NOT NULL,remainder REAL NOT NULL DEFAULT 0,
+ PRIMARY KEY(character_id,name),FOREIGN KEY(character_id) REFERENCES characters(id) ON DELETE CASCADE
+);
 PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS characters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -556,6 +560,12 @@ class Database:
                    WHERE inventory.character_id=? AND inventory.equipped_slot IS NOT NULL""", (character_id,)
             )
         limits = self._equipment_limits_from_talents({str(row["name"]) for row in rows})
+        async with self.connect() as db:
+            party=await self._talent_party(db,character_id)
+        from talent_batch_one import roots
+        party_bonus=sum(max((round(e['Value']) for _,e in roots(member.get('talents',member.get('abilities',[]))) if e['AffectsStat']==2161),default=0) for member in party[1:])
+        # _talent_party puts this character first, so its existing bonus isn't doubled.
+        limits['spellSlots']+=party_bonus
         from item_effects import active_equipment,equip_bonuses
         character=await self.get_character_by_id(character_id)
         equipped=active_equipment([dict(i) for i in equipped],character.get('active_weapon_set',1))
@@ -898,15 +908,45 @@ class Database:
     async def add_skill_experience(self, character_id: int, name: str, amount: int = 1) -> int:
         """Начислить опыт применённому навыку и вернуть его новое значение опыта."""
         async with self.connect() as db:
+            await db.execute('BEGIN IMMEDIATE')
+            from talent_batch_one import party_xp_multiplier
+            members=await self._talent_party(db,character_id)
+            multiplier=party_xp_multiplier(members,name)
+            carry=await db.execute_fetchall('SELECT remainder FROM skill_xp_remainders WHERE character_id=? AND name=?',(character_id,name))
+            import math
+            raw=max(0,int(amount))*multiplier+(float(carry[0]['remainder']) if carry else 0)
+            gain=math.floor(round(raw,6))
             await db.execute(
                 "UPDATE skills SET experience=experience+? WHERE character_id=? AND name=?",
-                (max(0, int(amount)), character_id, name),
+                (gain, character_id, name),
             )
             rows = await db.execute_fetchall(
                 "SELECT experience FROM skills WHERE character_id=? AND name=?", (character_id, name)
             )
+            if rows:await db.execute('INSERT INTO skill_xp_remainders(character_id,name,remainder) VALUES(?,?,?) ON CONFLICT(character_id,name) DO UPDATE SET remainder=excluded.remainder',
+                                     (character_id,name,round(raw-gain,6)))
             await db.commit()
             return int(rows[0]["experience"]) if rows else 0
+
+    async def _talent_party(self, db, character_id):
+        """Only the joined allies in this character's active shared scene."""
+        own=await db.execute_fetchall('SELECT guild_id FROM characters WHERE id=?',(character_id,))
+        ids={character_id};npcs=[]
+        tables=await db.execute_fetchall("SELECT name FROM sqlite_master WHERE type='table' AND name='live_battles'")
+        if tables and own:
+            battles=await db.execute_fetchall("SELECT spec FROM live_battles WHERE guild_id=? AND status='active' ORDER BY id DESC",(own[0]['guild_id'],))
+            for battle in battles:
+                state=json.loads(battle['spec']);tokens=state.get('tokens',{})
+                me=next((t for t in tokens.values() if t.get('characterId')==character_id and state.get('participants',{}).get(str(character_id),{}).get('joined')),None)
+                if not me:continue
+                for token in tokens.values():
+                    if token.get('team')!=me.get('team'):continue
+                    cid=token.get('characterId')
+                    if token.get('kind')=='player' and state.get('participants',{}).get(str(cid),{}).get('joined'):ids.add(cid)
+                    elif token.get('kind')=='npc':npcs.append(token)
+                break
+        result=[{'talents':[dict(t) for t in await db.execute_fetchall('SELECT name FROM talents WHERE character_id=?',(cid,))]} for cid in [character_id,*sorted(ids-{character_id})]]
+        return result+npcs
 
     async def adjust_health(self, character_id: int, delta: int) -> tuple[int, int]:
         async with self.connect() as db:

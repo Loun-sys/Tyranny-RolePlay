@@ -181,6 +181,8 @@ class BattleStore:
         ratio=max(.1,1+(attrs.get('Сила',10)-10)*.03)/max(.1,1+(old.get('Сила',10)-10)*.03)
         for k in ('damageMin','damageMax'):attack[k]=round(_apply_property(attack.get(k,1)*ratio,items,'Урон'))
         attack['accuracy']=round(_apply_property(attack.get('accuracy',20)+dexterity,items,'Точность'))
+        d['abilityAccuracyBonus']=d.get('abilityAccuracyBonus',0)+_apply_property(0,items,'Точность')
+        d['killAccuracyBonus']=sum(float(e['Value']) for item in items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('runtimeKillBonus'))
         for name,value in d['effectiveSkills'].items():d['effectiveSkills'][name]=round(_apply_property(value+attribute_skill_delta(name,old,attrs),items,name))
         for name,value in d['defenses'].items():
             delta=(attrs.get('Стойкость',10)-old.get('Стойкость',10))*1.5
@@ -216,6 +218,8 @@ class BattleStore:
                 engine.targets[other]['healthMax']=profiles[other][1]['healthMax']
                 engine.target_healths[other]=min(engine.targets[other]['healthMax'],token['health'])
         engine.conditions={('player' if k==key else k):copy.deepcopy(v) for k,v in s['conditions'].items()}
+        engine.engagements={('player' if source==key else source):['player' if victim==key else victim for victim in victims]
+                            for source,victims in s.get('engagements',{}).items()}
         engine.round_number=s['round'];engine.initiative=[{**i,'id':'player' if i['id']==key else i['id']} for i in s['initiative']]
         if not engine.initiative:engine.initiative=[{'id':'player','name':t['name'],'roll':0,'bonus':0,'total':0}]
         engine.selected_target_id=next(iter(engine._alive_targets()),next(iter(engine.targets),''))
@@ -236,6 +240,8 @@ class BattleStore:
         for k in e.targets:
             s['tokens'][k].update(x=e.target_positions[k][0],y=e.target_positions[k][1],health=e.target_healths[k],healthMax=e.targets[k]['healthMax'])
         s['conditions']={key if k=='player' else k:v for k,v in e.conditions.items()}
+        s['engagements']={(key if source=='player' else source):[key if victim=='player' else victim for victim in victims]
+                          for source,victims in getattr(e,'engagements',{}).items()}
         s['personal'][key]={**s['personal'].get(key,{}),**{f:list(getattr(e,f)) if isinstance(getattr(e,f,None),set) else copy.deepcopy(getattr(e,f))
             for f in PERSONAL if hasattr(e,f)}}
         for event in e.events:

@@ -5,7 +5,7 @@ from pathlib import Path
 from item_effects import STATS
 from localization import localize_game_text, neutralize_player_reference
 
-SKILLS={2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',34:'Исполнение',37:'Дротики'}
+SKILLS={1:'Хитроумие',2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',34:'Исполнение',37:'Дротики'}
 CONTROL={'dazed':'daze','prone':'prone','stun':'stun','paralyzed':'paralyze','petrified':'petrif','frozen':'freeze','asleep':'sleep','rooted':'root','hobbled':'hobble','Silenced':'silence','Disarm':'disarm','blinded':'blind','terrified':'fear','fear':'fear','confused':'confus','taunted':'taunt'}
 RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166,2129,2168,2127,2128}
 
@@ -85,8 +85,11 @@ def talent_mechanics(row):
         procs=proc_profiles(row)
         if procs:recognized|={2156,2159}
         missing=any(s.get('AffectsStat') not in recognized for s in root)
+        from talent_batch_one import BATCH_KEYS
+        if any(s['AffectsStat']==2113 for s in root) and row['key'] not in BATCH_KEYS:missing=True
         from talent_runtime import equipment_condition_supported
-        conditional=any(not equipment_condition_supported(e) for e in equip_modifiers(item)['conditional'])
+        from talent_batch_one import condition_supported
+        conditional=any(not equipment_condition_supported(e) and not condition_supported(e) for e in equip_modifiers(item)['conditional'])
         result['limitation']='Есть условные или специальные эффекты, ещё не подключённые к расчётам.' if missing or conditional else ''
     for node in row['nodes']:
         if node.get('tag') in CONTROL:
@@ -100,6 +103,18 @@ def talent_mechanics(row):
             result['effects'].append(prefix+text)
     result['effects']=list(dict.fromkeys(result['effects']))
     source_stats={s.get('AffectsStat') for node in row['nodes'] for s in node['statuses']}
+    if source_stats & {20,2126}:
+        result['effects'].append('Ближний контроль учитывает лимит удерживаемых врагов. Атака при вступлении — бесплатная реакция защитника на новый контакт; старший ранг заменяет младший.')
+    if 2113 in source_stats:
+        from talent_batch_one import skill_xp_bonuses
+        result['effects'].extend(f'Опыт навыка «{name}» союзникам: +{bonus*100:.0f}%. Отряд — вступившие участники одной стороны в активном бою; дробный опыт сохраняется.' for name,bonus in skill_xp_bonuses([row]).items())
+    if 2125 in source_stats:result['effects'].append('Урон: +10% за противника, который действительно удерживает персонажа в ближнем бою, а не за любого соседнего союзника.')
+    if any(p['Type']==25 for p in row.get('source',{}).get('activation',[])):
+        result['effects'].append('Срабатывает при попадании оружием из скрытности. Промах, обнаружение до атаки и обычное открытое нападение не запускают эффект.')
+    if row['key']=='PSV_PC_Power_Rampage':result['effects'].append('Точность всех атак и способностей: +15 за каждое собственное убийство врага, до конца этого боя. Бонусы суммируются, новый бой начинается без них.')
+    if row['key']=='PSV_Comp_RngMagic_SurgingWaters':
+        result['effects'].append('Автоматически при живом персонаже с ХП ниже 35%, один раз за бой: 10–14 ледяного урона, отталкивание 7 клеток, обездвиживание на 1 раунд, радиус 5 клеток. Без действия.')
+        result['limitation']=profile(row)['limitation']
     if 2150 in source_stats:
         result['effects'].append('Бонус точности действует на атаки и способности только с одноручным оружием в правой руке и пустой левой рукой. Старший ранг заменяет младший.')
     if 2044 in source_stats:
@@ -148,11 +163,15 @@ def profile(row,derived=None,weapon_range=1):
     row['accuracy']=max([skills.get(SKILLS[s],0)+derived.get('abilityAccuracyBonus',0) for s in row.get('skills',[]) if s in SKILLS]+([attack.get('accuracy',0)] if 31 in row.get('skills',[]) or not row.get('skills') else []),default=0)+row.get('accuracyBonus',0)
     row['cooldown']=0 if row.get('cooldown',0)==0 else max(1,math.ceil(round(row['cooldown']*derived.get('cooldownMultiplier',1),6)))
     row['effects']=[];unsupported=[];seen=set()
+    from ability_graphs import upgrade_launches,UPGRADE_GRAPH_KEYS
+    row['launches']=[] if row.get('graphResolved') else upgrade_launches(row,derived)
     primary=next((n['attack'] for n in row.get('nodes',[]) if n.get('attack') and n['phase'] in {'root','attack'}),{})
     row['targetType']=primary.get('ValidTargets',1)
     row['targetTeam']='ally' if row['targetType'] in {2,3,11,12,13,19,102,104} else 'enemy'
     for node in row.get('nodes',[]):
+        if not row.get('graphResolved') and node['prefab'] in {p['prefab'] for launch in row['launches'] for p in launch['nodes']}:continue
         for s in node.get('statuses',[]):
+            if node['phase']=='upgrade' and node['prefab'] in UPGRADE_GRAPH_KEYS and s['AffectsStat'] in {178,2159}:continue
             if s['AffectsStat'] in RAW_SUPPORTED and not s.get('ApplicationPrerequisites') and not s.get('TriggerAdjustment',{}).get('Type'):
                 identity=(node['side'],s['AffectsStat'],s.get('Value'),s.get('Duration'),s.get('affliction'),s.get('DmgType'),s.get('DefType'),s.get('Skill'))
                 if identity not in seen:
@@ -164,12 +183,14 @@ def profile(row,derived=None,weapon_range=1):
             seconds=max((s.get('Duration',0) for s in node.get('statuses',[])),default=0)
             row['effects'].append({'control':CONTROL[node['tag']],'name':node['name'],'side':node['side'],'Duration':seconds or 10,'rounds':max(1,math.ceil((seconds or 10)/10)),'value':0})
     row['movementEffect']='swap' if row['key']=='Abl_PC_Leadership_SwapPositions' else ''
-    row['supported']=bool(row.get('damageMax') or row.get('weaponMultiplier') or row['effects'] or row.get('push') or row['movementEffect'])
+    row['supported']=bool(row.get('damageMax') or row.get('weaponMultiplier') or row['effects'] or row.get('push') or row['movementEffect'] or row['launches'])
     row['limitation']='Для этой способности ещё нет боевого обработчика.' if not row['supported'] else ''
     row['unsupportedStats']=sorted(set(unsupported))
     if unsupported:
         row['supported']=False
         row['limitation']='Эта способность содержит условные эффекты, для которых ещё нет боевого обработчика.'
+    if any(not launch['supported'] for launch in row['launches']):
+        row['supported']=False;row['limitation']='Не подключена часть дополнительного графа способности.'
     row['details']=f"Дальность: {row['range']} клеток · Перезарядка: {'один раз за бой' if row.get('oncePerBattle') else str(row['cooldown'])+' раундов'}"
     if row.get('breathCost'):row['details']+=f" · Дыхание: {row['breathCost']}"
     if row['damageMax']:row['details']+=f" · Урон: {row['damageMin']:g}–{row['damageMax']:g}"
@@ -272,6 +293,9 @@ def stance_equipment(name):
 
 def proc_profiles(row,derived=None):
     """A single unconditional weapon-hit graph; complex/stealth graphs stay blocked."""
+    from ability_graphs import procs
+    graph=procs(row,derived)
+    if graph is not None:return graph
     triggers=[s for n in row['nodes'] if n['phase']=='root' and n['side']=='self'
               for s in n['statuses'] if s['AffectsStat'] in {2156,2159}]
     if len(triggers)!=1:return []

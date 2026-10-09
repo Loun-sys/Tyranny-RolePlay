@@ -140,9 +140,11 @@ class TalentRuntimeTests(unittest.TestCase):
         with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi):s.act({'kind':'attack'},c,d,[],2)
         self.assertIn('stun',s.conditions['dummy'])
 
-    def test_stealth_proc_stays_unimplemented_without_stealth_condition(self):
+    def test_stealth_proc_has_explicit_stealth_condition(self):
         from ability_rules import proc_profiles
-        self.assertEqual(proc_profiles(resolve('PSV_PC_Defense_PinningStrike')),[])
+        procs=proc_profiles(resolve('PSV_PC_Defense_PinningStrike'))
+        self.assertEqual(len(procs),1)
+        self.assertTrue(procs[0]['stealthOnly'])
 
     def test_energy_shield_can_target_self_but_not_hostile_dummy(self):
         c=actor('Abl_PC_Magic_EnergyShield');s=TrainingSession(1)

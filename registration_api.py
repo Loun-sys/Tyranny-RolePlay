@@ -325,7 +325,8 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     return {
         "defenses": defenses,
         "talentRuntime":runtime,
-        "abilityAccuracyBonus":single_weapon_bonus(runtime,active_items,active_set),
+        "killAccuracyBonus":sum(float(e['Value']) for item in active_items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('runtimeKillBonus')),
+        "abilityAccuracyBonus":single_weapon_bonus(runtime,active_items,active_set)+_apply_property(0,active_items,'Точность'),
         "incomingConversions":{'critToHit':_apply_property(0,active_items,'Отражение критических ударов'),
             'hitToGraze':_apply_property(0,active_items,'Отражение попаданий'),
             'grazeToMiss':_apply_property(0,active_items,'Отражение промахов')},
@@ -989,7 +990,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261009-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261009-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
 
 
 async def _player_maps(request,cid):

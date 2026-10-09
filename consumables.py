@@ -22,7 +22,7 @@ LABELS.update({20:'Количество удерживаемых противн�
  2101:'Две песни одновременно',2102:'Радиус защитных песен',2103:'Точность атакующих песен',2106:'Пробивание брони без оружия',
  2113:'Получение опыта навыков отрядом',2115:'Урон могильного света ночью',2116:'Длительность накладываемых воздействий',
  2120:'Длительность получаемых воздействий',2122:'Дополнительные комплекты оружия',2123:'Дополнительные быстрые ячейки',
- 2126:'Уровень атак по возможности',2138:'Отражение стрел',2142:'Дополнительные отскоки при промахе',
+ 2125:'Бонус урона за удерживающего противника',2126:'Уровень атаки при вступлении в бой',2138:'Отражение стрел',2142:'Дополнительные отскоки при промахе',
  2143:'Парирование за каждого удерживаемого врага',2145:'Невосприимчивость к зоне контроля',2146:'Парирование против дальних атак',
  2147:'Попадания в ближнем бою становятся скользящими',2148:'Скользящие удары в ближнем бою становятся промахами',
  2150:'Точность с единственным одноручным оружием',2157:'Количество атак',2159:'Дополнительная атака при попадании оружием',
@@ -60,6 +60,8 @@ def effects(item):
 def effect_text(e):
     stat=e.get('AffectsStat');v=float(e.get('Value',0));name=STATS.get(stat) or LABELS.get(stat)
     if stat==2168:return f"Вероятность {int(v)} ударов базовой атакой: {float(e.get('ExtraValue',0)):g}%"
+    if stat==2126:return f"Атака при вступлении в бой: уровень {int(v)}, шанс {e.get('ExtraValue',0):g}%"
+    if stat==105:return f"Критические попадания становятся обычными: {v:g}%"
     if stat==2172 and not v:return ''  # Display-only marker, not a -100% multiplier.
     if stat==2046:name=SKILLS.get(e.get('Skill'),'Все навыки магии')
     if stat==14:name='Броня'+(' ('+DAMAGE_TYPES[e['DmgType']].lower()+')' if e.get('DmgType') in DAMAGE_TYPES else '')
@@ -151,6 +153,7 @@ def apply(item,states,round_number,health,health_max):
         states[key]={'consumable':True,'source':copy.deepcopy(e),'name':effect_text(e),
                     'until':round_number+(rounds or 999999)-1,'beneficial':not e.get('IsHostile'),
                     'stacks':1,'remainingSeconds':round(float(e.get('Duration',0)),4),'affliction':e.get('affliction','')}
+        if stat==116 and e.get('IntervalRate') and not e.get('Duration'):states[key]['remainingSeconds']=999999
         if stat==25 and not e.get('IntervalRate'):
             health=max(0,health-round(v));states[key]['remainingSeconds']=0
         if stat in {53,2085}:states[key]['shieldRemaining']=v

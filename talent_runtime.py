@@ -5,7 +5,8 @@ No name matching: source stat IDs and values drive these calculations.
 import math
 
 SUPPORTED={27,101,137,70,2053,2052,112,2106,28,2157,80,2057,
-           2108,2109,2012,102,213,2054,2120,2116,2146,2143,2147,2148,2138,2121,2099,2101,2102,2103,2044,2150}
+           2108,2109,2012,102,213,2054,2120,2116,2146,2143,2147,2148,2138,2121,2099,2101,2102,2103,2044,2150,
+           20,24,2145,105,75,2125,2126,2113}
 DISPLAY_ONLY={184,2001,2011,2172,225}
 
 def attribute_skill_delta(name,base,effective):
@@ -18,7 +19,7 @@ def attribute_skill_delta(name,base,effective):
     return after-before
 
 def equipment_condition_supported(effect):
-    return (effect['AffectsStat'] in {14,2000,2026,2027}
+    return (effect['AffectsStat'] in {14,2000,2026,2027,24,2145,105}
             and effect.get('TriggerAdjustment',{}).get('Type',0) in {0,16,17,18}
             and all(p['Type'] in {30,31,32} for p in effect.get('ApplicationPrerequisites',[])))
 
@@ -41,7 +42,9 @@ def equipped_effect(effect,inventory):
 
 def effects(talents,inventory=None,active_set=1):
     from ability_rules import resolve,weapon_requirement
-    result={}
+    from talent_batch_one import family
+    from item_effects import active_equipment
+    result={};capacities={}
     for talent in talents:
         row=resolve(talent)
         if not row or not row['passive'] or row.get('modal') or row.get('isTalentUpgrade'):continue
@@ -51,9 +54,17 @@ def effects(talents,inventory=None,active_set=1):
             if node['phase']!='root' or node['side']!='self':continue
             for effect in node['statuses']:
                 stat=effect['AffectsStat']
-                if stat not in SUPPORTED or effect.get('ApplicationPrerequisites') or effect.get('TriggerAdjustment',{}).get('Type'):continue
+                if stat not in SUPPORTED:continue
+                if effect.get('ApplicationPrerequisites') or effect.get('TriggerAdjustment',{}).get('Type'):
+                    if inventory is None or not equipment_condition_supported(effect):continue
+                    effect=equipped_effect(effect,active_equipment(inventory,active_set))
+                    if effect is None:continue
+                if stat==2113:continue # Per-skill party bonuses, not a global multiplier.
+                if stat==20:
+                    group=family(row['key']);capacities[group]=max(capacities.get(group,0),effect['Value']);continue
                 # Successive ranks replace, rather than multiply, earlier ranks.
                 result[stat]=max(result.get(stat,float('-inf')),float(effect['Value']))
+    if capacities:result[20]=sum(capacities.values())
     return result
 
 def equipment_attack(attack,rules,category,weapon_count):
@@ -144,7 +155,7 @@ def hostile_duration(effect,outgoing,incoming):
     if not (effect.get('control') or effect.get('IsHostile')):return result
     seconds=float(effect.get('Duration',10 if effect.get('control') else 0))
     if seconds>0:
-        result['Duration']=round(seconds*outgoing.get(2116,1)*incoming.get(2120,1),4)
+        result['Duration']=round(seconds*outgoing.get(2116,1)*incoming.get(2120,1)*incoming.get(75,1),4)
         result['rounds']=max(1,math.ceil(result['Duration']/10))
     return result
 
@@ -154,5 +165,6 @@ def attack_context(rules,states,distance,health_fraction,engaged):
     if any(s.get('source',{}).get('AffectsStat')==25 for s in states.values()):multiplier*=rules.get(80,1)
     if any(not s.get('beneficial',False) for s in states.values()):multiplier*=rules.get(2057,1)
     multiplier*=1+rules.get(2108,0)*(1-health_fraction)
+    if engaged>0:multiplier*=1+rules.get(2125,0)*engaged/100
     return {'multiplier':multiplier,'accuracy':rules.get(70,0) if distance>5 else 0,
             'criticalMultiplier':1.5+rules.get(101,0)}

@@ -6,7 +6,7 @@ from scripts.game_asset_index import GameIndex,localized_tables
 from localization import localize_game_text
 
 COMBAT_REFS={'Afflictions','AfflictionPrefab','AttackPrefab','AbilityPrefab','ExtraAOE','SecondAOE','FollowUpAttacks','AttackPrefabTriggeredOn','ChildAttacks','AbilityMods','StatusEffects','m_afflictionData'}
-ATTACK_FIELDS={'DamageData','DamageMultiplier','AttackDistance','OverrideAttackDistance','UsePrimaryWeaponRange','AccuracyBonus','DTBypass','DefendedBy','SecondaryDefense','ValidTargets','ApplyToSelfOnly','PushDistance','BlastRadius','DamageAngleDegrees','ConeAngle','TargetAngle','m_attackSkills','UsePrimaryAttack','UseFullAttack','Bounces','BounceRange','BounceMultiplier','BaseInterruptValue','RecoveryTime','PersonalCooldownModifier','AttackVariation'}
+ATTACK_FIELDS={'DamageData','DamageMultiplier','AttackDistance','OverrideAttackDistance','UsePrimaryWeaponRange','AccuracyBonus','DTBypass','DefendedBy','SecondaryDefense','ValidTargets','ApplyToSelfOnly','PushDistance','BlastRadius','ExcludeTarget','DamageAngleDegrees','ConeAngle','TargetAngle','m_attackSkills','UsePrimaryAttack','UseFullAttack','Bounces','BounceRange','BounceMultiplier','BaseInterruptValue','RecoveryTime','PersonalCooldownModifier','AttackVariation'}
 DEFENSE={0:'Парирование',1:'Выносливость',2:'Воля',3:'Магия',5:'Нет'}
 
 def main():
@@ -26,7 +26,7 @@ def main():
             attack='DamageData' in t
             local_side=('self' if t.get('ApplyToSelfOnly') else 'target') if attack else side
             node={'prefab':prefab,'phase':phase,'side':local_side,'name':text(t.get('DisplayName',{})),'tag':t.get('Tag',''),
-                  'attack':{k:copy.deepcopy(v) for k,v in t.items() if k in ATTACK_FIELDS} if attack else {},'statuses':[]}
+                  'attack':{k:copy.deepcopy(v) for k,v in t.items() if k in ATTACK_FIELDS} if attack else {},'statuses':[], 'edges':[]}
             for s in t.get('StatusEffects',t.get('m_phraseData',[])):
                 s=copy.deepcopy(s)
                 for field in ('AttackPrefab','AbilityPrefab','AfflictionPrefab'):
@@ -41,6 +41,8 @@ def main():
                 elif isinstance(value,dict):
                     if 'm_PathID' in value:
                         target=g.resolve(obj,value)
+                        child_name=g.name(target)
+                        if child_name:node['edges'].append({'kind':key,'key':child_name})
                         child_side=local_side if local_side=='self' and phase!='root' else ('target' if attack else local_side)
                         if t.get('AbilityMods') and key in {'AfflictionPrefab','AttackPrefab'}:child_side='target'
                         child_phase='affliction' if key in {'AfflictionPrefab','m_afflictionData'} else 'followup' if key=='FollowUpAttacks' else 'attack' if key in {'AttackPrefab','ExtraAOE','SecondAOE'} else phase
@@ -66,9 +68,14 @@ def main():
         nodes=walk(obj);attacks=[n['attack'] for n in nodes if n['attack'] and n['phase'] in {'root','attack'}]
         primary=attacks[0] if attacks else {};damage=primary.get('DamageData',{})
         is_talent='AbilityMods' in t and 'CooldownType' not in t
+        ability_mods=copy.deepcopy(t.get('AbilityMods',[]))
+        for mod in ability_mods:
+            for status in mod.get('StatusEffects',[]):
+                for field in ('AttackPrefab','AbilityPrefab','AfflictionPrefab'):
+                    status[field+'Key']=g.name(g.resolve(obj,status.get(field)))
         if is_talent:
             nodes.append({'prefab':prefab,'phase':'upgrade','side':'target','name':name,'tag':'','attack':{},
-                          'statuses':[s for mod in t['AbilityMods'] for s in mod.get('StatusEffects',[])]})
+                          'statuses':[s for mod in ability_mods for s in mod.get('StatusEffects',[])]})
         mode=t.get('CooldownType',0);seconds=float(t.get('CooldownTimerDuration',0) if mode==3 else t.get('Cooldown',0))
         icon='';texture=g.resolve(obj,t.get('Icon'))
         if texture and texture.type.name=='Texture2D':
@@ -81,7 +88,7 @@ def main():
         row={'key':prefab,'prefab':prefab,'name':name,'name_en':text(t['DisplayName'],en,False),'description':text(t.get('Description',{})),
             'abilityClass':str(g.resolve(obj,t.get('m_Script')).read().m_ClassName) if g.resolve(obj,t.get('m_Script')) else '',
             'passive':bool(t.get('Passive')) or is_talent,'modal':bool(t.get('Modal')),'icon':icon or 'assets/game-combat/icon_option_talents.png',
-            'isTalentUpgrade':is_talent,'abilityMods':t.get('AbilityMods',[]),'skillBonuses':t.get('SkillBonuses',[]),
+            'isTalentUpgrade':is_talent,'abilityMods':ability_mods,'skillBonuses':t.get('SkillBonuses',[]),
             'grantedAbilities':[g.name(g.resolve(obj,ref)) for ref in t.get('Abilities',[])],
             'bonusDamageMult':float(t.get('BonusDamageMult',1)),'specializationCategory':t.get('SpecializationCategory'),
             'cooldown':math.ceil(seconds/10),'cooldownSeconds':seconds,'oncePerBattle':mode in {1,2},'cooldownMode':mode,
