@@ -1,0 +1,327 @@
+/* Shared final layout layer: keep the game skin, adapt the workspace itself. */
+:root {
+  --page-gutter: clamp(16px, 3vw, 64px);
+  --site-header: 72px;
+}
+html { -webkit-text-size-adjust: 100%; }
+body, main, section, aside, nav { min-width: 0; }
+button, a, summary, select { -webkit-tap-highlight-color: transparent; }
+button, summary { touch-action: manipulation; }
+input, select, textarea { min-width: 0; max-width: 100%; }
+:is(h1,h2,h3,p,b,.item-description) { overflow-wrap: anywhere; }
+dialog {
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
+  overscroll-behavior: contain;
+}
+.archive-page main {
+  width: min(1920px, 100%);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+.topbar { padding-inline: var(--page-gutter); gap: clamp(16px, 2vw, 35px); }
+.topbar .brand { flex: none; white-space: nowrap; }
+.topbar nav { min-width: 0; overflow-x: auto; scrollbar-width: thin; }
+.topbar button, .tabs button { flex: none; white-space: nowrap; }
+.tabs { top: var(--site-header); scrollbar-width: thin; scroll-padding-inline: 12px; }
+.profile-head { align-items: center; flex-wrap: wrap; }
+.profile-head > div { flex: 1 1 320px; min-width: 0; }
+.profile-head h1 { line-height: 1; }
+.profile-head .wallet-line { flex: 0 1 auto; }
+.wallet-ring-tip { max-width: min(180px, calc(100vw - 24px)); }
+.grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); }
+.archive-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 255px), 1fr)); }
+.box, .admin-box, .talent-selection, .bag-item, .shop-item { min-width: 0; }
+.box > p { line-height: 1.6; }
+.inventory-screen {
+  grid-template-columns: 210px minmax(430px, .95fr) minmax(320px, 1fr);
+  min-height: 0;
+}
+.paperdoll-frame { height: clamp(600px, 38vw, 760px); }
+.bag-scroll { max-height: min(850px, 85dvh); }
+.talent-track { overflow-x: auto; scrollbar-width: thin; overscroll-behavior-x: contain; }
+.talent-tree { flex-basis: calc(33.333% - 8px); }
+.talent-trees { grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr)); }
+.sigil-scroll-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.tyranny-spell-screen { width: 100%; }
+.encyclopedia-copy { max-width: 880px; }
+.creator-page .builder, .creator-page .hero__inner { width: min(1600px, calc(100% - 2 * var(--page-gutter))); }
+.creator-page .choice-stage { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+.creator-page .stats-stage { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }
+.creator-page .hero__inner { padding-left: 46%; }
+.creator-page .hero { min-height: clamp(560px, 70dvh, 800px); }
+.choice-list, .lore-panel, .allocation, .identity label, .ability-body, .stat-row > span { min-width: 0; }
+.creator-page .canonical-result { grid-template-columns: minmax(0, 1fr); }
+.creator-page .canonical-identity { width: 100%; max-width: 1100px; }
+.admin-shell { grid-template-columns: clamp(260px, 17vw, 350px) minmax(0, 1fr); }
+.admin-top { height: auto; min-height: 68px; padding-block: 10px; gap: 20px; }
+.admin-top > div { min-width: 0; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.admin-top button { flex: none; }
+.workspace { padding: clamp(16px, 2vw, 36px); }
+.admin-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.fields { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); }
+.sigil-groups { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.item-catalog-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+.editor-head > div, .npc-profile .fields, .merchant-filters > * { min-width: 0; }
+.box-actions, .item-dialog-actions { flex-wrap: wrap; }
+.map-scroll, .master-battle-viewport { overscroll-behavior: contain; max-width: 100%; }
+.map-scroll.map-pan, .map-pan .map-edit-cell { touch-action: pan-x pan-y; }
+.map-pan .map-edit-cell { cursor: grab; }
+.tabs, .topbar nav, .talent-track, .inventory-filters, .original-hotkeys, .creation-progress {
+  scrollbar-color: #77273a #100b10;
+}
+.master-combat-page main { max-width: 2400px; margin-inline: auto; }
+
+@media (min-width: 1400px) {
+  .combat-game-screen { --combat-side: clamp(448px, 28vw, 600px); }
+  .combat-sidebar .original-hotkeys { grid-template-columns: repeat(9, minmax(0, 1fr)) 30px; }
+  .combat-sidebar .original-quick { max-width: 52px; }
+  .combat-sidebar .original-menus button { width: 100%; max-width: 44px; height: 44px; }
+  .combat-game-screen .tactical-map-wrap { height: clamp(540px, 70dvh, 1050px); max-height: none; }
+  .master-combat-page .tactical-map-wrap { max-height: none; }
+}
+
+@media (max-width: 1250px) {
+  .topbar .brand span, #sync, .admin-top #connection { display: none; }
+  .inventory-screen { grid-template-columns: 180px minmax(0, 1fr); }
+  .inventory-screen .bag { grid-column: 1 / -1; }
+  .inventory-screen .bag-scroll { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .talent-tree { flex-basis: calc(50% - 6px); }
+}
+
+@media (max-width: 1000px) {
+  .creator-page .choice-stage, .creator-page .stats-stage { grid-template-columns: minmax(0, 1fr); }
+  .creator-page .hero__inner { padding-left: 32%; }
+  .admin-top { flex-wrap: wrap; }
+  .admin-top > div { flex: 1 1 100%; justify-content: flex-start; }
+  .admin-top a { font-size: 20px; }
+  .npc-roster, .npc-editor-toolbar { position: static; }
+  .npc-ability-catalog { position: static; max-height: none; }
+}
+
+@media (max-width: 850px) {
+  .admin-shell { grid-template-columns: minmax(0, 1fr); }
+  .roster { min-height: 0; max-height: 260px; border-right: 0; border-bottom: 1px solid var(--line); overflow: auto; }
+  .roster header { padding: 14px; }
+  .roster h1 { font-size: 26px; margin-bottom: 10px; }
+  .character-button { padding: 10px 14px; }
+  .master-battle-controls { grid-template-columns: minmax(0, 1fr); }
+  .npc-workspace { display: block; }
+  .npc-ability-catalog { margin-top: 16px; }
+}
+
+@media (max-width: 760px) {
+  :root { --site-header: 104px; --page-gutter: 12px; }
+  .topbar {
+    height: auto; min-height: var(--site-header); padding-block: 10px 0;
+    flex-wrap: wrap; gap: 8px; align-content: center;
+  }
+  .topbar .brand { font-size: 20px; }
+  .topbar nav { flex: 1 1 100%; width: 100%; gap: 4px; }
+  .topbar nav button { padding: 12px 10px; font-size: 11px; letter-spacing: .5px; min-height: 44px; }
+  .topbar nav button[data-view="encyclopedia"] { font-size: 10px; }
+  body:has(.combat-game-screen) .topbar { gap: 8px; }
+  body:has(.combat-game-screen) .topbar nav { flex: 1 1 100%; width: 100%; }
+  body:has(.combat-game-screen) .topbar nav button { font-size: 11px; padding: 12px 10px; letter-spacing: .5px; }
+  .archive-page main { padding-bottom: 36px; }
+  .profile-head { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 14px; padding-block: 24px; min-height: 0; }
+  .profile-head .profile-portrait { align-self: start; width: 88px; }
+  .profile-head .portrait { width: 88px; height: 112px; box-shadow: 5px 5px 0 #24050a; }
+  .profile-head .portrait-edit-label { font-size: 7px; }
+  .profile-head h1 { font-size: clamp(27px, 6vw, 42px); }
+  .profile-head small { font-size: 9px; letter-spacing: 1.5px; }
+  .profile-head p, .profile-head > div > b { font-size: 12px; }
+  .profile-head .wallet-line { grid-column: 1 / -1; width: 100%; justify-content: space-between; margin: 6px 0 0; gap: 10px; }
+  .wallet-rings { flex-wrap: wrap; }
+  .wallet-ring:last-child .wallet-ring-tip { left: auto; right: 0; transform: none; }
+  .tabs { max-width: 100%; }
+  .tabs button { min-height: 44px; padding: 11px 12px; }
+  .panel { padding-block: 18px; }
+  .banner { min-height: 190px; padding-block: 30px; }
+  .banner h1 { font-size: clamp(45px, 12vw, 76px); line-height: 1; }
+  .banner p { font-size: 15px; }
+  .toolbar { flex-wrap: wrap; gap: 10px; padding-block: 16px; }
+  .toolbar input { width: 100%; padding: 12px; }
+  .grid, .talent-trees { grid-template-columns: minmax(0, 1fr); }
+  .box { padding: 16px; }
+  .stat { grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; }
+  .stat > div { min-width: 0; }
+  .stat small { line-height: 1.5; }
+  .inventory-screen { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .inventory-screen .paperdoll { grid-row: 1; margin: 0; padding: 7px; }
+  .inventory-screen .combat-sheet { grid-row: 2; }
+  .inventory-screen .bag { grid-row: 3; margin: 0; }
+  .paperdoll-frame { height: clamp(460px, 130vw, 600px); }
+  .paper-slot { gap: 4px; }
+  .paper-slot button { width: 52px; height: 52px; }
+  .paper-slot b { font-size: 10px; max-width: 68px; }
+  .paper-slot.weapon-main { left: 22px; }
+  .paper-slot.weapon-off { right: 22px; }
+  .quick-slots { width: calc(100% - 20px); gap: 4px; }
+  .quick-slots .paper-slot button { min-width: 0; }
+  .weapon-sets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .weapon-set { min-width: 0; }
+  .inventory-screen .bag-scroll { display: block; max-height: none; padding-inline: 10px; }
+  .inventory-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding: 10px; }
+  .inventory-filters button { flex: none; min-height: 44px; }
+  .bag-item b { font-size: 14px; }
+  .bag-item select { min-height: 44px; }
+  .talent-carousel { grid-template-columns: 26px minmax(0, 1fr) 26px; }
+  .talent-tree { flex-basis: 100%; min-width: 0; padding-inline: 10px; }
+  .talent-tree header h2 { font-size: 20px; }
+  .talent-selection { padding: 14px; gap: 12px; }
+  .talent-actions { min-width: 0; }
+  .talent-more, .talent-actions .action { min-height: 44px; font-size: 12px; padding-inline: 8px; }
+  .talent-selection h2 { font-size: 22px; }
+  .encyclopedia-shell { min-height: 0; }
+  .encyclopedia-head h1 { font-size: clamp(34px, 8vw, 54px); }
+  .encyclopedia-categories button { min-width: 140px; flex: none; min-height: 44px; }
+  .encyclopedia-list { max-height: 220px; }
+  .encyclopedia-copy { font-size: 17px; line-height: 1.65; }
+  .encyclopedia-article { min-height: 0; }
+  .caster-card > div { min-width: 0; }
+  .grimoire-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .forge-primary-slot { width: 64px; height: 64px; }
+  .craft-layout { grid-template-columns: minmax(0, 1fr); }
+  .craft-forge .craft-compare { gap: 12px; }
+  .craft-stat-scroll { min-height: 0; max-height: 360px; }
+  .shop-item { grid-template-columns: 44px minmax(0, 1fr) 52px; }
+  .shop-item > button:last-child { grid-column: 2 / -1; min-height: 44px; }
+  .merchant-filters { align-items: stretch; }
+  .merchant-filters > input, .merchant-filters > select { flex: 1 1 140px; width: 100%; }
+  .merchant-nav button { min-height: 44px; }
+  .item-dialog-actions > button, .box-actions > button { min-height: 44px; }
+  .possession-coins { gap: 8px; }
+  dialog { padding: 18px; }
+  dialog .close { min-width: 44px; min-height: 44px; }
+  .item-dialog-head { gap: 12px; }
+  .item-dialog-head h2, .talent-dialog-head h2 { font-size: 23px; }
+  .item-dialog-head .gear-art { width: 60px; height: 60px; flex-basis: 60px; }
+  .item-dialog li { gap: 12px; }
+  #toast { max-width: calc(100vw - 24px); right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
+  .archive-page main > #toast:empty { height: 0; min-height: 0; padding: 0; margin: 0; }
+}
+
+@media (max-width: 1000px) {
+  /* The map gets its own scroll surface; HUD controls keep finger-sized targets. */
+  .combat-game-screen .combat-arena { display: grid; grid-template-columns: minmax(0, 1fr); padding: 6px; gap: 10px; }
+  .combat-map-tools { position: relative; inset: auto; grid-row: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; width: 100%; gap: 8px; }
+  .combat-journal { grid-column: 1 / -1; grid-row: 2; width: 100%; }
+  .combat-journal summary, .combat-initiative summary { min-height: 44px; }
+  .combat-zoom-controls { width: max-content; gap: 6px; }
+  .combat-zoom-controls button { width: 44px; height: 40px; }
+  .combat-initiative { justify-self: end; }
+  .combat-initiative-panel { top: 50px; max-height: 50dvh; }
+  .combat-game-screen .tactical-map-wrap {
+    grid-row: 2; order: initial; width: 100%; height: clamp(260px, 42dvh, 440px);
+    min-height: 0; max-height: none; margin-top: 0; padding: 0;
+  }
+  .master-combat-page .tactical-map-wrap { max-height: none; }
+  .combat-game-screen .combat-sidebar { grid-row: 3; width: 100%; display: flex; gap: 10px; }
+  .combat-sidebar .tyranny-combat-hud { grid-template-columns: minmax(0, 1fr); padding: 10px; width: 100% !important; }
+  .combat-sidebar .combat-hud-rail { display: none; } /* duplicated in the action row */
+  .combat-sidebar .original-hud-name { grid-column: 1; grid-row: 1; }
+  .combat-sidebar .original-hotkeys { grid-column: 1; grid-row: 2; display: flex; gap: 6px; overflow-x: auto; padding-bottom: 16px; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  .combat-sidebar .original-quick { flex: 0 0 44px; width: 44px; height: 44px; max-width: none; scroll-snap-align: start; }
+  .combat-sidebar .edit-hotkeys { flex: 0 0 44px; width: 44px; height: 44px; }
+  .combat-sidebar .original-hud-body { grid-column: 1; grid-row: 3; gap: 8px; }
+  .combat-sidebar .original-portrait { flex: 0 0 56px; width: 56px; height: 128px; }
+  .combat-sidebar .original-stat-row { gap: 4px 8px; }
+  .combat-sidebar .original-stat-row > span { font-size: 12px; }
+  .combat-sidebar .original-menus { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  .combat-sidebar .original-menus button { width: 100%; height: 44px; max-width: none; padding: 7px; }
+  .combat-sidebar .original-sets { grid-column: 1; grid-row: 4; }
+  .combat-sidebar .original-sets button { width: 44px; height: 44px; }
+  .combat-turn-resources .combat-end-turn { min-height: 44px; font-size: 11px; }
+  .combat-sidebar .combat-picker, .combat-sidebar .combat-info-drawer { max-height: 55dvh; }
+  .combat-picker header button, .combat-picker-tabs button { min-height: 44px; }
+  .combat-target-card header { flex-wrap: wrap; }
+  .combat-target-values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .master-combat-top { gap: 12px; }
+  .master-combat-top nav { width: 100%; gap: 8px; }
+  .master-combat-top nav button, .master-combat-top nav a { min-height: 44px; padding: 12px 10px; font-size: 11px; }
+  .master-combat-page main { padding: 12px; }
+  .master-turn-banner { font-size: 15px; }
+}
+
+@media (max-width: 760px) {
+  .admin-top { position: static; padding: 12px; gap: 10px; }
+  .admin-shell:has(.campaign-map-list, .npc-workspace, .item-catalog-grid, [data-battle-create], .master-battle-layout, .master-stock-row) .roster { display: none; }
+  .admin-top > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  .admin-top button { min-height: 44px; padding: 10px 6px; font-size: 11px; }
+  .admin-page #loading { inset: 0; }
+  .workspace { padding: 12px; }
+  .editor-head { align-items: flex-start; flex-wrap: wrap; gap: 14px; }
+  .editor-head h1 { font-size: clamp(28px, 7vw, 40px); }
+  .admin-box { padding: 14px; clip-path: none; }
+  .admin-tabs button { min-height: 44px; padding-inline: 12px; }
+  .edit-row { grid-template-columns: minmax(0, 1fr) 70px 70px; gap: 6px; }
+  .edit-row > button { grid-column: 2 / -1; }
+  .catalog-item { grid-template-columns: 40px minmax(0, 1fr) 60px; }
+  .catalog-item > button { grid-column: 2 / -1; }
+  .talent-admin, .spell-admin, .sigil-admin { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; }
+  .inventory-admin { grid-template-columns: 40px minmax(0, 1fr); }
+  .master-stock-row { grid-template-columns: 40px repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .master-stock-row > b { grid-column: 2 / -1; }
+  .master-stock-row > button { grid-column: 2 / -1; }
+  .master-battle-controls { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .battle-order-row { grid-template-columns: minmax(0, 1fr) 44px 44px; }
+  .battle-order-row button { min-height: 44px; }
+  .battle-scene-row { flex-wrap: wrap; }
+  .map-scroll, .master-battle-viewport { max-height: 55dvh; }
+  .map-tools > select, #map-token-filter { max-width: 100%; width: 100%; }
+  .map-tools label, .battle-participant-choices label { min-height: 44px; display: flex; gap: 8px; align-items: center; }
+  .map-tools button, .battle-toolbar button, .npc-workspace button { min-height: 44px; }
+  .npc-library-ability { grid-template-columns: 36px minmax(0, 1fr) 44px; gap: 8px; }
+  .npc-library-ability img { width: 36px; height: 36px; }
+  .npc-ability-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .npc-profile .fields { width: 100%; }
+  .npc-editor-toolbar h2 { flex-basis: 100%; }
+  .npc-catalog-scroll { max-height: 60dvh; }
+  .rep-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .creator-page .hero { min-height: 560px; }
+  .creator-page .hero__inner { padding-left: 0; padding-bottom: 60px; }
+  .creator-page .builder { padding-top: 24px; }
+  .creator-page .creation-progress { padding: 12px 0 16px; background: #08070a; grid-template-columns: repeat(7, minmax(86px, 1fr)); }
+  .creator-page .progress-item { min-height: 44px; font-size: 10px; }
+  .creator-page .wizard-step { padding-top: 24px; }
+  .creator-page .choice-stage { display: grid; }
+  .creator-page .lore-panel { padding: 20px 16px; margin-top: 0; }
+  .creator-page .choice-list { padding: 12px; gap: 8px; }
+  .creator-page .choice-option { min-height: 56px; }
+  .creator-page .stat-row { flex-wrap: wrap; gap: 10px; padding-inline: 6px; }
+  .creator-page .stat-row > span { flex: 1 1 120px; }
+  .creator-page .stat-row .stepper { flex: none; }
+  .creator-page .stepper button { width: 44px; height: 44px; }
+  .creator-page .rows { padding-inline: 10px; }
+  .creator-page .stats-stage .rows { max-height: none; overflow: visible; }
+  .creator-page .allocation-title { padding: 16px; gap: 10px; }
+  .creator-page .allocation-title h2 { font-size: clamp(19px, 4.9vw, 26px); overflow-wrap: normal; }
+  .creator-page .stats-stage > .lore-panel { position: static; }
+  .creator-page .ability-choice { grid-template-columns: 48px minmax(0, 1fr); gap: 10px; }
+  .creator-page .ability-choice > img { width: 48px; height: 48px; }
+  .creator-page .wizard-controls { grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); gap: 8px; }
+  .creator-page .screen-title h2 { font-size: clamp(24px, 6vw, 32px); }
+  .creator-page .canonical-identity { padding: 16px; }
+  .creator-page .result-copy { padding: 20px 16px; }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px; } /* no iOS focus zoom */
+}
+
+@media (max-width: 420px) {
+  .combat-sheet .combat-stat { grid-template-columns: 20px minmax(0, 1fr); gap: 4px 6px; }
+  .combat-sheet .combat-stat img { width: 20px; height: 20px; }
+  .combat-sheet .combat-stat span { font-size: 11px; }
+  .combat-sheet .combat-stat b { grid-column: 2; text-align: left; font-size: 16px; }
+  .craft-forge .craft-compare { grid-template-columns: minmax(0, 1fr); }
+  .craft-stat-scroll { max-height: 260px; }
+  .npc-owned-ability header { flex-wrap: wrap; }
+  .npc-owned-ability header .field { flex-basis: calc(100% - 70px); }
+  .edit-row { grid-template-columns: minmax(0, 1fr) 65px 65px; }
+  .admin-page .editor-head img { width: 80px; height: 100px; }
+}
+
+@media (max-height: 540px) and (max-width: 1000px) {
+  .topbar, .tabs, .creator-page .creation-progress { position: static; }
+  .combat-game-screen .tactical-map-wrap { height: 300px; }
+}

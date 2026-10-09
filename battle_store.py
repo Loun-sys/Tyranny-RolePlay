@@ -161,20 +161,12 @@ class BattleStore:
                 limits=await self.db.equipment_limits(actor['id'])
             else:
                 from talent_runtime import effects
-                inventory=[]
-                for item in t.get('equipment',[]):
-                    if item.get('slot') in {'PrimaryWeapon','SecondaryWeapon'}:
-                        inventory.append({**item,'equipped_slot':'Оружие I — '+('правая рука' if item['slot']=='PrimaryWeapon' else 'левая рука')})
+                from talent_reactions import actor_inventory,npc_derived
+                inventory=actor_inventory(t)
                 actor={'id':0,'name':t['name'],'attributes':t.get('attributes',{}),'talents':t.get('abilities',[]),
                        'health':t['health'],'health_max':t['healthMax'],'portrait_url':t.get('portrait',''),'level':t.get('level',1)}
-                derived={'attack':t.get('attack',{}),'armor':t.get('armor',0),'defenses':t.get('defenses',{}),
-                         'effectiveSkills':t.get('skills',{}),'effectiveAttributes':t.get('attributes',{}),
-                         'healthMax':t.get('baseHealthMax',t['healthMax']),'talentRuntime':effects(t.get('abilities',[]),inventory),'cooldownMultiplier':1}
                 states=row['state']['conditions'].get(key,{})
-                modifiers=virtual_equipment(states,row['state']['round'])
-                attribute_modifiers=virtual_equipment({k:v for k,v in states.items() if v.get('source',{}).get('AffectsStat') in {56,57,58,59,99,100}},row['state']['round'])
-                base=self._npc_modifiers(derived,attribute_modifiers)
-                derived=self._npc_modifiers(derived,modifiers);derived['_baseDerived']=base
+                derived=npc_derived(t,effects(t.get('abilities',[]),inventory),inventory,states,row['state']['round'])
                 spells=[];limits={'weaponSets':1}
             result[key]=(actor,derived,inventory,spells,limits)
         return result
@@ -215,7 +207,10 @@ class BattleStore:
             d=profiles[other][1].get('_baseDerived',profiles[other][1])
             engine.targets[other]={**token,'baseHealthMax':profiles[other][1]['healthMax'],'portrait':profiles[other][0].get('portrait_url',''),'armor':d.get('armor',0),'defenses':d.get('defenses',{}),'attack':d.get('attack',{}),
                 'armorByType':d.get('armorByType',{}),'incomingConversions':d.get('incomingConversions',{}),
-                'talentRuntime':d.get('talentRuntime',{}),'team':'ally' if token['team']==t['team'] else 'enemy'}
+                'talentRuntime':d.get('talentRuntime',{}),'team':'ally' if token['team']==t['team'] else 'enemy',
+                'combatDerived':profiles[other][1],'inventory':profiles[other][2],
+                'combatStance':s['personal'].get(other,{}).get('active_stance',''),
+                'character':profiles[other][0],'abilities':profiles[other][0].get('talents',[])}
             engine.target_healths[other]=token['health'];engine.target_positions[other]=(token['x'],token['y'])
             if not s['conditions'].get(other,{}).get('restore'):
                 engine.targets[other]['healthMax']=profiles[other][1]['healthMax']
@@ -225,6 +220,7 @@ class BattleStore:
         if not engine.initiative:engine.initiative=[{'id':'player','name':t['name'],'roll':0,'bonus':0,'total':0}]
         engine.selected_target_id=next(iter(engine._alive_targets()),next(iter(engine.targets),''))
         engine.runtime_talents=actor.get('talents',[]);engine.runtime_derived=derived
+        engine.runtime_character=actor
         engine.talent_runtime={int(k):v for k,v in derived.get('talentRuntime',{}).items()}
         engine.consumable_inventory=inventory
         # Unlike training, real inventory has already been reduced on the last request.
@@ -242,6 +238,9 @@ class BattleStore:
         s['conditions']={key if k=='player' else k:v for k,v in e.conditions.items()}
         s['personal'][key]={**s['personal'].get(key,{}),**{f:list(getattr(e,f)) if isinstance(getattr(e,f,None),set) else copy.deepcopy(getattr(e,f))
             for f in PERSONAL if hasattr(e,f)}}
+        for event in e.events:
+            if event.get('reaction') and event['sourceId']!='player':
+                s['personal'].setdefault(event['sourceId'],{})['stealthed']=False
         s['log'].extend(line.replace('Манекен разрушен.','Цель выведена из боя.').replace(' (тренировка — настоящий предмет не расходуется).','.') for line in e.log)
         s['log']=s['log'][-100:]
         if presentation:
@@ -341,14 +340,12 @@ class BattleStore:
                     before=dict(getattr(e,'consumable_used',{}))
                     data={**p,'targetId':target} if target else p
                     if s['tokens'][key]['kind']=='npc' and p.get('kind')=='ability':
-                        from ability_rules import profile
-                        from npc_store import refresh_ability
-                        ability=next((a for a in s['tokens'][key].get('abilities',[]) if p.get('name') in {a.get('key'),a.get('name')} and not a.get('passive')),None)
-                        if not ability:raise ValueError('Способность не назначена НПС.')
+                        from ability_rules import owned_actions
                         d=e._combat_derived(d)
-                        rule=profile(refresh_ability(ability),d,d.get('attack',{}).get('range',1))
+                        rule=next((a for a in owned_actions(s['tokens'][key].get('abilities',[]),d,d['attack'].get('range',1)) if p.get('name') in {a['key'],a['name']}),None)
+                        if not rule:raise ValueError('Способность не назначена НПС.')
                         e.selected_target_id=target or e.selected_target_id
-                        e.aim_point=e.player_position if rule['targeting']=='self' else self._cell(s,p) if 'x' in p and 'y' in p else e.target_positions.get(e.selected_target_id)
+                        e.aim_point=e.player_position if rule['targeting']=='self' or e.selected_target_id=='player' else self._cell(s,p) if 'x' in p and 'y' in p else e.target_positions.get(e.selected_target_id)
                         if e.aim_point is None:raise ValueError('Выберите цель способности.')
                         e._execute_ability(rule,d,inv)
                         if not rule.get('song'):e.action_available=False

@@ -5,7 +5,7 @@ No name matching: source stat IDs and values drive these calculations.
 import math
 
 SUPPORTED={27,101,137,70,2053,2052,112,2106,28,2157,80,2057,
-           2108,2109,2012,102,213,2054,2120,2116,2146,2143,2147,2148,2138,2121,2099,2101,2102,2103}
+           2108,2109,2012,102,213,2054,2120,2116,2146,2143,2147,2148,2138,2121,2099,2101,2102,2103,2044,2150}
 DISPLAY_ONLY={184,2001,2011,2172,225}
 
 def attribute_skill_delta(name,base,effective):
@@ -58,6 +58,8 @@ def effects(talents,inventory=None,active_set=1):
 
 def equipment_attack(attack,rules,category,weapon_count):
     attack=dict(attack)
+    if category=='Одноручное оружие' and weapon_count==1:
+        attack['accuracy']+=rules.get(2150,0)
     if category=='Безоружный бой':
         bonus=rules.get(27,0)
         attack['damageMin']+=bonus;attack['damageMax']+=bonus
@@ -74,6 +76,34 @@ def equipment_attack(attack,rules,category,weapon_count):
     attack['damageMin']=round(attack['damageMin']*multiplier)
     attack['damageMax']=round(attack['damageMax']*multiplier)
     return attack
+
+
+def single_weapon_bonus(rules,inventory,active_set=1):
+    from item_effects import active_equipment
+    weapons=[i for i in active_equipment(inventory,active_set) if i.get('equipped_slot','').startswith('Оружие')]
+    return rules.get(2150,0) if len(weapons)==1 and 'правая рука' in weapons[0]['equipped_slot'] and weapons[0].get('category')=='Одноручное оружие' else 0
+
+
+def riposte_chance(rules,inventory,attack,states,active_set=1):
+    """2044 has a different weapon filter from the 2150 accuracy bonus."""
+    from item_effects import active_equipment
+    weapons=[i for i in active_equipment(inventory,active_set) if i.get('equipped_slot','').startswith('Оружие')]
+    if len(weapons)!=1 or 'правая рука' not in weapons[0]['equipped_slot']:return 0
+    if weapons[0].get('category') not in {'Одноручное оружие','Метательное оружие'} or weapon_mode(attack)!='melee':return 0
+    blocked={'stun','prone','sleep','freeze','frozen','paralyze','paralyzed','petrif','petrified','disarm'}
+    if any(key.removeprefix('special:') in blocked for key in states):return 0
+    return max(0,min(1,rules.get(2044,0)/100))
+
+
+def spell_conversions(states,round_number):
+    """Serialized 50 means 50%, only for crafted spells; no permanent bonus."""
+    result={}
+    for state in states.values():
+        effect=state.get('source',{})
+        if state.get('until',0)<round_number:continue
+        key={2127:'critToHit',2128:'hitToGraze'}.get(effect.get('AffectsStat'))
+        if key:result[key]=max(result.get(key,0),float(effect.get('Value',0)))
+    return result
 
 
 def weapon_mode(attack,rule=None):

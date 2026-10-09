@@ -316,7 +316,7 @@ def _accent_value(accents: list[str], family: str) -> int:
 
 
 def spell_runtime_profile(
-    spell: dict, *, skill: int, wits: int, cooldown_multiplier: float = 1,
+    spell: dict, *, skill: int, wits: int, cooldown_multiplier: float = 1, accuracy_bonus: float = 0,
 ) -> dict:
     """Единый пошаговый расчёт формулы для сайта, тренировки и Discord-боя."""
     accents = list(spell.get("accents") or [])
@@ -325,7 +325,7 @@ def spell_runtime_profile(
     shape = EXPRESSION_RUNTIME.get(
         spell.get("expression"), EXPRESSION_RUNTIME["Сосредоточенное намерение"]
     )
-    accuracy = int(skill) + _accent_value(accents, "Точное действие")
+    accuracy = int(skill) + _accent_value(accents, "Точное действие") + accuracy_bonus
     power_bonus = _accent_value(accents, "Мощность")
     if enhancement == "Магия крови":
         power_bonus += 30

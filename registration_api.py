@@ -314,7 +314,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     deflection=round(deflection+shield_bonuses.get('Отражение',0))
     recovery = sum(float(item.get("recovery") or 0) for item in active_items)
     recovery = _apply_property(recovery, active_items, "Восстановление", "Recovery")
-    from talent_runtime import effects as talent_effects, equipment_attack
+    from talent_runtime import effects as talent_effects, equipment_attack, single_weapon_bonus
     runtime=talent_effects(character.get('talents',[]),active_items,active_set)
     if 2012 in runtime:defenses['Парирование']=defenses['Уклонение']
     attack_values=equipment_attack({"accuracy":accuracy,"damageMin":damage_min,"damageMax":damage_max,
@@ -325,6 +325,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     return {
         "defenses": defenses,
         "talentRuntime":runtime,
+        "abilityAccuracyBonus":single_weapon_bonus(runtime,active_items,active_set),
         "incomingConversions":{'critToHit':_apply_property(0,active_items,'Отражение критических ударов'),
             'hitToGraze':_apply_property(0,active_items,'Отражение попаданий'),
             'grazeToMiss':_apply_property(0,active_items,'Отражение промахов')},
@@ -964,10 +965,17 @@ async def admin_training(request: web.Request) -> web.Response:
                 result=session.master_npc_ability(str(payload.get('actorId','')),str(payload.get('abilityKey','')),str(payload.get('targetId','')),actor,base)
                 message=result['line']
             except (TypeError,ValueError) as error:raise web.HTTPConflict(reason=str(error)) from error
-        from ability_rules import profile
-        from npc_store import refresh_ability
-        npcs=[{'id':key,'name':n['name'],'visibleTargetIds':[t for t,h in session.target_healths.items() if h>0]+(['player'] if session.visible_to(key) else []),'abilities':[{k:v for k,v in profile(refresh_ability(a)).items() if k in {'key','name','description','icon','details','supported','limitation'}} for a in n.get('abilities',[]) if not a.get('passive')]}
-              for key,n in session.targets.items() if n.get('kind')=='npc']
+        from ability_rules import owned_actions
+        from talent_runtime import effects
+        from talent_reactions import actor_inventory,npc_derived
+        npcs=[]
+        for key,n in session.targets.items():
+            if n.get('kind')!='npc':continue
+            equipped=actor_inventory(n)
+            d=npc_derived(n,effects(n.get('abilities',[]),equipped),equipped,session.conditions.get(key,{}),session.round_number)
+            abilities=owned_actions(n.get('abilities',[]),d,d['attack'].get('range',1))
+            npcs.append({'id':key,'name':n['name'],'visibleTargetIds':[t for t,h in session.target_healths.items() if h>0]+(['player'] if session.visible_to(key) else []),
+                         'abilities':[{k:v for k,v in a.items() if k in {'key','name','description','icon','details','supported','limitation'}} for a in abilities]})
         return web.json_response({'ok':True,'active':True,'message':message,'npcs':npcs,'training':session.view(actor,_derived(actor,inventory),spells,limits['weaponSets'])})
 
 
@@ -981,7 +989,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261004-5", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261009-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
 
 
 async def _player_maps(request,cid):

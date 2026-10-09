@@ -7,7 +7,7 @@ from localization import localize_game_text, neutralize_player_reference
 
 SKILLS={2:'Атлетика',3:'Знания',4:'Хитроумие',5:'Одноручное оружие',6:'Парное оружие',7:'Двуручное оружие',8:'Волшебный посох',9:'Безоружный бой',10:'Луки',14:'Парирование',15:'Уклонение',18:'Управление огнём',19:'Управление холодом',20:'Управление молниями',22:'Управление рвением',23:'Управление истощением',25:'Управление жизнью',28:'Управление иллюзиями',30:'Управление могильным светом',32:'Управление силой',33:'Управление камнем',34:'Исполнение',37:'Дротики'}
 CONTROL={'dazed':'daze','prone':'prone','stun':'stun','paralyzed':'paralyze','petrified':'petrif','frozen':'freeze','asleep':'sleep','rooted':'root','hobbled':'hobble','Silenced':'silence','Disarm':'disarm','blinded':'blind','terrified':'fear','fear':'fear','confused':'confus','taunted':'taunt'}
-RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166,2129,2168}
+RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166,2129,2168,2127,2128}
 
 @lru_cache(maxsize=1)
 def library():
@@ -99,6 +99,13 @@ def talent_mechanics(row):
             prefix=('На себя: ' if node['side']=='self' else 'На цель: ')+('условный эффект — ' if effect.get('ApplicationPrerequisites') or effect.get('TriggerAdjustment',{}).get('Type') else '')
             result['effects'].append(prefix+text)
     result['effects']=list(dict.fromkeys(result['effects']))
+    source_stats={s.get('AffectsStat') for node in row['nodes'] for s in node['statuses']}
+    if 2150 in source_stats:
+        result['effects'].append('Бонус точности действует на атаки и способности только с одноручным оружием в правой руке и пустой левой рукой. Старший ранг заменяет младший.')
+    if 2044 in source_stats:
+        result['effects'].append('Ответный удар — бесплатная реакция на промах ближней оружейной атаки. Нужны пустая левая рука, основная ближняя атака и достижимая цель; контроль блокирует реакцию. Реакции не вызывают друг друга.')
+    if source_stats & {2127,2128}:
+        result['effects'].append('Защита от преобразования попаданий действует только во время щита и только против созданных заклинаний. Один бросок преобразуется не более одного раза; способности, песни и атаки посохом не подходят.')
     if not result['effects'] and row['passive']:
         result['limitation']=result.get('limitation') or 'Специальная механика этого таланта ещё не подключена к расчётам.'
     if row.get('modal'):
@@ -138,7 +145,7 @@ def profile(row,derived=None,weapon_range=1):
     runtime={int(k):v for k,v in derived.get('talentRuntime',{}).items()}
     if (row.get('weaponRange') or row.get('weaponMultiplier')) and row['targeting']!='self':
         row['range']+=runtime.get(2054,0)
-    row['accuracy']=max([skills.get(SKILLS[s],0) for s in row.get('skills',[]) if s in SKILLS]+([attack.get('accuracy',0)] if 31 in row.get('skills',[]) or not row.get('skills') else []),default=0)+row.get('accuracyBonus',0)
+    row['accuracy']=max([skills.get(SKILLS[s],0)+derived.get('abilityAccuracyBonus',0) for s in row.get('skills',[]) if s in SKILLS]+([attack.get('accuracy',0)] if 31 in row.get('skills',[]) or not row.get('skills') else []),default=0)+row.get('accuracyBonus',0)
     row['cooldown']=0 if row.get('cooldown',0)==0 else max(1,math.ceil(round(row['cooldown']*derived.get('cooldownMultiplier',1),6)))
     row['effects']=[];unsupported=[];seen=set()
     primary=next((n['attack'] for n in row.get('nodes',[]) if n.get('attack') and n['phase'] in {'root','attack'}),{})

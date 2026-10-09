@@ -36,6 +36,16 @@ async function main(){
  assert(spells.includes('ONLY SPELL'));assert(!spells.includes('ONLY ABILITY'));
  const inner={closest:selector=>selector==='[data-training-kind]'?'ACTION':'ICON'};
  context.inner=inner;assert.equal(vm.runInContext('combatTooltipTarget(inner)',context),'ACTION','Nested icons must use the same action tooltip');
+ const tooltip={style:{},offsetHeight:40};
+ context.document.querySelector=()=>tooltip;context.innerWidth=320;context.innerHeight=740;
+ context.tooltipTarget={dataset:{uiTip:'Передвижение'},getBoundingClientRect:()=>({left:270,top:200,bottom:244})};
+ for(const width of [305,375]){
+  context.document.documentElement={clientWidth:width};context.innerWidth=width+15;
+  vm.runInContext('showIconTooltip(tooltipTarget)',context);
+  assert.equal(parseFloat(tooltip.style.width),width-24);
+  assert(parseFloat(tooltip.style.left)+parseFloat(tooltip.style.width)<=width-12,'Tooltip must exclude the scrollbar on small screens');
+ }
+ context.document.querySelector=()=>null;
  assert.equal(vm.runInContext('localTalentIcon("assets/abilities/hobble.webp")',context),'assets/abilities/hobble.webp?v=20261002-game');
  const button={disabled:false,dataset:{trainingKind:'spell',trainingName:action.name},matches(){return false}};
  const event=click({closest(selector){return selector==='[data-training-kind]'?button:null}});
