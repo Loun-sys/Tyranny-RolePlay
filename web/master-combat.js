@@ -47,6 +47,7 @@ async function refreshMasterBattle(force=false){
 // Shared capture handlers provide aiming, quickbar bindings and safe movement
 // confirmation. Only the cabinet's ordinary bubbling controls are wired here.
 document.addEventListener('click',event=>{
+ if(event.target.closest('#battle-admin-link')&&combatBusy){event.preventDefault();toast('Дождитесь завершения текущего действия.');return}
  if(event.target.closest('[data-master-refresh]')){refreshMasterBattle(true);return}
  if(!training?.active||combatBusy)return;
  const picker=event.target.closest('[data-combat-picker]');

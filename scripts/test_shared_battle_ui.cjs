@@ -18,9 +18,9 @@ async function main(){
  for(const operation of ['place_player','add_npc','move','health','effect','remove_effect','order','turn','refresh_turn','start','finish','remove_token'])assert(admin.includes(operation),operation);
  assert(admin.includes('revision:masterBattle.revision'));
  const masterCalls=[];
- const masterContext=vm.createContext({document:{querySelector(){return null},addEventListener(){}},setInterval(){},encodeURIComponent,
-  base:()=>'/api/admin/test',toast(){},request:async(path,opts)=>{masterCalls.push([path,opts]);if(opts&&masterCalls.length===1)throw Error('Бой изменился. Обновите экран.');return {battle:{id:1,revision:opts?3:2},message:'OK'}}});
- vm.runInContext(admin,masterContext);vm.runInContext('masterBattle={id:1,revision:1};renderMasterBattle=()=>{}',masterContext);
+ const masterContext=vm.createContext({document:{querySelector(){return null},querySelectorAll(){return []},addEventListener(){}},setInterval(){},encodeURIComponent,
+  base:()=>'/api/admin/test',toast(){},request:async(path,opts)=>{masterCalls.push([path,opts]);if(opts&&masterCalls.length===1)throw Error('Бой изменился. Обновите экран.');return {battle:{id:1,revision:opts?3:2,tokens:[]},message:'OK'}}});
+ vm.runInContext(admin,masterContext);vm.runInContext('masterBattle={id:1,revision:1,tokens:[]};renderMasterBattle=()=>{}',masterContext);
  await vm.runInContext('battleEdit({operation:"add_npc",npcId:1,x:9,y:6})',masterContext);
  assert.equal(masterCalls.length,3);assert.equal(masterCalls[1][1],undefined);assert.equal(JSON.parse(masterCalls[2][1].body).revision,2);
  console.log('Shared battle UI: runtime boot, tab, authenticated routes, revision, no player reset and master controls OK');

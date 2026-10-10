@@ -11,7 +11,8 @@ vm.runInContext(fs.readFileSync('web/master-combat-runtime.js','utf8'),context);
 vm.runInContext(fs.readFileSync('web/master-combat.js','utf8'),context);
 async function main(){
  vm.runInContext('adoptMasterBattle(testBattle)',Object.assign(context,{testBattle:first}));
- assert(vm.runInContext('masterAdministrationUrl()',context).includes('battle=1#token=qa-admin'));
+ const editorUrl=new URL(vm.runInContext('masterAdministrationUrl()',context),'http://localhost/');
+ assert.equal(editorUrl.searchParams.get('battle'),'1');assert.equal(editorUrl.searchParams.get('actor'),'npc_1');assert.equal(editorUrl.hash,'#token=qa-admin');
  await vm.runInContext('request("/api/portal/qa-admin/training/action",{method:"POST",body:JSON.stringify({kind:"move",x:3,y:4,actorId:"npc_99",mode:"edit"})})',context);
  assert(calls[0].path.includes('/api/admin/qa-admin/battles/1?mode=play'));
  assert.deepEqual(JSON.parse(calls[0].options.body),{kind:'move',x:3,y:4,actorId:'npc_1',mode:'play',operation:'act',revision:4});

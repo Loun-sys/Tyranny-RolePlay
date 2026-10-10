@@ -500,12 +500,17 @@ class BattleStore:
             by_id={i['id']:i for i in s['initiative']};s['initiative']=[by_id[k] for k in order]
             s['log'].append('Мастер меняет порядок инициативы.')
         elif key not in s['tokens']:raise ValueError('Токен не найден.')
+        elif op=='team':
+            if p.get('team') not in {'party','enemy'}:raise ValueError('Выберите сторону токена: союзник или противник.')
+            s['tokens'][key]['team']=p['team']
+            s['log'].append(f"Мастер меняет сторону «{s['tokens'][key]['name']}»: "+('союзник' if p['team']=='party' else 'противник'))
         elif op=='move':
             x,y=self._cell(s,p);self._vacant(s,key,x,y);s['tokens'][key].update(x=x,y=y)
             s['log'].append(f"Мастер передвигает «{s['tokens'][key]['name']}» в {x}, {y}.")
         elif op=='health':
             t=s['tokens'][key];maximum=int(p.get('healthMax',t['healthMax']))
             value=int(p.get('health',t['health']+int(p.get('delta',0))))
+            if 'health' not in p and 'delta' in p:value=max(0,min(maximum,value))
             if not 1<=maximum<=100000 or not 0<=value<=maximum:raise ValueError('ХП: 0–максимум; максимум: 1–100000.')
             t.update(health=value,healthMax=maximum);s['log'].append(f"Мастер: ХП «{t['name']}» — {value}/{maximum}.")
             if 'healthMax' in p:t['baseHealthMax']=max(1,maximum-profiles[key][1]['healthMax']+t.get('baseHealthMax',t['healthMax']))
@@ -532,7 +537,9 @@ class BattleStore:
             s['currentId']=key;s['log'].append('Мастер передаёт ход: '+s['tokens'][key]['name'])
         elif op=='refresh_turn':
             personal=s['personal'].setdefault(key,{})
-            personal.update(action_available=True,movement_remaining=s['tokens'][key].get('movement',5),dash_used=False,opportunity_used=[])
+            engine=self._engine(row,key,profiles)
+            personal.update(action_available=True,movement_remaining=engine._movement_limit(),recovery_seconds=0,
+                            dash_used=False,disengaged=False,opportunity_used=[])
         elif op=='remove_token':
             s['tokens'].pop(key);s['personal'].pop(key,None);s['conditions'].pop(key,None)
             s['initiative']=[i for i in s['initiative'] if i['id']!=key]

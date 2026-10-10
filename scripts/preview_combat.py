@@ -68,6 +68,11 @@ async def main():
         qa_battle=await BattleStore(db).create(1,99,qa_map,[cid,second])
         await BattleStore(db).join(qa_battle['id'],1,cid)
         await BattleStore(db).join(qa_battle['id'],1,second)
+        if 'battle-editor' in sys.argv[2:]:
+            store=BattleStore(db)
+            await store.action(qa_battle['id'],1,owner=99,payload={'operation':'start'})
+            await store.action(qa_battle['id'],1,owner=99,payload={'operation':'order','order':['npc_1','npc_2',f'pc_{cid}',f'pc_{second}']})
+            await store.action(qa_battle['id'],1,owner=99,payload={'operation':'turn','tokenId':'npc_1'})
         app.router.add_get("/api/archive", api.archive_list)
         app.router.add_get('/api/registration/{token}',api.registration_info)
         app.router.add_post('/api/registration/{token}',api.registration_submit)

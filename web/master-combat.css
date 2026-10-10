@@ -14,4 +14,9 @@
 .master-combat-page .tactical-map-wrap{max-height:calc(100dvh - 215px)}
 .master-waiting .tyranny-combat-hud button:disabled{opacity:.45;cursor:default}
 .master-combat-empty{padding:40px;border:1px solid #632332;background:#100a0e}
+.battle-mode-switch{display:flex;align-items:stretch;border:1px solid #6d3444;background:#100b10}
+.battle-mode-switch>a,.battle-mode-switch>span{padding:13px 16px;color:#d4caca;text-decoration:none;font:800 12px Arial,sans-serif}
+.battle-mode-switch>[aria-current=page]{color:#fff;background:#832238;box-shadow:inset 0 -2px #f24965}
+.battle-mode-switch>a:hover{background:#3b1925}
+.battle-mode-switch>a{background:transparent}
 @media(max-width:900px){.master-combat-top{align-items:flex-start;padding:12px;flex-wrap:wrap}.master-combat-page main{padding:12px}.master-turn-banner{font-size:16px}.master-combat-page .tactical-map-wrap{max-height:70dvh}}

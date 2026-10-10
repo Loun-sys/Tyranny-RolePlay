@@ -6,7 +6,7 @@ const roundText=value=>`${Number(value).toLocaleString('ru-RU',{maximumFractionD
 let masterScene=null,masterMissing=false,masterPollPending=false,training=null,data={character:{name:'НПС',level:1},spells:[],talentLibrary:[],combatQuickbar:[]},tab='training',combatPicker='',quickbarEditing=0,trainingLoading=false;
 function toast(message){const node=$('#toast');node.textContent=message||'';node.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>node.classList.remove('show'),4000)}
 function masterBattlePath(){return `/api/admin/${encodeURIComponent(token)}/battles/${masterBattleId}?mode=play`}
-function masterAdministrationUrl(){return `admin.html?api=${encodeURIComponent(api)}&battle=${masterBattleId}#token=${encodeURIComponent(token)}`}
+function masterAdministrationUrl(){return `admin.html?api=${encodeURIComponent(api)}&battle=${masterBattleId}&actor=${encodeURIComponent(masterScene?.controller?.actorId||'')}#token=${encodeURIComponent(token)}`}
 async function masterFetch(path,options={}){
  const response=await fetch(api+path,{...options,headers:{'Content-Type':'application/json',...(options.headers||{})}}),result=await response.json().catch(()=>({}));
  if(!response.ok){const error=Error(result.error||`Ошибка ${response.status}`);error.status=response.status;throw error}
