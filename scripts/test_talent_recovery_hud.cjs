@@ -1,0 +1,12 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('web/combat-ui.js','utf8');
+const start=source.indexOf('function hudRecoveryStatus('),end=source.indexOf('\nfunction combatJournal(',start);
+const context=vm.createContext({esc:v=>String(v)});
+vm.runInContext(source.slice(start,end),context);
+assert.equal(context.hudRecoveryStatus(undefined),'');
+assert.equal(context.hudRecoveryStatus({recoverySeconds:0}),'');
+assert(context.hudRecoveryStatus({recoverySeconds:1.5}).includes('Восстановление 1.5 сек.'));
+assert(context.hudRecoveryStatus({recoverySeconds:20}).includes('10 секунд = 1 раунд'));
+assert(context.hudRecoveryStatus({recoverySeconds:20}).includes('не даёт дополнительного действия'));
+assert(source.includes("insertAdjacentHTML('afterend',hudRecoveryStatus(turn))"));
+console.log('Talent recovery HUD: remaining seconds, round conversion and no extra actions OK');

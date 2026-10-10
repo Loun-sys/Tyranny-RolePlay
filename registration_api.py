@@ -341,6 +341,8 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "spellPowerMultiplier":_apply_property(1,active_items,'Сила заклинаний'),
         "incomingDamageMultiplier":_apply_property(1,active_items,'Получаемый урон'),
         "healingMultiplier":_apply_property(1,active_items,'Получаемое лечение'),
+        "consumableEffectiveness":1+_apply_property(0,active_items,'Эффективность расходников')/100,
+        "weaponSwitchRecoveryBonus":_apply_property(0,active_items,'Восстановление смены оружия'),
         "attack":attack_values,
         "armor": armor, "deflection": deflection, "activeWeaponSet": active_set,
         "cooldownMultiplier": round(max(.1,_apply_property(1 - (quickness - 10) * .03,active_items,'Перезарядка')),3),
@@ -994,7 +996,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261010-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261010-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261005-1"})
 
 
 async def _player_maps(request,cid):

@@ -20,7 +20,9 @@ def graph(session,previous=None):
         states=session.conditions.get(key,{})
         attack=unit.get('attack',{})
         if health.get(key,0)<=0 or weapon_mode(attack)!='melee' or any(k.removeprefix('special:') in BLOCKED for k in states):continue
-        rules=session._target_talent_rules(key);capacity=max(0,1+int(rules.get(20,0)))
+        rules=session._target_talent_rules(key)
+        base=unit.get('memoryEngagementLimit',getattr(session,'runtime_character',{}).get('memoryEngagementLimit',1) if key=='player' else 1) or 1
+        capacity=max(0,base+int(rules.get(20,0)))
         radius=session._weapon_range(attack)
         candidates=[other for other in units if other!=key and health.get(other,0)>0 and hostile(key,other) and not immune(other)
                     and session.grid.distance(positions[key],positions[other])<=radius

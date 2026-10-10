@@ -6,9 +6,12 @@ GRAPH_KEYS={
  'PSV_PC_Magic_EnfeeblingTouch','PSV_PC_Agility_UnseenAdvantage','PSV_PC_Ranged_TerrorShot',
  'PSV_Comp_Beastwoman_TasteOfBlood','PSV_Comp_Lantry_ChargedThrow',
  'PSV_Comp_Verse_BloodCallsToBlood',
+ 'PSV_Comp_Lantry_Accelerate',
+ 'PSV_Comp_Sirin_EmbodiedNightmare_Terror',
 }
 UPGRADE_GRAPH_KEYS={'Abl_PC_Defense_StaggeringForce','Abl_PC_Leadership_ToArms','Abl_Comp_Defender_SoundOfWar'}
 UPGRADE_GRAPH_KEYS|={'PSV_Comp_Sirin_RevivingSong','TLN_Comp_Lantry_ArcaneJudgment'}
+UPGRADE_GRAPH_KEYS|={'PSV_Comp_RngMagic_CascadingEmbrace'}
 
 def branch(row,key,derived=None):
     from ability_rules import profile
@@ -54,10 +57,10 @@ def procs(row,derived=None):
     for node in row['nodes']:
         if node['phase']!='root' or node['side']!='self':continue
         for trigger in node['statuses']:
-            if trigger['AffectsStat'] not in {2156,2159}:continue
+            if trigger['AffectsStat'] not in {2156,2159} and not(row['key']=='PSV_Comp_Sirin_EmbodiedNightmare_Terror' and trigger['AffectsStat']==2119):continue
             child=branch(row,trigger.get('AttackPrefabKey',''),derived)
             if not child or not child['supported']:return []
-            child.update(triggerStat=trigger['AffectsStat'],weaponTrigger=trigger.get('AttackTypeTriggerForLaunchAttack',2),
+            child.update(triggerStat=2159 if trigger['AffectsStat']==2119 else trigger['AffectsStat'],weaponTrigger=trigger.get('AttackTypeTriggerForLaunchAttack',2),
                          stealthOnly=stealth,maxTriggers=trigger.get('TriggerAdjustment',{}).get('MaxTriggerCount',0))
             if row['key']=='PSV_Comp_Verse_BloodCallsToBlood':child['meleeOnly']=True
             result.append(child)
@@ -70,5 +73,5 @@ def upgrade_launches(row,derived):
         for status in node['statuses']:
             if status['AffectsStat'] not in {178,2159}:continue
             child=branch(row,status.get('AttackPrefabKey',''),derived)
-            if child:child.update(onWeaponHit=status['AffectsStat']==2159);result.append(child)
+            if child and status.get('Apply') not in {1,2}:child.update(onWeaponHit=status['AffectsStat']==2159);result.append(child)
     return result

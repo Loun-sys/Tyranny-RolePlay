@@ -156,8 +156,8 @@ class TacticalGrid:
                 break
         return cells
 
-    def radius_cells(self, center: tuple[int, int], radius: int) -> set[tuple[int, int]]:
-        radius=max(0,radius)
+    def radius_cells(self, center: tuple[int, int], radius: float) -> set[tuple[int, int]]:
+        radius=max(0,math.floor(radius))
         return {
             (x,y) for y in range(max(0,center[1]-radius),min(self.height,center[1]+radius+1))
             for x in range(max(0,center[0]-radius),min(self.width,center[0]+radius+1))

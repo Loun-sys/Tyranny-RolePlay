@@ -177,15 +177,20 @@ class CombatIntegrityTests(unittest.TestCase):
         self.assertEqual(s.target_healths['ally'],100);self.assertEqual(s.player_health,s.player_health_max)
 
     def test_unsupported_aria_preview_invalid_and_executor_preserves_all_resources(self):
-        # Resolve now has a handler. Summoning is still unsupported in this
-        # stage; it must retain the same resource-preserving rejection path.
+        # A synthetic unsupported future rule must retain resource-preserving
+        # rejection. Memories now has an actual summon handler.
         key='Abl_Comp_Sirin_AriaOfMemories'
         c,s,d=self.setup_battle(key);s.breath=8
-        action=next(a for a in s.view(c,d,[],2)['actions'] if a.get('key')==key)
-        self.assertFalse(action['supported']);self.assertTrue(action['disabledReason'])
-        self.assertTrue(all(not aim['valid'] for aim in action['aims'].values()))
-        before=copy.deepcopy(s.__dict__)
-        with self.assertRaises(ValueError):self.act(c,s,d,{'kind':'ability','name':key,'targetId':'ally','x':3,'y':1})
+        from ability_rules import profile as actual_profile
+        def unsupported(row,*args,**kw):
+            result=actual_profile(row,*args,**kw)
+            return {**result,'supported':False,'limitation':'Тест неподдержанной механики'} if row['key']==key else result
+        with patch('ability_rules.profile',side_effect=unsupported):
+            action=next(a for a in s.view(c,d,[],2)['actions'] if a.get('key')==key)
+            self.assertFalse(action['supported']);self.assertTrue(action['disabledReason'])
+            self.assertTrue(all(not aim['valid'] for aim in action['aims'].values()))
+            before=copy.deepcopy(s.__dict__)
+            with self.assertRaises(ValueError):self.act(c,s,d,{'kind':'ability','name':key,'targetId':'ally','x':3,'y':1})
         for field in ['breath','cooldowns','action_available','movement_remaining','target_healths','conditions','log']:
             self.assertEqual(getattr(s,field),before[field],field)
 

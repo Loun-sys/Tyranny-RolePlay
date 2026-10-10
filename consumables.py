@@ -40,6 +40,8 @@ LABELS.update({70:'Точность по целям дальше 5 клеток'
 LABELS.update({22:'Точность атаки по возможности',23:'Урон атаки по возможности',32:'Дополнительная броня экипировки',
               61:'Вытягивание здоровья',87:'Ответная атака при попадании в ближнем бою',109:'Добавочный стихийный урон оружия',
               124:'Продление действующих полезных эффектов',2170:'Точность атак по меченой цели',2174:'Ответный удар при промахе'})
+LABELS.update({17:'Недоступность для выбора целью',178:'Отложенная область',2015:'Скорость действий',2078:'Удерживание в воздухе',
+              2117:'Восстановление во время движения',215:'Восстановление смены оружия',223:'Выход из зоны контроля',2130:'Отражение созданных заклинаний'})
 MULTIPLIERS.update({80,2072,225})
 MULTIPLIERS.update({28,45,112,137,172,2057,2113,2115,2116,2120,2172})
 
@@ -120,7 +122,7 @@ def refresh_consumable(item):
 def virtual_equipment(states,round_number):
     """Reuse equipment calculation for all static consumable modifiers."""
     active=[]
-    for state in states.values():
+    for state in list(states.values()):
         if state.get('consumable') and state['until']>=round_number:
             e=state.get('source',{})
             if e.get('AffectsStat') in STATS or e.get('AffectsStat') in {7,8,9,14,32,84,140,2046,226,2166,2000,181,45,153,188,169}:
@@ -182,17 +184,20 @@ def crit_effects(states):
                 output.extend({**s,'effectName':g.get('localizedName',''),'affliction':g.get('prefab','')} for s in g.get('StatusEffects',[]))
     return output
 
-def pulse(states,round_number,health,health_max,elapsed_seconds=10):
+def pulse(states,round_number,health,health_max,elapsed_seconds=10,damage_receiver=None,on_transfer=None):
     healing=math.prod(s.get('source',{}).get('Value',1) for s in states.values()
                       if s.get('source',{}).get('AffectsStat')==169 and s.get('until',0)>=round_number-1)
-    for state in states.values():
+    for state in list(states.values()):
         if not state.get('consumable') or state['until']<round_number-1:continue
         e=state['source']
         elapsed=max(0,elapsed_seconds-state.pop('pulseDelaySeconds',0))
         if e.get('AffectsStat')==116 and e.get('IntervalRate') and state['remainingSeconds']>0:
             seconds=min(elapsed,state['remainingSeconds']);state['remainingSeconds']-=seconds
             health=min(health_max,health+math.ceil(health_max*e['Value']*seconds*healing))
-        elif e.get('AffectsStat')==25 and state['remainingSeconds']>0:
+        elif e.get('AffectsStat') in {25,61} and state['remainingSeconds']>0:
             seconds=min(elapsed,state['remainingSeconds']);state['remainingSeconds']-=seconds
-            health=max(0,health-round(e['Value']*(seconds if e.get('IntervalRate') else 1)))
+            amount=round(e['Value']*(seconds if e.get('IntervalRate') else 1))
+            damage=(damage_receiver(amount) if damage_receiver else receive_damage(states,amount))
+            actual=min(health,damage);health=max(0,health-damage)
+            if e['AffectsStat']==61 and on_transfer:on_transfer(state,actual)
     return health

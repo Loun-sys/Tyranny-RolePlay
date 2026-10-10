@@ -3,6 +3,7 @@ import asyncio
 import copy
 import json
 import random
+import time
 
 from training_combat import TrainingSession
 from tactical_grid import TacticalGrid, initiative_bonus
@@ -15,6 +16,7 @@ CREATE INDEX IF NOT EXISTS live_battles_scope ON live_battles(guild_id,owner_id,
 PERSONAL = ('cooldowns','active_weapon_set','movement_remaining','action_available','disengaged',
             'active_stance','active_songs','breath','opportunity_used','areas','stealthed','suspicion',
             'stealth_elapsed','dash_used','damage_total','attacks','hits','selected_target_id')
+PERSONAL+=('pending_graphs','recovery_seconds')
 
 
 class BattleEngine(TrainingSession):
@@ -91,6 +93,12 @@ class BattleStore:
         state={'mapId':selected['id'],'map':spec,'participants':members,'tokens':tokens,'personal':{},
                'conditions':{},'initiative':[],'currentId':'','acted':[],'round':1,'log':['Мастер собирает участников.'],'events':[]}
         async with self.db.connect() as c:
+            await c.execute('CREATE TABLE IF NOT EXISTS retained_breath(character_id INTEGER PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE,amount INTEGER NOT NULL,expires REAL NOT NULL)')
+            for cid in ids:
+                saved=await c.execute_fetchall('SELECT amount FROM retained_breath WHERE character_id=? AND expires>?',(cid,time.time()))
+                if saved:state['personal'][f'pc_{cid}']={'breath':saved[0]['amount']}
+            await c.commit()
+        async with self.db.connect() as c:
             cur=await c.execute('INSERT INTO live_battles(guild_id,owner_id,name,spec) VALUES(?,?,?,?)',
                 (guild,owner,selected['name'],json.dumps(state,ensure_ascii=False)))
             await c.commit()
@@ -117,6 +125,18 @@ class BattleStore:
                     if token['kind']=='player':
                         await c.execute('UPDATE characters SET health=MIN(health_max,?),updated_at=CURRENT_TIMESTAMP WHERE id=? AND guild_id=?',
                             (token['health'],token['characterId'],row['guild_id']))
+            if row['status']=='ended' and not state.get('breathSaved'):
+                from talent_batch_three import roots
+                await c.execute('CREATE TABLE IF NOT EXISTS retained_breath(character_id INTEGER PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE,amount INTEGER NOT NULL,expires REAL NOT NULL)')
+                combatants={i['id'] for i in state['initiative']}
+                for key,t in state['tokens'].items():
+                    if t['kind']!='player' or key not in combatants:continue
+                    actor=await self.db.get_character_by_id(t['characterId'])
+                    effect=next((e for _,e in roots(actor.get('talents',[])) if e['AffectsStat']==2100),{})
+                    amount=min(state['personal'].get(key,{}).get('breath',0),int(effect.get('Value',0)))
+                    await c.execute('INSERT OR REPLACE INTO retained_breath VALUES(?,?,?)',(t['characterId'],amount,time.time()+effect.get('ExtraValue',0)))
+                state['breathSaved']=True
+                await c.execute('UPDATE live_battles SET spec=? WHERE id=?',(json.dumps(state,ensure_ascii=False),row['id']))
             await c.commit()
         row['revision']+=1
 
@@ -164,11 +184,23 @@ class BattleStore:
                 from talent_reactions import actor_inventory,npc_derived
                 inventory=actor_inventory(t)
                 actor={'id':0,'name':t['name'],'attributes':t.get('attributes',{}),'talents':t.get('abilities',[]),
-                       'health':t['health'],'health_max':t['healthMax'],'portrait_url':t.get('portrait',''),'level':t.get('level',1),'wounds':t.get('wounds',0)}
+                       'health':t['health'],'health_max':t['healthMax'],'portrait_url':t.get('portrait',''),'level':t.get('level',1),'wounds':t.get('wounds',0),
+                       'memoryEngagementLimit':t.get('memoryEngagementLimit',0)}
                 states=row['state']['conditions'].get(key,{})
-                derived=npc_derived(t,effects(t.get('abilities',[]),inventory),inventory,states,row['state']['round'])
+                derived=npc_derived({**t,'combatStance':personal.get('active_stance','')},effects(t.get('abilities',[]),inventory),inventory,states,row['state']['round'])
                 spells=[];limits={'weaponSets':1}
             result[key]=(actor,derived,inventory,spells,limits)
+        from talent_batch_three import party_equipment
+        for key,(actor,derived,inventory,spells,limits) in list(result.items()):
+            members=[profiles[0] for other,profiles in result.items() if other!=key and self._eligible(row['state'],other) and row['state']['tokens'][other]['team']==row['state']['tokens'][key]['team']]
+            party=[effect for member in members for effect in party_equipment(member.get('talents',[]))]
+            if party:
+                if row['state']['tokens'][key]['kind']=='player':
+                    modified=_derived(actor,inventory+virtual_equipment(row['state']['conditions'].get(key,{}),row['state']['round'])+stance_equipment(row['state']['personal'].get(key,{}).get('active_stance',''))+party)
+                    modified['healthMax']=derived['healthMax'];modified['_baseDerived']=derived.get('_baseDerived',derived)
+                    derived=modified
+                else:derived=self._npc_modifiers(derived,party)
+                result[key]=(actor,derived,inventory,spells,limits)
         return result
 
     @staticmethod
@@ -198,9 +230,14 @@ class BattleStore:
         d['healthMax']=max(1,round(_apply_property(d['healthMax']+attrs.get('Живучесть',10)-old.get('Живучесть',10),items,'Максимум здоровья')))
         d['cooldownMultiplier']=max(.1,1-(attrs.get('Быстрота',10)-10)*.03)*_apply_property(1,items,'Перезарядка')
         d['movementMultiplier']=_apply_property(1,items,'Передвижение')
+        d['consumableEffectiveness']=1+_apply_property(0,items,'Эффективность расходников')/100
+        d['weaponSwitchRecoveryBonus']=_apply_property(0,items,'Восстановление смены оружия')
+        attack['recovery']=_apply_property(attack.get('recovery',0),items,'Восстановление')
+        attack['criticalChance']=_apply_property(attack.get('criticalChance',0),items,'Критический шанс')
         return d
 
     def _engine(self,row,key,profiles):
+        from combat_actor_refs import remap
         s=row['state'];t=s['tokens'][key];actor,derived,inventory,spells,limits=profiles[key]
         engine=BattleEngine(t.get('characterId',0));engine.initialized=True;engine.custom_map=s['map']
         points=lambda field:{(p['x'],p['y']) for p in s['map'].get(field,[])}
@@ -210,7 +247,7 @@ class BattleStore:
         for other,token in s['tokens'].items():
             if other==key:continue
             d=profiles[other][1].get('_baseDerived',profiles[other][1])
-            engine.targets[other]={**token,'baseHealthMax':profiles[other][1]['healthMax'],'portrait':profiles[other][0].get('portrait_url',''),'armor':d.get('armor',0),'defenses':d.get('defenses',{}),'attack':d.get('attack',{}),
+            engine.targets[other]={**remap(token,key,'player'),'baseHealthMax':profiles[other][1]['healthMax'],'portrait':profiles[other][0].get('portrait_url',''),'armor':d.get('armor',0),'defenses':d.get('defenses',{}),'attack':d.get('attack',{}),
                 'armorByType':d.get('armorByType',{}),'incomingConversions':d.get('incomingConversions',{}),
                 'talentRuntime':d.get('talentRuntime',{}),'team':'ally' if token['team']==t['team'] else 'enemy',
                 'combatDerived':profiles[other][1],'inventory':profiles[other][2],
@@ -220,7 +257,7 @@ class BattleStore:
             if not s['conditions'].get(other,{}).get('restore'):
                 engine.targets[other]['healthMax']=profiles[other][1]['healthMax']
                 engine.target_healths[other]=min(engine.targets[other]['healthMax'],token['health'])
-        engine.conditions={('player' if k==key else k):copy.deepcopy(v) for k,v in s['conditions'].items()}
+        engine.conditions={('player' if k==key else k):remap(v,key,'player') for k,v in s['conditions'].items()}
         engine.engagements={('player' if source==key else source):['player' if victim==key else victim for victim in victims]
                             for source,victims in s.get('engagements',{}).items()}
         engine.round_number=s['round'];engine.initiative=[{**i,'id':'player' if i['id']==key else i['id']} for i in s['initiative']]
@@ -233,20 +270,36 @@ class BattleStore:
         # Unlike training, real inventory has already been reduced on the last request.
         engine.consumable_used={}
         for field in PERSONAL:
-            if field in s['personal'].get(key,{}):setattr(engine,field,copy.deepcopy(s['personal'][key][field]))
+            if field in s['personal'].get(key,{}):setattr(engine,field,remap(s['personal'][key][field],key,'player'))
+        for pending in engine.pending_graphs:
+            if pending['targetId']==key:pending['targetId']='player'
         engine.opportunity_used=set(engine.opportunity_used)
         engine.movement_remaining=min(engine.movement_remaining,engine._movement_limit()+(5 if engine.dash_used else 0))
         return engine
 
     def _collect(self,row,key,e,presentation=True):
+        from combat_actor_refs import remap
         s=row['state'];t=s['tokens'][key];t.update(x=e.player_position[0],y=e.player_position[1],health=e.player_health,healthMax=e.player_health_max)
+        for k,token in list(s['tokens'].items()):
+            if k!=key and token.get('summonedBy') and k not in e.targets:
+                s['tokens'].pop(k);s['personal'].pop(k,None);s['conditions'].pop(k,None)
+                s['initiative']=[i for i in s['initiative'] if i['id']!=k]
         for k in e.targets:
+            if k not in s['tokens']:
+                token=remap(e.targets[k],'player',key)
+                token['team']=t['team'] if token.get('team')=='ally' else 'enemy'
+                token['baseHealthMax']=token['healthMax']
+                s['tokens'][k]=token
+                s['initiative'].append({'id':k,'name':token['name'],'roll':0,'bonus':0,'total':0})
             s['tokens'][k].update(x=e.target_positions[k][0],y=e.target_positions[k][1],health=e.target_healths[k],healthMax=e.targets[k]['healthMax'])
-        s['conditions']={key if k=='player' else k:v for k,v in e.conditions.items()}
+        s['conditions']={key if k=='player' else k:remap(v,'player',key) for k,v in e.conditions.items()}
         s['engagements']={(key if source=='player' else source):[key if victim=='player' else victim for victim in victims]
                           for source,victims in getattr(e,'engagements',{}).items()}
         s['personal'][key]={**s['personal'].get(key,{}),**{f:list(getattr(e,f)) if isinstance(getattr(e,f,None),set) else copy.deepcopy(getattr(e,f))
             for f in PERSONAL if hasattr(e,f)}}
+        s['personal'][key]=remap(s['personal'][key],'player',key)
+        for pending in s['personal'][key].get('pending_graphs',[]):
+            if pending['targetId']=='player':pending['targetId']=key
         for event in e.events:
             if event.get('reaction') and event['sourceId']!='player':
                 s['personal'].setdefault(event['sourceId'],{})['stealthed']=False
@@ -268,17 +321,15 @@ class BattleStore:
             # Each 10-second round pulses every condition once and every caster area once.
             from consumables import pulse
             s['round']+=1;s['acted']=[]
-            for key,t in s['tokens'].items():
+            for key in list(s['tokens']):
+                if key not in s['tokens']:continue
+                t=s['tokens'][key]
                 states=s['conditions'].get(key,{})
                 before=t['health']
-                t['health']=pulse(states,s['round'],t['health'],t['healthMax'])
-                if before>t['health']:
-                    from talent_batch_two import on_damage
-                    from talent_reactions import react_to_damage
-                    e=self._engine(row,key,profiles);e.round_number=s['round']-1
-                    on_damage(e,'player',before-t['health']);react_to_damage(e,'player')
-                    self._collect(row,key,e,presentation=False)
-                    states=s['conditions'].get(key,{})
+                e=self._engine(row,key,profiles);e.round_number=s['round']-1
+                e._pulse_conditions('player',s['round'])
+                self._collect(row,key,e,presentation=False)
+                t=s['tokens'][key];states=s['conditions'].get(key,{})
                 for name,effect in list(states.items()):
                     if effect.get('masterTick') and effect.get('until',0)>=s['round']-1 and t['health']>0:
                         value=round(effect.get('value',0))
@@ -289,8 +340,16 @@ class BattleStore:
                 s['conditions'][key]={k:v for k,v in states.items() if v.get('until',0)>=s['round']}
             profiles=await self._profiles(row)
             for key in list(s['tokens']):
+                if key not in s['tokens']:continue
                 e=self._engine(row,key,profiles)
                 e._combat_derived(profiles[key][1])
+                from talent_batch_three import advance_graphs
+                e.round_number=s['round']
+                advance_graphs(e)
+                e.recovery_seconds=max(0,e.recovery_seconds-10)
+                e.round_number=s['round']
+                from talent_batch_four import expire_summons
+                expire_summons(e)
                 for target,t in e.targets.items():
                     if not e.conditions.get(target,{}).get('restore'):
                         t['healthMax']=t['baseHealthMax'];e.target_healths[target]=min(t['healthMax'],e.target_healths[target])
@@ -346,7 +405,7 @@ class BattleStore:
                     target=p.get('targetId');target='player' if target==key else target
                     if not target and 'x' in p and 'y' in p:
                         target=next((k for k,t in s['tokens'].items() if k!=key and (t['x'],t['y'])==(int(p['x']),int(p['y']))),None)
-                    if target in s['tokens'] and s['tokens'][target]['team']!=s['tokens'][key]['team'] and s['personal'].get(target,{}).get('stealthed'):
+                    if target in s['tokens'] and s['tokens'][target]['team']!=s['tokens'][key]['team'] and self._hidden(s,target):
                         from ability_rules import resolve,profile
                         rule=profile(resolve(p.get('name'))) if p.get('kind')=='ability' and resolve(p.get('name')) else {}
                         if p.get('kind')=='spell':
@@ -398,11 +457,23 @@ class BattleStore:
             s['initiative']=[]
             for token,t in s['tokens'].items():
                 if not self._eligible(s,token):continue
+                from talent_runtime import effects
+                from song_rules import breath_limit
+                talents=profiles[token][0].get('talents',[])
+                retained=0
+                if t['kind']=='player':
+                    async with self.db.connect() as c:
+                        saved=await c.execute_fetchall('SELECT amount FROM retained_breath WHERE character_id=? AND expires>?',(t['characterId'],time.time()))
+                        if saved:retained=saved[0]['amount']
+                s['personal'].setdefault(token,{})['breath']=min(breath_limit(talents),retained+int(effects(talents).get(2099,0)))
                 roll=random.randint(1,20);bonus=initiative_bonus(profiles[token][0].get('attributes',{}).get('Быстрота',10))
                 s['initiative'].append({'id':token,'name':t['name'],'roll':roll,'bonus':bonus,'total':roll+bonus})
             s['initiative'].sort(key=lambda i:-i['total']);s['currentId']=s['initiative'][0]['id'];row['status']='active'
             s['log'].append('Мастер запускает бой.')
         elif op=='finish':row['status']='ended';s['log'].append('Мастер завершает бой.')
+        elif op=='time_of_day':
+            if p.get('timeOfDay') not in {'day','night'}:raise ValueError('Выберите день или ночь.')
+            s['map']['timeOfDay']=p['timeOfDay'];s['log'].append('Мастер задаёт время: '+('ночь' if p['timeOfDay']=='night' else 'день'))
         elif op in {'place_player','add_npc'}:
             if op=='add_npc' and len(s['tokens'])>=100:raise ValueError('Не более 100 токенов в бою.')
             x,y=self._cell(s,p)
@@ -476,6 +547,12 @@ class BattleStore:
     def _vacant(self,s,key,x,y):
         if any(k!=key and t['health']>0 and (t['x'],t['y'])==(x,y) for k,t in s['tokens'].items()):raise ValueError('Клетка занята другим токеном.')
 
+    @staticmethod
+    def _hidden(state,key):
+        return bool(state['personal'].get(key,{}).get('stealthed') or any(
+            e.get('source',{}).get('AffectsStat')==151 and e.get('until',0)>=state['round']
+            for e in state['conditions'].get(key,{}).values()))
+
     async def view(self,row,cid=None,actor_id=None,master=False,play=False):
         s=row['state'];profiles=await self._profiles(row)
         key=actor_id if master and not play and actor_id in s['tokens'] else f'pc_{cid}' if cid is not None else s['currentId'] or next(iter(s['tokens']),'')
@@ -483,8 +560,8 @@ class BattleStore:
             log=s['log'][-40:][::-1],map=s['map'],tokens=list({**t,'id':k,'portrait':profiles[k][0].get('portrait_url','')} for k,t in s['tokens'].items()),conditions=s['conditions'])
         if not key or key not in s['tokens']:return result
         e=self._engine(row,key,profiles);c,d,inv,spells,limits=profiles[key]
-        if play and s['personal'].get(e.selected_target_id,{}).get('stealthed'):
-            e.selected_target_id=next((k for k in e._alive_targets() if not s['personal'].get(k,{}).get('stealthed')),'')
+        if play and self._hidden(s,e.selected_target_id):
+            e.selected_target_id=next((k for k in e._alive_targets() if not self._hidden(s,k)),'')
         view=e.view(c,d,spells,limits['weaponSets'])
         view['derived'].pop('_baseDerived',None)
         remap=lambda k:'player' if k==key else k
@@ -499,13 +576,13 @@ class BattleStore:
             view['turn']['actionAvailable']=False;view['grid']['reachable']=[];view['grid']['movementPreviews']={}
             reason='Сейчас ход игрока — мастер наблюдает' if play and row['status']=='active' else 'Ожидание своего хода' if row['status']=='active' else 'Мастер ещё не запустил бой'
             for a in view['actions']:a['disabledReason']=reason
-        view['grid']['tokens']=[t for t in view['grid']['tokens'] if master and not play or t['id']=='player' or not (s['tokens'][t['id']]['team']!=s['tokens'][key]['team'] and s['personal'].get(t['id'],{}).get('stealthed'))]
+        view['grid']['tokens']=[t for t in view['grid']['tokens'] if master and not play or t['id']=='player' or not (s['tokens'][t['id']]['team']!=s['tokens'][key]['team'] and self._hidden(s,t['id']))]
         for token in view['grid']['tokens']:token['kind']=s['tokens'][key if token['id']=='player' else token['id']]['kind']
         if master and play:
             result['controller']={'actorId':key,'name':c['name'],'level':c.get('level',1),'kind':s['tokens'][key]['kind'],'canAct':your_turn}
             result['combatQuickbar']=s['personal'].get(key,{}).get('quickbar',[])
             view['grid']['controllerId']=key
-            hidden={k for k,t in s['tokens'].items() if t['team']!=s['tokens'][key]['team'] and s['personal'].get(k,{}).get('stealthed')}
+            hidden={k for k,t in s['tokens'].items() if t['team']!=s['tokens'][key]['team'] and self._hidden(s,k)}
             view['targets']=[t for t in view['targets'] if t['id'] not in hidden]
             if view['dummy'].get('id') in hidden:view['dummy']={'name':'Цель не выбрана','health':0,'healthMax':1,'armor':0}
             for action in view['actions']:

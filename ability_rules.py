@@ -10,6 +10,8 @@ SKILLS.update({24:'Управление эмоциями',26:'Управлени
 CONTROL={'dazed':'daze','prone':'prone','stun':'stun','paralyzed':'paralyze','petrified':'petrif','frozen':'freeze','asleep':'sleep','rooted':'root','hobbled':'hobble','Silenced':'silence','Disarm':'disarm','blinded':'blind','terrified':'fear','fear':'fear','confused':'confus','taunted':'taunt'}
 RAW_SUPPORTED=set(STATS)|{7,8,9,14,18,24,25,45,53,75,84,107,116,121,140,150,151,169,176,181,188,2000,2004,2013,2046,2072,2085,226,2145,2157,2166,2129,2168,2127,2128}
 RAW_SUPPORTED|={32,61,87,101,110,124,2170}
+RAW_SUPPORTED|={17,172,178,2004,2015,2042,2078,2162,2171,223,2130}
+RAW_SUPPORTED|={2058,2073,2074,2075,2076}
 
 @lru_cache(maxsize=1)
 def library():
@@ -61,7 +63,11 @@ def talent_mechanics(row):
     if row.get('song'):
         from song_rules import song_profile
         p=song_profile(row)
-        return {'type':'Песня','effects':[phrase['description'] for phrase in row['phrases']],
+        details=[]
+        for phrase,prepared in zip(row['phrases'],p['phraseProfiles']):
+            values='; '.join(dict.fromkeys(e['name'] for e in prepared['effects'] if e.get('name')))
+            details.append(phrase['name']+': '+values+f". Пение {prepared['recitationSeconds']:g} сек.; послезвучие {prepared['lingerSeconds']:g} сек.")
+        return {'type':'Песня','effects':details,
                 'details':p['details'],'limitation':p['limitation']}
     result={'effects':[], 'type':'Стойка' if row.get('modal') else 'Пассивный талант' if row['passive'] else 'Активная способность'}
     if row.get('bonusDamageMult',1)!=1:
@@ -86,14 +92,19 @@ def talent_mechanics(row):
         recognized=set(STATS)|SUPPORTED|DISPLAY_ONLY|{7,8,9,14,107,104,74,140,2000,181,2166,45,153,226,188,169,2046,2005,2168,2172,2122,2123,2161}
         from talent_batch_two import BATCH_KEYS as SECOND_BATCH,conditional_supported
         if row['key'] in SECOND_BATCH:recognized|={22,23,87,109,150,160,2174}
+        from talent_batch_three import BATCH_KEYS as THIRD_BATCH,SUPPORTED as THIRD_STATS,conditional_supported as third_conditional
+        if row['key'] in THIRD_BATCH:recognized|=THIRD_STATS
+        from talent_batch_four import BATCH_KEYS as FOURTH_BATCH,SUPPORTED as FOURTH_STATS
+        if row['key'] in FOURTH_BATCH:recognized|=FOURTH_STATS
         procs=proc_profiles(row)
         if procs:recognized|={2156,2159}
+        if procs and row['key']=='PSV_Comp_Sirin_EmbodiedNightmare_Terror':recognized.add(2119)
         missing=any(s.get('AffectsStat') not in recognized for s in root)
         from talent_batch_one import BATCH_KEYS
         if any(s['AffectsStat']==2113 for s in root) and row['key'] not in (*BATCH_KEYS,*SECOND_BATCH):missing=True
         from talent_runtime import equipment_condition_supported
         from talent_batch_one import condition_supported
-        conditional=any(not equipment_condition_supported(e) and not condition_supported(e) and not (row['key'] in SECOND_BATCH and conditional_supported(e)) for e in equip_modifiers(item)['conditional'])
+        conditional=any(not equipment_condition_supported(e) and not condition_supported(e) and not (row['key'] in SECOND_BATCH and conditional_supported(e)) and not(row['key'] in THIRD_BATCH and third_conditional(e)) and not(row['key'] in FOURTH_BATCH and e['AffectsStat']==178 and e.get('Apply')==1) for e in equip_modifiers(item)['conditional'])
         result['limitation']='Есть условные или специальные эффекты, ещё не подключённые к расчётам.' if missing or conditional else ''
     for node in row['nodes']:
         if node.get('tag') in CONTROL:
@@ -122,6 +133,10 @@ def talent_mechanics(row):
     from talent_batch_two import describe,HEALTH_REACTION
     if row['key']==HEALTH_REACTION:result['limitation']=profile(row)['limitation']
     if describe(row):result['effects'].append(describe(row))
+    from talent_batch_three import describe as third_describe
+    if third_describe(row):result['effects'].append(third_describe(row))
+    from talent_batch_four import describe as fourth_describe
+    if fourth_describe(row):result['effects'].append(fourth_describe(row))
     if 2150 in source_stats:
         result['effects'].append('Бонус точности действует на атаки и способности только с одноручным оружием в правой руке и пустой левой рукой. Старший ранг заменяет младший.')
     if 2044 in source_stats:
@@ -144,11 +159,22 @@ def talent_mechanics(row):
         for mod in row.get('abilityMods',[]):
             if mod['Type'] in labels:result['effects'].append(f"{labels[mod['Type']]}: {mod['Value']:+g}")
             elif mod['Type'] in {10,2000}:result['effects'].append(f"{'Перезарядка' if mod['Type']==10 else 'Урон'}: {(mod['Value']-1)*100:+g}%")
+    # Reviewed stateful graphs have contextual descriptions. Flattening every
+    # child node here wrongly labels enemy auras as permanent self bonuses.
+    contextual=third_describe(row) or fourth_describe(row)
+    if contextual:
+        result['effects']=[contextual]
+        if row.get('isTalentUpgrade'):
+            result['effects'].extend('Изменяет способность: '+base['name'] for key in row.get('grantedAbilities',[]) if (base:=resolve(key)))
+        if not row['passive'] and not row.get('modal'):
+            p=profile(row)
+            if p.get('skills'):result['effects'].append('Навык атаки: '+', '.join(SKILLS[s] for s in p['skills'] if s in SKILLS))
+            if p.get('targeting') not in {'self','aura'}:result['effects'].append('Защита цели: '+p.get('defense','Нет'))
     return result
 
 
 def upgrade_limitation(row):
-    supported_types={1,2,3,7,10,2000,2001,2002,12}
+    supported_types={1,2,3,7,10,11,2000,2001,2002,12}
     if any(m['Type'] not in supported_types for m in row.get('abilityMods',[])):
         return 'Некоторые изменения этой способности ещё не подключены к боевому обработчику.'
     for key in row.get('grantedAbilities',[]):
@@ -162,18 +188,38 @@ def profile(row,derived=None,weapon_range=1):
         from song_rules import song_profile
         return song_profile(row,derived)
     row=copy.deepcopy(row);derived=derived or {}
+    from talent_batch_four import GRAPH_ACTIVE as FOURTH_GRAPH,SPECIAL_ACTIVE
+    if not row.get('graphResolved') and row['key'] in FOURTH_GRAPH:
+        from ability_graphs import branch
+        prepared=branch(row,row['key'],derived)
+        prepared.update(targeting=row['targeting'],range=row['range'],area=row['area'])
+        for child in prepared.get('secondaryGraphs',[]):child['launchPhase']='followup'
+        return prepared
     from talent_batch_two import profile_prepared
     if not row.get('graphResolved'):
         prepared=profile_prepared(row,derived)
         if prepared is not row:return prepared
+        from talent_batch_three import GRAPH_ACTIVE as THIRD_GRAPH
+        if row['key'] in THIRD_GRAPH:
+            from ability_graphs import branch
+            prepared=branch(row,row['key'],derived)
+            if prepared:
+                prepared.update(targeting=row['targeting'],range=row['range'],area=row['area'])
+                if row['key']=='Abl_Comp_Lantry_TheftOfMoments':prepared['area']=0
+                if row['key']=='Abl_PC_Leadership_Undying':prepared.update(targetTeam='ally',stationaryBanner=True,supported=True,limitation='')
+                if row['key']=='Abl_Comp_RngMagic_BreathOfMother':prepared.update(supported=True,limitation='',stationaryMist=True)
+                return prepared
     skills=derived.get('effectiveSkills',{})
     attack=derived.get('attack',{});row['range']=max(1,weapon_range) if row.get('weaponRange') else row.get('range',0)
     if row['targeting']=='cone':row['range']=max(row['range'],row.get('area',0))
     runtime={int(k):v for k,v in derived.get('talentRuntime',{}).items()}
+    if row.get('area'):row['area']=round(row['area']*runtime.get(172,1),4)
     if (row.get('weaponRange') or row.get('weaponMultiplier')) and row['targeting']!='self':
         row['range']+=runtime.get(2054,0)
     row['accuracy']=max([skills.get(SKILLS[s],0)+derived.get('abilityAccuracyBonus',0) for s in row.get('skills',[]) if s in SKILLS]+([attack.get('accuracy',0)] if 31 in row.get('skills',[]) or not row.get('skills') else []),default=0)+row.get('accuracyBonus',0)
-    row['cooldown']=0 if row.get('cooldown',0)==0 else max(1,math.ceil(round(row['cooldown']*derived.get('cooldownMultiplier',1),6)))
+    seconds=row.get('cooldownSeconds',row.get('cooldown',0)*10)
+    if row.get('cooldown',0)!=math.ceil(seconds/10):seconds=row.get('cooldown',0)*10
+    row['cooldown']=0 if not seconds else max(1,math.ceil(round(seconds*derived.get('cooldownMultiplier',1)/10,6)))
     row['effects']=[];unsupported=[];seen=set()
     from ability_graphs import upgrade_launches,UPGRADE_GRAPH_KEYS
     row['launches']=[] if row.get('graphResolved') else upgrade_launches(row,derived)
@@ -202,7 +248,7 @@ def profile(row,derived=None,weapon_range=1):
         if node['prefab'] in retaliation_children:continue
         for s in node.get('statuses',[]):
             if row['key'] in GRAPH_ACTIVE|{HEALTH_REACTION} and s['AffectsStat'] in {178,2159}:continue
-            if node['phase']=='upgrade' and node['prefab'] in UPGRADE_GRAPH_KEYS and s['AffectsStat'] in {178,2159}:continue
+            if node['phase']=='upgrade' and node['prefab'] in UPGRADE_GRAPH_KEYS and s['AffectsStat'] in {178,2159} and s.get('Apply') not in {1,2}:continue
             conditional_transfer=s['AffectsStat']==61 and all(p['Type']==22 for p in s.get('ApplicationPrerequisites',[]))
             conditional_seal=s['AffectsStat']==116 and s.get('TriggerAdjustment',{}).get('Type')==2 and row['key']=='Abl_Comp_Lantry_EraseTheRecord'
             if s['AffectsStat'] in RAW_SUPPORTED and (conditional_transfer or conditional_seal or not s.get('ApplicationPrerequisites') and not s.get('TriggerAdjustment',{}).get('Type')):
@@ -214,19 +260,29 @@ def profile(row,derived=None,weapon_range=1):
             elif s['AffectsStat'] not in {184,2077,2001,2011} and node.get('tag') not in CONTROL:unsupported.append(s['AffectsStat'])
         if node.get('tag') in CONTROL:
             seconds=max((s.get('Duration',0) for s in node.get('statuses',[])),default=0)
-            row['effects'].append({'control':CONTROL[node['tag']],'name':node['name'],'side':node['side'],'Duration':seconds or 10,'rounds':max(1,math.ceil((seconds or 10)/10)),'value':0})
+            row['effects'].append({'control':CONTROL[node['tag']],'name':node['name'],'side':node['side'],'Duration':seconds or 10,'rounds':max(1,math.ceil((seconds or 10)/10)),'value':0,'affliction':node['prefab']})
     row['movementEffect']='swap' if row['key']=='Abl_PC_Leadership_SwapPositions' else ''
     row['supported']=bool(row.get('damageMax') or row.get('weaponMultiplier') or row['effects'] or row.get('push') or row['movementEffect'] or row['launches'])
     row['limitation']='Для этой способности ещё нет боевого обработчика.' if not row['supported'] else ''
     row['unsupportedStats']=sorted(set(unsupported))
     from talent_batch_two import BATCH_KEYS as SECOND_BATCH
-    if any(e.get('AffectsStat') in {32,61,87,124,2170} for e in row['effects']) and row.get('sourceAbilityKey',row['key']) not in SECOND_BATCH and not row.get('upgrades'):
+    from talent_batch_four import BATCH_KEYS as FOURTH_BATCH
+    if any(e.get('AffectsStat') in {32,61,87,124,2170} for e in row['effects']) and row.get('sourceAbilityKey',row['key']) not in (*SECOND_BATCH,*FOURTH_BATCH) and not row.get('upgrades'):
         unsupported.append('unreviewed-event-graph')
+    from talent_batch_three import BATCH_KEYS as THIRD_BATCH
+    if any(e.get('AffectsStat') in {17,178,2078,2162,2171,223,2130} for e in row['effects']) and row.get('sourceAbilityKey',row['key']) not in (*THIRD_BATCH,*FOURTH_BATCH) and not set(row.get('upgrades',[]))&set((*THIRD_BATCH,*FOURTH_BATCH)):
+        unsupported.append('unreviewed-timed-graph')
     if unsupported:
         row['supported']=False
         row['limitation']='Эта способность содержит условные эффекты, для которых ещё нет боевого обработчика.'
     if any(not launch['supported'] for launch in row['launches']):
         row['supported']=False;row['limitation']='Не подключена часть дополнительного графа способности.'
+    if row['key'] in SPECIAL_ACTIVE and not unsupported:
+        row.update(supported=True,limitation='',specialExecution=True)
+        if row['key']=='Abl_Comp_RngMagic_TerratusGate':row.update(area=2.5*runtime.get(172,1),targeting='area',targetTeam='enemy',emptyCell=True)
+    if row['key']=='Abl_Comp_Verse_Rush':
+        row['effects']=[e for e in row['effects'] if e.get('AffectsStat')!=178]
+        row.update(supported=True,limitation='',targeting='area',area=0,emptyCell=True,range=max(1,math.floor(5*derived.get('movementMultiplier',1)*1.5)))
     row['details']=f"Дальность: {row['range']} клеток · Перезарядка: {'один раз за бой' if row.get('oncePerBattle') else str(row['cooldown'])+' раундов'}"
     if row.get('breathCost'):row['details']+=f" · Дыхание: {row['breathCost']}"
     if row['damageMax']:row['details']+=f" · Урон: {row['damageMin']:g}–{row['damageMax']:g}"
@@ -242,6 +298,8 @@ def owned_actions(talents,derived,weapon_range=1):
             upgrades.append(row)
             candidates.extend(filter(None,(resolve(key) for key in row.get('grantedAbilities',[]))))
         elif not row['passive'] and (not row.get('modal') or row.get('song')):candidates.append(row)
+    from talent_batch_four import stance_upgrades
+    upgrades+=stance_upgrades(derived.get('activeStance',''))
     for row in candidates:
         if row['key'] in seen:continue
         rows.append(profile(apply_upgrades(row,upgrades),derived,weapon_range));seen.add(row['key'])
@@ -267,6 +325,7 @@ def apply_upgrades(row,upgrades):
             elif kind==10:
                 row['cooldownSeconds']*=value
                 row['cooldown']=math.ceil(row['cooldownSeconds']/10)
+            elif kind==11:row['recoveryAdjustmentSeconds']=row.get('recoveryAdjustmentSeconds',0)+value
             elif kind in {1,2,12}:
                 side='self' if kind in {1,12} else 'target'
                 # Wrapper graphs are already exported; do not flatten their triggers.
@@ -280,17 +339,22 @@ def passive_equipment(talents, inventory=None, active_set=1):
     from talent_runtime import equipment_condition_supported,equipped_effect
     from item_effects import active_equipment,unconditional
     effects=[];conditional={}
+    from talent_batch_three import rows,BATCH_KEYS as THIRD_BATCH
+    reviewed_ranks={r['key'] for r in rows(talents)}
     for talent in talents:
         row=resolve(talent)
         if not row or not row['passive'] or row.get('modal'):continue
         if row.get('abilityClass') in {'TriggeredOnKillAbility','TriggeredOnDeathAbility'}:continue
         if row['key']=='ABL_HH_Sentinel_Last_Stand':continue
+        if row['key'] in THIRD_BATCH and row['key'] not in reviewed_ranks:continue
         if inventory is not None and weapon_requirement(row,inventory,active_set):continue
         for node in row['nodes']:
             if node['side']!='self' or node['phase']!='root':continue
             for s in node['statuses']:
                 if s['AffectsStat'] in {25,116}:continue
-                if unconditional(s):effects.append(s)
+                if unconditional(s):
+                    if 'MoonlitWay' in row['key'] and s['AffectsStat']==2039:s={**s,'AffectsStat':2045}
+                    effects.append(s)
                 elif inventory is not None and equipment_condition_supported(s):
                     applied=equipped_effect(s,active_equipment(inventory,active_set))
                     if applied:
@@ -325,6 +389,9 @@ def stance_equipment(name):
     allowed=set(STATS)|{7,8,9,14,107,104,74,140,2000,181,2166,45,153,226,188,169,2046,2114}
     if proc_profiles(row):allowed|={2156,2159}
     if row['key']=='Abl_Comp_Defender_Stance_Phalanx_02':allowed.add(87)
+    if row['key']=='Abl_PC_Defense_StanceShieldbanger':allowed.add(2097)
+    from talent_batch_four import BATCH_KEYS as FOURTH_BATCH,STANCE_STATS
+    if row['key'] in FOURTH_BATCH:allowed|=STANCE_STATS
     if not effects or any(not unconditional(s) or s['AffectsStat'] not in allowed for s in effects):return []
     return [{'name':row['name'],'category':'Эффекты','equipped_slot':'Эффект','armor':0,'properties':{'gameData':{'statusEffects':effects}}}]
 

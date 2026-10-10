@@ -39,10 +39,12 @@ def npc_derived(actor,rules,inventory,states,round_number):
           'effectiveAttributes':actor.get('attributes',{}),'effectiveSkills':actor.get('skills',{}),
           'talentRuntime':rules,'abilityAccuracyBonus':single_weapon_bonus(rules,inventory),
           'cooldownMultiplier':1}
-    modifiers=virtual_equipment(states,round_number)
+    from ability_rules import passive_equipment,stance_equipment
+    persistent=passive_equipment(actor.get('abilities',[]),inventory)+stance_equipment(actor.get('combatStance',''))
+    modifiers=virtual_equipment(states,round_number)+persistent
     attributes=virtual_equipment({k:v for k,v in states.items() if v.get('source',{}).get('AffectsStat') in {56,57,58,59,99,100}},round_number)
     derived=BattleStore._npc_modifiers(base,modifiers)
-    derived['_baseDerived']=BattleStore._npc_modifiers(base,attributes)
+    derived['_baseDerived']=BattleStore._npc_modifiers(base,attributes+persistent)
     return derived
 
 
@@ -72,7 +74,7 @@ def try_riposte(session,target_id):
     return free_attack(session,target_id,'player','Ответный удар')
 
 
-def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,ability=None,opportunity=False):
+def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,ability=None,opportunity=False,allow_dead_source=False):
     """A free primary strike; both directions share rolls, shields and procs."""
     from talent_runtime import weapon_mode
     if source_id=='player':
@@ -99,7 +101,7 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
         return hit
     if target_id!='player':return None
     actor=session.targets[source_id]
-    if session.player_health<=0 or session.target_healths.get(source_id,0)<=0:return None
+    if session.player_health<=0 or session.target_healths.get(source_id,0)<=0 and not allow_dead_source:return None
     inventory=actor_inventory(actor);rules=session._target_talent_rules(source_id)
     states={k:v for k,v in session.conditions.get(source_id,{}).items() if v.get('until',session.round_number)>=session.round_number}
     derived=reaction_derived(actor,rules,inventory,states,session.round_number)
@@ -120,7 +122,11 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
         from consumables import virtual_equipment
         from ability_rules import stance_equipment
         attribute_states={k:v for k,v in session.conditions.get('player',{}).items() if v.get('source',{}).get('AffectsStat') in {56,57,58,59,99,100}}
-        baseline=_derived({**original,'active_weapon_set':session.active_weapon_set},getattr(session,'consumable_inventory',[])+virtual_equipment(attribute_states,session.round_number)+stance_equipment(session.active_stance))
+        baseline_items=getattr(session,'consumable_inventory',[])+virtual_equipment(attribute_states,session.round_number)+stance_equipment(session.active_stance)
+        # Legacy combat callers may provide a weapon/category stub, not a full
+        # catalog item. Normalize presentation only; never alter its modifiers.
+        baseline_items=[{**item,'name':item.get('name','')} for item in baseline_items]
+        baseline=_derived({**original,'active_weapon_set':session.active_weapon_set},baseline_items)
     clone.targets={k:v for k,v in clone.targets.items() if k!=target_id}
     for other in clone.targets.values():other['team']='ally' if other.get('team','enemy')==actor.get('team','enemy') else 'enemy'
     clone.targets[victim]={'name':original.get('name','Атакующий'),'healthMax':session.player_health_max,
@@ -133,9 +139,12 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
         'combatStance':session.active_stance}
     clone.target_healths={k:v for k,v in clone.target_healths.items() if k!=target_id};clone.target_healths[victim]=session.player_health
     clone.target_positions={k:v for k,v in clone.target_positions.items() if k!=target_id};clone.target_positions[victim]=session.player_position
-    clone.conditions={k:v for k,v in clone.conditions.items() if k not in {'player',target_id}}
-    clone.conditions['player']=copy.deepcopy(states);clone.conditions[victim]=copy.deepcopy(session.conditions.get('player',{}))
+    from combat_actor_refs import remap
+    clone.conditions={k:remap(remap(v,'player',victim),target_id,'player') for k,v in clone.conditions.items() if k not in {'player',target_id}}
+    clone.conditions['player']=remap(remap(states,'player',victim),target_id,'player')
+    clone.conditions[victim]=remap(remap(session.conditions.get('player',{}),'player',victim),target_id,'player')
     clone.player_position=session.target_positions[target_id];clone.player_health=session.target_healths[target_id];clone.player_health_max=actor['healthMax']
+    if allow_dead_source:clone.player_health=1
     clone.talent_runtime=rules;clone.runtime_talents=actor.get('abilities',[]);clone.runtime_derived=derived
     clone.runtime_character=actor.get('character',{'name':actor['name']});clone.consumable_inventory=inventory
     clone.active_weapon_set=derived.get('activeWeaponSet',1);clone.active_stance=actor.get('combatStance','')
@@ -154,12 +163,13 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
             defense=clone._defense('Парирование',victim)+defense_bonus,defense_name=None if opportunity else 'Парирование',armor=clone.targets[victim]['armor'],
             penetration=attack.get('penetration',0),target_id=victim,attack_mode='melee',allow_reactions=False)
         clone._weapon_talent_procs(victim,hit['result'])
-    session.player_health=clone.target_healths[victim];session.conditions['player']=clone.conditions.get(victim,{})
-    session.target_healths[target_id]=clone.player_health;session.conditions[target_id]=clone.conditions.get('player',{})
+    restore=lambda state:remap(remap(state,'player',target_id),victim,'player')
+    session.player_health=clone.target_healths[victim];session.conditions['player']=restore(clone.conditions.get(victim,{}))
+    session.target_healths[target_id]=0 if allow_dead_source else clone.player_health;session.conditions[target_id]=restore(clone.conditions.get('player',{}))
     session.player_position=clone.target_positions[victim]
     for key in session.targets:
         if key==target_id:continue
-        session.target_healths[key]=clone.target_healths[key];session.conditions[key]=clone.conditions.get(key,{})
+        session.target_healths[key]=clone.target_healths[key];session.conditions[key]=restore(clone.conditions.get(key,{}))
         session.target_positions[key]=clone.target_positions[key]
     remap=lambda key:target_id if key=='player' else 'player' if key==victim else key
     session.events.extend({**e,'sourceId':remap(e['sourceId']),'targetId':remap(e['targetId']),'reaction':True} for e in clone.events)

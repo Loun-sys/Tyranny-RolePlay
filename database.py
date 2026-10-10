@@ -49,6 +49,11 @@ CREATE TABLE IF NOT EXISTS characters (
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(guild_id, user_id)
 );
+CREATE TABLE IF NOT EXISTS retained_breath (
+    character_id INTEGER PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL,
+    expires REAL NOT NULL
+);
 CREATE TABLE IF NOT EXISTS attributes (
     character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -566,6 +571,9 @@ class Database:
         party_bonus=sum(max((round(e['Value']) for _,e in roots(member.get('talents',member.get('abilities',[]))) if e['AffectsStat']==2161),default=0) for member in party[1:])
         # _talent_party puts this character first, so its existing bonus isn't doubled.
         limits['spellSlots']+=party_bonus
+        for stat,field in [(2122,'weaponSets'),(2123,'quickSlots')]:
+            limits[field]+=sum(max((round(e['Value']) for _,e in roots(member.get('talents',member.get('abilities',[]))) if e['AffectsStat']==stat),default=0) for member in party[1:])
+        limits['weaponSets']=min(4,limits['weaponSets'])
         from item_effects import active_equipment,equip_bonuses
         character=await self.get_character_by_id(character_id)
         equipped=active_equipment([dict(i) for i in equipped],character.get('active_weapon_set',1))

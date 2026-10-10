@@ -37,6 +37,11 @@ function hudSongStatus(songs){
  const details=active.map(song=>`${song.name}${song.phraseName?` — ${song.phraseName}`:''}`).join('\n');
  return `<div class="original-turn combat-song-status" tabindex="0" aria-label="${esc(label)}" data-ui-tip="${esc(label)}${details?`\n${esc(details)}`:''}">${esc(label)}</div>`;
 }
+function hudRecoveryStatus(turn){
+ const seconds=Number(turn?.recoverySeconds||0);if(seconds<=0)return '';
+ const label=`Восстановление ${Number(seconds.toFixed(2))} сек.`;
+ return `<div class="original-turn combat-recovery-status" tabindex="0" data-ui-tip="${esc(label)}\n10 секунд = 1 раунд. Пока остаётся больше 10 секунд, основное действие недоступно. Восстановление меньше раунда не даёт дополнительного действия.">${esc(label)}</div>`;
+}
 function combatJournal(t){
  const lines=t.log||[],latest=lines[0]||'—';
  return `<details class="combat-journal" data-combat-journal ${combatJournalOpen?'open':''}><summary aria-label="Раскрыть или свернуть журнал боя"><span class="combat-journal-latest">${esc(latest)}</span><span class="combat-journal-arrow" aria-hidden="true">▾</span></summary><ol>${lines.map(line=>`<li>${esc(line)}</li>`).join('')}</ol></details>`;
@@ -96,6 +101,7 @@ renderTraining=function(panel,character){
  hud.querySelectorAll('.original-stat-row')[2]?.insertAdjacentHTML('beforeend',stat('deflection',`${d.deflection||0}%`));
  const end=hud.querySelector('[data-training-kind="end_turn"]');end.className='combat-end-turn';end.textContent='ЗАВЕРШИТЬ ХОД';end.disabled=!!t.finished;
  hud.querySelector('.original-turn').insertAdjacentHTML('afterend',hudSongStatus(t.songs));
+ hud.querySelector('.original-turn').insertAdjacentHTML('afterend',hudRecoveryStatus(turn));
  panel.querySelector('.training-reset').textContent='ЗАВЕРШИТЬ ТРЕНИРОВКУ';
  const edit=hud.querySelector('.edit-hotkeys');edit.textContent='⚙';edit.dataset.uiTip='Перетащите умение или заклинание из отдельного списка в ячейку 1–9';edit.setAttribute('aria-label','Настроить быстрые ячейки');edit.removeAttribute('title');
  // Controls belong to the arena sidebar, never to the scrolling map surface.

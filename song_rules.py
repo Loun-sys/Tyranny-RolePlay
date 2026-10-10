@@ -22,6 +22,7 @@ def phrase_profile(song,phrase,derived=None,tempo=0):
             if effect['AffectsStat'] not in RAW_SUPPORTED|{184,2011,2077} and node.get('tag') not in CONTROL:
                 unsupported.append(effect['AffectsStat'])
     synthetic={**song,'key':phrase['key'],'name':phrase['name'],'nodes':nodes,'passive':False,'modal':False,
+               'sourceAbilityKey':song['key'],
                'phrases':[],'song':None,'targeting':'area','area':radius,'range':radius,'skills':[34],
                'accuracyBonus':runtime.get(2103,0),'damageMin':0,'damageMax':0,'weaponMultiplier':0,
                'defense':phrase['defense'],'breathCost':0}

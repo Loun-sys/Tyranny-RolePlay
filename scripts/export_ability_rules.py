@@ -5,9 +5,10 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from scripts.game_asset_index import GameIndex,localized_tables
 from localization import localize_game_text
 
-COMBAT_REFS={'Afflictions','AfflictionPrefab','AttackPrefab','AbilityPrefab','ExtraAOE','SecondAOE','FollowUpAttacks','AttackPrefabTriggeredOn','ChildAttacks','AbilityMods','StatusEffects','m_afflictionData'}
+COMBAT_REFS={'Afflictions','AfflictionPrefab','AttackPrefab','AbilityPrefab','ExtraAOE','SecondAOE','FollowUpAttacks','AttackPrefabTriggeredOn','ChildAttacks','AbilityMods','StatusEffects','m_afflictionData','AoeOnKill','SummonPrefab'}
 ATTACK_FIELDS={'DamageData','DamageMultiplier','AttackDistance','OverrideAttackDistance','UsePrimaryWeaponRange','AccuracyBonus','DTBypass','DefendedBy','SecondaryDefense','ValidTargets','ApplyToSelfOnly','PushDistance','BlastRadius','ExcludeTarget','DamageAngleDegrees','ConeAngle','TargetAngle','m_attackSkills','UsePrimaryAttack','UseFullAttack','Bounces','BounceRange','BounceMultiplier','BaseInterruptValue','RecoveryTime','PersonalCooldownModifier','AttackVariation'}
 DEFENSE={0:'Парирование',1:'Выносливость',2:'Воля',3:'Магия',5:'Нет'}
+ATTACK_FIELDS|={'SummonFileList','SummonedLifetime','DestroyExistingSummons','ReplaceTargettedBy','HowManyToSummon','SummonType','Duration','OverrideInterval'}
 
 def main():
     g=GameIndex();ru=localized_tables();en=localized_tables('en')
@@ -23,7 +24,7 @@ def main():
             obj,t,inherited,side,phase=queue.pop(0);ident=(obj.assets_file.name,obj.path_id,inherited,side,phase)
             if ident in seen:continue
             seen.add(ident);prefab=g.name(obj)
-            attack='DamageData' in t
+            attack='DamageData' in t or 'SummonFileList' in t
             local_side=('self' if t.get('ApplyToSelfOnly') else 'target') if attack else side
             node={'prefab':prefab,'phase':phase,'side':local_side,'name':text(t.get('DisplayName',{})),'tag':t.get('Tag',''),
                   'attack':{k:copy.deepcopy(v) for k,v in t.items() if k in ATTACK_FIELDS} if attack else {},'statuses':[], 'edges':[]}
@@ -45,7 +46,7 @@ def main():
                         if child_name:node['edges'].append({'kind':key,'key':child_name})
                         child_side=local_side if local_side=='self' and phase!='root' else ('target' if attack else local_side)
                         if t.get('AbilityMods') and key in {'AfflictionPrefab','AttackPrefab'}:child_side='target'
-                        child_phase='affliction' if key in {'AfflictionPrefab','m_afflictionData'} else 'followup' if key=='FollowUpAttacks' else 'attack' if key in {'AttackPrefab','ExtraAOE','SecondAOE'} else phase
+                        child_phase='affliction' if key in {'AfflictionPrefab','m_afflictionData'} else 'followup' if key=='FollowUpAttacks' else 'attack' if key in {'AttackPrefab','ExtraAOE','SecondAOE','AoeOnKill','SummonPrefab'} else phase
                         duration=float(edge.get('Duration',inherited) or inherited)
                         for co,ct in g.components(target):queue.append((co,ct,duration,child_side,child_phase))
                     else:
@@ -90,6 +91,7 @@ def main():
             'passive':bool(t.get('Passive')) or is_talent,'modal':bool(t.get('Modal')),'icon':icon or 'assets/game-combat/icon_option_talents.png',
             'isTalentUpgrade':is_talent,'abilityMods':ability_mods,'skillBonuses':t.get('SkillBonuses',[]),
             'grantedAbilities':[g.name(g.resolve(obj,ref)) for ref in t.get('Abilities',[])],
+            'triggerOnPartyKill':bool(t.get('TriggerOnPartyKill')),
             'bonusDamageMult':float(t.get('BonusDamageMult',1)),'specializationCategory':t.get('SpecializationCategory'),
             'cooldown':math.ceil(seconds/10),'cooldownSeconds':seconds,'oncePerBattle':mode in {1,2},'cooldownMode':mode,
             'range':math.ceil(float(primary.get('OverrideAttackDistance') or primary.get('AttackDistance',0))),

@@ -122,7 +122,8 @@ class TalentRuntimeTests(unittest.TestCase):
         self.assertEqual(_derived(c,[heavy])['armor'],0)
 
     def test_unsupported_upgrades_still_report_real_limitations(self):
-        self.assertTrue(talent_mechanics(resolve('PSV_PC_Magic_CounterSpell'))['limitation'])
+        unsupported=resolve('PSV_PC_Magic_CounterSpell');unsupported['abilityMods']=[{'Type':999,'Value':1}]
+        self.assertTrue(talent_mechanics(unsupported)['limitation'])
 
     def test_frozen_stance_triggers_on_hit_only_while_selected(self):
         c=actor('Abl_Comp_Lantry_StanceFrozen');s=TrainingSession(1);s.player_position=(9,4)
