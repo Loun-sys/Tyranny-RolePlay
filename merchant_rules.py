@@ -121,7 +121,10 @@ def runtime_warnings(item):
     from item_effects import game_data,equip_modifiers
     from consumables import profile
     game=game_data(item);notes=[]
-    if equip_modifiers(item)['conditional'] or any(m.get(k) for m in game.get('mods',[]) for k in ('StatusEffectsOnAttack','StatusEffectsOnCrit','StatusEffectsOnLaunch')):
+    from item_effects import STATS
+    standard=set(STATS)|{14,7,8,9,107,104,74,140,2000,181,2166,45,153,226,188,169,204,215}
+    special=any(s.get('AffectsStat') not in standard for s in game.get('statusEffects',[])) or any(m.get(k) for m in game.get('mods',[]) for k in ('DamageProcs','AbilityModsOnEquip'))
+    if special or equip_modifiers(item)['conditional'] or any(m.get(k) for m in game.get('mods',[]) for k in ('StatusEffectsOnAttack','StatusEffectsOnCrit','StatusEffectsOnLaunch')):
         notes.append('Условные эффекты и особые срабатывания этого предмета применяются мастером вручную.')
     info=profile(item)
     if info and info['limitations']:notes.append('Требуют контроля мастера: '+', '.join(info['limitations'])+'.')

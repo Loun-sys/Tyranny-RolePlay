@@ -5,9 +5,3 @@ const inventoryCardWithoutEffects=inventoryItemCard;
 inventoryItemCard=function(item){return inventoryCardWithoutEffects(item).replace('</article>',weaponSummary(item)+itemUseSummary(item)+'</article>')};
 const shopRowWithoutEffects=shopRow;
 shopRow=function(item,sell){return shopRowWithoutEffects(item,sell).replace('</article>',itemUseSummary(item)+'</article>')};
-document.addEventListener('click',event=>{
- const button=event.target.closest('[data-shop-inspect]');if(!button)return;
- const item=[...(playerShop?.items||[]),...data.inventory].find(i=>Number(i.id)===Number(button.dataset.shopInspect));
- if(item?.properties?.['Хват'])document.querySelector('#item-dialog-body h3')?.insertAdjacentHTML('beforebegin',`<p class="item-grip">${esc(item.properties['Хват'])}</p>`);
- if(item&&itemUseDescription(item))document.querySelector('#item-dialog-body h3')?.insertAdjacentHTML('beforebegin',`<h3>При применении</h3><p>${esc(itemUseDescription(item))}</p>`);
-});

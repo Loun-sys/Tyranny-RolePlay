@@ -1,0 +1,22 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const ctx=vm.createContext({document:{addEventListener(){}},esc:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),data:{inventory:[],character:{skills:{}}}});
+vm.runInContext(fs.readFileSync('web/game-help.js','utf8'),ctx);
+vm.runInContext(fs.readFileSync('web/weapon-details.js','utf8'),ctx);
+vm.runInContext(`GameHelp.loadEntries(${JSON.stringify(JSON.parse(fs.readFileSync('web/data/encyclopedia.json','utf8')).entries)})`,ctx);
+for(const term of ['Сила','Парирование','Восстановление','Рубящий','Качество','Управление силой','Горение','Купить','Дистанция'])assert(vm.runInContext(`GameHelp.help(${JSON.stringify(term)})`,ctx)?.text.length>20,term);
+assert(vm.runInContext("GameHelp.markup('[url=glossary:парирование]Парирования[/url] <img onerror=bad>')",ctx).includes('data-game-help="парирование"'));
+assert(!vm.runInContext("GameHelp.markup('<script>alert(1)</script>')",ctx).includes('<script>'));
+const item={id:4,name:'Доспехи вора',category:'Броня',quality:'Хорошее',armor:3,recovery:.05,value:1320,image_url:'test.png',description:'',lore:'',properties:{gameData:{secret:'SECRET'},'Эффекты':'SHOULD_NOT_DUPLICATE','Модификаторы':'Авантюрист'},inspection:{type:'Легкая броня (Кожа)',armorGroups:[{value:5.25,types:['Рубящий','Дробящий']},{value:0,types:['Колющий','Огненный']}],bonuses:{Отражение:12},modifiers:[{name:'Авантюрист',effects:['Урон по целям под воздействием «Горение»: +20%'],description:''}]}};
+const html=ctx.gameItemDetails(item);
+for(const text of ['Легкая броня (Кожа)','5,25','Отражение','Авантюрист','+20%','data-game-help="Горение"','ImperialBronzeRing','ImperialCopperRing'])assert(html.includes(text),text);
+for(const absent of ['Описание','История','Вес','SECRET','SHOULD_NOT_DUPLICATE'])assert(!html.includes(absent),absent);
+assert.equal((html.match(/Авантюрист/g)||[]).length,1);
+const lore=ctx.gameItemDetails({...item,description:'Одна история.',lore:'Одна история.'});assert.equal((lore.match(/Одна история/g)||[]).length,1);
+ctx.data.inventory=[{...item,inventory_id:7,equipped_slot:'Торс'}];assert(ctx.itemCompareButton({...item,slot:'Торс',inventory_id:8}).includes('data-item-compare'));
+const weapon={inventory_id:10,weaponStats:{hands:2},name:'Посох'};
+ctx.data.character.active_weapon_set=2;ctx.data.inventory=[{...weapon,inventory_id:11,equipped_slot:'Оружие II — правая рука'}];
+assert.equal(ctx.itemCompareTarget(weapon).inventory_id,11,'weapon comparison follows the active set and exact equipment slot');
+assert.equal(ctx.itemCompareTarget(ctx.data.inventory[0]),null,'do not compare an equipped weapon against itself');
+ctx.data=null;assert.equal(ctx.itemCompareButton(item),'','public catalogue works without a character session');
+for(const page of ['archive','admin','index','master-combat']){const source=fs.readFileSync(`web/${page}.html`,'utf8');assert(source.includes('game-help.js'),page);assert(source.includes('game-items.css'),page)}
+console.log('Game inspections: source glossary, conditional mod details, rings, omitted placeholders and zero stats, safe rich text, all four screens and comparison OK');

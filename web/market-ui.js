@@ -5,9 +5,7 @@ let marketOffset=0,marketSort='name',marketStockOnly=false,marketSignature='',ma
 let publicCatalog=null,publicCatalogFilters={q:'',category:'',quality:'',slot:'',minLevel:'',availability:'',sort:'name',minPrice:0,maxPrice:2000000000},publicCatalogSequence=0;
 const marketLevels=[1,5,10,15,20];
 function marketPager(offset,total,attribute){return `<nav class="merchant-nav market-pages" aria-label="Страницы"><button ${offset===0?'disabled':''} ${attribute}="${Math.max(0,offset-50)}">←</button><span>${total?offset+1:0}–${Math.min(offset+50,total)} из ${total}</span><button ${offset+50>=total?'disabled':''} ${attribute}="${offset+50}">→</button></nav>`}
-function marketItemDetails(i){const m=i.market;return `<h2>${esc(i.name)}</h2><img class="catalog-detail-icon" data-quality="${esc(i.quality)}" src="${esc(i.image_url)}" alt=""><p>${esc(i.category)} · ${esc(i.quality)}${i.slot?' · '+esc(i.slot):''}</p>${m?`<p>${m.purchasable?`${esc(m.shopName)} · с ${m.minLevel} уровня · ${m.buyPrice} медных колец`:`Не продаётся: ${esc(m.unavailableReason)}`}</p>`:''}${itemStatDefinitionList(i)}${itemPropertyEntries(i).map(([k,v])=>`<section class="market-property"><h3>${esc(k)}</h3><p>${esc(typeof v==='object'?JSON.stringify(v):v)}</p></section>`).join('')}${i.description?`<p class="item-description">${esc(i.description)}</p>`:''}${i.lore?`<h3>История</h3><p class="item-description">${esc(i.lore)}</p>`:''}`}
-const marketBaseDetails=marketItemDetails;
-marketItemDetails=function(item){return marketBaseDetails(item)+(item.runtimeNotes||[]).map(note=>`<p class="market-lock">${esc(note)}</p>`).join('')};
+function marketItemDetails(i){return gameItemDetails(i,{market:true})+itemCompareButton(i)}
 function marketOpenDetails(item){$('#item-dialog-body').innerHTML=marketItemDetails(item);if(!$('#item-dialog').open)$('#item-dialog').showModal()}
 const marketOldShowView=showView;
 let marketInitialCatalog=new URLSearchParams(location.search).get('view')==='catalog';

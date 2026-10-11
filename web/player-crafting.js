@@ -28,12 +28,7 @@ function craftForgeCost(row){
   return (coins||'<span>Бесплатно</span>')+row.ingredients.filter(r=>r.consumed).map(r=>`<span class="craft-cost-token" title="${esc(r.item?.name)}"><b>${craftNumber(r.quantity)}</b><img src="${esc(r.item?.image_url)}" alt="${esc(r.item?.name)}"></span>`).join('');
 }
 function craftForgeMaterials(){return (craftingData.materials||[]).map(i=>`<span class="craft-stock" title="${esc(i.name)}"><b>${craftNumber(i.quantity)}</b><img src="${esc(i.image_url)}" alt="${esc(i.name)}"></span>`).join('')}
-function craftStats(i){
-  const props=Object.entries(i.properties||{}).filter(([k,v])=>k!=='gameData'&&v!==null&&v!==''&&typeof v!=='object');
-  const stat=(label,value)=>`<div class="craft-stat"><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`;
-  const recovery=typeof roundText==='function'?roundText(Number(i.recovery||0)):craftNumber(i.recovery)+' раундов';
-  return `<div class="craft-stats"><p class="craft-category">${esc(i.category)}</p><dl>${stat('Качество',i.quality)}${Number(i.damage_max)?stat('Урон',craftNumber(i.damage_min)+'–'+craftNumber(i.damage_max)):''}${Number(i.armor)?stat('Броня',craftNumber(i.armor)):''}${Number(i.recovery)?stat('Восстановление',recovery):''}${props.map(([k,v])=>stat(k,v)).join('')}</dl></div>`;
-}
+function craftStats(i){return itemGameStats(i)+itemGameEffects(i)}
 function craftForge(row){
   const reason=craftBlocked(row);
   return `<section class="craft-forge" aria-label="Кузня"><h2>Кузня</h2><header class="craft-forge-item">${itemVisual(row.item)}<h3>${esc(row.item.name)}</h3></header><div class="craft-forge-body"><div class="craft-compare"><section aria-label="В данный момент"><h4>В ДАННЫЙ МОМЕНТ:</h4><div class="craft-stat-scroll">${craftStats(row.item)}</div></section><section aria-label="После улучшения"><h4>ПОСЛЕ УЛУЧШЕНИЯ:</h4><div class="craft-stat-scroll">${craftStats(row.result)}</div></section></div><aside class="craft-forge-materials" aria-label="Запасы материалов">${craftForgeMaterials()}</aside></div><div class="craft-forge-footer"><div class="craft-forge-price"><span>ЦЕНА:</span><div class="craft-cost">${craftForgeCost(row)}</div></div><p class="craft-instant">Улучшение мгновенно${row.item.equipped_slot?' · экипировка сохраняется':''}</p><p class="craft-locked" id="craft-blocked" role="status">${esc(reason)}</p><div class="craft-forge-actions"><button data-craft-back>НАЗАД</button><button class="action" data-craft-action="upgrade" data-inventory="${Number(row.inventoryId)}" ${reason?'disabled':''}>УЛУЧШИТЬ</button></div></div></section>`;

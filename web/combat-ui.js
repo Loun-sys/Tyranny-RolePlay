@@ -287,7 +287,7 @@ document.addEventListener('drop',async e=>{
  }catch(error){toast('Не удалось назначить действие.')}
 },true);
 function combatTooltipTarget(element){return element.closest('[data-training-kind]')||element.closest('[data-ui-tip]')}
-function hideCombatTooltip(){const tip=document.querySelector('.game-icon-tooltip');if(tip)tip.hidden=true}
+function hideCombatTooltip(){const tip=document.querySelector('.game-icon-tooltip');if(tip)tip.hidden=true;if(typeof GameHelp!=='undefined')GameHelp.hideCombat()}
 function showIconTooltip(target){
  if(combatBusy){hideCombatTooltip();return}
  if(!target){hideCombatTooltip();return}
@@ -296,12 +296,13 @@ function showIconTooltip(target){
  const reach=action?.weaponRange!==undefined?`Дальность реакции: ${action.weaponRange} м. Выберите видимого противника.`:`Дальность: ${action?.range||0} м${action?.area?` · область ${action.area} м`:''}`;
  const content=action?`${action.name}\n\n${action.description||''}\n\n${reach}\n${action.remaining?`Перезарядка: ${action.remaining} раунд.`:'Нажмите, затем выберите цель на карте.'}${target.dataset.quickSlot?'\nПеретащите на другую ячейку для обмена.':''}`:target.dataset.uiTip;
  if(!content){hideCombatTooltip();return}
+ if(typeof GameHelp!=='undefined'){GameHelp.show(target,action?.name||content.split('\n')[0],content);return}
  let popover=document.querySelector('.game-icon-tooltip');if(!popover){popover=document.createElement('div');popover.className='game-icon-tooltip';popover.setAttribute('role','tooltip');document.body.append(popover)}
  popover.textContent=content;popover.hidden=false;const rect=target.getBoundingClientRect(),viewportWidth=document.documentElement?.clientWidth||innerWidth,width=Math.min(360,viewportWidth-24);popover.style.width=`${width}px`;popover.style.maxHeight=`${innerHeight-24}px`;popover.style.left=`${Math.max(12,Math.min(rect.left,viewportWidth-width-12))}px`;const above=rect.top-popover.offsetHeight-10;popover.style.top=`${above>=12?above:Math.max(12,Math.min(rect.bottom+10,innerHeight-popover.offsetHeight-12))}px`;
 }
 document.addEventListener('pointerover',e=>showIconTooltip(combatTooltipTarget(e.target)));
 document.addEventListener('focusin',e=>showIconTooltip(combatTooltipTarget(e.target)));
-document.addEventListener('pointerout',e=>{const target=combatTooltipTarget(e.target);if(target&&!target.contains(e.relatedTarget))hideCombatTooltip()});
+document.addEventListener('pointerout',e=>{const target=combatTooltipTarget(e.target);if(target&&!target.contains(e.relatedTarget)&&!(typeof GameHelp!=='undefined'&&GameHelp.owns(target)))hideCombatTooltip()});
 document.addEventListener('focusout',hideCombatTooltip);
 document.addEventListener('dragstart',hideCombatTooltip);
 document.addEventListener('click',hideCombatTooltip);
