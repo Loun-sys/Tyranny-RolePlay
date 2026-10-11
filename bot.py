@@ -221,14 +221,7 @@ class TyrannyBot(commands.Bot):
     async def setup_hook(self) -> None:
         await self.db.initialize()
         self.registration_runner = await start_registration_api(self, self.db, DATA_DIR)
-        restrict_commands(self.tree)
-        synced = await self.tree.sync()
-        log.info("Глобально синхронизировано команд: %s", len(synced))
-        if TEST_GUILD_ID:
-            guild = discord.Object(id=TEST_GUILD_ID)
-            self.tree.copy_global_to(guild=guild)
-            synced = await self.tree.sync(guild=guild)
-            log.info("Синхронизировано команд на тестовом сервере: %s", len(synced))
+        await sync_application_commands(self.tree, TEST_GUILD_ID)
 
 
 def restrict_commands(tree):
@@ -237,6 +230,29 @@ def restrict_commands(tree):
     for command in list(tree.get_commands()):
         if command.name not in allowed:
             tree.remove_command(command.name)
+
+
+async def sync_application_commands(tree, legacy_guild_id: int = 0):
+    """Publish one global set, then retire only its old guild-scoped copies.
+
+    Global commands must be published successfully before any duplicate is
+    removed. Fetch the remote guild registrations: clearing the local tree
+    alone would leave the old Discord copies in place. Do not bulk overwrite
+    the guild scope, which could delete unrelated guild-only/context commands.
+    """
+    restrict_commands(tree)
+    synced = await tree.sync()
+    log.info("Глобально синхронизировано команд: %s", len(synced))
+    if legacy_guild_id:
+        guild = discord.Object(id=legacy_guild_id)
+        signatures = {(command.name, command.type) for command in synced}
+        duplicates = [command for command in await tree.fetch_commands(guild=guild)
+                      if (command.name, command.type) in signatures]
+        for command in duplicates:
+            await command.delete()
+            tree.remove_command(command.name, guild=guild, type=command.type)
+        log.info("Удалено серверных дублей команд: %s", len(duplicates))
+    return synced
 
 
 bot = TyrannyBot()
