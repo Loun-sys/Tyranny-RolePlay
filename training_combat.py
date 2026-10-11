@@ -11,6 +11,7 @@ from typing import Any
 
 from constants import ABILITY_DETAILS
 from sigil_data import spell_runtime_profile
+from equipment_recovery import cooldown_recovery, finalize_recovery, with_recovery
 from persistent_spells import persistent_profile
 from tactical_grid import BASE_MOVEMENT, TACTICAL_MAPS, TacticalGrid, initiative_bonus
 
@@ -107,6 +108,7 @@ class TrainingSession:
     breath: int = 0
     pending_graphs: list[dict[str, Any]] = field(default_factory=list)
     recovery_seconds: float = 0
+    weapon_switch_recovery_seconds: float = 0
     aim_point: tuple[int, int] | None = None
     opportunity_used: set[str] = field(default_factory=set)
     areas: list[dict[str, Any]] = field(default_factory=list)
@@ -436,6 +438,7 @@ class TrainingSession:
         return after
 
     def _execute_ability(self, rule, derived, inventory):
+        rule=with_recovery(rule,derived)
         from ability_rules import weapon_requirement
         requirement=weapon_requirement(rule,inventory,self.active_weapon_set)
         if requirement:raise ValueError(requirement)
@@ -526,7 +529,6 @@ class TrainingSession:
                 for launch in rule.get('secondaryGraphs',[]):
                     if launch.get('launchPhase')=='followup':self._resolve_graph_attack(launch,self.selected_target_id)
         self.cooldowns[key]=999999 if rule['oncePerBattle'] else self.round_number+rule['cooldown']+1
-        self.recovery_seconds=max(0,derived['attack'].get('recovery',0)*10+rule.get('recoveryAdjustmentSeconds',0))
         self.breath-=rule.get('breathCost',0)
         line=' '.join(lines) or f"Применена способность «{rule['name']}»."
         if not lines:self.log.append(line)
@@ -678,6 +680,7 @@ class TrainingSession:
         clone.conditions[player_target]=copy.deepcopy(self.conditions.get('player',{}));clone.conditions['player']=copy.deepcopy(self.conditions.get(actor_id,{}))
         clone.player_position=self.target_positions[actor_id];clone.player_health=self.target_healths[actor_id];clone.player_health_max=npc['healthMax']
         clone.action_available=True;clone.cooldowns=copy.deepcopy(getattr(self,'npc_cooldowns',{}).get(actor_id,{}))
+        clone.weapon_switch_recovery_seconds=0  # Never inherit the player's swap surcharge.
         clone.selected_target_id=player_target if target_id=='player' else 'player' if target_id==actor_id else target_id
         if rule['targeting']=='self' or clone.selected_target_id=='player':clone.aim_point=clone.player_position
         else:
@@ -714,6 +717,7 @@ class TrainingSession:
         self.equipment_movement_multiplier=result.get('movementMultiplier',1)
         attrs=result.setdefault('effectiveAttributes',{})
         attack=result.setdefault('attack',{})
+        attack['recovery']=result.get('equipmentRecoveryRaw',attack.get('recovery',0))
         guard=1
         for state in self.conditions.get('player',{}).values():
             kind,value=state.get('kind'),state.get('value',0)
@@ -750,6 +754,8 @@ class TrainingSession:
         result=third_context(self,result)
         shield(self,'player')
         self.talent_runtime={int(k):v for k,v in result.get('talentRuntime',{}).items()}
+        finalize_recovery(result)
+        result['weaponSwitchRecoverySeconds']=self.weapon_switch_recovery_seconds
         return result
 
     def _weapon_talent_procs(self,target_id,result):
@@ -798,8 +804,6 @@ class TrainingSession:
             raise ValueError('Персонаж под воздействием контроля: завершите ход.')
         if not self.action_available:
             raise ValueError("Основное действие в этом ходу уже потрачено.")
-        if self.recovery_seconds>10:
-            raise ValueError('Оружие ещё восстанавливается: завершите ход.')
         taunt=controls.get('taunt',{}) or controls.get('memory-taunt',{})
         source=taunt.get('sourceId')
         if hostile and distance and source and self.selected_target_id!=source and self.target_healths.get(source,0)>0:
@@ -1242,7 +1246,8 @@ class TrainingSession:
 
     def _end_turn(self) -> dict[str, Any]:
         from talent_batch_three import advance_graphs
-        self.recovery_seconds=max(0,self.recovery_seconds-10)
+        self.recovery_seconds=0  # Ignore the obsolete action-lock timer in saved battles.
+        self.weapon_switch_recovery_seconds=max(0,self.weapon_switch_recovery_seconds-10)
         self._advance_stealth(max(0,10-self.stealth_elapsed))
         self.stealth_elapsed=0
         self._advance_songs()
@@ -1451,6 +1456,7 @@ class TrainingSession:
             if not item or int(item['quantity'])<=used.get(name,0):raise ValueError('Расходник недоступен.')
             info=profile(item)
             if not info:raise ValueError('Этот предмет не является расходником.')
+            info=with_recovery(info,derived)
             from talent_batch_three import effective_consumable
             item=effective_consumable(item,derived.get('consumableEffectiveness',1))
             if self.remaining('item:'+name):raise ValueError('Расходник ещё перезаряжается.')
@@ -1520,8 +1526,9 @@ class TrainingSession:
             number = int(payload.get("number", 0))
             if not 1 <= number <= weapon_sets:
                 raise ValueError("Этот комплект оружия недоступен.")
+            if number!=self.active_weapon_set:
+                self.weapon_switch_recovery_seconds+=max(0,2+derived.get('weaponSwitchRecoveryBonus',0))
             self.active_weapon_set = number
-            self.recovery_seconds+=max(0,2+derived.get('weaponSwitchRecoveryBonus',0))
             line = f"Раунд {self.round_number}: выбран комплект оружия {number}; основное действие не потрачено."
             self.log.append(line)
             return {"result": "Комплект сменён", "damage": 0, "line": line}
@@ -1590,6 +1597,7 @@ class TrainingSession:
         elif kind == "artifact":
             ability=next((a for a in derived.get('artifactAbilities',[]) if a['name']==name),None)
             if not ability:raise ValueError('Артефакт не экипирован в активном комплекте.')
+            ability=with_recovery(ability,derived)
             if not ability['supported']:raise ValueError(ability['limitation'])
             key='artifact:'+name
             if self.remaining(key):raise ValueError('Способность артефакта уже использована или перезаряжается.')
@@ -1642,6 +1650,7 @@ class TrainingSession:
                 spell, skill=int(derived.get('effectiveSkills',{}).get(skill,character.get("skills", {}).get(skill, {}).get("value", 0))),
                 wits=int(attrs.get("Смекалка", 10)), cooldown_multiplier=multiplier,
                 accuracy_bonus=derived.get('abilityAccuracyBonus',0),
+                equipment_recovery=cooldown_recovery(derived),
             )
             for field in ['damage_min','damage_max']:profile[field]=round(profile[field]*derived.get('spellPowerMultiplier',1))
             if profile.get('area'):profile['area']=round(profile['area']*self.talent_runtime.get(172,1),4)
@@ -1743,13 +1752,16 @@ class TrainingSession:
         for item in getattr(self,'consumable_inventory',[]):
             info=profile(item)
             if not info:continue
+            info=with_recovery(info,derived)
             used=getattr(self,'consumable_used',{}).get(str(item['inventory_id']),0)
             if info and int(item['quantity'])>used:
                 actions.append({'kind':'item','name':str(item['inventory_id']),'displayName':item['name'],
+                    'cooldown':info['cooldown'],'cooldownBase':info['cooldownBase'],'equipmentRecovery':info['equipmentRecovery'],
                     'description':info['description']+f" · На себя: без действия. На соседнюю цель (1 клетка): основное действие. Осталось в тренировке: {int(item['quantity'])-used}",
                     'icon':item['image_url'],'targeting':'unit','range':1,'freeOnSelf':True,'includeSelf':info['targeting']=='self','requiresFallen':info['targeting']=='ally',
                     'remaining':self.remaining('item:'+str(item['inventory_id'])), 'disabledReason':'','limitation':'','cells':[]})
         for ability in derived.get('artifactAbilities',[]):
+            ability=with_recovery(ability,derived)
             actions.append({**ability,'kind':'artifact',
                 'remaining':self.remaining('artifact:'+ability['name']),
                 'disabledReason':ability['limitation'] or reason(ability['range']),
@@ -1772,6 +1784,7 @@ class TrainingSession:
                 spell, skill=int(derived.get('effectiveSkills',{}).get(skill,character.get("skills", {}).get(skill, {}).get("value", 0))),
                 wits=int(attrs.get("Смекалка", 10)), cooldown_multiplier=float(derived.get("cooldownMultiplier", 1)),
                 accuracy_bonus=derived.get('abilityAccuracyBonus',0),
+                equipment_recovery=cooldown_recovery(derived),
             )
             for field in ['damage_min','damage_max']:profile[field]=round(profile[field]*derived.get('spellPowerMultiplier',1))
             actions.append({"kind": "spell", "name": spell["name"],
@@ -1909,7 +1922,8 @@ class TrainingSession:
                           "activeWeaponSet": self.active_weapon_set, "weaponSets": weapon_sets},
             "turn": {"actorId": "player", "movementRemaining": self.movement_remaining,
                      "movementMax": self._movement_limit()+(BASE_MOVEMENT if self.dash_used else 0), "actionAvailable": self.action_available,
-                     "recoverySeconds":round(self.recovery_seconds,3),
+                     "equipmentRecovery":derived.get('equipmentRecovery',0),
+                     "weaponSwitchRecoverySeconds":round(self.weapon_switch_recovery_seconds,3),
                      "distanceToTarget": distance, "inControlZone": self.player_position in controlled,
                      "cover": cover_name, "coverBonus": cover_bonus, "disengaged": self.disengaged},
             "stealth":self._stealth_view(derived),

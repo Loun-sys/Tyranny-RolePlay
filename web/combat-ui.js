@@ -30,7 +30,7 @@ combatPickerPanel=function(t){
  return `<div class="combat-picker"><header><b>${combatPicker==='item'?'РАСХОДНИКИ':combatPicker==='spell'?'ГРИМУАР':combatPicker==='artifact'?'СПОСОБНОСТИ АРТЕФАКТОВ':'УМЕНИЯ'}</b><button data-combat-picker-close aria-label="Закрыть">×</button></header><nav class="combat-picker-tabs"><button data-combat-picker="ability">Умения</button><button data-combat-picker="spell">Заклинания</button><button data-combat-picker="item">Расходники</button></nav><p>${quickbarEditing?`Выберите действие для ячейки ${quickbarEditing} или перетащите его.`:'Нажмите для прицеливания. Перетащите в быстрые ячейки 1–9.'}</p><div class="combat-picker-list">${actions.map(x=>`<div class="combat-choice">${combatActionButton(x,'data-picker-action="1"')}</div>`).join('')||'<p>Нет доступных действий.</p>'}</div></div>`;
 };
 const statNames={health:'Здоровье',critical:'Критический шанс',accuracy:'Точность',damage:'Урон оружия',recovery:'Восстановление',endurance:'Защита Выносливостью',will:'Защита Волей',magic:'Защита Магией',dodge:'Уклонение',parry:'Парирование',armor:'Поглощение брони',deflection:'Отражение'};
-function hudStat(icon,value,label=statNames[icon]){return `<span tabindex="0" data-ui-tip="${esc(label)}: ${esc(value)}" aria-label="${esc(label)}: ${esc(value)}"><img src="assets/stat-icons/${icon}.png?v=20261002-atlas" alt="${esc(label)}">${esc(value)}</span>`}
+function hudStat(icon,value,label=statNames[icon]){return `<span tabindex="0" data-ui-tip="${esc(label)}: ${esc(value)}${icon==='recovery'?'\nСумма активной экипировки округляется вверх до полного раунда и добавляется к перезарядке. Действие не отнимается.':''}" aria-label="${esc(label)}: ${esc(value)}"><img src="assets/stat-icons/${icon}.png?v=20261002-atlas" alt="${esc(label)}">${esc(value)}</span>`}
 function hudSongStatus(songs){
  if(!songs?.available)return '';
  const active=songs.active||[],label=`Дыхание ${songs.breath??0} / ${songs.limit??1} · Песни ${active.length} / ${songs.capacity??1}`;
@@ -38,9 +38,9 @@ function hudSongStatus(songs){
  return `<div class="original-turn combat-song-status" tabindex="0" aria-label="${esc(label)}" data-ui-tip="${esc(label)}${details?`\n${esc(details)}`:''}">${esc(label)}</div>`;
 }
 function hudRecoveryStatus(turn){
- const seconds=Number(turn?.recoverySeconds||0);if(seconds<=0)return '';
- const label=`Восстановление ${Number(seconds.toFixed(2))} сек.`;
- return `<div class="original-turn combat-recovery-status" tabindex="0" data-ui-tip="${esc(label)}\n10 секунд = 1 раунд. Пока остаётся больше 10 секунд, основное действие недоступно. Восстановление меньше раунда не даёт дополнительного действия.">${esc(label)}</div>`;
+ const rounds=Number(turn?.equipmentRecovery||0);if(rounds<=0)return '';
+ const label=`Восстановление: +${rounds} раунд. к перезарядке`;
+ return `<div class="original-turn combat-recovery-status" tabindex="0" data-ui-tip="${esc(label)}\nСумма надетой брони и оружия активного комплекта округляется вверх один раз. Добавляется к перезарядке способности или заклинания. Не отнимает действие и не блокирует обычную атаку.">${esc(label)}</div>`;
 }
 function combatJournal(t){
  const lines=t.log||[],latest=lines[0]||'—';

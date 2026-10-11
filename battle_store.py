@@ -16,7 +16,7 @@ CREATE INDEX IF NOT EXISTS live_battles_scope ON live_battles(guild_id,owner_id,
 PERSONAL = ('cooldowns','active_weapon_set','movement_remaining','action_available','disengaged',
             'active_stance','active_songs','breath','opportunity_used','areas','stealthed','suspicion',
             'stealth_elapsed','dash_used','damage_total','attacks','hits','selected_target_id')
-PERSONAL+=('pending_graphs','recovery_seconds')
+PERSONAL+=('pending_graphs','recovery_seconds','weapon_switch_recovery_seconds')
 
 
 class BattleEngine(TrainingSession):
@@ -232,7 +232,9 @@ class BattleStore:
         d['movementMultiplier']=_apply_property(1,items,'Передвижение')
         d['consumableEffectiveness']=1+_apply_property(0,items,'Эффективность расходников')/100
         d['weaponSwitchRecoveryBonus']=_apply_property(0,items,'Восстановление смены оружия')
-        attack['recovery']=_apply_property(attack.get('recovery',0),items,'Восстановление')
+        attack['recovery']=_apply_property(d.get('equipmentRecoveryRaw',attack.get('recovery',0)),items,'Восстановление')
+        from equipment_recovery import finalize_recovery
+        finalize_recovery(d)
         attack['criticalChance']=_apply_property(attack.get('criticalChance',0),items,'Критический шанс')
         return d
 
@@ -346,7 +348,8 @@ class BattleStore:
                 from talent_batch_three import advance_graphs
                 e.round_number=s['round']
                 advance_graphs(e)
-                e.recovery_seconds=max(0,e.recovery_seconds-10)
+                e.recovery_seconds=0
+                e.weapon_switch_recovery_seconds=max(0,e.weapon_switch_recovery_seconds-10)
                 e.round_number=s['round']
                 from talent_batch_four import expire_summons
                 expire_summons(e)
@@ -538,7 +541,7 @@ class BattleStore:
         elif op=='refresh_turn':
             personal=s['personal'].setdefault(key,{})
             engine=self._engine(row,key,profiles)
-            personal.update(action_available=True,movement_remaining=engine._movement_limit(),recovery_seconds=0,
+            personal.update(action_available=True,movement_remaining=engine._movement_limit(),recovery_seconds=0,weapon_switch_recovery_seconds=0,
                             dash_used=False,disengaged=False,opportunity_used=[])
         elif op=='remove_token':
             s['tokens'].pop(key);s['personal'].pop(key,None);s['conditions'].pop(key,None)

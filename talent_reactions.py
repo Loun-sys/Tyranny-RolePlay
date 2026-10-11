@@ -32,6 +32,14 @@ def npc_derived(actor,rules,inventory,states,round_number):
     """Use the shared NPC stat calculation, including temporary attributes."""
     from consumables import virtual_equipment
     from battle_store import BattleStore
+    from equipment_recovery import item_recovery
+    from item_texts import catalog_texts
+    catalog=catalog_texts()[0]
+    roman=('I','II','III','IV')[max(1,min(4,actor.get('active_weapon_set',1)))-1]
+    recovery_items=[i for i in inventory if i.get('equipped_slot') and i['equipped_slot']!='Мастерская'
+                    and not i['equipped_slot'].startswith('Быстрый предмет')
+                    and (not i['equipped_slot'].startswith('Оружие') or i['equipped_slot'].startswith(f'Оружие {roman} '))]
+    recovery=sum(item_recovery(i if 'recovery' in i else catalog.get(i.get('prefab'),{})) for i in recovery_items)
     base={'attack':npc_attack(actor,rules,inventory),'defenses':actor.get('defenses',{}),
           'armor':actor.get('armor',0),'armorByType':actor.get('armorByType',{}),
           'incomingConversions':actor.get('incomingConversions',{}),
@@ -39,6 +47,7 @@ def npc_derived(actor,rules,inventory,states,round_number):
           'effectiveAttributes':actor.get('attributes',{}),'effectiveSkills':actor.get('skills',{}),
           'talentRuntime':rules,'abilityAccuracyBonus':single_weapon_bonus(rules,inventory),
           'cooldownMultiplier':1}
+    base['attack']['recovery']=recovery
     from ability_rules import passive_equipment,stance_equipment
     persistent=passive_equipment(actor.get('abilities',[]),inventory)+stance_equipment(actor.get('combatStance',''))
     modifiers=virtual_equipment(states,round_number)+persistent

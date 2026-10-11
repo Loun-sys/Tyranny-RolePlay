@@ -4,9 +4,12 @@ const start=source.indexOf('function hudRecoveryStatus('),end=source.indexOf('\n
 const context=vm.createContext({esc:v=>String(v)});
 vm.runInContext(source.slice(start,end),context);
 assert.equal(context.hudRecoveryStatus(undefined),'');
-assert.equal(context.hudRecoveryStatus({recoverySeconds:0}),'');
-assert(context.hudRecoveryStatus({recoverySeconds:1.5}).includes('Восстановление 1.5 сек.'));
-assert(context.hudRecoveryStatus({recoverySeconds:20}).includes('10 секунд = 1 раунд'));
-assert(context.hudRecoveryStatus({recoverySeconds:20}).includes('не даёт дополнительного действия'));
+assert.equal(context.hudRecoveryStatus({equipmentRecovery:0}),'');
+assert.equal(context.hudRecoveryStatus({recoverySeconds:30}),''); // Legacy busy timer is no longer an action lock.
+assert(context.hudRecoveryStatus({equipmentRecovery:2}).includes('+2 раунд. к перезарядке'));
+assert(!context.hudRecoveryStatus({equipmentRecovery:2}).includes('50%'));
+assert(context.hudRecoveryStatus({equipmentRecovery:2}).includes('округляется вверх один раз'));
+assert(context.hudRecoveryStatus({equipmentRecovery:2}).includes('Не отнимает действие'));
+assert(!source.includes('основное действие недоступно'));
 assert(source.includes("insertAdjacentHTML('afterend',hudRecoveryStatus(turn))"));
-console.log('Talent recovery HUD: remaining seconds, round conversion and no extra actions OK');
+console.log('Equipment recovery HUD: summed/rounded cooldown surcharge, no action lock OK');

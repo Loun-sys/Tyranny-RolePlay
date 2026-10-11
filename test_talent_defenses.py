@@ -117,7 +117,7 @@ class TalentDefenseTests(unittest.TestCase):
 
     def test_iron_light_as_air_removes_recovery_and_allows_double_attack(self):
         c=actor('Abl_PC_Defense_IronLightAsAir');s=TrainingSession(1);d=_derived(c,[])
-        d['equipmentRecovery']=1;d['attack']['recovery']=1
+        d['equipmentRecoveryRaw']=1;d['equipmentRecovery']=1;d['attack']['recovery']=1
         s.act({'kind':'ability','name':'Abl_PC_Defense_IronLightAsAir'},c,d,[],2)
         self.assertEqual(s._combat_derived(d)['equipmentRecovery'],0)
         s._end_turn();s.player_position=(9,4)

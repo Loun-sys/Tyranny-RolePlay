@@ -318,13 +318,14 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     deflection = max(0, attrs.get("Искусность", 10) - 10)
     deflection = round(_apply_property(deflection, active_items, "Отражение", "Deflection"))
     deflection=round(deflection+shield_bonuses.get('Отражение',0))
-    recovery = sum(float(item.get("recovery") or 0) for item in active_items)
+    from equipment_recovery import item_recovery, finalize_recovery, with_recovery
+    recovery = sum(item_recovery(item) for item in active_items)
     recovery = _apply_property(recovery, active_items, "Восстановление", "Recovery")
     from talent_runtime import effects as talent_effects, equipment_attack, single_weapon_bonus
     runtime=talent_effects(character.get('talents',[]),active_items,active_set)
     if 2012 in runtime:defenses['Парирование']=defenses['Уклонение']
     attack_values=equipment_attack({"accuracy":accuracy,"damageMin":damage_min,"damageMax":damage_max,
-        "splitChances":split_chances,"recovery":round(recovery,4),
+        "splitChances":split_chances,"recovery":round(recovery,6),
         "criticalChance":max(1,round(_apply_property(attrs.get('Искусность',10)-9,active_items,'Критический шанс'))),
         "penetration":_apply_property(0,active_items,'Пробивание брони'),"skill":attack_skill,
         "range":weapon_stats['rangeCells'] if weapon_stats else {'Луки':12,'Дротики':6,'Волшебный посох':10}.get(attack_skill,1),
@@ -332,7 +333,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "damageTypes":weapon_stats['damageTypes'] if weapon_stats else ['Дробящий'],
         "randomDamage":bool(weapon_stats and weapon_stats['randomDamage']),
         "defense":weapon_stats['defense'] if weapon_stats else None},runtime,attack_skill,len(weapons))
-    return {
+    result = {
         "defenses": defenses,
         "talentRuntime":runtime,
         "killAccuracyBonus":sum(float(e['Value']) for item in active_items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('runtimeKillBonus')),
@@ -353,10 +354,12 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "armor": armor, "deflection": deflection, "activeWeaponSet": active_set,
         "cooldownMultiplier": round(max(.1,_apply_property(1 - (quickness - 10) * .03,active_items,'Перезарядка')),3),
         "cooldownPercent": round((1 - max(.1,_apply_property(1 - (quickness - 10) * .03,active_items,'Перезарядка'))) * 100),
-        "equipmentRecovery": round(recovery, 2),
         "healthMax": max(1, round(_apply_property(character.get('health_max',20) + attrs.get('Живучесть',10)-character['attributes'].get('Живучесть',10),active_items,'Максимум здоровья'))),
         "equipmentBonuses": [{"item":item['name'],"bonuses":__import__('item_effects').equip_bonuses(item)} for item in active_items],
     }
+    finalize_recovery(result)
+    result['artifactAbilities'] = [with_recovery(action, result) for action in result['artifactAbilities']]
+    return result
 
 
 def _clean_inventory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -369,6 +372,8 @@ def _clean_inventory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             item["properties"] = {}
         from item_texts import normalize_item_text
         item = normalize_item_text(item)
+        from equipment_recovery import item_recovery
+        item['recoveryAdapted'] = item_recovery(item)
         from merchant_rules import reliable_icon
         item['image_url'],item['iconFallback']=reliable_icon(item)
         from weapon_stats import readout
@@ -1023,7 +1028,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-3", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-1", "equipmentRecoveryVersion":"20261012-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-3", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6"})
 
 
 async def _player_maps(request,cid):

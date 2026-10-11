@@ -183,6 +183,29 @@ class SharedBattleTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(row['state']['personal']['npc_1']['selected_target_id'],'pc_2')
         with self.assertRaises(ValueError):await self.edit(operation='act',actorId='npc_1',kind='ability',name=a['key'],targetId='pc_1',x=1,y=1)
 
+    async def test_npc_recovery_preview_matches_cooldown_and_next_turn_keeps_action(self):
+        from ability_rules import resolve
+        row=await self.start()
+        row['state']['tokens']['npc_1'].update(abilities=[{'key':'Abl_PC_Thrust','name':resolve('Abl_PC_Thrust')['name']}],
+            inventory=[{'name':'Тестовые доспехи','category':'Броня','equipped_slot':'Торс','recovery':.8}])
+        row['state']['personal'].setdefault('npc_1',{})['recovery_seconds']=30
+        await self.store._save(row)
+        await self.edit(operation='move',tokenId='npc_1',x=1,y=2)
+        row=await self.edit(operation='turn',tokenId='npc_1')
+        view=await self.store.view(row,master=True,play=True)
+        preview=next(a for a in view['training']['actions'] if a['kind']=='ability' and a['key']=='Abl_PC_Thrust')
+        self.assertEqual(view['training']['turn']['equipmentRecovery'],2)
+        self.assertEqual(preview['cooldown'],preview['cooldownBase']+2)
+        with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi):
+            row=await self.edit(operation='act',mode='play',actorId='npc_1',kind='ability',name='Abl_PC_Thrust',targetId='pc_1',x=1,y=1)
+        self.assertEqual(row['state']['personal']['npc_1']['cooldowns']['ability:Abl_PC_Thrust'],row['state']['round']+preview['cooldown']+1)
+        for _ in row['state']['initiative']:
+            row=await self.edit(operation='act',actorId=row['state']['currentId'],kind='end_turn')
+        self.assertEqual(row['state']['currentId'],'npc_1')
+        self.assertTrue(row['state']['personal']['npc_1']['action_available'])
+        with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi):
+            await self.edit(operation='act',mode='play',actorId='npc_1',kind='attack',targetId='pc_1',x=1,y=1)
+
     async def test_hidden_token_unit_attack_rejected_and_contact_drag_reveals(self):
         await self.start();await self.edit(operation='turn',tokenId='pc_1')
         row=await self.store.action(self.ident,1,cid=1,payload={'kind':'tactic','name':'Уйти в скрытность','targetId':'pc_1','x':1,'y':1})

@@ -14,7 +14,8 @@ function itemStatEntries(item){
  }else{
   if(item.damage_max)rows.push(['Урон',`${item.damage_min}–${item.damage_max}`]);
   if(item.armor)rows.push(['Броня',itemNumber(item.armor)]);
-  if(item.recovery)rows.push(['Восстановление',`+${itemNumber(item.recovery*10)} сек. (${itemNumber(item.recovery)} раунда)`]);
+  const recovery=item.recoveryAdapted??Number(item.recovery||0)*1.5;
+  if(recovery)rows.push(['Восстановление',`+${itemNumber(recovery*10)} сек. (${itemNumber(recovery)} раунда)`]);
  }
  return rows;
 }

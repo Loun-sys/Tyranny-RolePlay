@@ -317,6 +317,7 @@ def _accent_value(accents: list[str], family: str) -> int:
 
 def spell_runtime_profile(
     spell: dict, *, skill: int, wits: int, cooldown_multiplier: float = 1, accuracy_bonus: float = 0,
+    equipment_recovery: float = 0,
 ) -> dict:
     """Единый пошаговый расчёт формулы для сайта, тренировки и Discord-боя."""
     accents = list(spell.get("accents") or [])
@@ -336,6 +337,9 @@ def spell_runtime_profile(
     cooldown = max(1, math.ceil(
         shape["cooldown"] * (1 - recovery_cut / 100) * max(.1, float(cooldown_multiplier))
     ))
+    from equipment_recovery import recovery_rounds
+    cooldown_base = cooldown
+    cooldown += recovery_rounds(equipment_recovery)
     projectiles = shape["projectiles"] + _accent_value(accents, "Прыгающие заряды")
     if enhancement == "Залпы":
         projectiles += 2
@@ -344,6 +348,8 @@ def spell_runtime_profile(
         "damage_min": max(1, power - 4),
         "damage_max": power + 4,
         "cooldown": cooldown,
+        "cooldownBase": cooldown_base,
+        "equipmentRecovery": recovery_rounds(equipment_recovery),
         "defense": shape["defense"],
         "penetration": _accent_value(accents, "Пробивающая сила"),
         "projectiles": projectiles,

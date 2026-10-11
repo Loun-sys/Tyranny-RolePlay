@@ -19,7 +19,7 @@ assert(node('#panel').innerHTML.includes('25–30'));
 assert(node('#panel').innerHTML.includes('+8'));
 assert(node('#panel').innerHTML.includes('+10'));
 assert(node('#panel').innerHTML.includes('Рубящий: 8; Колющий: 4'));
-assert(node('#panel').innerHTML.includes('0,05 раунда'));
+assert(node('#panel').innerHTML.includes('0,075 раунда')); // Item display is +50%; only equipment totals are rounded.
 assert(!node('#panel').innerHTML.includes('RAW_EXPORT'));
 assert(!node('#panel').innerHTML.includes('Цена предмета'));
 assert(!node('#panel').innerHTML.includes('data-craft-select'));

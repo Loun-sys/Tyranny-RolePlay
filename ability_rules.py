@@ -184,6 +184,11 @@ def upgrade_limitation(row):
     return ''
 
 def profile(row,derived=None,weapon_range=1):
+    from equipment_recovery import with_recovery
+    return with_recovery(_profile(row,derived,weapon_range), derived or {})
+
+
+def _profile(row,derived=None,weapon_range=1):
     if row.get('song'):
         from song_rules import song_profile
         return song_profile(row,derived)

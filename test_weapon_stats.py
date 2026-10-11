@@ -31,10 +31,10 @@ class WeaponStatsTests(unittest.TestCase):
     def test_mismatched_weapon_types_no_longer_share_generic_range_or_recovery(self):
         sword=readout(self.item('Железный меч'));knife=readout(self.item('Бронзовый кинжал'))
         staff=readout(self.item('Посох Каирна'))
-        self.assertEqual((sword['accuracyBonus'],sword['penetration'],sword['recoverySeconds']),(0,3,.75))
+        self.assertEqual((sword['accuracyBonus'],sword['penetration'],sword['recoverySeconds']),(0,3,1.125))
         self.assertEqual(sword['damageTypes'],['Рубящий','Колющий'])
         self.assertEqual((knife['accuracyBonus'],knife['penetration'],knife['recoverySeconds']),(10,0,0))
-        self.assertEqual((staff['rangeCells'],staff['recoverySeconds'],staff['defense']),(8,2.5,'Уклонение'))
+        self.assertEqual((staff['rangeCells'],staff['recoverySeconds'],staff['defense']),(8,3.75,'Уклонение'))
 
     def test_javelins_use_projectile_but_throwable_daggers_remain_melee(self):
         javelins=[i for i in catalog_texts()[0].values() if readout(i) and 'javelin' in game_data(i)['prefab'].lower()]

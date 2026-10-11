@@ -34,6 +34,7 @@ def restore_weapon(item):
     return item
 
 def readout(item):
+    from equipment_recovery import item_recovery
     from item_effects import game_data,DAMAGE_TYPES,equip_modifiers
     game=game_data(item);attack=game.get('attack',{})
     if not attack or not item.get('hands'):return None
@@ -49,6 +50,6 @@ def readout(item):
         'rangeMeters':distance,'rangeCells':max(1,math.ceil(distance)),
         'minRangeMeters':minimum,'minRangeCells':math.ceil(minimum),'defense':defense.get(attack.get('DefendedBy',0),'Парирование'),
         'secondaryDefense':defense.get(attack.get('SecondaryDefense',5),'Нет'),
-        'recoverySeconds':round(item.get('recovery',0)*10,4),'recoveryRounds':item.get('recovery',0),
+        'recoverySeconds':round(item_recovery(item)*10,6),'recoveryRounds':item_recovery(item),
         'interrupt':float(attack.get('BaseInterruptValue',0)),'hands':int(item.get('hands') or 0),
         'attackSpeed':{0:'Мгновенная',1:'Быстрая',2:'Медленная',3:'Бесконечная'}.get(attack.get('AttackSpeed'),'—')}

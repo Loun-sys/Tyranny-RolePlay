@@ -439,6 +439,7 @@ class TargetSelect(discord.ui.Select):
                 skill=actor.skills.get(skill, actor.skills.get("Знания", 25)),
                 wits=actor.attributes.get("Смекалка", 10),
                 cooldown_multiplier=max(.1, 1 - (actor.attributes.get("Быстрота", 10) - 10) * .03),
+                equipment_recovery=actor.recovery,
             )
             cells = spell_effect_cells(self.session.grid, (actor.x, actor.y), (target.x, target.y), profile)
             affected = [unit for unit in self.session.combatants.values()

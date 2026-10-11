@@ -150,8 +150,8 @@ class BehaviorTests(unittest.TestCase):
 
     def test_no_swap_cooldown_uses_source_minus_twenty_seconds(self):
         c,d,s=prepared('PSV_BledenMark_NoWeaponSwapCD');self.assertEqual(d['weaponSwitchRecoveryBonus'],-20)
-        s.act({'kind':'weapon_set','number':2},c,d,[],2);self.assertEqual(s.recovery_seconds,0)
-        c,d,s=prepared();s.act({'kind':'weapon_set','number':2},c,d,[],2);self.assertEqual(s.recovery_seconds,2)
+        s.act({'kind':'weapon_set','number':2},c,d,[],2);self.assertEqual(s.weapon_switch_recovery_seconds,0)
+        c,d,s=prepared();s.act({'kind':'weapon_set','number':2},c,d,[],2);self.assertEqual(s.weapon_switch_recovery_seconds,2)
 
     def test_call_requires_primary_defense_success_before_followup(self):
         for defense,damaged in [(1000,False),(0,True)]:
