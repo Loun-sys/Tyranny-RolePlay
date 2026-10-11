@@ -17,7 +17,6 @@ const equipmentItemDetails=openItemDetails;
 openItemDetails=function(id){
  equipmentItemDetails(id);
  const item=data.inventory.find(i=>Number(i.inventory_id)===Number(id));if(!item)return;
- if(item.category==='Броня'&&!item.armor)document.querySelector('#item-dialog-body ul')?.insertAdjacentHTML('afterbegin','<li><span>Броня</span><b>0</b></li>');
  const recovery=[...document.querySelectorAll('#item-dialog-body li')].find(e=>e.querySelector('span')?.textContent==='Восстановление');if(recovery)recovery.querySelector('b').textContent=scaledRoundText(item.recovery);
  if(item.properties?.gameData?.useComponents?.length){
   document.querySelector('.item-dialog-actions')?.insertAdjacentHTML('beforeend',`<button class="action" data-consume-item="${item.inventory_id}">ПРИМЕНИТЬ</button>`);

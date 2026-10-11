@@ -284,6 +284,8 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         defenses[name]=round(defenses[name]+shield_bonuses.get(name,0))
     weapons = [item for item in active_items if str(item.get("equipped_slot", "")).startswith("Оружие")]
     primary = next((item for item in weapons if "правая рука" in item.get("equipped_slot", "")), None)
+    from weapon_stats import readout as weapon_readout
+    weapon_stats=weapon_readout(primary) if primary else None
     skill_by_category = {
         "Одноручное оружие": "Одноручное оружие", "Двуручное оружие": "Двуручное оружие",
         "Парное оружие": "Парное оружие", "Луки": "Луки", "Метательное оружие": "Дротики",
@@ -325,7 +327,11 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "splitChances":split_chances,"recovery":round(recovery,4),
         "criticalChance":max(1,round(_apply_property(attrs.get('Искусность',10)-9,active_items,'Критический шанс'))),
         "penetration":_apply_property(0,active_items,'Пробивание брони'),"skill":attack_skill,
-        "range":{'Луки':12,'Дротики':6,'Волшебный посох':10}.get(attack_skill,1)},runtime,attack_skill,len(weapons))
+        "range":weapon_stats['rangeCells'] if weapon_stats else {'Луки':12,'Дротики':6,'Волшебный посох':10}.get(attack_skill,1),
+        "minRange":weapon_stats['minRangeCells'] if weapon_stats else 0,
+        "damageTypes":weapon_stats['damageTypes'] if weapon_stats else ['Дробящий'],
+        "randomDamage":bool(weapon_stats and weapon_stats['randomDamage']),
+        "defense":weapon_stats['defense'] if weapon_stats else None},runtime,attack_skill,len(weapons))
     return {
         "defenses": defenses,
         "talentRuntime":runtime,
@@ -365,6 +371,8 @@ def _clean_inventory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         item = normalize_item_text(item)
         from merchant_rules import reliable_icon
         item['image_url'],item['iconFallback']=reliable_icon(item)
+        from weapon_stats import readout
+        item['weaponStats']=readout(item)
         if 'market' in item:
             from merchant_rules import runtime_warnings
             item['runtimeNotes']=runtime_warnings(item)
@@ -1013,7 +1021,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-2"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-3", "weaponStatsVersion":"20261011-1"})
 
 
 async def _player_maps(request,cid):

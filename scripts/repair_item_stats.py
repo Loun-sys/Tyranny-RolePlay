@@ -99,7 +99,7 @@ def main():
         game['mods']=mods;game['modReferences']=item.get('ItemMods',[])
         game['statusEffects']=[*item.get('StatusEffects',[]),*(s for m in mods for s in m.get('StatusEffectsOnEquip',[]))]
         row.update(value=round(item['Value']['InitialValue']),hands=2 if item.get('BothPrimaryAndSecondarySlot') else 1 if item.get('PrimaryWeaponSlot') else 0,
-            armor=round(float(game['armor'].get('DamageThreshold',0)),4),recovery=round(float(game['armor'].get('RecoveryModifier',game['attack'].get('RecoveryTime',0)))/10,4))
+            armor=round(float(game['armor'].get('DamageThreshold',0)),4),recovery=round(float(game['armor'].get('RecoveryModifier',game['attack'].get('PersonalCooldownModifier',0)))/10,4))
         damage=game['attack'].get('DamageData',{})
         row['damage_min']=round(damage.get('Minimum',0));row['damage_max']=round(damage.get('Maximum',0))
         txobj=index.resolve(obj,item.get('IconTexture'))

@@ -24,8 +24,11 @@ class MarketSourceTests(unittest.TestCase):
                 self.assertEqual(g['statsVersion'],2)
                 if info and (scaling:=scale_row(info,info['level'])):
                     if info['kind']=='weapon':
-                        self.assertEqual(item['damage_min'],round(scaling['AttackBase_DamageData_DamageMin']))
-                        self.assertEqual(item['damage_max'],round(scaling['AttackBase_DamageData_DamageMax']))
+                        from weapon_stats import source_attack
+                        _,melee=source_attack(g['prefab'])
+                        prefix='Weapon_MeleeAttack_AttackBase_' if melee else 'AttackBase_'
+                        self.assertEqual(item['damage_min'],round(scaling[prefix+'DamageData_DamageMin']))
+                        self.assertEqual(item['damage_max'],round(scaling[prefix+'DamageData_DamageMax']))
                     if info['kind']=='armor':self.assertAlmostEqual(item['armor'],scaling['DamageThreshold'])
                 else:
                     self.assertEqual(item['damage_max'],round(g.get('attack',{}).get('DamageData',{}).get('Maximum',0)))
@@ -87,11 +90,42 @@ class MarketSourceTests(unittest.TestCase):
         for name in library():
             self.assertTrue(is_artifact({'name':name,'quality':'Обычное','properties':{}}))
 
+    def test_numbered_variants_stay_in_catalog_but_not_any_shop(self):
+        variants=[i for i in catalog_texts()[0].values() if 'вариант ' in i['name']]
+        self.assertEqual(len(variants),323)
+        for i in variants:
+            self.assertFalse(market_profile(i)['purchasable'],i['name'])
+            self.assertFalse(any(shop_accepts(i,key) for key in SHOPS),i['name'])
+
 
 class MarketStoreTests(CampaignTests):
     async def seed(self):
         await self.db.upsert_catalog([normalize_quality(i) for i in catalog_texts()[0].values()])
         await self.store.ensure_shops(1)
+
+    async def test_numbered_variant_migration_preserves_owned_item_and_manual_stock(self):
+        await self.seed();await self.store.set_wallet(1,10000)
+        source=next(i for i in catalog_texts()[0].values() if '(вариант 2)' in i['name'] and not is_artifact(i))
+        async with self.db.connect() as c:
+            i=dict((await c.execute_fetchall('SELECT * FROM item_catalog WHERE name=?',(source['name'],)))[0])
+            await c.execute('INSERT INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,enabled,shop_key) VALUES(1,?,7,111,55,1,?)',(i['id'],'custom'))
+            await c.execute('INSERT INTO shop_stock_customized VALUES(1,?)',(i['id'],))
+            await c.execute('UPDATE shop_balance_seeded SET version=3');await c.commit()
+        await self.db.admin_give_item(1,i['name'])
+        owned=next(r for r in await self.db.inventory(1) if r['id']==i['id'])
+        for payload in [{'action':'buy','itemId':i['id']},{'action':'sell','inventoryId':owned['inventory_id']}]:
+            with self.assertRaisesRegex(ValueError,'Нумерованные'):await self.store.trade(1,payload)
+        with self.assertRaisesRegex(ValueError,'Нумерованные'):
+            await self.store.edit_shop(1,{'itemId':i['id'],'shopKey':'custom','stock':1,'enabled':True})
+        await self.store.ensure_shops(1)
+        self.assertFalse(any(r['id']==i['id'] for r in (await self.store.shop(1,shop_key='custom'))['items']))
+        self.assertFalse(any(r['id']==i['id'] for r in await self.store.sale_offers(1,1,'custom')))
+        async with self.db.connect() as c:
+            r=(await c.execute_fetchall('SELECT * FROM shop_stock WHERE item_id=?',(i['id'],)))[0]
+            self.assertEqual((r['enabled'],r['stock'],r['buy_price'],r['sell_price']),(0,7,111,55))
+            self.assertTrue(await c.execute_fetchall('SELECT 1 FROM item_catalog WHERE id=?',(i['id'],)))
+        self.assertEqual((await self.store.wallet(1))['totalCopper'],10000)
+        self.assertTrue(any(r['inventory_id']==owned['inventory_id'] for r in await self.db.inventory(1)))
 
     async def test_all_tradeable_items_distributed_once_and_pagination(self):
         await self.seed()

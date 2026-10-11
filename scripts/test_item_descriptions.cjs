@@ -1,5 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const ctx=vm.createContext({document:{addEventListener(){}},esc:s=>String(s).replaceAll('<','&lt;'),inventoryItemCard:()=>'<article>Предмет</article>',shopRow:()=>'<article>Товар</article>'});
+vm.runInContext(fs.readFileSync('web/weapon-details.js','utf8'),ctx);
 vm.runInContext(fs.readFileSync('web/item-descriptions.js','utf8'),ctx);
 const item={properties:{'При использовании':'Здоровье: 25% максимального здоровья'}};
 ctx.item=item;

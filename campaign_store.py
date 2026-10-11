@@ -83,7 +83,7 @@ class CampaignStore:
     def __init__(self, db): self.db = db
 
     async def ensure_shops(self,guild):
-        from merchant_rules import market_profile,SHOP_BALANCE_VERSION,recipe_outputs,MATERIAL_PRICES,is_artifact
+        from merchant_rules import market_profile,SHOP_BALANCE_VERSION,recipe_outputs,MATERIAL_PRICES,excluded_from_trade
         async with self.db.connect() as c:
             if await c.execute_fetchall('SELECT 1 FROM shop_balance_seeded WHERE guild_id=? AND version>=?',(guild,SHOP_BALANCE_VERSION)):return
         async with self.db.connect() as c:
@@ -95,7 +95,7 @@ class CampaignStore:
             additions=[]
             for item in rows:
                 p=market_profile(item);old=existing.get(item['id'])
-                if is_artifact(item):
+                if excluded_from_trade(item):
                     if old:await c.execute('UPDATE shop_stock SET enabled=0 WHERE guild_id=? AND item_id=?',(guild,item['id']))
                     continue
                 if not p['purchasable']:continue
@@ -205,8 +205,8 @@ class CampaignStore:
                 ident=int(payload.get('itemId',0))
                 items=await conn.execute_fetchall('SELECT * FROM item_catalog WHERE id=?',(ident,))
                 if not items: raise ValueError('Предмет не найден.')
-                from merchant_rules import SHOPS,shop_accepts,is_artifact
-                if is_artifact(dict(items[0])):raise ValueError('Артефакты и артефактные предметы не продаются.')
+                from merchant_rules import SHOPS,shop_accepts,excluded_from_trade
+                if excluded_from_trade(dict(items[0])):raise ValueError(excluded_from_trade(dict(items[0])))
                 old=await conn.execute_fetchall('SELECT shop_key FROM shop_stock WHERE guild_id=? AND item_id=?',(guild,ident))
                 key=str(payload.get('shopKey',old[0]['shop_key'] if old else 'custom'))
                 if key not in SHOPS:raise ValueError('Неизвестный магазин.')
@@ -223,8 +223,8 @@ class CampaignStore:
             if shop_key:
                 ids={r['item_id'] for r in await conn.execute_fetchall('SELECT item_id FROM shop_stock WHERE guild_id=? AND shop_key=?',(guild,shop_key))}
                 rows=[r for r in rows if r['id'] in ids]
-            from merchant_rules import market_profile,is_artifact
-            offers=[{'id':r['id'],'sell_price':r['sell_price']} for r in rows if not is_artifact(dict(r))]
+            from merchant_rules import market_profile,excluded_from_trade
+            offers=[{'id':r['id'],'sell_price':r['sell_price']} for r in rows if not excluded_from_trade(dict(r))]
             crafted=await conn.execute_fetchall("SELECT item_catalog.* FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=? AND source_url LIKE 'craft://%' AND NOT EXISTS(SELECT 1 FROM shop_stock WHERE shop_stock.item_id=item_catalog.id AND guild_id=?)",(cid,guild))
             for item in crafted:
                 p=market_profile(dict(item))
@@ -249,9 +249,9 @@ class CampaignStore:
                 if not inv or inv[0]['equipped_slot'] or inv[0]['quantity']<quantity: raise ValueError('Сначала снимите предмет; количество должно быть доступно.')
                 ident=inv[0]['item_id']
             else: raise ValueError('Неизвестная торговая операция.')
-            from merchant_rules import is_artifact
+            from merchant_rules import excluded_from_trade
             goods=await conn.execute_fetchall('SELECT * FROM item_catalog WHERE id=?',(ident,))
-            if goods and is_artifact(dict(goods[0])):raise ValueError('Артефакты и артефактные предметы не продаются.')
+            if goods and excluded_from_trade(dict(goods[0])):raise ValueError(excluded_from_trade(dict(goods[0])))
             rows=await conn.execute_fetchall('SELECT item_catalog.*,shop_stock.stock,shop_stock.buy_price,shop_stock.sell_price,shop_stock.shop_key FROM shop_stock JOIN item_catalog ON item_catalog.id=item_id WHERE guild_id=? AND item_id=? AND enabled=1',(guild,ident))
             if not rows and payload['action']=='sell' and not await conn.execute_fetchall('SELECT 1 FROM shop_stock WHERE guild_id=? AND item_id=?',(guild,ident)):
                 from merchant_rules import market_profile

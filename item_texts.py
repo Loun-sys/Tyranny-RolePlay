@@ -16,6 +16,8 @@ def catalog_texts():
         if row['properties']['gameData'].get('useComponents') and source.get('FilterType')==16:row['category']='Расходуемые предметы'
         if row['properties']['gameData']['prefab']=='WPN_1H_IR_Dagger_Lantry':row['name']='Перо Книгочея'
         if row['category']=='Одноручное оружие' and row['hands']==2:row['category']='Двуручное оружие'
+        from crafting import normalize_quality
+        if row['hands']:row.update(normalize_quality(row))
     return {r['properties']['gameData']['prefab']:r for r in rows}, {r['name'].casefold():r for r in rows}
 
 def clean_copy(text):

@@ -5,6 +5,7 @@ const item={id:1,name:'Шлем',category:'Броня',quality:'Хорошее',
 const shop={settings:{name:'Торговый двор',enabled:1,minLevel:5,locked:true},characterLevel:1,shops:[{key:'level_5',name:'Торговый двор',minLevel:5,count:1,locked:true}],categories:['Броня'],qualities:['Хорошее'],items:[{...item,buy_price:500,stock:1}],saleOffers:[],wallet:{copper:500},total:1,offset:0};
 const ctx=vm.createContext({document:{querySelector:node,addEventListener(type,fn){(events[type]??=[]).push(fn)}},$:node,URLSearchParams,location:{search:''},api:'http://localhost',token:'test',showView(){},renderCabinet(){},renderTab(){},esc:v=>String(v??'').replaceAll('<','&lt;'),roundText:n=>`${n} раундов`,data:{inventory:[],wallet:{},character:{level:1}},tab:'shop',toast(){},request:async()=>shop,clearTimeout,setTimeout});
 vm.runInContext(fs.readFileSync('web/player-shop.js','utf8'),ctx);
+vm.runInContext(fs.readFileSync('web/weapon-details.js','utf8'),ctx);
 vm.runInContext(fs.readFileSync('web/market-ui.js','utf8'),ctx);
 vm.runInContext(`playerShop=${JSON.stringify(shop)};renderPlayerShop()`,ctx);
 const html=node('#panel').innerHTML;
@@ -12,6 +13,12 @@ assert(html.includes('с 5 уровня'));assert(html.includes('Уровень 
 assert(html.includes('button disabled'));assert(html.includes('data-shop-page'));assert(html.includes('Парирование: +2'));
 const details=ctx.marketItemDetails(item);assert(details.includes('Броня'));assert(details.includes('0.5'));assert(details.includes('Рубящий: 1'));assert(details.includes('Условный эффект'));assert(!details.includes('История'));
 assert(!ctx.marketItemDetails({...item,properties:{'Эффекты':'<script>'}}).includes('<script>'));
+const weapon={...item,name:'Железный меч',category:'Одноручное оружие',armor:0,weaponStats:{damageMin:8,damageMax:10,damageTypes:['Рубящий','Колющий'],accuracyBonus:0,penetration:3,rangeMeters:.5,rangeCells:1,defense:'Парирование',secondaryDefense:'Нет',recoverySeconds:.75,recoveryRounds:.075,interrupt:0,hands:1,attackSpeed:'Быстрая'},properties:{'Точность':'+0','Тип урона':'Рубящий / Колющий','Эффекты':'Тест'}};
+const weaponHTML=ctx.marketItemDetails(weapon);
+for(const text of ['Одноручное оружие','8–10','Рубящий / Колющий','лучший против цели','Точность</dt><dd>+0','Пробивание брони</dt><dd>3','Парирование','0.5 м','0.75 сек.','0.075 раунда','Прерывание</dt><dd>0','Быстрая'])assert(weaponHTML.includes(text),text);
+assert.equal((weaponHTML.match(/Точность/g)||[]).length,1);
+assert(ctx.itemStatList({...weapon,weaponStats:{...weapon.weaponStats,recoverySeconds:0,recoveryRounds:0,hands:2}}).includes('0 сек. · 0 раунда'));
+assert(ctx.weaponSummary(weapon).includes('Восстановление +0.75 сек.'));
 vm.runInContext("playerShopKey='level_5';playerShopURL();marketOffset=50",ctx);
 assert(vm.runInContext('playerShopURL()',ctx).includes('offset=50'));
 vm.runInContext("playerShopCategory='Броня'",ctx);assert(vm.runInContext('playerShopURL()',ctx).includes('offset=0'));

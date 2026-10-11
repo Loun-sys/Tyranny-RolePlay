@@ -13,7 +13,7 @@ SHOPS={
     [(5,'Торговый двор'),(10,'Гильдейский рынок'),(15,'Редкие товары'),(20,'Лавка высшего качества')]},
  'custom':{'name':'Лавка мастера','categories':[]}}
 for shop in SHOPS.values():shop.setdefault('minLevel',1)
-SHOP_BALANCE_VERSION=3
+SHOP_BALANCE_VERSION=4
 MATERIAL_PRICES={'RES_SkyPillar_AlchemySupplies':5,'RES_SkyPillar_Scrolls':10,
     'RES_SkyPillar_Hide':15,'RES_SkyPillar_Ingot_Iron':20,'RES_SkyPillar_Ingot_Bronze':40}
 QUALITY_LEVELS={'Обычное':1,'Хорошее':5,'Добротное':5,'Превосходное':10,
@@ -27,6 +27,13 @@ def is_artifact(item):
     base=(game.get('craftBaseName') or item.get('name','')).split(' (')[0]
     return (item.get('quality')=='Артефакт' or
         bool(re.search(r'(?:^|_)ART(?:_|$)',game.get('prefab',''),re.I)) or base in library())
+
+def excluded_from_trade(item):
+    from item_effects import game_data
+    if is_artifact(item):return 'Артефакты и артефактные предметы не продаются'
+    if any(re.search(r'\bвариант\s+\d+\b',str(name),re.I) for name in (item.get('name',''),game_data(item).get('craftBaseName',''))):
+        return 'Нумерованные варианты предметов не продаются'
+    return ''
 
 @lru_cache(maxsize=1)
 def recipe_outputs():
@@ -46,7 +53,7 @@ def market_profile(item):
     from consumables import profile
     game=game_data(item);source=game.get('sourceItem',{});prefab=game.get('prefab','');recipe=recipe_outputs().get(prefab)
     reason=''
-    if is_artifact(item):reason='Артефакты и артефактные предметы не продаются'
+    if excluded_from_trade(item):reason=excluded_from_trade(item)
     elif not game.get('statsVersion'):reason='Нет подтверждённых игровых характеристик'
     elif prefab.startswith('MONEY_'):reason='Валюта хранится в кошельке'
     elif source.get('CutFromGame') or source.get('IsProp') or re.search(r'(?:test|debug|^Prop_)',prefab,re.I):reason='Служебный предмет'
@@ -104,7 +111,7 @@ def market_profile(item):
         'unavailableReason':reason,'buyPrice':price,'sellPrice':sell,'initialStock':1 if unique or (info and info['permanent']) else stock}
 
 def shop_accepts(item,key):
-    if is_artifact(item):return False
+    if excluded_from_trade(item):return False
     if key=='custom':return True
     p=market_profile(item)
     return p['purchasable'] and p['shopKey']==key

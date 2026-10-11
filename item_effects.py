@@ -117,6 +117,16 @@ def refresh_item_properties(item):
     if high:p['Безоружный урон']=f'{low:g}–{high:g}'
     if game.get('attack'):
         damage=game['attack'].get('DamageData',{})
-        if damage.get('Type') in DAMAGE_TYPES:p['Тип урона']=DAMAGE_TYPES[damage['Type']]
-        if game['attack'].get('AttackDistance'):p['Дальность']=f"{game['attack']['AttackDistance']:g} м"
+        from weapon_stats import readout
+        stats=readout(item)
+        if stats:
+            p['Тип урона']='Случайный' if stats['randomDamage'] else ' / '.join(stats['damageTypes'])+(' (выбирается лучший)' if len(stats['damageTypes'])>1 else '')
+            p['Точность']=f"{stats['accuracyBonus']:+g}"
+            p['Пробивание брони']=f"{stats['penetration']:g}"
+            p['Защита цели']=stats['defense']+(' / '+stats['secondaryDefense'] if stats['secondaryDefense']!='Нет' else '')
+            p['Дальность']=(f"{stats['minRangeMeters']:g}–" if stats['minRangeMeters'] else '')+f"{stats['rangeMeters']:g} м ({stats['rangeCells']} клеток на поле)"
+            p['Восстановление оружия']=f"{stats['recoverySeconds']:g} сек. = {stats['recoveryRounds']:g} раунда"
+            p['Прерывание']=f"{stats['interrupt']:g}"
+            p['Скорость атаки']=stats['attackSpeed']
+        elif damage.get('Type') in DAMAGE_TYPES:p['Тип урона']=DAMAGE_TYPES[damage['Type']]
     return item

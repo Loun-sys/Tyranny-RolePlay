@@ -865,6 +865,15 @@ class TrainingSession:
                 'reflections':{i:max(reflection,reflection_chance(defender_rules,attack_mode,result)) for i,result in
                     enumerate(['Промах','Скользящий удар','Попадание','Критическое попадание']) if i}}
 
+    def _weapon_damage_type(self, weapon, target, randomize=False):
+        types=weapon.get('damageTypes') or ['Дробящий']
+        if weapon.get('randomDamage') and randomize:return random.choice(types).lower()
+        # BestOfType uses the target's current typed armor, including effects.
+        def armor(kind):
+            return self._attack_parameters(accuracy=0,defense=0,
+                armor=self.targets[target]['armor'],target_id=target,damage_type=kind.lower())['armor']
+        return min(types,key=armor).lower()
+
     def _attack_damage(self, raw, quality, parameters, penetration, target_id, mutate=False):
         statuses=self.conditions.get(target_id,{})
         armor=parameters['armor']
@@ -894,8 +903,8 @@ class TrainingSession:
         ordinary=kind=='attack'
         if ordinary:
             accuracy=weapon.get('accuracy',0);low=weapon.get('damageMin',1);high=weapon.get('damageMax',2)
-            mode=weapon_mode(weapon);defense='Парирование' if mode=='melee' else 'Уклонение'
-            penetration=round(weapon.get('penetration',0));damage_type='физического'
+            mode=weapon_mode(weapon);defense=weapon.get('defense') or ('Парирование' if mode=='melee' else 'Уклонение')
+            penetration=round(weapon.get('penetration',0));damage_type=self._weapon_damage_type(weapon,target)
         elif kind=='artifact':
             accuracy=weapon.get('accuracy',20);low=action['damageMin'] or round(weapon.get('damageMin',2)*factor)
             high=action['damageMax'] or round(weapon.get('damageMax',4)*factor)
@@ -921,14 +930,19 @@ class TrainingSession:
         parameters=self._attack_parameters(accuracy=accuracy,defense=self._defense(defense,target) if defense!='Нет' else 0,
             armor=self.targets[target]['armor'],target_id=target,attack_mode=mode,
             defense_name=defense if kind!='artifact' else None,damage_type=damage_type,crafted_spell=kind=='spell')
+        possible_parameters=[parameters]
+        if ordinary and weapon.get('randomDamage'):
+            possible_parameters=[{**parameters,'armor':self._attack_parameters(accuracy=accuracy,defense=0,
+                armor=self.targets[target]['armor'],target_id=target,damage_type=t.lower())['armor']}
+                for t in weapon['damageTypes']]
         distribution=outcome_distribution(parameters['accuracy'],parameters['defense']+cover,
             derived.get('attack',{}).get('criticalChance',0),
             getattr(self,'talent_runtime',{}).get(102,0),parameters['conversions'],parameters['reflections'],parameters['spellConversions'])
         bounds=[]
         for label,quality in [('graze',.5),('hit',1),('critical',parameters['criticalMultiplier'])]:
             if distribution[label]>0:
-                bounds.extend(self._attack_damage(raw,quality,parameters,penetration,target)[0]
-                              for raw in [max(1,low) if high>0 else 0,max(1,low,high) if high>0 else 0])
+                bounds.extend(self._attack_damage(raw,quality,p,penetration,target)[0]
+                              for p in possible_parameters for raw in [max(1,low) if high>0 else 0,max(1,low,high) if high>0 else 0])
         return {'targetId':target,'name':self.targets[target]['name'],'accuracy':parameters['accuracy'],
                 'defenseName':defense,'defense':parameters['defense'],'cover':cover,
                 'hitChance':round((1-distribution['miss']-distribution['reflected'])*100,1),
@@ -1532,14 +1546,16 @@ class TrainingSession:
             mode=weapon_mode(attack)
             action_range = self._weapon_range(attack)
             self._require_action(action_range)
-            defense_name = "Парирование" if mode=='melee' else "Уклонение"
+            if self._distance()<attack.get('minRange',0):raise ValueError(f"Цель слишком близко: минимальная дальность оружия — {attack['minRange']} клеток.")
+            defense_name = attack.get('defense') or ("Парирование" if mode=='melee' else "Уклонение")
             cover_name, cover_bonus = self.grid.cover(self.player_position, self.target_positions[self.selected_target_id])
             cover_bonus = cover_bonus if action_range > 1 else 0
             result = self._roll_attack(
                 name="Обычная атака", accuracy=int(attack.get("accuracy", 0)),
                 low=int(attack.get("damageMin", 1)), high=int(attack.get("damageMax", 2)),
-                defense=self._defense(defense_name), armor=self.targets[self.selected_target_id]["armor"], cover_bonus=cover_bonus,
+                defense=self._defense(defense_name) if defense_name!='Нет' else 0, armor=self.targets[self.selected_target_id]["armor"], cover_bonus=cover_bonus,
                 penetration=round(attack.get('penetration',0)),
+                damage_type=self._weapon_damage_type(attack,self.selected_target_id,randomize=True),
                 attack_mode=mode,defense_name=defense_name,
             )
             chances=dict(attack.get('splitChances',{}))
@@ -1559,8 +1575,9 @@ class TrainingSession:
                     if self.target_healths[self.selected_target_id]<=0 or self.player_health<=0:break
                     extra=self._roll_attack(name='Дополнительный удар',accuracy=int(attack.get('accuracy',0)),
                         low=int(attack.get('damageMin',1)),high=int(attack.get('damageMax',2)),
-                        defense=self._defense(defense_name),armor=self.targets[self.selected_target_id]['armor'],
+                        defense=self._defense(defense_name) if defense_name!='Нет' else 0,armor=self.targets[self.selected_target_id]['armor'],
                         cover_bonus=cover_bonus,penetration=round(attack.get('penetration',0)),
+                        damage_type=self._weapon_damage_type(attack,self.selected_target_id,randomize=True),
                         attack_mode=mode,defense_name=defense_name)
                     result['damage']+=extra['damage'];result['line']+=' '+extra['line']
         elif kind == "ability":
@@ -1720,7 +1737,7 @@ class TrainingSession:
             return f"Цель вне дальности: {distance}/{action_range} м" if distance > action_range else ""
 
         actions = [{"kind": "attack", "name": "Обычная атака", "description": "Атака активным оружейным комплектом.",
-                    "remaining": 0, "range": weapon_range, "weaponSkill": attack.get("skill", ""), "disabledReason": reason(weapon_range),
+                    "remaining": 0, "range": weapon_range, "minRange":attack.get('minRange',0), "weaponSkill": attack.get("skill", ""), "disabledReason": reason(weapon_range),
                     "cells": [{"x": selected_target["x"], "y": selected_target["y"]}]}]
         from consumables import profile
         for item in getattr(self,'consumable_inventory',[]):
@@ -1807,6 +1824,7 @@ class TrainingSession:
                     shape = self._spell_cells(action) if action["kind"] in {"spell","artifact","ability"} else {point}
                     effective_point = self.player_position if targeting in {"self", "aura"} else point
                     valid = self.grid.distance(self.player_position, effective_point) <= action.get("range", 0)
+                    valid = valid and self.grid.distance(self.player_position,effective_point)>=action.get('minRange',0)
                     valid = valid and point not in self.grid.blocked and self.grid.line_of_sight(self.player_position, effective_point)
                     if action['kind']=='artifact' and not action['supported']: valid=False
                     if action['kind']=='ability' and not action['supported']:valid=False

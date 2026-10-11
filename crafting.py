@@ -28,7 +28,14 @@ def normalize_quality(item,level=None):
     item=copy.deepcopy(item)
     if prefab(item).startswith('RES_SkyPillar_'):item['category']='Материалы';item['weight']=0
     info=quality_info(item)
-    if not info:return item
+    if not info:
+        from weapon_stats import restore_weapon
+        item=restore_weapon(item)
+        if props(item).get('gameData',{}).get('statsVersion')==2:
+            item['properties']=props(item)
+            from item_effects import refresh_item_properties
+            refresh_item_properties(item)
+        return item
     level=level or info['level'];row=scale_row(info,level)
     if not row:return item
     p=props(item);game=p.setdefault('gameData',{});game['craftQuality']={**info,'level':level};game['qualityStats']=row
@@ -50,6 +57,8 @@ def normalize_quality(item,level=None):
         for field,label in fields.items():
             if row.get(field):p[label]=f"{row[field]:+g}"
     item['properties']=p
+    from weapon_stats import restore_weapon
+    item=restore_weapon(item)
     if game.get('statsVersion')==2:
         from item_effects import refresh_item_properties
         refresh_item_properties(item)
