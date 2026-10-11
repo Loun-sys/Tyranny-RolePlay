@@ -11,6 +11,9 @@ from official_localization import official_entity
 def catalog_texts():
     rows = json.loads((Path(__file__).parent/'catalog/game_items.json').read_text(encoding='utf-8'))
     for row in rows:
+        source=row['properties']['gameData'].get('sourceItem',{})
+        if source.get('PrimaryWeaponSlot') and source.get('SkillType')==11:row['category']='Посохи'
+        if row['properties']['gameData'].get('useComponents') and source.get('FilterType')==16:row['category']='Расходуемые предметы'
         if row['properties']['gameData']['prefab']=='WPN_1H_IR_Dagger_Lantry':row['name']='Перо Книгочея'
         if row['category']=='Одноручное оружие' and row['hands']==2:row['category']='Двуручное оружие'
     return {r['properties']['gameData']['prefab']:r for r in rows}, {r['name'].casefold():r for r in rows}

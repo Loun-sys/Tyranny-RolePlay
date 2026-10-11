@@ -80,6 +80,10 @@ async def main():
         app.router.add_get("/api/portal/{token}", api.portal_info)
         app.router.add_get("/api/portal/{token}/training", api.training_info)
         app.router.add_get("/api/portal/{token}/shop", api.portal_shop)
+        app.router.add_post("/api/portal/{token}/shop", api.portal_shop)
+        app.router.add_get('/api/catalog',api.player_catalog)
+        if 'shops' in sys.argv[2:]:
+            await CampaignStore(db).set_wallet(cid,25000)
         for path, handler in [("start", api.training_start), ("action", api.training_action), ("reset", api.training_reset)]:
             app.router.add_post("/api/portal/{token}/training/" + path, handler)
         app.router.add_post("/api/portal/{token}/combat-quickbar", api.portal_combat_quickbar)

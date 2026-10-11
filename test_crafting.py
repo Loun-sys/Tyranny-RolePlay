@@ -105,14 +105,15 @@ class CraftTests(CampaignTests):
 
     async def test_portal_and_material_recipe_shop(self):
         await self.setup_crafter();await self.craft.ensure_supplies(1)
-        shop=await self.store.shop(1,shop_key='custom')
-        self.assertTrue(any(i['category']=='Материалы' for i in shop['items']))
-        self.assertTrue(any(i['name'].startswith('Рецепт:') for i in shop['items']))
-        self.assertTrue(all(i['category'] in {'Материалы','Чертежи','Разное'} for i in shop['items']))
+        shop=await self.store.shop(1,category='Материалы')
+        self.assertTrue(shop['items'])
+        recipes=await self.store.shop(1,category='Чертежи')
+        self.assertTrue(any(i['name'].startswith('Рецепт:') for i in recipes['items']))
+        self.assertTrue(all(i['category']=='Материалы' for i in shop['items']))
         first=shop['items'][0]
-        await self.store.edit_shop(1,{'itemId':first['id'],'stock':3,'buyPrice':5,'sellPrice':2})
+        await self.store.edit_shop(1,{'itemId':first['id'],'stock':3,'buyPrice':5,'sellPrice':2,'shopKey':first['shop_key']})
         await self.craft.ensure_supplies(1)
-        self.assertEqual(next(i['stock'] for i in (await self.store.shop(1,shop_key='custom'))['items'] if i['id']==first['id']),3)
+        self.assertEqual(next(i['stock'] for i in (await self.store.shop(1,category='Материалы'))['items'] if i['id']==first['id']),3)
         app=web.Application();app['db']=self.db;app.router.add_get('/api/portal/{token}/crafting',portal_crafting)
         token=await self.db.create_portal_token(1,1)
         async with TestClient(TestServer(app)) as client:

@@ -73,8 +73,10 @@ class CraftingStore:
             items=await self._items(c)
             for name in wanted:
                 if name not in items:continue
-                i=items[name];price=max(1,int(i['value']))
-                await c.execute('INSERT OR IGNORE INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,enabled,shop_key) VALUES(?,?,?,?,?,1,?)',(guild,i['id'],15,price,price//2,'custom'))
+                from merchant_rules import market_profile
+                i=items[name];market=market_profile(i)
+                if not market['purchasable']:continue
+                await c.execute('INSERT OR IGNORE INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,enabled,shop_key) VALUES(?,?,?,?,?,1,?)',(guild,i['id'],market['initialStock'],market['buyPrice'],market['sellPrice'],market['shopKey']))
             await c.execute('INSERT INTO crafting_shop_seeded VALUES(?)',(guild,));await c.commit()
     async def _check(self,c,cid):
         rows=await c.execute_fetchall('SELECT background FROM characters WHERE id=?',(cid,))

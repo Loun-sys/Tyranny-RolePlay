@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS battle_maps(id INTEGER PRIMARY KEY AUTOINCREMENT,guil
 CREATE TABLE IF NOT EXISTS shop_settings(guild_id INTEGER PRIMARY KEY,name TEXT NOT NULL DEFAULT 'Имперская лавка',enabled INTEGER NOT NULL DEFAULT 1);
 CREATE TABLE IF NOT EXISTS shop_stock(guild_id INTEGER NOT NULL,item_id INTEGER NOT NULL REFERENCES item_catalog(id),stock INTEGER NOT NULL CHECK(stock>=-1),buy_price INTEGER NOT NULL CHECK(buy_price>=0),sell_price INTEGER NOT NULL CHECK(sell_price>=0),enabled INTEGER NOT NULL DEFAULT 1,shop_key TEXT NOT NULL DEFAULT 'custom',PRIMARY KEY(guild_id,item_id));
 CREATE TABLE IF NOT EXISTS shop_seeded(guild_id INTEGER PRIMARY KEY,created_at TEXT DEFAULT CURRENT_TIMESTAMP);
-CREATE TABLE IF NOT EXISTS shop_branches(guild_id INTEGER NOT NULL,shop_key TEXT NOT NULL,name TEXT NOT NULL,enabled INTEGER NOT NULL DEFAULT 1,PRIMARY KEY(guild_id,shop_key));
+CREATE TABLE IF NOT EXISTS shop_branches(guild_id INTEGER NOT NULL,shop_key TEXT NOT NULL,name TEXT NOT NULL,enabled INTEGER NOT NULL DEFAULT 1,min_level INTEGER NOT NULL DEFAULT 1,PRIMARY KEY(guild_id,shop_key));
+CREATE TABLE IF NOT EXISTS shop_balance_seeded(guild_id INTEGER PRIMARY KEY,version INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS shop_stock_customized(guild_id INTEGER,item_id INTEGER,PRIMARY KEY(guild_id,item_id));
 CREATE TABLE IF NOT EXISTS commerce_log(id INTEGER PRIMARY KEY AUTOINCREMENT,character_id INTEGER NOT NULL,guild_id INTEGER NOT NULL,operation TEXT NOT NULL,item_id INTEGER,quantity INTEGER NOT NULL,amount INTEGER NOT NULL,created_at TEXT DEFAULT CURRENT_TIMESTAMP);
 '''
 
@@ -81,30 +83,29 @@ class CampaignStore:
     def __init__(self, db): self.db = db
 
     async def ensure_shops(self,guild):
-        from merchant_rules import common_item
+        from merchant_rules import market_profile,SHOP_BALANCE_VERSION,recipe_outputs,MATERIAL_PRICES
         async with self.db.connect() as c:
-            if await c.execute_fetchall('SELECT 1 FROM shop_seeded WHERE guild_id=?',(guild,)):return
+            if await c.execute_fetchall('SELECT 1 FROM shop_balance_seeded WHERE guild_id=? AND version>=?',(guild,SHOP_BALANCE_VERSION)):return
         async with self.db.connect() as c:
             await c.execute('BEGIN IMMEDIATE')
-            if await c.execute_fetchall('SELECT 1 FROM shop_seeded WHERE guild_id=?',(guild,)):return
+            if await c.execute_fetchall('SELECT 1 FROM shop_balance_seeded WHERE guild_id=? AND version>=?',(guild,SHOP_BALANCE_VERSION)):return
             rows=[dict(r) for r in await c.execute_fetchall('SELECT * FROM item_catalog ORDER BY value,name,id')]
-            for key in ['consumables','weapons','armor']:
-                candidates=[r for r in rows if common_item(r,key)]
-                groups={}
-                for item in candidates:
-                    group=item['category']+':'+item.get('slot','')
-                    groups.setdefault(group,[]).append(item)
-                selected=[]
-                cap={'consumables':15,'weapons':10,'armor':12}[key]
-                while len(selected)<cap and any(groups.values()):
-                    for group in groups.values():
-                        if group and len(selected)<cap:selected.append(group.pop(0))
-                for item in selected:
-                    stock=10+sum(map(ord,item['name']))%6 if key=='consumables' else 3+sum(map(ord,item['name']))%3
-                    price=max(1,int(item['value']))
-                    await c.execute('INSERT OR IGNORE INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,enabled,shop_key) VALUES(?,?,?,?,?,1,?)',
-                        (guild,item['id'],stock,price,price//2,key))
-            await c.execute('INSERT INTO shop_seeded(guild_id) VALUES(?)',(guild,))
+            existing={r['item_id']:dict(r) for r in await c.execute_fetchall('SELECT * FROM shop_stock WHERE guild_id=?',(guild,))}
+            customized={r['item_id'] for r in await c.execute_fetchall('SELECT item_id FROM shop_stock_customized WHERE guild_id=?',(guild,))}
+            additions=[]
+            for item in rows:
+                p=market_profile(item);old=existing.get(item['id'])
+                if not p['purchasable']:continue
+                if not old:additions.append((guild,item['id'],p['initialStock'],p['buyPrice'],p['sellPrice'],p['shopKey']))
+                elif item['id'] not in customized and (old['shop_key']!='custom' or
+                        (json.loads(item['properties']).get('gameData',{}).get('prefab') in (recipe_outputs().keys() | MATERIAL_PRICES.keys()) and old['buy_price']==max(1,int(item['value'])) and old['sell_price']==old['buy_price']//2)):
+                    # Keep purchased stock, closed goods and independently edited prices.
+                    untouched=old['buy_price']==max(1,int(item['value'])) and old['sell_price']==old['buy_price']//2
+                    await c.execute('UPDATE shop_stock SET shop_key=?,buy_price=?,sell_price=? WHERE guild_id=? AND item_id=?',
+                        (p['shopKey'],p['buyPrice'] if untouched else old['buy_price'],p['sellPrice'] if untouched else old['sell_price'],guild,item['id']))
+            await c.executemany('INSERT INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,enabled,shop_key) VALUES(?,?,?,?,?,1,?)',additions)
+            await c.execute('INSERT OR IGNORE INTO shop_seeded(guild_id) VALUES(?)',(guild,))
+            await c.execute('INSERT OR REPLACE INTO shop_balance_seeded VALUES(?,?)',(guild,SHOP_BALANCE_VERSION))
             await c.commit()
 
     async def wallet(self,cid):
@@ -147,8 +148,8 @@ class CampaignStore:
             if cursor.rowcount!=1: raise ValueError('Карта не найдена.')
             await conn.commit()
 
-    async def shop(self,guild,query='',admin=False,shop_key='',category='',quality=''):
-        from merchant_rules import SHOPS
+    async def shop(self,guild,query='',admin=False,shop_key='',category='',quality='',offset=0,sort='name',availability='',level=None):
+        from merchant_rules import SHOPS,market_profile
         if shop_key and shop_key not in SHOPS:raise ValueError('Неизвестный магазин.')
         await self.ensure_shops(guild)
         from crafting import CraftingStore
@@ -157,18 +158,32 @@ class CampaignStore:
         if ready:await CraftingStore(self.db).ensure_supplies(guild)
         async with self.db.connect() as conn:
             settings=await conn.execute_fetchall('SELECT * FROM shop_settings WHERE guild_id=?',(guild,))
-            branch=await conn.execute_fetchall('SELECT name,enabled FROM shop_branches WHERE guild_id=? AND shop_key=?',(guild,shop_key))
+            branches={r['shop_key']:dict(r) for r in await conn.execute_fetchall('SELECT * FROM shop_branches WHERE guild_id=?',(guild,))}
+            branch=branches.get(shop_key)
             clauses=['guild_id=?','(name LIKE ? OR category LIKE ?)'];values=[guild,'%'+query+'%','%'+query+'%']
             if not admin:clauses.append('shop_stock.enabled=1')
             if shop_key:clauses.append('shop_key=?');values.append(shop_key)
             if category:clauses.append('category=?');values.append(category)
             if quality:clauses.append('quality=?');values.append(quality)
-            rows=await conn.execute_fetchall('SELECT item_catalog.*,shop_stock.stock,shop_stock.buy_price,shop_stock.sell_price,shop_stock.enabled,shop_stock.shop_key FROM shop_stock JOIN item_catalog ON item_catalog.id=shop_stock.item_id WHERE '+' AND '.join(clauses)+' ORDER BY name LIMIT 200',values)
+            if availability=='stock':clauses.append('stock<>0')
+            order={'name':'name,id','price_asc':'buy_price,name,id','price_desc':'buy_price DESC,name,id'}.get(sort,'name,id')
+            sql=' FROM shop_stock JOIN item_catalog ON item_catalog.id=shop_stock.item_id WHERE '+' AND '.join(clauses)
+            total=(await conn.execute_fetchall('SELECT COUNT(*) AS n'+sql,values))[0]['n']
+            rows=await conn.execute_fetchall('SELECT item_catalog.*,shop_stock.stock,shop_stock.buy_price,shop_stock.sell_price,shop_stock.enabled,shop_stock.shop_key'+sql+' ORDER BY '+order+' LIMIT 50 OFFSET ?',(*values,max(0,offset)))
             cats=await conn.execute_fetchall('SELECT DISTINCT category FROM shop_stock JOIN item_catalog ON item_catalog.id=item_id WHERE guild_id=?'+(' AND shop_key=?' if shop_key else '')+' ORDER BY category',(guild,shop_key) if shop_key else (guild,))
             config=dict(settings[0]) if settings else {'name':'Имперская лавка','enabled':1}
             if shop_key and shop_key!='custom':config={'name':SHOPS[shop_key]['name'],'enabled':1}
-            if branch:config.update(dict(branch[0]))
-            return {'settings':config,'items':[dict(row) for row in rows],'shopKey':shop_key,'shops':[{'key':k,**v} for k,v in SHOPS.items()],
+            config['minLevel']=SHOPS.get(shop_key,SHOPS['custom'])['minLevel']
+            if branch:config.update(name=branch['name'],enabled=branch['enabled'],minLevel=branch['min_level'])
+            config['locked']=level is not None and level<config['minLevel']
+            counts={r['shop_key']:r['n'] for r in await conn.execute_fetchall('SELECT shop_key,COUNT(*) AS n FROM shop_stock WHERE guild_id=? AND enabled=1 GROUP BY shop_key',(guild,))}
+            shops=[]
+            for k,v in SHOPS.items():
+                b=branches.get(k,{})
+                shops.append({'key':k,**v,'name':b.get('name',v['name']),'minLevel':b.get('min_level',v['minLevel']),
+                    'enabled':b.get('enabled',1),'count':counts.get(k,0),'locked':level is not None and level<b.get('min_level',v['minLevel'])})
+            items=[{**dict(r),'market':market_profile(dict(r))} for r in rows]
+            return {'settings':config,'items':items,'shopKey':shop_key,'shops':shops,'total':total,'offset':max(0,offset),'characterLevel':level,
                 'categories':[r['category'] for r in cats],'qualities':['Обычное','Хорошее','Превосходное','Выдающееся','Безупречное','Артефакт','Добротное','Изысканное','Шедевр']}
 
     async def edit_shop(self,guild,payload):
@@ -178,19 +193,23 @@ class CampaignStore:
                 key=str(payload.get('shopKey','custom'))
                 from merchant_rules import SHOPS
                 if key not in SHOPS:raise ValueError('Неизвестный магазин.')
-                await conn.execute('INSERT INTO shop_branches VALUES(?,?,?,?) ON CONFLICT(guild_id,shop_key) DO UPDATE SET name=excluded.name,enabled=excluded.enabled',(guild,key,str(payload.get('name',SHOPS[key]['name']))[:100],int(bool(payload.get('enabled',True)))))
+                old=await conn.execute_fetchall('SELECT min_level FROM shop_branches WHERE guild_id=? AND shop_key=?',(guild,key))
+                min_level=int(payload.get('minLevel',old[0]['min_level'] if old else SHOPS[key]['minLevel']))
+                if not 1<=min_level<=100:raise ValueError('Уровень магазина должен быть от 1 до 100.')
+                await conn.execute('INSERT INTO shop_branches(guild_id,shop_key,name,enabled,min_level) VALUES(?,?,?,?,?) ON CONFLICT(guild_id,shop_key) DO UPDATE SET name=excluded.name,enabled=excluded.enabled,min_level=excluded.min_level',(guild,key,str(payload.get('name',SHOPS[key]['name']))[:100],int(bool(payload.get('enabled',True))),min_level))
             else:
                 ident=int(payload.get('itemId',0))
                 items=await conn.execute_fetchall('SELECT * FROM item_catalog WHERE id=?',(ident,))
                 if not items: raise ValueError('Предмет не найден.')
-                from merchant_rules import SHOPS,common_item
+                from merchant_rules import SHOPS,shop_accepts
                 old=await conn.execute_fetchall('SELECT shop_key FROM shop_stock WHERE guild_id=? AND item_id=?',(guild,ident))
                 key=str(payload.get('shopKey',old[0]['shop_key'] if old else 'custom'))
                 if key not in SHOPS:raise ValueError('Неизвестный магазин.')
-                if key!='custom' and not common_item(dict(items[0]),key):raise ValueError('В обычной лавке допустимы только обычные неуникальные товары её категории.')
+                if not shop_accepts(dict(items[0]),key):raise ValueError('Предмет не соответствует категории или уровню лавки. Для своего ассортимента используйте лавку мастера.')
                 stock,buy,sell=(int(payload.get(k,0)) for k in ('stock','buyPrice','sellPrice'))
                 if stock < -1 or stock > 999999 or not 0<=sell<=buy<=2_000_000_000: raise ValueError('Проверьте запас и цены. Цена продажи не должна превышать цену покупки.')
                 await conn.execute('INSERT INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,enabled,shop_key) VALUES(?,?,?,?,?,?,?) ON CONFLICT(guild_id,item_id) DO UPDATE SET stock=excluded.stock,buy_price=excluded.buy_price,sell_price=excluded.sell_price,enabled=excluded.enabled,shop_key=excluded.shop_key',(guild,ident,stock,buy,sell,int(bool(payload.get('enabled',True))),key))
+                await conn.execute('INSERT OR IGNORE INTO shop_stock_customized VALUES(?,?)',(guild,ident))
             await conn.commit()
 
     async def sale_offers(self,cid,guild,shop_key=''):
@@ -199,7 +218,13 @@ class CampaignStore:
             if shop_key:
                 ids={r['item_id'] for r in await conn.execute_fetchall('SELECT item_id FROM shop_stock WHERE guild_id=? AND shop_key=?',(guild,shop_key))}
                 rows=[r for r in rows if r['id'] in ids]
-            return [dict(row) for row in rows]
+            offers=[dict(row) for row in rows]
+            from merchant_rules import market_profile
+            crafted=await conn.execute_fetchall("SELECT item_catalog.* FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=? AND source_url LIKE 'craft://%' AND NOT EXISTS(SELECT 1 FROM shop_stock WHERE shop_stock.item_id=item_catalog.id AND guild_id=?)",(cid,guild))
+            for item in crafted:
+                p=market_profile(dict(item))
+                if p['purchasable'] and (not shop_key or shop_key==p['shopKey']):offers.append({'id':item['id'],'sell_price':p['sellPrice']})
+            return offers
 
     async def trade(self,cid,payload):
         if not isinstance(payload,dict): raise ValueError('Некорректная торговая операция.')
@@ -207,7 +232,7 @@ class CampaignStore:
         if not 1<=quantity<=99: raise ValueError('Количество: 1–99.')
         async with self.db.connect() as conn:
             await conn.execute('BEGIN IMMEDIATE')
-            chars=await conn.execute_fetchall('SELECT guild_id FROM characters WHERE id=?',(cid,))
+            chars=await conn.execute_fetchall('SELECT guild_id,level FROM characters WHERE id=?',(cid,))
             if not chars: raise ValueError('Персонаж не найден.')
             guild=chars[0]['guild_id']
             settings=await conn.execute_fetchall('SELECT enabled FROM shop_settings WHERE guild_id=?',(guild,))
@@ -220,13 +245,25 @@ class CampaignStore:
                 ident=inv[0]['item_id']
             else: raise ValueError('Неизвестная торговая операция.')
             rows=await conn.execute_fetchall('SELECT item_catalog.*,shop_stock.stock,shop_stock.buy_price,shop_stock.sell_price,shop_stock.shop_key FROM shop_stock JOIN item_catalog ON item_catalog.id=item_id WHERE guild_id=? AND item_id=? AND enabled=1',(guild,ident))
+            if not rows and payload['action']=='sell' and not await conn.execute_fetchall('SELECT 1 FROM shop_stock WHERE guild_id=? AND item_id=?',(guild,ident)):
+                from merchant_rules import market_profile
+                crafted=await conn.execute_fetchall("SELECT * FROM item_catalog WHERE id=? AND source_url LIKE 'craft://%'",(ident,))
+                if crafted:
+                    p=market_profile(dict(crafted[0]))
+                    if p['purchasable']:
+                        await conn.execute('INSERT INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,shop_key) VALUES(?,?,0,?,?,?)',(guild,ident,p['buyPrice'],p['sellPrice'],p['shopKey']))
+                        rows=[{**dict(crafted[0]),'stock':0,'buy_price':p['buyPrice'],'sell_price':p['sellPrice'],'shop_key':p['shopKey']}]
             if not rows: raise ValueError('Магазин не торгует этим предметом.')
             item=rows[0]
             key=str(payload.get('shopKey',''))
             if key and key!=item['shop_key']:raise ValueError('Предмет не продаётся в выбранной лавке.')
-            branch=await conn.execute_fetchall('SELECT enabled FROM shop_branches WHERE guild_id=? AND shop_key=?',(guild,item['shop_key']))
+            branch=await conn.execute_fetchall('SELECT enabled,min_level FROM shop_branches WHERE guild_id=? AND shop_key=?',(guild,item['shop_key']))
             if item['shop_key']=='custom' and not branch and settings and not settings[0]['enabled']:raise ValueError('Магазин закрыт.')
             if branch and not branch[0]['enabled']:raise ValueError('Магазин закрыт.')
+            from merchant_rules import SHOPS
+            required=branch[0]['min_level'] if branch else SHOPS.get(item['shop_key'],SHOPS['custom'])['minLevel']
+            if chars[0]['level']<required:raise ValueError(f'Магазин доступен с {required} уровня. Ваш уровень: {chars[0]["level"]}.')
+            balance=(await conn.execute_fetchall('SELECT copper FROM wallets WHERE character_id=?',(cid,)))[0]['copper']
             if payload['action']=='buy':
                 cost=item['buy_price']*quantity
                 balance=(await conn.execute_fetchall('SELECT copper FROM wallets WHERE character_id=?',(cid,)))[0]['copper']
@@ -249,6 +286,7 @@ class CampaignStore:
                 amount=-cost
             else:
                 amount=item['sell_price']*quantity
+                if balance+amount>2000000000:raise ValueError('Кошелёк достиг предельного количества колец.')
                 if inv[0]['quantity']==quantity: await conn.execute('DELETE FROM inventory WHERE id=?',(inv[0]['id'],))
                 else: await conn.execute('UPDATE inventory SET quantity=quantity-? WHERE id=?',(quantity,inv[0]['id']))
                 await conn.execute('UPDATE wallets SET copper=copper+? WHERE character_id=?',(amount,cid))

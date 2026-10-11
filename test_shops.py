@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
 from test_campaign import CampaignTests
-from merchant_rules import common_item,reliable_icon,SHOPS
+from merchant_rules import market_profile,reliable_icon,SHOPS
+from crafting import normalize_quality
 from catalog_browser import browse
 from registration_api import admin_catalog,admin_shop,portal_shop,_clean_inventory
 from aiohttp import web
@@ -10,17 +11,18 @@ from aiohttp.test_utils import TestClient,TestServer
 class ShopTests(CampaignTests):
     async def seed(self):
         rows=json.loads(Path('catalog/game_items.json').read_text(encoding='utf-8'))
-        await self.db.upsert_catalog(rows)
+        await self.db.upsert_catalog([normalize_quality(i) for i in rows])
         await self.store.ensure_shops(1)
 
     async def test_starter_stores_and_icons(self):
         await self.seed()
-        for key,cap in [('consumables',15),('weapons',10),('armor',12)]:
+        for key in ['consumables','weapons','armor']:
             s=await self.store.shop(1,shop_key=key)
             self.assertGreater(len(s['items']),0)
-            self.assertLessEqual(len(s['items']),cap)
+            self.assertLessEqual(len(s['items']),50)
             for i in s['items']:
-                self.assertTrue(common_item(i,key))
+                self.assertEqual(market_profile(i)['shopKey'],key)
+                self.assertEqual(market_profile(i)['minLevel'],1)
                 self.assertTrue(10<=i['stock']<=15 if key=='consumables' else 3<=i['stock']<=5)
                 path,_=reliable_icon(i)
                 self.assertTrue((Path('web')/path).is_file())

@@ -251,6 +251,13 @@ class Database:
                 await db.execute("ALTER TABLE shop_stock ADD COLUMN shop_key TEXT NOT NULL DEFAULT 'custom'")
                 await db.commit()
             quickbar_schema = await db.execute_fetchall("SELECT sql FROM sqlite_master WHERE name='combat_quickbar'")
+            branch_columns={r['name'] for r in await db.execute_fetchall('PRAGMA table_info(shop_branches)')}
+            if 'min_level' not in branch_columns:
+                await db.execute('ALTER TABLE shop_branches ADD COLUMN min_level INTEGER NOT NULL DEFAULT 1')
+                from merchant_rules import SHOPS
+                for key,shop in SHOPS.items():
+                    await db.execute('UPDATE shop_branches SET min_level=? WHERE shop_key=?',(shop['minLevel'],key))
+                await db.commit()
             if quickbar_schema and 'BETWEEN 1 AND 5' in quickbar_schema[0]['sql']:
                 # Preserve every binding while widening the legacy SQLite constraint.
                 await db.execute('BEGIN')

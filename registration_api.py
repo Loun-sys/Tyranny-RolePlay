@@ -365,6 +365,9 @@ def _clean_inventory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         item = normalize_item_text(item)
         from merchant_rules import reliable_icon
         item['image_url'],item['iconFallback']=reliable_icon(item)
+        if 'market' in item:
+            from merchant_rules import runtime_warnings
+            item['runtimeNotes']=runtime_warnings(item)
         result.append(item)
     return result
 
@@ -727,15 +730,29 @@ async def admin_character(request: web.Request) -> web.Response:
 
 async def admin_catalog(request: web.Request) -> web.Response:
     await _admin_owner(request)
+    return await item_catalog_response(request)
+
+
+async def player_catalog(request: web.Request) -> web.Response:
+    # Read-only public goods, no character, guild stock, wallet or admin data.
+    return await item_catalog_response(request,public=True)
+
+
+async def item_catalog_response(request: web.Request,public=False) -> web.Response:
     query = str(request.query.get("q", ""))[:100]
     category = str(request.query.get("category", ""))[:100]
     from catalog_browser import browse
     try:
         result=await browse(request.app['db'],query,category,str(request.query.get('quality',''))[:100],
             max(0,int(request.query.get('offset',0))),str(request.query.get('sort','name')),
-            max(0,int(request.query.get('minPrice',0))),int(request.query.get('maxPrice',2000000000)))
+            max(0,int(request.query.get('minPrice',0))),int(request.query.get('maxPrice',2000000000)),
+            str(request.query.get('minLevel',''))[:3],str(request.query.get('availability',''))[:20],str(request.query.get('slot',''))[:100],verified_only=public)
     except (ValueError,TypeError) as error:raise web.HTTPBadRequest(reason='Некорректные фильтры каталога.') from error
     result['items']=_clean_inventory(result['items'])
+    for item in result['items']:
+        # Internal source graphs/URLs are not needed by catalogue consumers.
+        item['properties']={k:v for k,v in item['properties'].items() if k!='gameData'}
+        item.pop('source_url',None)
     return web.json_response({'ok':True,**result})
 
 
@@ -996,7 +1013,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-1"})
 
 
 async def _player_maps(request,cid):
@@ -1050,8 +1067,8 @@ async def admin_shop(request):
     if request.method=='POST':
         try: await store.edit_shop(guild,await request.json())
         except (ValueError,TypeError) as error: raise web.HTTPBadRequest(reason=str(error)) from error
-    try:shop=await store.shop(guild,str(request.query.get('q',''))[:100],True,str(request.query.get('shopKey','custom')),str(request.query.get('category',''))[:100],str(request.query.get('quality',''))[:100])
-    except ValueError as error:raise web.HTTPBadRequest(reason=str(error)) from error
+    try:shop=await store.shop(guild,str(request.query.get('q',''))[:100],True,str(request.query.get('shopKey','custom')),str(request.query.get('category',''))[:100],str(request.query.get('quality',''))[:100],max(0,int(request.query.get('offset',0))),str(request.query.get('sort','name')))
+    except (ValueError,TypeError) as error:raise web.HTTPBadRequest(reason=str(error)) from error
     shop['items']=_clean_inventory(shop['items'])
     return web.json_response({'ok':True,**shop})
 
@@ -1077,8 +1094,8 @@ async def portal_shop(request):
         except (ValueError,TypeError) as error: raise web.HTTPConflict(reason=str(error)) from error
     character=await request.app['db'].get_character_by_id(cid)
     key=str(request.query.get('shopKey','consumables'))
-    try:shop=await store.shop(character['guild_id'],str(request.query.get('q',''))[:100],False,key,str(request.query.get('category',''))[:100],str(request.query.get('quality',''))[:100])
-    except ValueError as error:raise web.HTTPBadRequest(reason=str(error)) from error
+    try:shop=await store.shop(character['guild_id'],str(request.query.get('q',''))[:100],False,key,str(request.query.get('category',''))[:100],str(request.query.get('quality',''))[:100],max(0,int(request.query.get('offset',0))),str(request.query.get('sort','name')),str(request.query.get('availability','')),character['level'])
+    except (ValueError,TypeError) as error:raise web.HTTPBadRequest(reason=str(error)) from error
     shop['items']=_clean_inventory(shop['items'])
     return web.json_response({'ok':True,**shop,'saleOffers':await store.sale_offers(cid,character['guild_id'],key),'wallet':await store.wallet(cid),'message':message})
 
@@ -1121,6 +1138,7 @@ async def start_registration_api(bot: Any, db: Any, data_dir: Path) -> web.AppRu
     app["training_locks"] = {}
     app["extended_talents"] = await load_extended_talents(data_dir)
     app.router.add_get("/health", health)
+    app.router.add_get('/api/catalog',player_catalog)
     app.router.add_get("/api/registration/{token}", registration_info)
     app.router.add_post("/api/registration/{token}", registration_submit)
     app.router.add_options("/api/registration/{token}", lambda _: web.Response(status=204))
