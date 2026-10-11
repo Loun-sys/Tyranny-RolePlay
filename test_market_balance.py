@@ -4,7 +4,7 @@ from pathlib import Path
 from aiohttp import web
 from aiohttp.test_utils import TestClient,TestServer
 from test_campaign import CampaignTests
-from merchant_rules import market_profile,SHOPS,SHOP_BALANCE_VERSION,MATERIAL_PRICES,consumable_costs,recipe_outputs
+from merchant_rules import market_profile,SHOPS,SHOP_BALANCE_VERSION,MATERIAL_PRICES,consumable_costs,recipe_outputs,is_artifact,shop_accepts
 from item_texts import catalog_texts,normalize_item_text
 from item_effects import game_data,armor_by_type,equip_modifiers
 from crafting import normalize_quality,quality_info,scale_row
@@ -69,6 +69,23 @@ class MarketSourceTests(unittest.TestCase):
         for prefab,output in recipe_outputs().items():
             m=market_profile(catalog_texts()[0][prefab]);self.assertTrue(m['purchasable'])
             self.assertGreaterEqual(m['minLevel'],market_profile(output)['minLevel'])
+
+    def test_artifact_families_are_catalogue_only_even_at_other_qualities(self):
+        from artifact_rules import library
+        artifacts=[i for i in catalog_texts()[0].values() if is_artifact(i)]
+        self.assertGreater(len(artifacts),50)
+        self.assertTrue(any(i['quality']!='Артефакт' for i in artifacts))
+        for item in artifacts:
+            with self.subTest(item=item['name']):
+                self.assertFalse(market_profile(item)['purchasable'])
+                self.assertIn('Артефакты',market_profile(item)['unavailableReason'])
+                self.assertFalse(any(shop_accepts(item,key) for key in SHOPS))
+                upgraded=copy.deepcopy(item)
+                upgraded['name']+=' (Безупречное)'
+                upgraded['properties']['gameData']['craftBaseName']=item['name']
+                self.assertTrue(is_artifact(upgraded))
+        for name in library():
+            self.assertTrue(is_artifact({'name':name,'quality':'Обычное','properties':{}}))
 
 
 class MarketStoreTests(CampaignTests):
@@ -165,4 +182,30 @@ class MarketStoreTests(CampaignTests):
         self.assertEqual((await self.store.wallet(1))['totalCopper'],p['sellPrice'])
         async with self.db.connect() as c:
             sold=(await c.execute_fetchall('SELECT stock FROM shop_stock WHERE item_id=?',(actual['id'],)))[0]
-        self.assertEqual(sold['stock'],1)
+            self.assertEqual(sold['stock'],1)
+
+    async def test_artifact_migration_and_direct_trade_cannot_bypass_exclusion(self):
+        await self.seed();await self.store.set_wallet(1,10000)
+        source=next(i for i in catalog_texts()[0].values() if is_artifact(i) and not i['name'].endswith(')') and i['hands'])
+        async with self.db.connect() as c:
+            item=dict((await c.execute_fetchall('SELECT * FROM item_catalog WHERE name=?',(source['name'],)))[0])
+            await c.execute('INSERT INTO shop_stock(guild_id,item_id,stock,buy_price,sell_price,enabled,shop_key) VALUES(1,?,2,6000,3000,1,?)',(item['id'],'custom'))
+            await c.execute('INSERT INTO shop_stock_customized VALUES(1,?)',(item['id'],))
+            await c.execute('UPDATE characters SET level=20 WHERE id=1')
+            await c.execute('UPDATE shop_balance_seeded SET version=2');await c.commit()
+        await self.db.admin_give_item(1,item['name'])
+        inventory=await self.db.inventory(1);owned=next(i for i in inventory if i['id']==item['id'])
+        # Even legacy/custom enabled stock is untradeable before migration runs.
+        for payload in [{'action':'buy','itemId':item['id']},{'action':'sell','inventoryId':owned['inventory_id']}]:
+            with self.assertRaisesRegex(ValueError,'Артефакты'):await self.store.trade(1,payload)
+        self.assertEqual((await self.store.wallet(1))['totalCopper'],10000)
+        self.assertFalse(any(i['id']==item['id'] for i in await self.store.sale_offers(1,1,'custom')))
+        with self.assertRaisesRegex(ValueError,'Артефакты'):
+            await self.store.edit_shop(1,{'itemId':item['id'],'shopKey':'custom','stock':2,'buyPrice':6000,'sellPrice':3000,'enabled':True})
+        await self.store.ensure_shops(1)
+        self.assertFalse(any(i['id']==item['id'] for i in (await self.store.shop(1,shop_key='custom'))['items']))
+        async with self.db.connect() as c:
+            row=(await c.execute_fetchall('SELECT * FROM shop_stock WHERE guild_id=1 AND item_id=?',(item['id'],)))[0]
+            self.assertEqual((row['enabled'],row['stock'],row['buy_price'],row['sell_price']),(0,2,6000,3000))
+            self.assertTrue(await c.execute_fetchall('SELECT 1 FROM item_catalog WHERE id=?',(item['id'],)))
+        self.assertTrue(any(i['inventory_id']==owned['inventory_id'] for i in await self.db.inventory(1)))

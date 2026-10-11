@@ -1013,7 +1013,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-1", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-2"})
 
 
 async def _player_maps(request,cid):
