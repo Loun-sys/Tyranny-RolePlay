@@ -4,12 +4,16 @@ function node(selector){if(!nodes.has(selector))nodes.set(selector,{textContent:
 const first={id:1,name:'Поле',revision:4,status:'active',round:1,controller:{actorId:'npc_1',name:'Первый НПС',level:2,kind:'npc',canAct:true},combatQuickbar:[],training:{active:true,character:{name:'Первый НПС'},grid:{controllerId:'npc_1',tokens:[]},actions:[]}};
 let response={battle:first};
 const context=vm.createContext({URLSearchParams,encodeURIComponent,location:{search:'?api=http://localhost:8768&battle=1',hash:'#token=qa-admin'},localStorage:{getItem(){return ''}},
- document:{hidden:false,querySelector:node,addEventListener(type,fn){(listeners[type]??=[]).push(fn)}},
+ document:{hidden:false,querySelector:node,querySelectorAll(){return []},addEventListener(type,fn){(listeners[type]??=[]).push(fn)}},
  setInterval(){},setTimeout(){},clearTimeout(){},fetch:async(path,options)=>{calls.push({path,options});return {ok:true,json:async()=>response}},
  renderTraining(){},animateTokenMovement(){},combatHealthChanges(){return [{delta:5}]},combatBusy:false,setCombatBusy(value){context.combatBusy=value},clearCombatAim(){context.cleared=true},showCombatAim(){},armedCombatAction:null,combatAim:null});
 vm.runInContext(fs.readFileSync('web/master-combat-runtime.js','utf8'),context);
 vm.runInContext(fs.readFileSync('web/master-combat.js','utf8'),context);
 async function main(){
+ const buttons=[{disabled:false,dataset:{}},{disabled:true,dataset:{}}];context.document.querySelectorAll=()=>buttons;
+ vm.runInContext('setCombatBusy(true)',context);assert(buttons.every(b=>b.disabled));
+ vm.runInContext('setCombatBusy(false)',context);assert.equal(buttons[0].disabled,false);assert.equal(buttons[1].disabled,true,'A waiting-player button must not be enabled by finishing an animation');
+ context.document.querySelectorAll=()=>[];
  vm.runInContext('adoptMasterBattle(testBattle)',Object.assign(context,{testBattle:first}));
  const editorUrl=new URL(vm.runInContext('masterAdministrationUrl()',context),'http://localhost/');
  assert.equal(editorUrl.searchParams.get('battle'),'1');assert.equal(editorUrl.searchParams.get('actor'),'npc_1');assert.equal(editorUrl.hash,'#token=qa-admin');

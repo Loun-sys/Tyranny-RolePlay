@@ -1,16 +1,26 @@
 /* No HP forms or scene overrides here: current NPC, normal action budget, next turn. */
 const renderMasterArena=renderTraining;
+let masterEmbeddedPaused=false;
+function masterBusyControls(busy){
+ document.querySelectorAll('.tyranny-combat-hud button,[data-move-x],[data-target-id],[data-training-kind],[data-stance-name],[data-training-set],[data-picker-action]').forEach(button=>{
+  if(busy){if(button.dataset.masterWasDisabled===undefined)button.dataset.masterWasDisabled=String(button.disabled);button.disabled=true}
+  else if(button.dataset.masterWasDisabled!==undefined){button.disabled=button.dataset.masterWasDisabled==='true';delete button.dataset.masterWasDisabled}
+ });
+}
+const masterSetBusy=setCombatBusy;
+setCombatBusy=function(value){masterSetBusy(value);masterBusyControls(value)};
 renderTraining=function(panel,character){
  if(!training){panel.innerHTML='<section class="master-combat-empty"><h2>На поле нет участников</h2><p>Вернитесь в администрирование и разместите токены.</p></section>';updateMasterTurn();return}
  renderMasterArena(panel,character);
  panel.querySelector('.training-reset')?.remove();
  const header=panel.querySelector('.training-header');if(header)header.hidden=true;
- const canAct=!!masterScene?.controller?.canAct;
+ const canAct=!!masterScene?.controller?.canAct&&!masterEmbeddedPaused;
  panel.classList.toggle('master-waiting',!canAct);
  if(!canAct){
   panel.querySelectorAll('[data-training-kind],[data-stance-name],[data-training-set],[data-quick-slot],[data-target-id],[data-move-x],[data-picker-action]').forEach(button=>{button.disabled=true;button.setAttribute('aria-disabled','true');button.draggable=false});
   const resources=panel.querySelector('.original-turn');if(resources)resources.textContent=masterScene?.status==='active'?'Ожидание хода игрока':masterScene?.status==='ended'?'Бой завершён':'Бой ещё не начался';
  }
+ if(combatBusy)masterBusyControls(true);
  updateMasterTurn();
 };
 // Viewer id "player" is rebound at each initiative step. Never animate one NPC
@@ -25,9 +35,10 @@ function updateMasterTurn(){
  $('#battle-admin-link').href=masterAdministrationUrl();
  const waiting=!controller?.canAct;node.classList.toggle('waiting',waiting);
  node.textContent=!battle?'':battle.status==='lobby'?'Расстановка. Запустите бой в администрировании.':battle.status==='ended'?'Бой завершён.':controller?.canAct?`Ваш ход: ${controller.name} · Раунд ${battle.round}`:controller?`Ход игрока: ${controller.name} · Ожидание`: 'Нет участников, способных ходить.';
+ if(battle&&q.get('embed')==='1'&&window.parent!==window)window.parent.postMessage({type:'tyranny-master-state',battleId:battle.id,revision:battle.revision,round:battle.round,status:battle.status},location.origin);
 }
 async function refreshMasterBattle(force=false){
- if(masterPollPending||combatBusy||masterMissing)return;
+ if(masterPollPending||combatBusy||masterMissing||masterEmbeddedPaused)return;
  masterPollPending=true;
  try{
   const result=await masterFetch(masterBattlePath()+(!force&&masterScene?`&afterRevision=${masterScene.revision}`:''));
@@ -49,7 +60,7 @@ async function refreshMasterBattle(force=false){
 document.addEventListener('click',event=>{
  if(event.target.closest('#battle-admin-link')&&combatBusy){event.preventDefault();toast('Дождитесь завершения текущего действия.');return}
  if(event.target.closest('[data-master-refresh]')){refreshMasterBattle(true);return}
- if(!training?.active||combatBusy)return;
+ if(!training?.active||combatBusy||masterEmbeddedPaused)return;
  const picker=event.target.closest('[data-combat-picker]');
  if(picker){combatPicker=combatPicker===picker.dataset.combatPicker?'':picker.dataset.combatPicker;quickbarEditing=0;renderTraining($('#panel'),data.character);return}
  if(event.target.closest('[data-combat-picker-close]')){combatPicker='';quickbarEditing=0;renderTraining($('#panel'),data.character);return}
@@ -69,3 +80,25 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 setInterval(()=>{if(!document.hidden)refreshMasterBattle()},2000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshMasterBattle(true)});
+
+// A separate document keeps the player's HUD isolated from master edit handlers.
+// Parent never reads combat globals or grants more authority to an embedded turn.
+if(q.get('embed')==='1'&&window.parent!==window){
+ document.documentElement.classList.add('master-embedded');
+ const embeddedSetBusy=setCombatBusy;
+ setCombatBusy=function(busy){embeddedSetBusy(busy);window.parent.postMessage({type:'tyranny-master-busy',busy},location.origin)};
+ window.addEventListener('message',event=>{
+  if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='tyranny-master-pause')return;
+  if(combatBusy){toast('Дождитесь завершения текущего действия.');return}
+  masterEmbeddedPaused=true;clearCombatAim();
+  if(masterScene?.controller)masterScene.controller.canAct=false;
+  renderTraining($('#panel'),data.character);
+  window.parent.postMessage({type:'tyranny-master-paused'},location.origin);
+ });
+ document.addEventListener('click',event=>{
+  if(!event.target.closest('#battle-admin-link'))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  window.dispatchEvent(new MessageEvent('message',{source:window.parent,origin:location.origin,data:{type:'tyranny-master-pause'}}));
+ },true);
+ window.parent.postMessage({type:'tyranny-master-busy',busy:false},location.origin);
+}

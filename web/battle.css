@@ -83,3 +83,50 @@
  .battle-board-toolbar{padding:10px}.battle-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
  .battle-tools .dark-button{padding:8px;font-size:11px}.battle-zoom{gap:4px}.battle-zoom .dark-button{padding:8px;font-size:10px}.battle-zoom output{min-width:32px;font-size:10px}
 }
+
+/* Compact master cockpit: the selected token takes priority over the roster. */
+.battle-cockpit .battle-editor-heading{gap:12px;padding-bottom:10px}
+.battle-cockpit .battle-editor-heading h1{font-size:25px;margin:0 0 5px}
+.battle-mode-switch>button{border:0;background:transparent;color:#d4caca;padding:12px 16px;font:800 12px Arial;cursor:pointer}
+.battle-mode-switch>button:hover{background:#3b1925}
+.battle-cockpit .battle-scene-status{margin-bottom:10px;padding:6px 12px}
+.battle-current-turn{background:transparent;border:0;text-align:left;color:#e0c997;font:700 12px Arial;cursor:pointer;padding:7px 0}
+.battle-cockpit .master-battle-controls{top:76px;height:calc(100dvh - 201px);min-height:330px;grid-template-rows:auto minmax(0,1fr)}
+.battle-cockpit .master-battle-layout{grid-template-columns:minmax(0,1fr) 350px;gap:10px}
+.battle-cockpit .battle-inspector-body{padding:14px}
+.battle-cockpit .battle-selected-heading{margin-bottom:8px}
+.battle-cockpit .battle-selected-heading h2{font-size:20px}
+.battle-selected-heading>button{margin-left:auto}
+.battle-cockpit .battle-board-toolbar{padding:9px;gap:6px}
+.battle-cockpit .battle-board-toolbar button{padding:8px 10px;font-size:11px}
+.battle-cockpit .battle-tool-hint{padding:0 10px 8px;font-size:11px}
+.battle-cockpit .master-battle-viewport{height:calc(100dvh - 290px);min-height:280px;max-height:none}
+.battle-cockpit #battle-token-rows{max-height:none;overflow:visible;padding:0}
+.battle-cockpit .battle-token-list-heading{padding:0 0 12px}
+.battle-health-readout{display:grid;gap:6px}.battle-health-readout strong{font:28px Georgia;color:#e6d0a0}.battle-health-readout small{font:12px Arial;color:#a6999c}
+.battle-health-readout meter{width:100%;height:8px;accent-color:#799460}
+.battle-cockpit .battle-hp-adjust{margin:10px 0;grid-template-columns:1fr 80px 1fr}
+.battle-token-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end}.battle-token-actions>.field{margin:0}.battle-token-actions select{padding:9px}.battle-token-actions>button{min-height:37px;padding:8px;font-size:12px}
+.battle-section-title{font:16px Georgia;color:#d4be8b;margin:16px 0 8px}
+.battle-effect-chips{display:flex;gap:5px;flex-wrap:wrap}.battle-effect-chips>.battle-help{margin:0}
+.battle-effect-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 4px 4px 7px;background:#231422;border:1px solid #513048;border-radius:3px;font-size:11px}
+.battle-effect-chip small{font:10px Arial;letter-spacing:0}.battle-effect-chip button{border:0;color:#da9faa;background:#432035;min-width:25px;min-height:26px;cursor:pointer}
+.battle-quick-effects{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}.battle-quick-effects button{padding:8px;font-size:12px;text-align:left}.battle-quick-effects small{display:block;font:10px Arial;color:#948b90;margin-top:4px;letter-spacing:0}
+.battle-npc-palette{display:grid;gap:5px;max-height:240px;overflow:auto;margin:10px 0;scrollbar-width:thin}
+.battle-npc-card{display:flex;gap:9px;align-items:center;padding:8px;border:1px solid #392632;color:#ded1d6;background:#161018;cursor:pointer;text-align:left}.battle-npc-card.selected{border-color:#cd4b6d;background:#331425}.battle-npc-card b{font-size:12px}.battle-npc-card small{display:block;font:10px Arial;letter-spacing:0;color:#a0949b;margin-top:4px}
+.battle-placement-instruction{font:13px/1.6 Arial;color:#c3b181;background:#211a1e;border-left:2px solid #9e8651;padding:10px}
+.battle-shortcuts{font:10px/1.5 Arial;color:#91838d;padding:8px 0}.battle-shortcuts span{float:right;color:#aeb293}
+.battle-play-stage{height:calc(100dvh - 170px);min-height:540px;border:1px solid #50303c;background:#080708}
+#battle-play-frame{width:100%;height:100%;border:0;display:block}
+.battle-playing .master-battle-layout[hidden],.battle-playing .battle-scene-status[hidden],.battle-playing .battle-shortcuts[hidden]{display:none!important}
+.battle-cockpit [hidden]{display:none!important}
+.battle-index-heading{display:grid;grid-template-columns:1fr minmax(180px,320px) 130px;gap:12px;align-items:center;margin-bottom:16px}.battle-index-heading h2{margin:0}.battle-index-heading select{background:#130d15;color:#ddd;border:1px solid #513643;padding:11px}
+.battle-create-fold{margin-top:16px}.battle-create-fold>summary{font:24px Georgia;cursor:pointer;color:#d8bd90}.battle-create-fold[open]>summary{margin-bottom:20px}
+.battle-participant-toolbar{display:flex;gap:8px;align-items:center;margin:14px 0}.battle-participant-toolbar input{flex:1;min-width:0}.battle-participant-toolbar output{font-size:12px;white-space:nowrap;color:#b9a875}.battle-participant-choices{max-height:260px;overflow:auto;margin:12px 0 18px}
+.battle-editor-index [hidden]{display:none!important}.battle-order-row[draggable=true]{cursor:grab}
+.battle-cockpit .battle-fold .battle-active-effects,.battle-cockpit .battle-fold .battle-effect-presets,.battle-cockpit .battle-fold h2{display:none}
+@media(max-width:650px){.battle-index-heading{grid-template-columns:1fr 110px}.battle-index-heading h2{grid-column:1/-1}.battle-participant-toolbar{flex-wrap:wrap}.battle-participant-toolbar input{flex-basis:100%}}
+@media(max-width:560px){.battle-cockpit .battle-board-toolbar .battle-tools{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1800px){.battle-cockpit .master-battle-layout{grid-template-columns:minmax(0,1fr) 400px}.battle-cockpit .battle-inspector-body{padding:20px}}
+@media(max-width:1050px){.battle-cockpit .master-battle-layout{grid-template-columns:minmax(0,1fr) 310px}}
+@media(max-width:800px){.battle-cockpit .master-battle-layout{grid-template-columns:minmax(0,1fr)}.battle-cockpit .master-battle-controls{position:static;height:auto;min-height:0}.battle-cockpit .battle-inspector-body{max-height:60dvh}.battle-cockpit .master-battle-viewport{height:45dvh;min-height:240px}.battle-play-stage{height:85dvh;min-height:580px}.battle-shortcuts{display:none}.battle-cockpit .battle-tools{width:auto;display:flex;flex-wrap:wrap}}

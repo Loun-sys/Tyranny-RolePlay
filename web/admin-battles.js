@@ -60,8 +60,8 @@ async function battleEdit(payload){
   battleAdopt(result.battle);
   if(payload.operation==='add_npc')battleToken=masterBattle.tokens.find(t=>!oldTokens.has(t.id))?.id||battleToken;
   if(payload.operation==='place_player')battleToken=`pc_${payload.characterId}`;
-  renderMasterBattle();toast(result.message);
- }catch(error){toast(error.message);if(masterBattle?.id===id)await loadMasterBattle(id)}finally{battleBusy(false)}
+  renderMasterBattle();toast(result.message);return true;
+ }catch(error){toast(error.message);if(masterBattle?.id===id)await loadMasterBattle(id);return false}finally{battleBusy(false)}
 }
 function battleRosterRows(){
  const tokens=masterBattle.tokens.filter(t=>(battleTokenKind==='all'||t.kind===battleTokenKind)&&t.name.toLocaleLowerCase('ru').includes(battleTokenQuery.toLocaleLowerCase('ru')));
@@ -204,7 +204,7 @@ document.addEventListener('input',event=>{
 });
 document.addEventListener('click',event=>{
  if(!event.target.closest('[data-campaign],[data-open-npcs],[data-open-catalog],#reload'))return;
- if(battleRequestPending){event.preventDefault();event.stopImmediatePropagation();toast('Дождитесь сохранения правки.');return}
+ if(battleRequestPending||(typeof battleCockpitMode!=='undefined'&&battleCockpitMode==='play')){event.preventDefault();event.stopImmediatePropagation();toast(battleRequestPending?'Дождитесь сохранения правки.':'Вернитесь в редактор перед изменением сцены.');return}
  ++battleLoadTicket;masterBattle=null;
 },true);
 document.addEventListener('dragstart',event=>{const node=event.target.closest('[data-battle-token]');if(node&&masterBattle?.status!=='ended'&&!battleRequestPending)event.dataTransfer.setData('application/x-tyranny-token',node.dataset.battleToken)});
@@ -215,7 +215,7 @@ document.addEventListener('drop',async event=>{
  const [x,y]=cell.dataset.masterBattleCell.split(':').map(Number);if(battleChooseCell(x,y))await battleEdit({operation:'move',tokenId:id,x,y});
 });
 setInterval(async()=>{
- if(!masterBattle||battleRequestPending||document.hidden||!document.querySelector('.master-battle-grid')||document.activeElement?.matches('input,select'))return;
+ if(!masterBattle||battleRequestPending||(typeof battleCockpitMode!=='undefined'&&battleCockpitMode==='play')||document.hidden||!document.querySelector('.master-battle-grid')||document.activeElement?.matches('input,select'))return;
  const id=masterBattle.id,ticket=battleLoadTicket;
  try{const result=await request(`${base()}/battles/${id}?actorId=${encodeURIComponent(battleToken)}&afterRevision=${masterBattle.revision}`);if(ticket!==battleLoadTicket||battleRequestPending||masterBattle?.id!==id||!document.querySelector('.master-battle-grid'))return;if(!result.unchanged&&battleAdopt(result.battle))renderMasterBattle();const sync=document.querySelector('.battle-editor-sync');if(sync)sync.textContent='СОХРАНЕНО НА СЕРВЕРЕ'}catch{const sync=document.querySelector('.battle-editor-sync');if(sync)sync.textContent='НЕТ СОЕДИНЕНИЯ'}
 },2500);

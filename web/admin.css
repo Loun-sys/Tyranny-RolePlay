@@ -2,3 +2,8 @@
 .character-danger-zone{border-color:#8d2336}.character-danger-zone p{color:#b6a7ad;font-size:14px;line-height:1.6}
 .character-delete-dialog{width:min(540px,92vw);max-height:90dvh;overflow:auto;background:#0b080a;color:#ded9d0;border:1px solid #c42a44;padding:26px}
 .character-delete-dialog::backdrop{background:#000b}.character-delete-dialog h2{font:27px Georgia;margin:0 0 16px}.character-delete-dialog p{line-height:1.6}.character-delete-dialog b{color:#ffb4c0}.character-delete-dialog button:disabled{opacity:.4;cursor:not-allowed}#delete-character-error{color:#f56d7c;min-height:22px}
+.admin-top button[aria-current=page]{background:#541626;border-color:#cf3157;color:white;box-shadow:inset 0 -2px #eb4a69}
+.admin-top>div{gap:6px}.admin-top button{font-size:11px}.admin-top #connection{letter-spacing:1px;margin:0 8px}.admin-top{height:60px}
+.admin-top button:focus-visible{outline:2px solid #d6b970;outline-offset:2px}
+@media(max-width:1050px){.admin-top{padding:10px 14px;height:auto;min-height:60px;flex-wrap:wrap;gap:8px}.admin-top #connection{display:none}.admin-top>a{font-size:18px}.admin-top>div{flex:1;justify-content:flex-end}}
+@media(max-width:650px){.admin-top{position:static;display:block}.admin-top>div{justify-content:flex-start;overflow:auto;margin-top:9px;scrollbar-width:thin}.admin-top button{flex:none;min-height:38px;padding:8px 10px;font-size:10px}.workspace{padding:12px}.admin-box{clip-path:none}}

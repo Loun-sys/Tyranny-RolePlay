@@ -20,3 +20,7 @@
 .battle-mode-switch>a:hover{background:#3b1925}
 .battle-mode-switch>a{background:transparent}
 @media(max-width:900px){.master-combat-top{align-items:flex-start;padding:12px;flex-wrap:wrap}.master-combat-page main{padding:12px}.master-turn-banner{font-size:16px}.master-combat-page .tactical-map-wrap{max-height:70dvh}}
+.master-embedded .master-combat-top{display:none}
+.master-embedded .master-combat-page main{padding:8px}
+.master-embedded .master-turn-banner{font:14px Arial;margin-bottom:8px;padding:8px 12px}
+.master-embedded .master-combat-page .tactical-map-wrap{max-height:calc(100dvh - 65px)}
