@@ -7,6 +7,7 @@ for(const name of ['statsBox','skillsBox','talentMechanics','abilitiesBox','deri
 const start=source.indexOf('function renderTab('),end=source.indexOf('\n\n',start);vm.runInContext(source.slice(start,end),ctx);
 ctx.renderTab();const html=panel.innerHTML;
 assert(html.includes('development-top'));assert(html.includes('Остальные навыки (14)'));
+assert(html.includes('title="Дополнительное восстановление от надетой брони и оружия, влияющее на итоговую перезарядку способностей и талантов. Округляется в большую сторону."'));
 assert(!html.includes('Как растёт персонаж'));assert(!html.includes('<article class="item">'));
 assert(html.includes('class="talent-game-icon overview"'));assert(html.includes('Прицельный выстрел'));
 assert(html.includes('+12 к точности'));assert(html.includes('Эффекты и условия'));
