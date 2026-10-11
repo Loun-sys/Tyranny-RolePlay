@@ -6,6 +6,8 @@
 .game-item-inspection .game-item-mod h3{border:0;padding:0}
 .game-item-head>div{min-width:0;flex:1}.game-item-head h2{font:26px/1.15 Georgia,'Times New Roman',serif;color:#d2cab0;margin:0 0 7px;border-bottom:1px solid #514428;padding-bottom:6px;overflow-wrap:anywhere}
 .game-item-price{display:flex;gap:10px;color:#d9b64d}.game-item-coin{display:inline-flex;align-items:center;gap:3px;cursor:help}.game-item-coin img{width:23px;height:25px;object-fit:contain}
+.price-rings{display:inline-flex;align-items:center;flex-wrap:wrap;gap:9px;color:#d9b64d;vertical-align:middle;font:17px/1.3 Georgia,serif}
+.price-rings .game-item-coin{white-space:nowrap}.shop-item .price-rings{display:flex;margin:7px 0}.price-rings .game-item-coin img{width:22px;height:24px;object-fit:contain;background:none;border:0;margin:0;flex:none}.catalog-card .price-rings{justify-content:center;margin-top:7px}.catalog-card .price-rings .game-item-coin{display:inline-flex;gap:3px}.price-free{color:#a1af8e;font-size:14px}
 .game-item-stats{color:#b97c20;margin-bottom:22px}.game-item-stats>div{margin:0}.game-item-stats>div>span:not(.game-term){color:#c9c3aa}
 .game-item-type{margin-bottom:2px!important}.game-item-resistance{color:#c9c3aa;padding-left:3px}
 .game-item-mod{margin:19px 0;color:#c9c3aa}.game-item-inspection .game-item-mod h3{margin:0 0 3px;font:inherit;color:#39ba15;letter-spacing:0;text-transform:none}

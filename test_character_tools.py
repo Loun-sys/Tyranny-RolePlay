@@ -76,6 +76,23 @@ class CharacterToolsTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(json.loads(log['details'])['name'],'Герой')
         self.assertFalse(await self.db.delete_character(1,1))
 
+    async def test_dashboard_returns_source_metadata_for_owned_starting_abilities(self):
+        from ability_rules import normalize_talent
+        await self.prepare()
+        async with self.db.connect() as conn:
+            await conn.execute("INSERT INTO talents(character_id,tree_name,name) VALUES(1,'Старт','Выстрел в сердце')")
+            await conn.commit()
+        async with await self.client() as client:
+            response=await client.get(f'/api/portal/{self.portal}')
+            self.assertEqual(response.status,200)
+            payload=await response.json()
+        owned=next(t for t in payload['learnedTalents'] if t.get('legacyName')=='Выстрел в сердце')
+        canonical=normalize_talent({'name':'Выстрел в сердце'})
+        self.assertEqual(owned['name'],canonical['name'])
+        self.assertEqual(owned['mechanics'],canonical['mechanics'])
+        self.assertTrue((Path('web')/owned['icon_url']).is_file())
+        self.assertTrue(owned['mechanics']['effects'])
+
     async def test_admin_delete_requires_exact_confirmation_and_guild_authority(self):
         await self.prepare()
         await self.db.update_character_text(2,'portrait_url','local://fixture.webp')

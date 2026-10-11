@@ -8,7 +8,7 @@ const baseEquipmentInventory=renderInventory;
 renderInventory=function(p,c){baseEquipmentInventory(p,equippedCharacter(c));if(Object.keys(data.itemEffects||{}).length)p.querySelector('.combat-sheet')?.insertAdjacentHTML('beforeend',`<h3>Эффекты предметов</h3>${Object.values(data.itemEffects).map(s=>`<p>${esc(s.name)}</p>`).join('')}`)};
 const equipmentStatIcon=statIcon;
 statIcon=function(file,label,value,help=''){return equipmentStatIcon(file,label,file==='recovery.png'?scaledRoundText(data.derived?.attack?.recovery||0):value,help)};
-skillsBox=function(c){return baseSkillsBox(equippedCharacter(c))};
+skillsBox=function(c,compact=false){return baseSkillsBox(equippedCharacter(c),compact)};
 const baseSpellFormulaState=spellFormulaState;
 spellFormulaState=function(c){return baseSpellFormulaState(equippedCharacter(c))};
 const baseSpellNumbers=spellNumbers;

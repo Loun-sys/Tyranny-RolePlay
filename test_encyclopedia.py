@@ -49,6 +49,8 @@ class EncyclopediaTests(unittest.TestCase):
 
     def test_role_play_overrides_survive_regeneration(self):
         by_asset = {entry['asset']: entry for entry in self.entries}
+        self.assertIn('предмета может быть улучшено скованным ремеслом', by_asset['GL_Equipment_Quality']['body'])
+        self.assertNotIn('предмета может быть улучшено в кузне', by_asset['GL_Equipment_Quality']['body'])
         self.assertIn('Певчий', by_asset['GL_GameMechanics_Breath']['body'])
         self.assertNotIn('Сирин', by_asset['GL_GameMechanics_Breath']['body'])
         self.assertIn('Персонажу игрока', by_asset['GL_GameMechanics_Favor']['body'])

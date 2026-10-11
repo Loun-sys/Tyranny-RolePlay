@@ -425,6 +425,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
         "equipmentSlots": list(EQUIPMENT_SLOTS),
         "equipmentLimits": await db.equipment_limits(character_id),
         "talentLibrary": [__import__('ability_rules').normalize_talent(t) for t in [*TALENTS, *background_talents]],
+        "learnedTalents": [__import__('ability_rules').normalize_talent(t) for t in character.get('talents', [])],
         "reputations": reputations,
         "factionTalents": request.app["extended_talents"]["factions"],
         "sigils": {"library": sigil_library, "knownKeys": sorted(known_sigils), "scrolls": sigil_scrolls},
@@ -1022,7 +1023,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-3", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261011-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-3", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6"})
 
 
 async def _player_maps(request,cid):

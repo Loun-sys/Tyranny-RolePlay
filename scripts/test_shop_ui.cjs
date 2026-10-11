@@ -3,6 +3,7 @@ const nodes={},node=k=>nodes[k]??={innerHTML:'',hidden:false,value:'',insertAdja
 const shop={settings:{name:'Лавка',enabled:1},shops:[{key:'consumables',name:'Припасы'},{key:'weapons',name:'Оружие'},{key:'armor',name:'Броня'}],categories:['Луки'],qualities:['Обычное'],items:[{id:1,name:'Лук',category:'Луки',quality:'Обычное',value:100,buy_price:100,stock:4,image_url:'assets/test.png'}],saleOffers:[],wallet:{copper:50}};
 const context=vm.createContext({document:{querySelector:node,addEventListener(){}},$:node,URLSearchParams,renderCabinet(){},renderTab(){},esc:v=>String(v??''),data:{inventory:[],wallet:{}},tab:'shop',token:'test',toast(){},request(){return shop},base(){return '/api/admin/test'}});
 vm.runInContext(fs.readFileSync('web/player-shop.js','utf8'),context);
+vm.runInContext(fs.readFileSync('web/weapon-details.js','utf8'),context);
 const rings=context.moneyIcons({iron:5,bronze:12,copper:90});
 for(const [key,name,icon,count] of [['iron','Железные кольца','Iron',5],['bronze','Бронзовые кольца','Bronze',12],['copper','Медные кольца','Copper',90]]){
  assert(rings.includes(`data-ring="${key}" tabindex="0" aria-label="${name}: ${count}"`));
@@ -19,6 +20,12 @@ assert(node('#panel').innerHTML.includes('data-player-merchant="weapons"'));
 assert(node('#panel').innerHTML.includes('player-shop-category'));
 assert(!node('#panel').innerHTML.includes('Лавка украшений'));
 assert(node('#panel').innerHTML.includes('Обычное'));
+const mixedPrice=context.priceIcons(12345);
+for(const ring of ['Iron','Bronze','Copper'])assert(mixedPrice.includes(`Imperial${ring}Ring_S.png`));
+assert(mixedPrice.includes('>1</span>'));assert(mixedPrice.includes('>23</span>'));assert(mixedPrice.includes('>45</span>'));
+assert(context.priceIcons(0).includes('Бесплатно'));
+assert(!context.priceIcons(100).includes('ImperialCopperRing'));
+assert(node('#panel').innerHTML.includes('price-rings'));
 vm.runInContext("playerShopKey='weapons';playerShopCategory='Луки'",context);
 assert(vm.runInContext('playerShopURL()',context).includes('shopKey=weapons'));
 context.campaignWorkspace=s=>node('#editor').innerHTML=s;

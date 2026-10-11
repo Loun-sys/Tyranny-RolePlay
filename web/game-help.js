@@ -94,7 +94,7 @@ const GameHelp=(()=>{
   const pending=new Set();let scheduled=false;
   observer=new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1&&!n.closest('#game-help-popover')&&!n.matches('.game-term'))pending.add(n);if(pending.size&&!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;const roots=[...pending];pending.clear();roots.forEach(annotate)})}});
   observer.observe(document.body,{childList:true,subtree:true});
-  fetch('data/encyclopedia.json?v=20261004-2').then(r=>{if(!r.ok)throw Error('glossary');return r.json()}).then(d=>{loadEntries(d.entries);annotate(document.body)}).catch(()=>{loadEntries([]);annotate(document.body)});
+  fetch('data/encyclopedia.json?v=20261011-6').then(r=>{if(!r.ok)throw Error('glossary');return r.json()}).then(d=>{loadEntries(d.entries);annotate(document.body)}).catch(()=>{loadEntries([]);annotate(document.body)});
  }
  if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',start,{once:true});
  return {help,markup,loadEntries,show,hide,annotate,owns(target){return active===target},hideCombat(){if(active?.closest('.combat-game-screen,.combat-action-picker'))hide()}};

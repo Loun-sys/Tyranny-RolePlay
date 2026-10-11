@@ -187,6 +187,8 @@ def main() -> None:
         title_ru, title_en = clean_title(title_ru_raw), clean_title(title_en_raw)
         title_ru = RUSSIAN_TITLE_FIXES.get(source.get("m_Name", ""), title_ru)
         body_ru = RUSSIAN_BODY_OVERRIDES.get(source.get("m_Name", ""), body_ru)
+        if source.get("m_Name") == "GL_Equipment_Quality":
+            body_ru = body_ru.replace("предмета может быть улучшено в кузне", "предмета может быть улучшено скованным ремеслом")
         if int(source.get("Category", 0)) == 1:
             body_ru = body_ru.replace("к Вершителю судеб", "к Персонажу игрока").replace("к Вершителю", "к Персонажу игрока").replace("Вершителю судеб", "Персонажу игрока").replace("Вершителя судеб", "Персонажа игрока")
         if source.get("m_Name") == "GL_Boon_Quality_Alone_Time":
