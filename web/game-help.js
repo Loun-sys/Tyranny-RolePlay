@@ -5,7 +5,7 @@ const GameHelp=(()=>{
  const plain=v=>String(v||'').replace(/\[url=glossary:[^\]]+]([\s\S]*?)\[\/url]/gi,'$1').replace(/\[\/?[^\]]+]/g,'').trim();
  const aliases={'Урон':'Типы урона','Рубящий':'Типы урона','Дробящий':'Типы урона','Колющий':'Типы урона','Огненный':'Типы урона','Ледяной':'Типы урона','Электрический':'Типы урона','Разъедающий':'Типы урона','Магический':'Типы урона','Крит. шанс':'Критическое попадание','Критический шанс':'Критическое попадание','Выносливость':'Защита Выносливостью','Воля':'Защита Волей','Перезарядка':'Перезарядка способности','Ранг навыка':'Ранг навыка','Прерывание':'Упреждение','Быстрый доступ':'Расходуемые предметы','Аксессуары':'Аксессуар','Восстановление оружия':'Восстановление','Управление силой':'Управление силами','Поглощение':'Броня','Поглощение брони':'Броня','Дротики':'Метательное оружие','Обычное':'Качество','Хорошее':'Качество','Превосходное':'Качество','Выдающееся':'Качество','Безупречное':'Качество'};
  const fallbacks={
-  'Восстановление':'Сумма надетой брони и оружия активного комплекта округляется вверх один раз до полного раунда и добавляется к перезарядке способностей, заклинаний и расходников. Не отнимает действие и не блокирует обычную атаку.',
+  'Восстановление':'Дополнительное восстановление от надетой брони и оружия, влияющее на итоговую перезарядку способностей и талантов. Дробные значения сохраняются. Не отнимает действие и не блокирует обычную атаку.',
   'Дистанция':'Дальность применения в метрах. На поле 1 клетка = 1 метр; дробная дальность округляется вверх. Если указана минимальная дистанция, ближе неё атаковать нельзя.',
   'Дальность':'Дальность применения в метрах. На поле 1 клетка = 1 метр. Для применения нужны допустимая цель и свободная линия видимости.',
   'Радиус':'Расстояние от центра области до её границы. В область попадают допустимые видимые цели.',
@@ -95,7 +95,7 @@ const GameHelp=(()=>{
   const pending=new Set();let scheduled=false;
   observer=new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1&&!n.closest('#game-help-popover')&&!n.matches('.game-term'))pending.add(n);if(pending.size&&!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;const roots=[...pending];pending.clear();roots.forEach(annotate)})}});
   observer.observe(document.body,{childList:true,subtree:true});
-  fetch('data/encyclopedia.json?v=20261011-7').then(r=>{if(!r.ok)throw Error('glossary');return r.json()}).then(d=>{loadEntries(d.entries);annotate(document.body)}).catch(()=>{loadEntries([]);annotate(document.body)});
+  fetch('data/encyclopedia.json?v=20261012-3').then(r=>{if(!r.ok)throw Error('glossary');return r.json()}).then(d=>{loadEntries(d.entries);annotate(document.body)}).catch(()=>{loadEntries([]);annotate(document.body)});
  }
  if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',start,{once:true});
  return {help,markup,loadEntries,show,hide,annotate,owns(target){return active===target},hideCombat(){if(active?.closest('.combat-game-screen,.combat-action-picker'))hide()}};

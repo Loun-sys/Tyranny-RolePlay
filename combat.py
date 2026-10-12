@@ -70,7 +70,7 @@ class Combatant:
     ready_at: float = 1.0
     active_weapon_set: int = 1
     conditions: list[str] = field(default_factory=list)
-    cooldowns: dict[str, int] = field(default_factory=dict)
+    cooldowns: dict[str, float] = field(default_factory=dict)
     x: int = 0
     y: int = 0
     initiative_roll: int = 0

@@ -80,7 +80,7 @@ function applyCreationGlossary(entries=[]){
   rebuildGlossary();
 }
 async function loadCreationGlossary(){
-  try{const response=await fetch('data/encyclopedia.json?v=20261011-7');if(!response.ok)throw Error('Энциклопедия недоступна');applyCreationGlossary((await response.json()).entries)}
+  try{const response=await fetch('data/encyclopedia.json?v=20261012-3');if(!response.ok)throw Error('Энциклопедия недоступна');applyCreationGlossary((await response.json()).entries)}
   catch{applyCreationGlossary()}
 }
 function helpAttrs(title,text){return `data-help-title="${escapeHtml(title)}" data-help-text="${escapeHtml(text)}" aria-describedby="glossary-tooltip"`}

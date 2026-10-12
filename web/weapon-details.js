@@ -1,5 +1,6 @@
 /* Game-style inspection shared by inventory, merchants, catalogue and forge. */
 function itemNumber(value){return Number(value).toLocaleString('ru-RU',{maximumFractionDigits:4})}
+function itemRecovery(item){return item.recoveryAdapted??Math.round((Number(item.recovery||0)*2.25+1e-10)*100)/100}
 function itemHelp(term,text=term,fallback=''){return `<span class="game-term" tabindex="0" data-game-help="${esc(term)}"${fallback?` data-game-help-text="${esc(fallback)}"`:''}>${esc(text)}</span>`}
 function itemRichText(value){return typeof GameHelp!=='undefined'?GameHelp.markup(value):esc(String(value||'').replace(/\[url=glossary:[^\]]+]([\s\S]*?)\[\/url]/gi,'$1').replace(/\[\/?(?:color|b|i|u)[^\]]*]/gi,''))}
 function itemStatEntries(item){
@@ -14,7 +15,7 @@ function itemStatEntries(item){
  }else{
   if(item.damage_max)rows.push(['Урон',`${item.damage_min}–${item.damage_max}`]);
   if(item.armor)rows.push(['Броня',itemNumber(item.armor)]);
-  const recovery=item.recoveryAdapted??Number(item.recovery||0)*1.5;
+  const recovery=itemRecovery(item);
   if(recovery)rows.push(['Восстановление',`+${itemNumber(recovery*10)} сек. (${itemNumber(recovery)} раунда)`]);
  }
  return rows;

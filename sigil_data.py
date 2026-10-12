@@ -339,7 +339,7 @@ def spell_runtime_profile(
     ))
     from equipment_recovery import recovery_rounds
     cooldown_base = cooldown
-    cooldown += recovery_rounds(equipment_recovery)
+    cooldown = round(cooldown + recovery_rounds(equipment_recovery), 6)
     projectiles = shape["projectiles"] + _accent_value(accents, "Прыгающие заряды")
     if enhancement == "Залпы":
         projectiles += 2

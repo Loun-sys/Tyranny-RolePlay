@@ -191,11 +191,12 @@ class SharedBattleTests(unittest.IsolatedAsyncioTestCase):
         row['state']['personal'].setdefault('npc_1',{})['recovery_seconds']=30
         await self.store._save(row)
         await self.edit(operation='move',tokenId='npc_1',x=1,y=2)
+        await self.edit(operation='order',order=['npc_1','pc_1','pc_2'])
         row=await self.edit(operation='turn',tokenId='npc_1')
         view=await self.store.view(row,master=True,play=True)
         preview=next(a for a in view['training']['actions'] if a['kind']=='ability' and a['key']=='Abl_PC_Thrust')
-        self.assertEqual(view['training']['turn']['equipmentRecovery'],2)
-        self.assertEqual(preview['cooldown'],preview['cooldownBase']+2)
+        self.assertEqual(view['training']['turn']['equipmentRecovery'],1.8)
+        self.assertEqual(preview['cooldown'],preview['cooldownBase']+1.8)
         with patch('training_combat.random.randint',side_effect=lambda lo,hi:hi):
             row=await self.edit(operation='act',mode='play',actorId='npc_1',kind='ability',name='Abl_PC_Thrust',targetId='pc_1',x=1,y=1)
         self.assertEqual(row['state']['personal']['npc_1']['cooldowns']['ability:Abl_PC_Thrust'],row['state']['round']+preview['cooldown']+1)

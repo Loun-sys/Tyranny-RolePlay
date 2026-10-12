@@ -8,8 +8,10 @@ assert.equal(context.hudRecoveryStatus({equipmentRecovery:0}),'');
 assert.equal(context.hudRecoveryStatus({recoverySeconds:30}),''); // Legacy busy timer is no longer an action lock.
 assert(context.hudRecoveryStatus({equipmentRecovery:2}).includes('+2 раунд. к перезарядке'));
 assert(!context.hudRecoveryStatus({equipmentRecovery:2}).includes('50%'));
-assert(context.hudRecoveryStatus({equipmentRecovery:2}).includes('округляется вверх один раз'));
+assert(context.hudRecoveryStatus({equipmentRecovery:.14}).includes('+0,14 раунд. к перезарядке'));
+assert(!context.hudRecoveryStatus({equipmentRecovery:2}).includes('округляется вверх'));
+assert(context.hudRecoveryStatus({equipmentRecovery:.14}).includes('без округления до целого раунда'));
 assert(context.hudRecoveryStatus({equipmentRecovery:2}).includes('Не отнимает действие'));
 assert(!source.includes('основное действие недоступно'));
 assert(source.includes("insertAdjacentHTML('afterend',hudRecoveryStatus(turn))"));
-console.log('Equipment recovery HUD: summed/rounded cooldown surcharge, no action lock OK');
+console.log('Equipment recovery HUD: fractional cooldown surcharge, no action lock OK');

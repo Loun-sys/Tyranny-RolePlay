@@ -82,7 +82,7 @@ class TrainingSession:
     attacks: int = 0
     hits: int = 0
     active_weapon_set: int = 1
-    cooldowns: dict[str, int] = field(default_factory=dict)
+    cooldowns: dict[str, float] = field(default_factory=dict)
     log: list[str] = field(default_factory=list)
     map_key: str = "training_grounds"
     player_position: tuple[int, int] = (2, 4)
@@ -186,6 +186,8 @@ class TrainingSession:
             from ability_rules import resolve
             row=resolve(key.removeprefix('ability:'))
             if row:key='ability:'+row['key']
+        # Keep the fractional deadline in state. The turn UI counts complete
+        # waiting turns; a sub-round equipment penalty must not force +1 turn.
         return max(0, int(self.cooldowns.get(key, 0)) - self.round_number)
 
     def _cooldown(self, base: float, multiplier: float) -> int:
