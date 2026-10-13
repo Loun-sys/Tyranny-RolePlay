@@ -43,8 +43,11 @@ function battlePositionHud(){
  const x=g.left+(t.x+.5)*battleZoom,y=g.top+(t.y+1)*battleZoom;
  const visible=x>=v.left&&x<=v.right&&y>=v.top&&y-battleZoom<=v.bottom;
  hud.hidden=!battleHudOpen||!visible||['ruler','pan','add_npc','place_player'].includes(battleTool)||battlePlacementArmed;
- const rightLimit=b.width-(battleDrawerOpen?document.querySelector('.tabletop-dock')?.offsetWidth||0:0);
- hud.style.left=`${Math.max(8,Math.min(x-b.left-hud.offsetWidth/2,rightLimit-hud.offsetWidth-8))}px`;
+ const expanded=hud.querySelector('.tabletop-status-menu')?.open,dockWidth=document.querySelector('.tabletop-dock')?.offsetWidth||0;
+ const rightLimit=b.width-(battleDrawerOpen||expanded?dockWidth+10:0);
+ let left=x-b.left-hud.offsetWidth/2;
+ if(expanded){left=x-b.left+battleZoom/2+14;if(left+hud.offsetWidth>rightLimit)left=x-b.left-hud.offsetWidth-battleZoom/2-14}
+ hud.style.left=`${Math.max(8,Math.min(left,rightLimit-hud.offsetWidth-8))}px`;
  hud.style.top=`${Math.max(v.top-b.top+8,Math.min(y-b.top+12,v.bottom-b.top-hud.offsetHeight-10))}px`;
 }
 renderMasterBattle=function(){
@@ -171,6 +174,7 @@ document.addEventListener('pointerup',async event=>{
 document.addEventListener('pointercancel',battleCancelGesture,true);
 window.addEventListener('blur',()=>{battleSpaceHeld=false;battleCancelGesture()});
 window.addEventListener('resize',battlePositionHud);
+document.addEventListener('toggle',event=>{if(event.target.matches('.tabletop-status-menu'))battlePositionHud()},true);
 document.addEventListener('contextmenu',event=>{if(event.target.closest('.master-battle-viewport'))event.preventDefault()});
 document.addEventListener('dblclick',event=>{const t=event.target.closest('[data-battle-token]');if(t&&battleEditable()){battleDrawerOpen=true;battleQueueOpen=false;battleToken=t.dataset.battleToken;battleInspector='token';renderMasterBattle()}});
 document.addEventListener('submit',async event=>{
