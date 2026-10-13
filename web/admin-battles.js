@@ -215,7 +215,7 @@ document.addEventListener('drop',async event=>{
  const [x,y]=cell.dataset.masterBattleCell.split(':').map(Number);if(battleChooseCell(x,y))await battleEdit({operation:'move',tokenId:id,x,y});
 });
 setInterval(async()=>{
- if(!masterBattle||battleRequestPending||(typeof battleCockpitMode!=='undefined'&&battleCockpitMode==='play')||document.hidden||!document.querySelector('.master-battle-grid')||document.activeElement?.matches('input,select'))return;
+ if(!masterBattle||battleRequestPending||(typeof battleCockpitMode!=='undefined'&&battleCockpitMode==='play')||(typeof battleGesture!=='undefined'&&battleGesture)||document.hidden||!document.querySelector('.master-battle-grid')||document.activeElement?.matches('input,select'))return;
  const id=masterBattle.id,ticket=battleLoadTicket;
  try{const result=await request(`${base()}/battles/${id}?actorId=${encodeURIComponent(battleToken)}&afterRevision=${masterBattle.revision}`);if(ticket!==battleLoadTicket||battleRequestPending||masterBattle?.id!==id||!document.querySelector('.master-battle-grid'))return;if(!result.unchanged&&battleAdopt(result.battle))renderMasterBattle();const sync=document.querySelector('.battle-editor-sync');if(sync)sync.textContent='СОХРАНЕНО НА СЕРВЕРЕ'}catch{const sync=document.querySelector('.battle-editor-sync');if(sync)sync.textContent='НЕТ СОЕДИНЕНИЯ'}
 },2500);

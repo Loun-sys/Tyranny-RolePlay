@@ -1,0 +1,75 @@
+/* A tabletop is a work surface, not a long form. Keep the map under every tool. */
+.admin-page:has(.battle-tabletop) .admin-top{min-height:48px;padding:8px 18px;position:relative;z-index:20}
+.workspace:has(.battle-tabletop){padding:0!important}
+.battle-tabletop{position:relative;height:calc(100dvh - 65px);min-height:420px;display:flex;flex-direction:column;background:#09090c;padding:8px 12px;box-sizing:border-box}
+.battle-tabletop .battle-editor-heading{flex:none;padding:0 0 8px;gap:16px}
+.battle-tabletop .battle-editor-heading h1{font-size:20px;margin:0 0 3px}
+.battle-tabletop .battle-editor-heading .battle-toolbar{margin:0 0 0 auto;gap:5px}
+.battle-tabletop .battle-editor-heading button{padding:8px 12px;font-size:11px}
+.battle-tabletop .battle-scene-status{flex:none;margin:0;padding:2px 10px;background:#141116;border-bottom:0}
+.battle-tabletop .battle-scene-status select{padding:4px;font-size:11px}
+.battle-tabletop .master-battle-layout{position:relative;display:block;flex:1;min-height:0}
+.battle-tabletop .master-battle-board{height:100%;display:flex;flex-direction:column;position:relative;top:auto;overflow:hidden}
+.battle-tabletop .battle-board-toolbar{flex:none;padding:7px 8px}
+.battle-tabletop .battle-tools{display:flex;width:auto;gap:4px;flex-wrap:wrap}
+.battle-tabletop .battle-board-toolbar button{padding:7px 9px;font-size:11px;min-height:32px}
+.battle-tabletop .battle-tool-hint{flex:none;padding:0 10px 6px;font:11px/1.4 Arial;color:#b7adb3}
+.battle-tabletop .master-battle-viewport{height:auto;min-height:0;max-height:none;flex:1;touch-action:none;user-select:none;background:radial-gradient(ellipse at center,#1a1721,#09080c 75%);border-top:1px solid #57404b;scrollbar-width:thin}
+.battle-tabletop .master-battle-grid{position:relative;margin:auto;background-color:#15151a}
+.battle-tabletop .master-battle-cell{border-color:#dcd3bd22}
+.battle-tabletop .master-battle-cell.selected{outline:2px solid #f0dba4;box-shadow:inset 0 0 14px #f0dba455}
+.battle-tabletop .master-battle-token{inset:4px;background:#20151e;box-shadow:0 3px 8px #000c;border-width:2px}
+.battle-tabletop .master-battle-token:after{content:'';position:absolute;bottom:-3px;left:0;height:4px;width:var(--token-health,100%);border-radius:3px;background:#6abe83;box-shadow:0 0 0 1px #111}
+.battle-tabletop .master-battle-token small{font:10px Arial;padding:1px 3px;border-radius:2px}
+.tabletop-token-status{position:absolute;right:-5px;top:-5px;width:17px;height:17px;display:grid;place-items:center;background:#753856;border:1px solid #f3c980;border-radius:50%;font:10px Arial;color:white}
+.battle-tabletop .master-battle-token.current{box-shadow:0 0 0 3px #e7c36b,0 0 22px #d9b35199}
+.battle-tabletop .battle-shortcuts{display:none}
+.battle-tabletop .battle-editor-journal{flex:none;padding:8px 12px;background:#121015}
+.battle-tabletop .battle-editor-journal[open]{position:absolute;bottom:0;left:0;right:0;z-index:12;max-height:35%;box-shadow:0 -6px 25px #000a}
+.tabletop-dock{position:absolute;right:10px;top:90px;width:280px;max-height:calc(100% - 138px);z-index:8;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.tabletop-dock>*{pointer-events:auto;box-shadow:0 10px 30px #0009}
+.tabletop-queue{background:#111018ed;border:1px solid #6e4a59;border-radius:7px;overflow:hidden;color:#ddd8cc;flex:none}
+.tabletop-queue>header{display:flex;background:#211820;border-bottom:1px solid #543744;align-items:stretch}
+.tabletop-queue button{background:transparent;color:inherit;border:0;cursor:pointer;font-family:Arial;min-height:34px}
+.tabletop-queue>header>button:first-child{flex:1;min-width:0;display:grid;grid-template-columns:1fr 12px;padding:8px 10px;text-align:left;gap:4px}
+.tabletop-queue header span{grid-column:1;font-size:10px;color:#c8b07a}.tabletop-queue header b{grid-column:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tabletop-queue header i{grid-column:2;grid-row:1/3;align-self:center;font-style:normal}
+.tabletop-queue .tabletop-next{border-left:1px solid #684753;font-size:20px;min-width:40px;color:#ead3a0}
+.tabletop-queue-rows{max-height:190px;overflow:auto;scrollbar-width:thin}
+.tabletop-queue-row{display:grid;grid-template-columns:minmax(0,1fr) 22px 22px;border-bottom:1px solid #332832;cursor:grab}
+.tabletop-queue-row>button:first-child{display:grid;grid-template-columns:28px 1fr 24px;align-items:center;gap:8px;padding:6px 7px;text-align:left;min-width:0}
+.tabletop-queue-row .battle-avatar{width:27px;height:27px}.tabletop-queue-row b{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.tabletop-queue-row small{display:block;font:10px Arial;color:#baafb1;letter-spacing:0;margin-top:3px}.tabletop-queue-row em{font:14px Georgia;color:#ead3a0;text-align:center}
+.tabletop-queue-row.current{border-left:3px solid #e5be69;background:#43312588}.tabletop-queue-row.defeated{opacity:.5}
+.tabletop-queue .tabletop-npc-turn{width:100%;background:#512638;font-size:11px;padding:8px;text-align:center;border-top:1px solid #7d4759}
+.tabletop-dock .master-battle-controls{display:none!important}
+.drawer-open .tabletop-dock{width:330px;height:calc(100% - 138px)}
+.drawer-open .tabletop-dock .master-battle-controls{display:flex!important;flex-direction:column;position:static;height:auto;flex:1;min-height:0;max-height:none;border-radius:7px;background:#0e0c12f5}
+.drawer-open .tabletop-queue-rows{max-height:125px}
+.drawer-open .battle-inspector-tabs{flex:none}
+.drawer-open .battle-inspector-body{flex:1;min-height:0;padding:12px;max-height:none}
+.tabletop-token-hud{position:absolute;z-index:10;width:264px;background:#121019f5;border:1px solid #977c56;border-radius:7px;box-shadow:0 8px 25px #000c;color:#e0d7c4}
+.tabletop-token-hud header{display:flex;align-items:center;gap:8px;padding:7px 9px;border-bottom:1px solid #443241;min-width:0}.tabletop-token-hud header b{flex:1;font:12px Georgia;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.tabletop-token-hud header span{font:11px Arial;white-space:nowrap}
+.tabletop-token-hud button{background:#31202c;border:1px solid #59434e;color:#eadabb;min-width:30px;min-height:30px;cursor:pointer;border-radius:3px}
+.tabletop-token-hud header button{border:0;background:transparent;min-width:22px;min-height:22px}
+.tabletop-token-hud form{display:flex;align-items:center;gap:5px;padding:8px}.tabletop-token-hud form label{font:11px Arial}.tabletop-token-hud input,.tabletop-token-hud select{padding:7px 5px;border:1px solid #61505a;background:#09080d;color:#eee;min-width:0;width:100%;box-sizing:border-box;font:12px Arial}
+.tabletop-token-hud form input{flex:1;width:0}.tabletop-token-hud form input::placeholder{color:#aaa}
+.tabletop-status-menu{font:11px Arial;border-top:1px solid #443241}.tabletop-status-menu>summary{padding:8px;cursor:pointer}.tabletop-status-menu>summary span{float:right;color:#d4bd88}.tabletop-status-menu>div{padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:220px;overflow:auto}.tabletop-status-menu label:first-child,.tabletop-status-menu>div>button,.tabletop-status-menu .battle-effect-chips{grid-column:1/-1}.tabletop-status-menu label{display:grid;gap:4px;color:#bbb}
+.tabletop-drag-ghost{position:absolute;border:2px solid #d7c78d;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:.85;z-index:14;display:grid;place-items:center;background:#321e2b}.tabletop-drag-ghost img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.tabletop-drop-good{box-shadow:inset 0 0 0 3px #69d1ae!important;background:#69d1ae44!important}.tabletop-drop-bad{box-shadow:inset 0 0 0 3px #e66376!important;background:#e6637644!important}
+.tabletop-measure{position:absolute;left:50%;bottom:45px;transform:translateX(-50%);background:#0c0a12ed;color:#f0dba4;border:1px solid #aa8c55;border-radius:4px;padding:7px 12px;font:13px Arial;pointer-events:none;z-index:15}
+.tabletop-ruler-line{position:absolute;height:2px;background:#e9cf85;transform-origin:left center;pointer-events:none;z-index:13;box-shadow:0 0 3px #000}
+.tabletop-panning,.battle-tabletop:has([data-battle-tool="pan"].active) .master-battle-viewport{cursor:grab}.tabletop-panning{cursor:grabbing!important}
+.battle-tabletop .battle-play-stage{flex:1;height:auto;min-height:0}
+.battle-tabletop button:hover:not(:disabled){filter:brightness(1.2)}
+.battle-tabletop .battle-board-toolbar .battle-tools{display:flex;min-width:0;max-width:100%}
+@media(min-width:1800px){.battle-tabletop{height:calc(100dvh - 65px)}.tabletop-dock{width:310px}.drawer-open .tabletop-dock{width:370px}}
+@media(max-width:800px){.battle-tabletop{height:calc(100dvh - 90px);min-height:500px;padding:6px}.battle-tabletop .battle-editor-heading{gap:5px;flex-wrap:wrap}.battle-tabletop .battle-editor-heading h1{font-size:16px}.battle-tabletop .battle-mode-switch{width:auto;flex:1}.battle-tabletop .battle-mode-switch button{font-size:10px;padding:9px 6px}.battle-tabletop .battle-editor-heading>.battle-toolbar{margin-left:0}.battle-tabletop .battle-scene-status{flex-wrap:nowrap;gap:6px}.battle-tabletop .battle-current-turn{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.battle-tabletop .battle-editor-sync{font-size:8px;margin-left:auto}.battle-tabletop .battle-tools{flex-wrap:nowrap;overflow:auto;width:100%;padding-bottom:2px}.battle-tabletop .battle-tools button{flex:none;min-height:36px}.battle-tabletop .battle-zoom{flex-wrap:nowrap}.battle-tabletop .battle-tool-hint{display:none}.tabletop-dock{top:100px;right:6px;width:220px;max-height:calc(100% - 143px)}.tabletop-queue-row b{max-width:105px}.tabletop-queue-rows{max-height:125px}.drawer-open .tabletop-dock{width:min(330px,calc(100% - 12px));height:calc(100% - 143px)}.drawer-open .tabletop-queue-rows{max-height:75px}.tabletop-token-hud{width:min(264px,calc(100% - 16px))}.battle-tabletop .battle-editor-heading .battle-toolbar button{font-size:9px;padding:6px;min-height:30px}.battle-tabletop .battle-scene-menu summary{padding:2px 8px}.battle-tabletop .battle-board-toolbar{gap:4px}.battle-tabletop .battle-zoom button{padding:5px 8px;min-height:34px}}
+@media(max-width:560px){
+ .battle-tabletop .battle-editor-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}
+ .battle-tabletop .battle-editor-heading>div:first-child{grid-column:1;grid-row:1}
+ .battle-tabletop .battle-editor-heading>.battle-toolbar{grid-column:2;grid-row:1}
+ .battle-tabletop .battle-editor-heading>.battle-mode-switch{grid-column:1/-1;grid-row:2;display:flex;width:100%;min-width:0}
+ .battle-tabletop .battle-mode-switch>button{flex:1;min-width:0}
+ .battle-tabletop .battle-board-toolbar .battle-tools{display:flex;flex-wrap:nowrap;width:100%;overflow:auto}
+ .battle-tabletop .battle-tools button{flex:none}
+ .battle-tabletop .battle-zoom{width:100%;overflow:auto}
+}
