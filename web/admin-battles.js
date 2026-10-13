@@ -45,15 +45,16 @@ async function loadMasterBattle(id){
 }
 async function battleEdit(payload){
  if(battleRequestPending||!masterBattle)return;
+ const {strictRevision,...editPayload}=payload;
  const id=masterBattle.id,selected=battleToken;let oldTokens=new Set(masterBattle.tokens.map(t=>t.id));++battleLoadTicket;battleBusy(true);
  try{
   const path=`${base()}/battles/${id}?actorId=${encodeURIComponent(selected)}`;
-  const send=()=>request(path,{method:'POST',body:JSON.stringify({...payload,revision:masterBattle.revision})});
+  const send=()=>request(path,{method:'POST',body:JSON.stringify({...editPayload,revision:masterBattle.revision})});
   let result;
   try{result=await send()}catch(error){
    // A revision conflict is rejected before mutation. Never retry a combat
    // action or an ambiguous network failure (especially NPC creation).
-   if(payload.operation==='act'||!error.message.startsWith('Бой изменился.'))throw error;
+   if(strictRevision||payload.operation==='act'||!error.message.startsWith('Бой изменился.'))throw error;
    battleAdopt((await request(path)).battle);oldTokens=new Set(masterBattle.tokens.map(t=>t.id));result=await send();
   }
   if(masterBattle?.id!==id)return;

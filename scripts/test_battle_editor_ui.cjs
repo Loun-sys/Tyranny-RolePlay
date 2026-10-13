@@ -41,6 +41,15 @@ async function main(){
  await click({target:{closest:selector=>selector==='.battle-play-link'?{}:null},preventDefault(){prevented=true}});
  assert(prevented,'Mode switch cannot interrupt a pending edit');
  const css=fs.readFileSync('web/battle.css','utf8');assert(css.includes(':has(.master-battle-editor)'));assert(css.includes('@media(max-width:800px)'));
+ vm.runInContext('battleRequestPending=false',context);
+ let posts=0;
+ context.request=async(path,options)=>{if(options?.method==='POST'){posts++;assert(!Object.hasOwn(JSON.parse(options.body),'strictRevision'));throw Error('Бой изменился. Обновите сцену.')}return {battle:{...scene,revision:6}}};
+ assert.equal(await vm.runInContext('battleEdit({operation:"move",tokenId:"npc_1",x:5,y:4,strictRevision:true})',context),false);
+ assert.equal(posts,1,'Undo must not retry against a concurrent revision');
+ posts=0;
+ context.request=async(path,options)=>{if(options?.method==='POST'&&++posts===1)throw Error('Бой изменился. Обновите сцену.');return {battle:{...scene,revision:7},message:'OK'}};
+ assert.equal(await vm.runInContext('battleEdit({operation:"move",tokenId:"npc_1",x:5,y:4})',context),true);
+ assert.equal(posts,2,'Ordinary explicit edits retain their existing conflict recovery');
  console.log('Battle editor: modes, escaped names, token filters, map placement, centered zoom, relative HP, pending guards and unchanged initiative OK');
 }
 main().catch(error=>{console.error(error);process.exitCode=1});

@@ -187,7 +187,7 @@ document.addEventListener('click',async event=>{
  if(button.hasAttribute('data-tabletop-drawer')||button.hasAttribute('data-tabletop-details')){stop();battleDrawerOpen=button.hasAttribute('data-tabletop-details')||!battleDrawerOpen;if(battleDrawerOpen)battleQueueOpen=false;if(button.hasAttribute('data-tabletop-details'))battleInspector='token';renderMasterBattle();return}
  if(button.hasAttribute('data-tabletop-queue')){stop();battleQueueOpen=!battleQueueOpen;renderMasterBattle();return}
  if(button.hasAttribute('data-tabletop-hud-close')){stop();battleHudOpen=false;battlePositionHud();return}
- if(button.hasAttribute('data-tabletop-undo')){stop();const undo=battleMoveUndo;if(undo&&undo.scene===masterBattle.id&&undo.revision===masterBattle.revision){await battleMoveToken(undo.id,undo.x,undo.y);battleMoveUndo=null;document.querySelector('[data-tabletop-undo]').disabled=true}return}
+ if(button.hasAttribute('data-tabletop-undo')){stop();const undo=battleMoveUndo;if(undo&&undo.scene===masterBattle.id&&undo.revision===masterBattle.revision){if(battleFreeCell(undo.x,undo.y,undo.id))await battleEdit({operation:'move',tokenId:undo.id,x:undo.x,y:undo.y,strictRevision:true});battleMoveUndo=null;document.querySelector('[data-tabletop-undo]').disabled=true}return}
  if(button.hasAttribute('data-tabletop-effect')){
   stop();if(masterBattle.status==='ended')return;
   const effect=document.querySelector('#tabletop-effect').value,rounds=Number(document.querySelector('#tabletop-rounds').value),value=Number(document.querySelector('#tabletop-value').value);
