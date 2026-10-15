@@ -95,7 +95,7 @@ class CampaignStore:
             additions=[]
             for item in rows:
                 p=market_profile(item);old=existing.get(item['id'])
-                if excluded_from_trade(item):
+                if excluded_from_trade(item) or (old and not p['purchasable'] and item['id'] not in customized):
                     if old:await c.execute('UPDATE shop_stock SET enabled=0 WHERE guild_id=? AND item_id=?',(guild,item['id']))
                     continue
                 if not p['purchasable']:continue

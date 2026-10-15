@@ -3,7 +3,7 @@ const css = fs.readFileSync('web/responsive.css', 'utf8');
 for (const page of ['index', 'archive', 'admin', 'master-combat']) {
   const html = fs.readFileSync(`web/${page}.html`, 'utf8');
   assert(html.includes('width=device-width,initial-scale=1'));
-  assert(html.includes('responsive.css?v=20261005-1'));
+  assert(html.includes(`responsive.css?v=${['index','archive'].includes(page)?'20261015-4':'20261005-1'}`));
   assert(html.indexOf('responsive.css') > html.lastIndexOf('stylesheet', html.indexOf('responsive.css') - 2));
 }
 assert(css.includes('@media (min-width: 1400px)'));

@@ -13,7 +13,7 @@ SHOPS={
     [(5,'Торговый двор'),(10,'Гильдейский рынок'),(15,'Редкие товары'),(20,'Лавка высшего качества')]},
  'custom':{'name':'Лавка мастера','categories':[]}}
 for shop in SHOPS.values():shop.setdefault('minLevel',1)
-SHOP_BALANCE_VERSION=4
+SHOP_BALANCE_VERSION=5
 MATERIAL_PRICES={'RES_SkyPillar_AlchemySupplies':5,'RES_SkyPillar_Scrolls':10,
     'RES_SkyPillar_Hide':15,'RES_SkyPillar_Ingot_Iron':20,'RES_SkyPillar_Ingot_Bronze':40}
 QUALITY_LEVELS={'Обычное':1,'Хорошее':5,'Добротное':5,'Превосходное':10,
@@ -24,13 +24,21 @@ def is_artifact(item):
     from item_effects import game_data
     from artifact_rules import library
     game=game_data(item)
+    from item_policy import explicit_artifact
     base=(game.get('craftBaseName') or item.get('name','')).split(' (')[0]
-    return (item.get('quality')=='Артефакт' or
+    return (explicit_artifact(item) or item.get('quality')=='Артефакт' or
         bool(re.search(r'(?:^|_)ART(?:_|$)',game.get('prefab',''),re.I)) or base in library())
 
 def excluded_from_trade(item):
     from item_effects import game_data
     if is_artifact(item):return 'Артефакты и артефактные предметы не продаются'
+    game=game_data(item);source=game.get('sourceItem',{})
+    base=(game.get('craftBaseName') or item.get('name','')).split(' (')[0].casefold()
+    if base=='бронзовый двуручный меч' and (item.get('quality') in {'Безупречное','Шедевр'} or
+            re.search(r'\((?:Безупречное|Шедевр)\)',item.get('name',''),re.I)):
+        return 'Безупречный бронзовый двуручный меч не продаётся'
+    if source.get('IsQuestItem') or re.search(r'^Quest_',game.get('prefab',''),re.I):
+        return 'Квестовый предмет'
     if any(re.search(r'\bвариант\s+\d+\b',str(name),re.I) for name in (item.get('name',''),game_data(item).get('craftBaseName',''))):
         return 'Нумерованные варианты предметов не продаются'
     return ''
@@ -58,7 +66,8 @@ def market_profile(item):
     elif prefab.startswith('MONEY_'):reason='Валюта хранится в кошельке'
     elif source.get('CutFromGame') or source.get('IsProp') or re.search(r'(?:test|debug|^Prop_)',prefab,re.I):reason='Служебный предмет'
     elif source.get('IsQuestItem') or re.search(r'^Quest_',prefab,re.I):reason='Квестовый предмет'
-    elif (source.get('PlayerBound') or source.get('RestrictedToCharacter')) and not recipe:reason='Персональный предмет'
+    elif (source.get('PlayerBound') or source.get('RestrictedToCharacter')) and not recipe and not (
+            item.get('category') in {*SHOPS['weapons']['categories'],'Броня','Аксессуары'}):reason='Персональный предмет'
     elif item.get('category')=='Чертежи' and not recipe:reason='Этот чертёж пока не используется в мастерской'
     elif int(item.get('value',0))<=0 and not recipe:reason='Не продаётся в игре'
     elif item.get('category') in SHOPS['consumables']['categories'] and not profile(item):reason='Нет эффекта применения'

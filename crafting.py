@@ -144,7 +144,7 @@ class CraftingStore:
                 item=dict(inv[0]);recipe=upgrade_recipe(item);quantity=1
                 if not recipe:raise ValueError('Нет доступного улучшения для этого предмета.')
                 result=normalize_quality(item,recipe['to']);game=result['properties']['gameData']
-                game.setdefault('craftBaseName',item['name']);game.setdefault('craftBaseId',item['id'])
+                game.setdefault('craftBaseName',game.get('sourceName') or item['name']);game.setdefault('craftBaseId',item['id'])
                 result['name']=game['craftBaseName']+' ('+result['quality']+')'
                 result['source_url']='craft://'+hashlib.sha256((str(game['craftBaseId'])+':'+str(recipe['to'])).encode()).hexdigest()
                 job={'kind':'upgrade','inventoryId':item['inventory_id'],'result':result,'name':item['name'],'equippedSlot':item['equipped_slot']}

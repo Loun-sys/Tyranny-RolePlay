@@ -11,6 +11,8 @@ from item_copy import adapt_item_copy, adapt_item_properties
 @lru_cache(maxsize=1)
 def catalog_texts():
     rows = json.loads((Path(__file__).parent/'catalog/game_items.json').read_text(encoding='utf-8'))
+    extra=Path(__file__).parent/'catalog/game_items_extra.json'
+    if extra.exists():rows.extend(json.loads(extra.read_text(encoding='utf-8')))
     for row in rows:
         source=row['properties']['gameData'].get('sourceItem',{})
         if source.get('PrimaryWeaponSlot') and source.get('SkillType')==11:row['category']='Посохи'
@@ -19,6 +21,8 @@ def catalog_texts():
         if row['category']=='Одноручное оружие' and row['hands']==2:row['category']='Двуручное оружие'
         from crafting import normalize_quality
         if row['hands']:row.update(normalize_quality(row))
+        from item_policy import explicit_artifact
+        if explicit_artifact(row):row['quality']='Артефакт'
         for field in ['description','lore']:
             row[field] = clean_copy(row.get(field))
         row['properties'] = adapt_item_properties(row['properties'])
@@ -66,8 +70,8 @@ def normalize_item_text(item):
             item=normalize_quality(item)
             p=item['properties'];game=p['gameData']
         if str(item.get('source_url','')).startswith('craft://'):
-            game['craftBaseName'] = canonical['name']
-            item['name'] = canonical['name'] + ' (' + item.get('quality','Обычное') + ')'
+            game['craftBaseName'] = source.get('sourceName') or canonical['name']
+            item['name'] = game['craftBaseName'] + ' (' + item.get('quality','Обычное') + ')'
         else: item['name'] = canonical['name']
         if not game.get('localizedText'):
             p = {**canonical['properties'], 'gameData':game or canonical['properties']['gameData']}
@@ -82,4 +86,6 @@ def normalize_item_text(item):
     if item.get('category') in {'Одноручное оружие','Двуручное оружие','Парное оружие','Луки','Метательное оружие','Посохи','Щиты'}:
         item['properties']['Хват']='Двуручное оружие · занимает обе руки' if int(item.get('hands') or 0)>=2 else ('Щит · занимает одну руку' if item['category']=='Щиты' else 'Одноручное оружие · занимает одну руку')
     item['properties'] = adapt_item_properties(item['properties'])
+    from item_policy import explicit_artifact
+    if explicit_artifact(item):item['quality']='Артефакт'
     return item

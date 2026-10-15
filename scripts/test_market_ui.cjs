@@ -25,4 +25,6 @@ vm.runInContext("playerShopCategory='Броня'",ctx);assert(vm.runInContext('p
 vm.runInContext(`publicCatalog=${JSON.stringify({items:[item],total:80,offset:50,categories:['Броня'],qualities:['Хорошее'],slots:['Голова']})};renderPublicCatalog()`,ctx);
 assert(node('#catalog-content').innerHTML.includes('name="slot"'));assert(node('#catalog-content').innerHTML.includes('name="minLevel"'));
 assert(node('#catalog-content').innerHTML.includes('data-public-page="0"'));assert(node('#catalog-content').innerHTML.includes('Торговый двор · ур. 5'));
-console.log('Market UI: level locks, complete effects, escaped details, no fake lore, public filters and pagination OK');
+vm.runInContext(`playerShop={...playerShop,shopKey:'custom'};renderPlayerShop()`,ctx);
+assert(node('#panel .market-header').innerHTML.includes('Ассортимент этой лавки задаёт мастер.'));
+console.log('Market UI: level locks, complete effects, escaped details, no fake lore, public filters, pagination and manual master-stock hint OK');

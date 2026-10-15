@@ -321,6 +321,9 @@ dialog {
   .admin-page .editor-head img { width: 80px; height: 100px; }
 }
 
+body>footer>.site-credit{font:9px/1.5 Arial,sans-serif;letter-spacing:.04em;opacity:.4}
+.creator-page>footer>.site-credit{font-size:7px}
+
 @media (max-height: 540px) and (max-width: 1000px) {
   .topbar, .tabs, .creator-page .creation-progress { position: static; }
   .combat-game-screen .tactical-map-wrap { height: 300px; }

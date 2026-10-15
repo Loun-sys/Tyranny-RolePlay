@@ -15,7 +15,7 @@ from catalog_browser import browse
 class MarketSourceTests(unittest.TestCase):
     def test_every_source_item_keeps_numeric_stats_and_functional_readouts(self):
         rows=catalog_texts()[0]
-        self.assertEqual(len(rows),1233)
+        self.assertEqual(len(rows),1251)
         character={'attributes':dict.fromkeys(['Сила','Искусность','Быстрота','Живучесть','Смекалка','Стойкость'],10),
             'skills':{name:{'value':30} for name in ['Атлетика','Хитроумие','Знания','Парирование','Уклонение','Одноручное оружие','Двуручное оружие','Волшебный посох','Луки','Парное оружие','Безоружный бой']},'health_max':100}
         for raw in rows.values():
@@ -169,12 +169,12 @@ class MarketStoreTests(CampaignTests):
         app.router.add_post('/api/portal/{token}/shop',portal_shop)
         token=await self.db.create_portal_token(1,1)
         async with TestClient(TestServer(app)) as client:
-            response=await client.get('/api/catalog?category=Посохи&minLevel=20&availability=buyable')
+            response=await client.get('/api/catalog?category=Посохи&minLevel=15&availability=buyable')
             self.assertEqual(response.status,200);result=await response.json();self.assertGreater(result['total'],0)
             for i in result['items']:
-                self.assertEqual(i['market']['minLevel'],20);self.assertNotIn('gameData',i['properties']);self.assertNotIn('source_url',i)
+                self.assertEqual(i['market']['minLevel'],15);self.assertNotIn('gameData',i['properties']);self.assertNotIn('source_url',i)
             self.assertEqual((await client.get('/api/catalog?offset=oops')).status,400)
-            self.assertEqual((await (await client.get('/api/catalog')).json())['total'],1233)
+            self.assertEqual((await (await client.get('/api/catalog')).json())['total'],1251)
             self.assertEqual((await client.post('/api/catalog',json={})).status,405)
             s=await (await client.get(f'/api/portal/{token}/shop?shopKey=level_20')).json()
             self.assertTrue(s['settings']['locked'])

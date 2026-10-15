@@ -1,0 +1,578 @@
+{
+  "KenrickRecruit_WPN_2H_BR_Sword_Exquisite": {
+    "attack": {
+      "AttackDistance": 1.25,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 6,
+      "DTBypass": 0.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.75,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 23.0,
+        "Maximum": 28.0,
+        "Type": 0,
+        "BestOfType": 2
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 1350,
+      "level": 4
+    }
+  },
+  "KenrickRecruit_WPN_SHLD_IR_Heater_Superior": {
+    "attack": {},
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 0,
+    "quality": {
+      "id": 500,
+      "level": 3
+    }
+  },
+  "KenrickRecruit_WPN_1H_IR_Axe_Superior": {
+    "attack": {
+      "AttackDistance": 0.5,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 3.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.0,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 17.0,
+        "Maximum": 20.0,
+        "Type": 0,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 1,
+    "quality": {
+      "id": 50,
+      "level": 3
+    }
+  },
+  "KenrickRecruit_WPN_2H_BR_Sword_Superior": {
+    "attack": {
+      "AttackDistance": 1.25,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 6,
+      "DTBypass": 0.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.75,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 23.0,
+        "Maximum": 28.0,
+        "Type": 0,
+        "BestOfType": 2
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 1350,
+      "level": 3
+    }
+  },
+  "KenrickRecruit_WPN_1H_IR_Axe_Exquisite": {
+    "attack": {
+      "AttackDistance": 0.5,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 3.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.0,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 17.0,
+        "Maximum": 20.0,
+        "Type": 0,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 1,
+    "quality": {
+      "id": 50,
+      "level": 4
+    }
+  },
+  "KenrickRecruit_WPN_2H_IR_Mace_Fine": {
+    "attack": {
+      "AttackDistance": 1.25,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 1.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 0.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 2.25,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 35.0,
+        "Maximum": 42.0,
+        "Type": 1,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 950,
+      "level": 2
+    }
+  },
+  "KenrickRecruit_WPN_2H_IR_Mace_Superior": {
+    "attack": {
+      "AttackDistance": 1.25,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 1.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 0.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 2.25,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 35.0,
+        "Maximum": 42.0,
+        "Type": 1,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 950,
+      "level": 3
+    }
+  },
+  "KenrickRecruit_WPN_BOW_WD_Longbow_Fine": {
+    "attack": {
+      "AttackDistance": 14.0,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 5.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 2.25,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 28.0,
+        "Maximum": 33.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 200,
+      "level": 2
+    }
+  },
+  "KenrickRecruit_WPN_1H_BR_Javelin_Exquisite": {
+    "attack": {
+      "AttackDistance": 8.0,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 6,
+      "DTBypass": 2.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.75,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 16.0,
+        "Maximum": 21.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {
+      "AttackDistance": 0.5,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 3,
+      "DTBypass": 1.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.0,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 5.0,
+        "Maximum": 10.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "thrown": true,
+    "hands": 1,
+    "quality": {
+      "id": 700,
+      "level": 4
+    }
+  },
+  "KenrickRecruit_WPN_2H_IR_Mace_Exquisite": {
+    "attack": {
+      "AttackDistance": 1.25,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 1.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 0.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 2.25,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 35.0,
+        "Maximum": 42.0,
+        "Type": 1,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 950,
+      "level": 4
+    }
+  },
+  "KenrickRecruit_WPN_2H_BR_Sword_Fine": {
+    "attack": {
+      "AttackDistance": 1.25,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 6,
+      "DTBypass": 0.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.75,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 23.0,
+        "Maximum": 28.0,
+        "Type": 0,
+        "BestOfType": 2
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 1350,
+      "level": 2
+    }
+  },
+  "KenrickRecruit_WPN_1H_IR_Axe_Fine": {
+    "attack": {
+      "AttackDistance": 0.5,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 3.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.0,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 17.0,
+        "Maximum": 20.0,
+        "Type": 0,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 1,
+    "quality": {
+      "id": 50,
+      "level": 2
+    }
+  },
+  "KenrickRecruit_WPN_BOW_WD_Longbow_Exquisite": {
+    "attack": {
+      "AttackDistance": 14.0,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 5.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 2.25,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 28.0,
+        "Maximum": 33.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 200,
+      "level": 4
+    }
+  },
+  "KenrickRecruit_WPN_SHLD_IR_Heater_Fine": {
+    "attack": {},
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 0,
+    "quality": {
+      "id": 500,
+      "level": 2
+    }
+  },
+  "KenrickRecruit_WPN_BOW_WD_Longbow_Superior": {
+    "attack": {
+      "AttackDistance": 14.0,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 0,
+      "DTBypass": 5.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 2.25,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 28.0,
+        "Maximum": 33.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 2,
+    "quality": {
+      "id": 200,
+      "level": 3
+    }
+  },
+  "KenrickRecruit_WPN_SHLD_IR_Heater_Exquisite": {
+    "attack": {},
+    "meleeAttack": {},
+    "thrown": false,
+    "hands": 0,
+    "quality": {
+      "id": 500,
+      "level": 4
+    }
+  },
+  "KenrickRecruit_WPN_1H_BR_Javelin_Superior": {
+    "attack": {
+      "AttackDistance": 8.0,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 6,
+      "DTBypass": 2.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.75,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 16.0,
+        "Maximum": 21.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {
+      "AttackDistance": 0.5,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 3,
+      "DTBypass": 1.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.0,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 5.0,
+        "Maximum": 10.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "thrown": true,
+    "hands": 1,
+    "quality": {
+      "id": 700,
+      "level": 3
+    }
+  },
+  "KenrickRecruit_WPN_1H_BR_Javelin_Fine": {
+    "attack": {
+      "AttackDistance": 8.0,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 6,
+      "DTBypass": 2.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.75,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 2,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 16.0,
+        "Maximum": 21.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "meleeAttack": {
+      "AttackDistance": 0.5,
+      "OverrideAttackDistance": 0.0,
+      "MinAttackDistance": 0.0,
+      "AccuracyBonus": 3,
+      "DTBypass": 1.0,
+      "DefendedBy": 0,
+      "SecondaryDefense": 5,
+      "PersonalCooldownModifier": 1.0,
+      "UsePersonalCooldown": 1,
+      "ZeroAttackRecovery": 0,
+      "BaseInterruptValue": 0,
+      "AttackSpeed": 1,
+      "UiAttackSpeed": 0,
+      "SpeedFactor": 1.0,
+      "DamageMultiplier": 1.0,
+      "DamageData": {
+        "Minimum": 5.0,
+        "Maximum": 10.0,
+        "Type": 2,
+        "BestOfType": 9
+      }
+    },
+    "thrown": true,
+    "hands": 1,
+    "quality": {
+      "id": 700,
+      "level": 2
+    }
+  }
+}

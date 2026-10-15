@@ -79,7 +79,7 @@ class PossessionTests(unittest.IsolatedAsyncioTestCase):
             await conn.execute("UPDATE characters SET specialization_1='Короткий лук',specialization_2='Заклинания льда' WHERE id=?",(cid,))
             await grant_start(conn,cid,'Книгочей');await conn.commit()
         self.assertEqual(await self.db.inventory(cid),before)
-        self.assertEqual((await CampaignStore(self.db).wallet(cid))['totalCopper'],300)
+        self.assertEqual((await CampaignStore(self.db).wallet(cid))['totalCopper'],180)
     async def test_money_atomic_transfer_destroy_and_scope(self):
         store=CampaignStore(self.db);await store.set_wallet(1,300)
         results=await asyncio.gather(*(operate(self.db,1,{'action':'transfer','kind':'money','quantity':200,'recipientId':2}) for _ in range(2)),return_exceptions=True)

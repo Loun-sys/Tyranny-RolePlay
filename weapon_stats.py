@@ -5,7 +5,10 @@ from pathlib import Path
 
 @lru_cache(maxsize=1)
 def source():
-    return json.loads((Path(__file__).parent/'catalog/weapon_source.json').read_text(encoding='utf-8'))['weapons']
+    rows=json.loads((Path(__file__).parent/'catalog/weapon_source.json').read_text(encoding='utf-8'))['weapons']
+    extra=Path(__file__).parent/'catalog/weapon_source_extra.json'
+    if extra.exists():rows.update(json.loads(extra.read_text(encoding='utf-8')))
+    return rows
 
 def source_attack(prefab):
     record=source().get(prefab,{})

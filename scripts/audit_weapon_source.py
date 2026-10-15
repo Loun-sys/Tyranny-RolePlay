@@ -11,7 +11,7 @@ FIELDS=('AttackDistance','OverrideAttackDistance','MinAttackDistance','AccuracyB
     'BaseInterruptValue','AttackSpeed','UiAttackSpeed','SpeedFactor','DamageMultiplier')
 
 def extract():
-    index=GameIndex()
+    index=GameIndex(extra_bundles=['recipes'])
     records={};timing={}
     for tree in index.trees.values():
         if 'ShortAttackSpeed' in tree:timing.update({k:v for k,v in tree.items() if 'AttackSpeed' in k})
@@ -54,6 +54,8 @@ def main():
     from item_effects import game_data
     errors=[];count=0
     snapshot=json.loads((ROOT/'catalog/weapon_source.json').read_text(encoding='utf-8'))
+    extra=ROOT/'catalog/weapon_source_extra.json'
+    if extra.exists():snapshot['weapons'].update(json.loads(extra.read_text(encoding='utf-8')))
     for prefab,raw in catalog_texts()[0].items():
         original=source['weapons'].get(prefab)
         if not original or not original['attack']:continue

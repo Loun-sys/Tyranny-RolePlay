@@ -368,7 +368,8 @@ class Database:
         game_items = Path(__file__).resolve().parent / 'catalog' / 'game_items.json'
         if game_items.exists():
             from crafting import normalize_quality
-            await self.upsert_catalog([normalize_quality(i) for i in json.loads(game_items.read_text(encoding='utf-8'))])
+            from item_texts import catalog_texts
+            await self.upsert_catalog([normalize_quality(i) for i in catalog_texts()[0].values()])
         # Repair persisted crafted variants too, without changing IDs, inventory,
         # prices or the upgraded numerical quality values.
         async with self.connect() as db:

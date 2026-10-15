@@ -5,13 +5,13 @@ CREATE TABLE IF NOT EXISTS starting_grants(character_id INTEGER PRIMARY KEY REFE
 CREATE TABLE IF NOT EXISTS possession_log(id INTEGER PRIMARY KEY, sender_id INTEGER NOT NULL, recipient_id INTEGER, kind TEXT NOT NULL, amount INTEGER NOT NULL, item_id INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
 """
 STARTS={
- 'Книгочей':(300,[('WPN_1H_IR_Dagger_Lantry',1),('Cloth_Armor_Lantry',1),('Cloth_GLOVE_Lantry',1),('Cloth_BOOTS_Lantry',1)]),
- 'Заклинатель':(200,[('Cloth_Armor_MageRobes_01',1)]),
+ 'Книгочей':(180,[('WPN_1H_IR_Dagger_Lantry',1),('Cloth_Armor_Lantry',1),('Cloth_GLOVE_Lantry',1),('Cloth_BOOTS_Lantry',1)]),
+ 'Заклинатель':(120,[('Cloth_Armor_MageRobes_01',1)]),
  'Зверолюд':(0,[]),
- 'Певчий':(300,[('Cloth_Armor_MageRobes_01',1)]),
- 'Танцующий':(200,[('Leather_Armor_02',1)]),
- 'Авангард':(300,[('Bronze_Armor_02',1)]),
- 'Скованный Ремеслом':(600,[('Cloth_Armor_MageRobes_01',1),('RES_SkyPillar_Ingot_Iron',10),('RES_SkyPillar_Ingot_Bronze',10),('RES_SkyPillar_Hide',10),('RES_SkyPillar_AlchemySupplies',15)]),
+ 'Певчий':(180,[('Cloth_Armor_MageRobes_01',1)]),
+ 'Танцующий':(120,[('Leather_Armor_02',1)]),
+ 'Авангард':(180,[('Bronze_Armor_02',1)]),
+ 'Скованный Ремеслом':(360,[('Cloth_Armor_MageRobes_01',1),('RES_SkyPillar_Ingot_Iron',5),('RES_SkyPillar_Ingot_Bronze',5),('RES_SkyPillar_Hide',5),('RES_SkyPillar_AlchemySupplies',7)]),
 }
 SPECIALIZATION_STARTS={
  'Меч и щит':[('WPN_1H_Starter_Sword',1),('WPN_SHLD_Starter_Buckler_Quartermaster_Store',1)],
