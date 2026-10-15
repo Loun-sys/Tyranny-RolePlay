@@ -5,22 +5,17 @@ from constants import WEAPON_SKILLS, MAGIC_SKILLS
 
 COMBAT_CHECK_SKILLS = WEAPON_SKILLS + MAGIC_SKILLS
 CHECK_DEFINITIONS = (
-    {'name':'Запугивание','attribute':'Живучесть','sources':['Атлетика','@combatMax'],
-     'description':'Угрозы, давление и демонстрация силы.'},
-    {'name':'Влияние','attribute':'Смекалка','sources':['Хитроумие','Знания'],
-     'description':'Убеждение, переговоры и поиск подхода к собеседнику.'},
-    {'name':'Наблюдательность','attribute':'Быстрота','sources':['Знания','Хитроумие'],
-     'description':'Обнаружение деталей, следов и изменений в окружении.'},
-    {'name':'Выносливость','attribute':'Стойкость','sources':['Атлетика','Парирование'],
-     'description':'Сопротивление усталости и длительным нагрузкам вне боя. Это не боевая защита Выносливостью.'},
-    {'name':'Проницательность','attribute':'Искусность','sources':['Хитроумие','Уклонение'],
-     'description':'Понимание чужих намерений и распознавание обмана.'},
+    {'name':'Запугивание','attribute':'Живучесть','sources':['Атлетика','@combatMax']},
+    {'name':'Влияние','attribute':'Смекалка','sources':['Хитроумие','Знания']},
+    {'name':'Наблюдательность','attribute':'Быстрота','sources':['Знания','Хитроумие']},
+    {'name':'Выносливость','attribute':'Стойкость','sources':['Атлетика','Парирование']},
+    {'name':'Проницательность','attribute':'Искусность','sources':['Хитроумие','Уклонение']},
 )
 
 
 def configuration():
     return {'definitions':[dict(d, sources=list(d['sources'])) for d in CHECK_DEFINITIONS],
-            'combatSkills':list(COMBAT_CHECK_SKILLS),'pointsPerDie':10}
+            'combatSkills':list(COMBAT_CHECK_SKILLS),'pointsPerDie':10,'attributeDivisor':3}
 
 
 def _value(value):
@@ -47,10 +42,11 @@ def check_skills(attributes, skills):
         value = sum(source['value']*.5 for source in sources)
         dice = max(0,math.floor(value/10))
         attribute_value = _value(attributes.get(definition['attribute'],0))
+        attribute_bonus = attribute_value / 3
         result[definition['name']] = {**definition,'sources':sources,'value':value,
-            'attributeValue':attribute_value,'diceCount':dice,
-            'formula':f'{attribute_value} + {dice}d6',
-            'minimum':attribute_value+dice,'maximum':attribute_value+dice*6}
+            'attributeValue':attribute_value,'attributeBonus':attribute_bonus,'diceCount':dice,
+            'formula':f'{attribute_value} / 3 + {dice}d6',
+            'minimum':attribute_bonus+dice,'maximum':attribute_bonus+dice*6}
     return result
 
 
@@ -63,7 +59,7 @@ def roll_check(check, modifier=0, rng=None):
     roller = rng or random.SystemRandom()
     rolls = [roller.randint(1,6) for _ in range(dice)]
     return {'rolls':rolls,'modifier':modifier,
-            'total':check['attributeValue']+sum(rolls)+modifier}
+            'total':check['attributeBonus']+sum(rolls)+modifier}
 
 
 async def character_checks(db, character):

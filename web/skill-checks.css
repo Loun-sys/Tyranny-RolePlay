@@ -1,28 +1,16 @@
 .check-skills{min-width:0;margin:0;padding:22px;border:1px solid #51412c;background:#0d0b0ded;clip-path:none;color:#ddd4c4}
-.check-skills>header{display:flex;justify-content:space-between;align-items:start;gap:24px;margin-bottom:20px}
-.check-skills>header small{font:700 10px Arial;letter-spacing:2px;color:#c8ab70}
-.check-skills>header h2{font:26px/1.25 Georgia,serif;margin:7px 0 0;color:#e1d2b1;text-transform:none;letter-spacing:0}
-.check-skills>header>p{max-width:440px;margin:0;font:13px/1.6 Arial;color:#a99c8e}
+.check-skills>header{margin-bottom:20px}
+.check-skills>header h2{font:26px/1.25 Georgia,serif;margin:0;color:#e1d2b1;text-transform:none;letter-spacing:0}
 .check-skill-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .check-skill-card{padding:16px;background:#0a090c;border:1px solid #44323b;min-width:0}
 .check-skill-card>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
-.check-skill-card h3{font:19px/1.3 Georgia,serif;color:#d9c9a3;margin:0;cursor:help;border-bottom:1px dotted #9b8051;overflow-wrap:anywhere}
-.check-skill-card h3:focus-visible{outline:2px solid #c5a35d;outline-offset:4px}
+.check-skill-card h3{font:19px/1.3 Georgia,serif;color:#d9c9a3;margin:0;overflow-wrap:anywhere}
 .check-skill-value{font:25px Georgia,serif;color:#ead5a2;white-space:nowrap}
 .check-skill-formula{display:block;margin:8px 0;font:12px/1.6 Arial;color:#b4a9a4}
 .check-skill-formula i{font-style:normal;color:#8c7761}
 .check-skill-formula b{color:#d6bd80}
-.check-skill-source-note{font:11px/1.5 Arial;color:#998b7b;margin:8px 0}
-.check-skill-description{font:12px/1.6 Arial;color:#bdb0a2;margin:12px 0}
-.check-skill-roll{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid #433329;padding-top:10px;font:12px Arial;color:#d1c0a1}
-.check-skill-roll img{width:22px;height:22px;object-fit:contain;flex:none}
-.check-skill-roll strong{margin-left:auto;font:19px Georgia,serif;color:#e4c489;white-space:nowrap}
-.check-skill-range{display:block;margin-top:9px;font:11px Arial!important;letter-spacing:0!important;color:#a99a83!important}
-.check-skills>footer{position:static;display:block;border-top:1px solid #46392a;margin:18px 0 0;padding:8px 0 0;text-align:left;background:none;min-height:0;width:auto}
-.check-skills>footer p{font:12px/1.7 Arial;color:#ac9e8b;margin:8px 0;letter-spacing:0;text-transform:none}
-.check-skills code{color:#e0c38b;overflow-wrap:anywhere}
 #creation-check-skills{margin-top:24px;scroll-margin-top:110px}
 .creation-check-link{font:14px/1.6 Arial;color:#d2b578;text-underline-offset:4px}
 @media(min-width:1700px){.check-skill-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
-@media(max-width:1100px){.check-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.check-skills>header{display:block}.check-skills>header>p{max-width:none;margin-top:12px}}
+@media(max-width:1100px){.check-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.check-skill-grid{grid-template-columns:minmax(0,1fr)}.check-skills{padding:16px}.check-skills>header h2{font-size:23px}.check-skill-card{padding:14px}}

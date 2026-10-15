@@ -730,7 +730,7 @@ async def spellbook_command(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-@bot.tree.command(name="проверка", description="Проверка вне боя: характеристика + кубики d6")
+@bot.tree.command(name="проверка", description="Проверка вне боя: треть характеристики + кубики d6")
 @app_commands.choices(навык=[app_commands.Choice(name=row['name'], value=row['name']) for row in CHECK_DEFINITIONS])
 @app_commands.describe(навык="Навык проверки персонажа", модификатор="Число к итогу броска: например +3 или -2")
 async def skill_check(
@@ -744,16 +744,15 @@ async def skill_check(
     checks = await character_checks(bot.db,character)
     check = checks[навык.value]
     result = roll_check(check,модификатор)
-    number = lambda value: f'{value:g}'.replace('.',',')
+    number = lambda value: f'{value:.2f}'.rstrip('0').rstrip('.').replace('.',',')
     embed = discord.Embed(title=f'{навык.value} · {number(result["total"])}', color=BRONZE)
     embed.description = (f'**{discord.utils.escape_markdown(character["name"])}**\n'
-        f'{check["attribute"]} **{number(check["attributeValue"])}** + **{check["diceCount"]}d6** '
+        f'{check["attribute"]} **{number(check["attributeValue"])} / 3** + **{check["diceCount"]}d6** '
         f'{модификатор:+d} = **{number(result["total"])}**')
     breakdown = ' + '.join(f'{source["name"]} {number(source["value"])} × 0,5' for source in check['sources'])
     embed.add_field(name='Навык проверки',value=f'{breakdown} = **{number(check["value"])}**',inline=False)
     dice_text = ', '.join(str(value) for value in result['rolls']) or 'Нет кубиков: навык ниже 10.'
     embed.add_field(name='Результаты d6',value=dice_text[:1024],inline=False)
-    embed.set_footer(text='1d6 за каждые полные 10 навыка. Модификатор прибавляется к итогу. Результат оценивает мастер.')
     await interaction.followup.send(embed=embed,allowed_mentions=discord.AllowedMentions.none())
 
 

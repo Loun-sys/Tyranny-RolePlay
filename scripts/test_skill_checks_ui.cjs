@@ -17,10 +17,11 @@ const ctx=vm.createContext({});vm.runInContext(fs.readFileSync('web/skill-checks
 for(const fixture of payload.cases)assert.deepEqual(JSON.parse(JSON.stringify(checks.calculate(payload.rules,fixture.attributes,fixture.skills))),fixture.expected,'Creation preview must match Python/API for every formula, maximum and half-point');
 const rows=checks.calculate(payload.rules,payload.cases[0].attributes,payload.cases[0].skills),html=checks.render(rows,{preview:true});
 for(const name of ['Запугивание','Влияние','Наблюдательность','Выносливость','Проницательность'])assert(html.includes(`data-check-skill="${name}"`));
-assert(html.includes('Это не боевая защита'));assert(html.includes('модификатор:-2'));assert(html.includes('Отдельных очков и опыта нет'));assert(html.includes('data-help-text='));assert(!html.includes('data-step-kind='));
+assert(html.includes('<h2>Вне-боевые проверки</h2>'));assert(html.includes('data-no-game-help'));assert(!html.includes('data-step-kind='));
+for(const removed of ['Это не боевая защита','модификатор:-2','Отдельных очков и опыта нет','data-help-text=','tabindex=','Влияние, восприятие и стойкость','Максимум среди','Бросок:','Без модификатора','check-skill-roll','check-skill-description','ПРОВЕРКИ ВНЕ БОЯ','<footer>'])assert(!html.includes(removed),removed);
 rows.Влияние.sources[0].name='<script>bad</script>';assert(!checks.render(rows).includes('<script>bad</script>'));assert(checks.render(rows).includes('&lt;script&gt;'));
 assert.deepEqual(JSON.parse(JSON.stringify(checks.calculate(null,{},{}))),{});
-for(const path of ['web/index.html','web/archive.html']){const source=fs.readFileSync(path,'utf8');assert(source.includes('skill-checks.css?v=20261015-1'));assert(source.includes('skill-checks.js?v=20261015-1'))}
+for(const path of ['web/index.html','web/archive.html']){const source=fs.readFileSync(path,'utf8');assert(source.includes('skill-checks.css?v=20261015-2'));assert(source.includes('skill-checks.js?v=20261015-2'));assert(source.includes('game-help.js?v=20261015-2'))}
 const creation=fs.readFileSync('web/app.js','utf8'),archive=fs.readFileSync('web/archive.js','utf8');assert(creation.includes("checkTarget.innerHTML=SkillChecks.render(SkillChecks.calculate(state.config.checkSkills"));assert(archive.includes('${checkSkillsBox(c,data)}'));
 assert(archive.includes('${checkSkillsBox(c,d)}'),'Public archive must use the opened record, not the signed-in character');
 vm.runInContext(archive.split('\n').find(line=>line.startsWith('function checkSkillsBox(')),ctx);
@@ -28,4 +29,5 @@ assert.equal(ctx.checkSkillsBox({}, {derived:{checkSkills:rows}}),checks.render(
 vm.runInContext(creation.slice(creation.indexOf('function skillBase('),creation.indexOf('\nfunction sourceBonuses(')),ctx);
 for(const fixture of payload.baseCases){ctx.state={attributes:fixture.attributes,config:{skillAttributes:payload.weights}};for(const [name,expected]of Object.entries(fixture.expected))assert.equal(ctx.skillBase(name),expected,`${name}: preview must match the database at exact halves`)}
 const css=fs.readFileSync('web/skill-checks.css','utf8');assert(css.includes('@media(max-width:600px)'));assert(css.includes('@media(min-width:1700px)'));
-console.log('Skill checks UI: exact Python/JS parity across 15 builds, read-only creation preview, dossier placement, escaped formulas, scoped help and phone/wide layout OK');
+const help=fs.readFileSync('web/game-help.js','utf8');assert(help.includes("p.closest('[data-no-game-help],script"));assert(help.includes("root.closest?.('[data-no-game-help]"));
+console.log('Skill checks UI: one-third attribute parity across 15 builds, compact cards, no explanations/tooltips, creation/archive placement and phone/wide layout OK');
