@@ -6,6 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from urllib.parse import unquote
 from official_localization import official_entity
+from item_copy import adapt_item_copy, adapt_item_properties
 
 @lru_cache(maxsize=1)
 def catalog_texts():
@@ -18,13 +19,16 @@ def catalog_texts():
         if row['category']=='Одноручное оружие' and row['hands']==2:row['category']='Двуручное оружие'
         from crafting import normalize_quality
         if row['hands']:row.update(normalize_quality(row))
+        for field in ['description','lore']:
+            row[field] = clean_copy(row.get(field))
+        row['properties'] = adapt_item_properties(row['properties'])
     return {r['properties']['gameData']['prefab']:r for r in rows}, {r['name'].casefold():r for r in rows}
 
 def clean_copy(text):
     text = str(text or '')
     if re.search(r'предмет из (?:игры|Tyranny|Тирании)', text, re.I): return ''
     text = re.sub(r'https?://[^\s<>]*?(?:fandom\.com|wiki)[^\s<>]*', '', text, flags=re.I)
-    return text.strip()
+    return adapt_item_copy(text)
 
 def normalize_item_text(item):
     item = copy.deepcopy(item)
@@ -77,4 +81,5 @@ def normalize_item_text(item):
         refresh_consumable(item)
     if item.get('category') in {'Одноручное оружие','Двуручное оружие','Парное оружие','Луки','Метательное оружие','Посохи','Щиты'}:
         item['properties']['Хват']='Двуручное оружие · занимает обе руки' if int(item.get('hands') or 0)>=2 else ('Щит · занимает одну руку' if item['category']=='Щиты' else 'Одноручное оружие · занимает одну руку')
+    item['properties'] = adapt_item_properties(item['properties'])
     return item
