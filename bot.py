@@ -27,6 +27,7 @@ from registration_api import start_registration_api
 from talent_data import TALENT_BY_NAME, TALENTS, TALENTS_BY_TREE
 from wiki_importer import sync_wiki
 from skill_checks import CHECK_DEFINITIONS, character_checks, roll_check
+from discord_servers import game_guild_ids
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -35,6 +36,7 @@ log = logging.getLogger("tyranny")
 DATA_DIR = Path(os.getenv("TYRANNY_DATA_DIR", "data"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 TEST_GUILD_ID = int(os.getenv("DISCORD_GUILD_ID", "0") or 0)
+GAME_GUILD_IDS = game_guild_ids()
 MASTER_ROLE_IDS = {
     int(value.strip()) for value in os.getenv("TYRANNY_MASTER_ROLE_IDS", "").split(",") if value.strip().isdigit()
 }
@@ -222,7 +224,7 @@ class TyrannyBot(commands.Bot):
     async def setup_hook(self) -> None:
         await self.db.initialize()
         self.registration_runner = await start_registration_api(self, self.db, DATA_DIR)
-        await sync_application_commands(self.tree, TEST_GUILD_ID)
+        await sync_application_commands(self.tree, GAME_GUILD_IDS)
 
 
 def restrict_commands(tree):
@@ -233,19 +235,44 @@ def restrict_commands(tree):
             tree.remove_command(command.name)
 
 
-async def sync_application_commands(tree, legacy_guild_id: int = 0):
-    """Publish one global set, then retire only its old guild-scoped copies.
+async def sync_application_commands(tree, legacy_guild_id=0):
+    """Keep checks immediately available in the configured guild, without copies.
 
-    Global commands must be published successfully before any duplicate is
-    removed. Fetch the remote guild registrations: clearing the local tree
-    alone would leave the old Discord copies in place. Do not bulk overwrite
-    the guild scope, which could delete unrelated guild-only/context commands.
+    Upsert only this guild command, not the entire guild scope. Publish it before
+    global sync removes its previous global registration. Other installations
+    without a configured guild retain the global check command.
     """
     restrict_commands(tree)
+    ids = [legacy_guild_id] if isinstance(legacy_guild_id, int) else legacy_guild_id
+    guilds = [discord.Object(id=value) for value in dict.fromkeys(ids) if value]
+    published = []
+    if guilds:
+        check = tree.get_command("проверка")
+        for guild in guilds:
+            check = check or tree.get_command("проверка", guild=guild)
+        if check is None:
+            raise RuntimeError("Команда /проверка не загружена; синхронизация отменена.")
+        # discord.py exposes bulk sync publicly, but only a single-command REST
+        # upsert preserves unrelated guild-only and context menu registrations.
+        for guild in guilds:
+            try:
+                guild_check = await tree._http.upsert_guild_command(
+                    tree.client.application_id, guild.id, payload=check.to_dict(tree)
+                )
+            except (discord.Forbidden, discord.NotFound):
+                # A configured server may not have invited the bot yet. Keep its
+                # local handler ready for on_guild_join, without breaking others.
+                tree.add_command(check, guild=guild, override=True)
+                log.warning("Сервер %s пока недоступен; /проверка появится после добавления бота.", guild.id)
+                continue
+            tree.add_command(check, guild=guild, override=True)
+            published.append(guild)
+            log.info("/проверка зарегистрирована на сервере %s (ID %s)", guild.id, guild_check["id"])
+        if published:
+            tree.remove_command("проверка")
     synced = await tree.sync()
     log.info("Глобально синхронизировано команд: %s", len(synced))
-    if legacy_guild_id:
-        guild = discord.Object(id=legacy_guild_id)
+    for guild in published:
         signatures = {(command.name, command.type) for command in synced}
         duplicates = [command for command in await tree.fetch_commands(guild=guild)
                       if (command.name, command.type) in signatures]
@@ -262,6 +289,12 @@ bot = TyrannyBot()
 @bot.event
 async def on_ready():
     log.info("Tyranny-бот подключён как %s", bot.user)
+
+
+@bot.event
+async def on_guild_join(guild: discord.Guild):
+    if guild.id in GAME_GUILD_IDS:
+        await sync_application_commands(bot.tree, GAME_GUILD_IDS)
 
 
 @bot.tree.command(name="бой", description="Открыть полностью кнопочную боевую сцену")

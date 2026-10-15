@@ -1,6 +1,6 @@
 /* Character development retains base values; previews and readouts use equipment. */
-function equippedCharacter(c){
- const d=data?.derived||{};
+function equippedCharacter(c,dossier=data){
+ const d=dossier?.derived||{};
  return {...c,health_max:d.healthMax??c.health_max,attributes:{...c.attributes,...d.effectiveAttributes},skills:Object.fromEntries(Object.entries(c.skills||{}).map(([name,row])=>[name,{...row,value:d.effectiveSkills?.[name]??row.value}]))};
 }
 const baseSkillsBox=skillsBox;
@@ -8,7 +8,7 @@ const baseEquipmentInventory=renderInventory;
 renderInventory=function(p,c){baseEquipmentInventory(p,equippedCharacter(c));if(Object.keys(data.itemEffects||{}).length)p.querySelector('.combat-sheet')?.insertAdjacentHTML('beforeend',`<h3>Эффекты предметов</h3>${Object.values(data.itemEffects).map(s=>`<p>${esc(s.name)}</p>`).join('')}`)};
 const equipmentStatIcon=statIcon;
 statIcon=function(file,label,value,help=''){return equipmentStatIcon(file,label,file==='recovery.png'?scaledRoundText(data.derived?.attack?.recovery||0):value,help)};
-skillsBox=function(c,compact=false){return baseSkillsBox(equippedCharacter(c),compact)};
+skillsBox=function(c,compact=false,dossier=data){return baseSkillsBox(equippedCharacter(c,dossier),compact,dossier)};
 const baseSpellFormulaState=spellFormulaState;
 spellFormulaState=function(c){return baseSpellFormulaState(equippedCharacter(c))};
 const baseSpellNumbers=spellNumbers;

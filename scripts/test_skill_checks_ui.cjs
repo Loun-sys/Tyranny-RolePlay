@@ -31,7 +31,7 @@ rows.Влияние.sources[0].name='<script>bad</script>';assert(!checks.render
 assert.deepEqual(JSON.parse(JSON.stringify(checks.calculate(null,{},{}))),{});
 for(const path of ['web/index.html','web/archive.html']){const source=fs.readFileSync(path,'utf8');assert(source.includes('skill-checks.css?v=20261015-3'));assert(source.includes('skill-checks.js?v=20261015-3'));assert(source.includes('game-help.js?v=20261015-2'))}
 const creation=fs.readFileSync('web/app.js','utf8'),archive=fs.readFileSync('web/archive.js','utf8');assert(creation.includes("checkTarget.innerHTML=SkillChecks.render(SkillChecks.calculate(state.config.checkSkills"));assert(archive.includes('${checkSkillsBox(c,data)}'));
-assert(archive.includes('${checkSkillsBox(c,d)}'),'Public archive must use the opened record, not the signed-in character');
+assert(fs.readFileSync('web/archive-record.js','utf8').includes('${checkSkillsBox(c,d)}'),'Public archive must use the opened record, not the signed-in character');
 vm.runInContext(archive.split('\n').find(line=>line.startsWith('function checkSkillsBox(')),ctx);
 assert.equal(ctx.checkSkillsBox({}, {derived:{checkSkills:rows}}),checks.render(rows));
 vm.runInContext(creation.slice(creation.indexOf('function skillBase('),creation.indexOf('\nfunction sourceBonuses(')),ctx);

@@ -457,8 +457,11 @@ async def archive_character(request: web.Request) -> web.Response:
     payload = await _dashboard(request, character_id)
     for field in ("notes", "attribute_points", "talent_points", "rewarded_level"):
         payload["character"].pop(field, None)
-    payload.pop("talentLibrary", None)
     payload.pop("sigils", None)
+    payload.pop("recipients", None)
+    payload.pop("combatQuickbar", None)
+    for item in payload["inventory"]:
+        item.pop("notes", None)
     return web.json_response({"ok": True, **payload})
 
 
@@ -1032,7 +1035,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261015-5", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6", "skillChecksVersion":"20261015-3"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261015-5", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6", "skillChecksVersion":"20261015-3", "archiveRecordVersion":"20261015-1", "discordCommandsVersion":"20261015-1"})
 
 
 async def _player_maps(request,cid):
