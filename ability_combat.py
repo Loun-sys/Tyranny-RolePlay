@@ -40,6 +40,11 @@ def execute(session,actor,target,talent):
     battle.player_position=(actor.x,actor.y);battle.player_health=actor.health;battle.player_health_max=actor.health_max
     battle.initialized=True;battle.cooldowns={'ability:'+rule['key']:actor.cooldowns.get(talent['name'],0)}
     battle.targets={u.key:{'name':u.name,'healthMax':u.health_max,'armor':actor_derived(u,False)['armor'],'defenses':actor_derived(u,False)['defenses'],'team':'enemy' if u.team!=actor.team else 'ally'} for u in session.combatants.values() if u is not actor}
+    for unit in session.combatants.values():
+        if unit is actor:continue
+        d=actor_derived(unit,False)
+        for field in ('armorByType','incomingConversions','incomingDamageMultiplier','disengagementDefenseBonus'):
+            battle.targets[unit.key][field]=d[field]
     battle.target_healths={u.key:u.health for u in session.combatants.values() if u is not actor}
     battle.target_positions={u.key:(u.x,u.y) for u in session.combatants.values() if u is not actor}
     battle.conditions={u.key:copy.deepcopy(getattr(u,'consumable_states',{})) for u in session.combatants.values() if u is not actor}

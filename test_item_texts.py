@@ -139,7 +139,7 @@ class MasterTalentApiTests(unittest.IsolatedAsyncioTestCase):
     async def test_public_archive_does_not_receive_master_catalog(self):
         from registration_api import archive_character
         request = SimpleNamespace(match_info={'character_id':'7'})
-        with patch('registration_api._dashboard',AsyncMock(return_value={'character':{}})):
+        with patch('registration_api._dashboard',AsyncMock(return_value={'character':{},'inventory':[]})):
             response = await archive_character(request)
         self.assertNotIn('masterFactionTalents',json.loads(response.text))
 

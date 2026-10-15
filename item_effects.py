@@ -57,7 +57,7 @@ def equip_modifiers(item):
     for e in game.get('statusEffects',[]):
         if not unconditional(e):conditional.append(e);continue
         stat=e.get('AffectsStat');value=float(e.get('Value',0));key=STATS.get(stat)
-        if stat==2046:key=SKILLS.get(e.get('Skill'))
+        if stat==2046:key='Магические навыки' if not e.get('Skill') else SKILLS.get(e.get('Skill'))
         if stat==14:
             if e.get('DmgType') in DAMAGE_TYPES:add(typed,DAMAGE_TYPES[e['DmgType']],value)
             else:add(flat,'Броня',value)
@@ -68,6 +68,7 @@ def equip_modifiers(item):
             label={2000:'Перезарядка',181:'Максимум здоровья',2166:'Передвижение',45:'Урон',153:'Сила заклинаний',226:'Урон ближнего боя',188:'Получаемый урон',169:'Получаемое лечение'}[stat]
             multiply[label]=multiply.get(label,1)*value
         elif key:add(flat,key,value)
+        elif stat in {5,27}:add(flat,{5:'Точность дальних атак',27:'Добавочный безоружный урон'}[stat],value)
         elif stat in {204,215}:add(flat,{204:'Эффективность расходников',215:'Восстановление смены оружия'}[stat],value)
     return {'flat':flat,'percent':percent,'multiply':multiply,'armorByType':typed,'conditional':conditional}
 

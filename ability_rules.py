@@ -17,7 +17,15 @@ RAW_SUPPORTED|={2058,2073,2074,2075,2076}
 def library():
     path=Path(__file__).parent/'catalog/ability_rules.json'
     rows=json.loads(path.read_text(encoding='utf-8'))['abilities'] if path.exists() else []
-    for row in rows:row['description']=neutralize_player_reference(row.get('description',''))
+    from localization import localize_player_text
+    from gameplay_copy import adapt_gameplay_description
+    for row in rows:
+        row['description']=localize_player_text(adapt_gameplay_description(row.get('description',''),row['key']))
+        for node in row.get('nodes',[]):
+            if 'description' in node:node['description']=localize_player_text(node['description'])
+            for effect in node.get('statuses',[]):
+                if effect.get('localizedDescription'):
+                    effect['localizedDescription']=localize_player_text(effect['localizedDescription'])
     return rows
 
 @lru_cache(maxsize=1)
@@ -51,7 +59,7 @@ def resolve(value):
     return copy.deepcopy(index().get(english.casefold()))
 
 def normalize_talent(talent):
-    talent={**talent,'description':neutralize_player_reference(talent.get('description',''))}
+    talent={**talent,'description':__import__('localization').localize_player_text(talent.get('description',''))}
     row=resolve(talent)
     return {**talent,'legacyName':talent.get('legacyName',talent['name']),'name':row['name'],'description':row['description'] or talent.get('description',''),'prefab':row['key'],'icon_url':row['icon'],'mechanics':talent_mechanics(row)} if row else {**talent,'mechanics':{'effects':[],'limitation':'Не найдено соответствие в игровых файлах; механика требует проверки.'}}
 

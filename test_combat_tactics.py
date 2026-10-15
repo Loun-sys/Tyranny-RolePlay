@@ -29,9 +29,10 @@ class TacticalCombatTests(unittest.TestCase):
         for name,expected in [('miss',.15),('graze',.35),('hit',.5),('critical',0)]:self.assertAlmostEqual(result[name],expected)
         self.assertAlmostEqual(sum(result.values()),1)
 
-    def test_sequential_conversions_and_reflection(self):
+    def test_single_defensive_conversion_and_reflection(self):
         converted=outcome_distribution(0,0,critical=100,conversions={'critToHit':100,'hitToGraze':100,'grazeToMiss':100})
-        self.assertAlmostEqual(converted['miss'],1)
+        self.assertAlmostEqual(converted['miss'],.5)
+        self.assertAlmostEqual(converted['hit'],.5)
         reflected=outcome_distribution(0,0,reflections={1:1,2:1,3:1})
         self.assertAlmostEqual(reflected['reflected'],.85)
         self.assertAlmostEqual(sum(reflected.values()),1)
@@ -107,10 +108,10 @@ class TacticalCombatTests(unittest.TestCase):
     def test_preview_and_execution_share_conversion_and_armor(self):
         c,d,s=self.battle();s.targets['enemy']['incomingConversions']={'hitToGraze':100,'grazeToMiss':100}
         preview=s._attack_preview({'kind':'attack'},'enemy',d)
-        self.assertEqual(preview['hitChance'],0);self.assertEqual(preview['damageMax'],0)
+        self.assertGreater(preview['hitChance'],0);self.assertGreater(preview['damageMax'],0)
         with patch('training_combat.random.randint',return_value=100):
             result=self.act(c,d,s,kind='attack',targetId='enemy')
-        self.assertEqual(result['damage'],0);self.assertEqual(s.events[0]['result'],'Промах')
+        self.assertGreater(result['damage'],0);self.assertEqual(s.events[0]['result'],'Скользящий удар')
 
     def test_movement_route_matches_executed_path_and_opportunity(self):
         c,d,s=self.battle();s.player_position=(0,1)

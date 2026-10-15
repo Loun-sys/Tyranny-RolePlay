@@ -24,8 +24,9 @@ def outcome_distribution(accuracy, defense, critical=0, graze_to_hit=0, conversi
     probabilities[1] -= promote
     probabilities[2] += promote
     unchanged[1] *= 1-max(0,min(1,graze_to_hit))
+    before_deflection=probabilities.copy()
     for index, key in [(3, 'critToHit'), (2, 'hitToGraze'), (1, 'grazeToMiss')]:
-        converted = probabilities[index] * percent_roll((conversions or {}).get(key, 0))
+        converted = before_deflection[index] * percent_roll((conversions or {}).get(key, 0))
         probabilities[index] -= converted
         probabilities[index - 1] += converted
         unchanged[index] *= 1-percent_roll((conversions or {}).get(key,0))

@@ -117,8 +117,9 @@ def modifier_details(mod, prefab=''):
                 lines.append(f'Перезарядка способности: {(value-1)*100:+.4g}%')
             elif kind==2001:
                 lines.append(f'Дистанция: {value:+g} м')
+    from localization import localize_player_text
     return {'name': mod.get('localizedName', ''),
-            'description': mod.get('localizedDescription', ''), 'effects': _unique(lines)}
+            'description': localize_player_text(mod.get('localizedDescription', '')), 'effects': _unique(lines)}
 
 
 def readout(item):

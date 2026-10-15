@@ -34,6 +34,10 @@ def npc_derived(actor,rules,inventory,states,round_number):
     from battle_store import BattleStore
     from equipment_recovery import item_recovery
     from item_texts import catalog_texts
+    from equipment_runtime import rules as equipment_rules
+    rules=dict(rules)
+    for stat,value in equipment_rules(inventory,actor.get('active_weapon_set',1)).items():
+        rules[stat]=rules.get(stat,1)*value if stat==2116 else rules.get(stat,0)+value
     catalog=catalog_texts()[0]
     roman=('I','II','III','IV')[max(1,min(4,actor.get('active_weapon_set',1)))-1]
     recovery_items=[i for i in inventory if i.get('equipped_slot') and i['equipped_slot']!='Мастерская'
@@ -43,6 +47,9 @@ def npc_derived(actor,rules,inventory,states,round_number):
     base={'attack':npc_attack(actor,rules,inventory),'defenses':actor.get('defenses',{}),
           'armor':actor.get('armor',0),'armorByType':actor.get('armorByType',{}),
           'incomingConversions':actor.get('incomingConversions',{}),
+          'deflection':actor.get('deflection',0),
+          'disengagementDefenseBonus':actor.get('disengagementDefenseBonus',0),
+          'incomingDamageMultiplier':actor.get('incomingDamageMultiplier',1),
           'healthMax':actor.get('baseHealthMax',actor['healthMax']),
           'effectiveAttributes':actor.get('attributes',{}),'effectiveSkills':actor.get('skills',{}),
           'talentRuntime':rules,'abilityAccuracyBonus':single_weapon_bonus(rules,inventory),
@@ -101,6 +108,7 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
         if opportunity:damage_bonus+=session.talent_runtime.get(23,0)
         accuracy_bonus=session.talent_runtime.get(22,0) if opportunity else 0
         defense_bonus=session._target_talent_rules(target_id).get(160,0) if opportunity else 0
+        if opportunity:defense_bonus+=session.targets[target_id].get('disengagementDefenseBonus',0)
         hit=session._roll_attack(name=name,accuracy=attack.get('accuracy',20)+accuracy_bonus,low=attack.get('damageMin',2)+damage_bonus,
             high=attack.get('damageMax',4)+damage_bonus,defense=session._defense('Парирование',target_id)+defense_bonus,
             defense_name=None if opportunity else 'Парирование',armor=session.targets[target_id].get('armor',0),target_id=target_id,
@@ -141,6 +149,8 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
     clone.targets[victim]={'name':original.get('name','Атакующий'),'healthMax':session.player_health_max,
         'armor':baseline.get('armor',0),'armorByType':baseline.get('armorByType',{}),
         'defenses':baseline.get('defenses',{}),'incomingConversions':baseline.get('incomingConversions',{}),
+        'disengagementDefenseBonus':baseline.get('disengagementDefenseBonus',0),
+        'incomingDamageMultiplier':baseline.get('incomingDamageMultiplier',1),
         'talentRuntime':getattr(session,'talent_runtime',{}),'team':'enemy',
         'attack':baseline.get('attack',{}),'combatDerived':source_derived,
         'inventory':getattr(session,'consumable_inventory',[]),'character':original,
@@ -168,6 +178,7 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
         if opportunity:damage_bonus+=rules.get(23,0)
         accuracy_bonus=rules.get(22,0) if opportunity else 0
         defense_bonus=clone._target_talent_rules(victim).get(160,0) if opportunity else 0
+        if opportunity:defense_bonus+=clone.targets[victim].get('disengagementDefenseBonus',0)
         hit=clone._roll_attack(name=name,accuracy=attack.get('accuracy',20)+accuracy_bonus,low=attack.get('damageMin',2)+damage_bonus,high=attack.get('damageMax',4)+damage_bonus,
             defense=clone._defense('Парирование',victim)+defense_bonus,defense_name=None if opportunity else 'Парирование',armor=clone.targets[victim]['armor'],
             penetration=attack.get('penetration',0),target_id=victim,attack_mode='melee',allow_reactions=False)

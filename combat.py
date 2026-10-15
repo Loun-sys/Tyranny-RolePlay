@@ -273,6 +273,8 @@ def apply_equipment(unit: Combatant) -> None:
     unit.damage_min=derived['attack']['damageMin'];unit.damage_max=derived['attack']['damageMax']
     unit.recovery=derived['attack']['recovery'];unit.health_max=derived['healthMax']
     unit.equipment_defenses=derived['defenses'];unit.equipment_armor_by_type=derived['armorByType']
+    unit.equipment_conversions=derived['incomingConversions']
+    unit.equipment_disengagement_defense=derived.get('disengagementDefenseBonus',0)
     unit.equipment_penetration=derived['attack']['penetration'];unit.equipment_incoming_damage=derived['incomingDamageMultiplier']
     primary=next((i for i in active_equipment(inventory,unit.active_weapon_set) if 'правая рука' in i.get('equipped_slot','')),None)
     unit.damage_type=DAMAGE_TYPES.get(game_data(primary or {}).get('attack',{}).get('DamageData',{}).get('Type'),'Рубящий')
@@ -324,6 +326,11 @@ def resolve_attack(attacker: Combatant, target: Combatant, *, accuracy: int | No
         quality, multiplier = "попадание", 1
     else:
         quality, multiplier = "критическое попадание", 1.5
+    conversions=getattr(target,'equipment_conversions',{})
+    for current,key,new,new_multiplier in [('критическое попадание','critToHit','попадание',1),('попадание','hitToGraze','скользящий удар',.5),('скользящий удар','grazeToMiss','промах',0)]:
+        if quality==current and conversions.get(key,0) and random.randint(1,100)<=conversions[key]:
+            quality,multiplier=new,new_multiplier
+            break
     if multiplier == 0:
         return f"**{attacker.name}** → **{target.name}**: промах ({roll} + {attack_accuracy} − {target_defense})."
     low, high = damage or (attacker.damage_min, attacker.damage_max)
@@ -543,7 +550,7 @@ class DirectionButton(discord.ui.Button):
         if controllers and not actor.disengaged:
             before = actor.health
             for enemy in controllers:
-                line = "⚡ Атака по возможности: " + resolve_attack(enemy, actor, defense="Уклонение")
+                line = "⚡ Атака по возможности: " + resolve_attack(enemy, actor, defense="Уклонение",defense_bonus=getattr(actor,'equipment_disengagement_defense',0))
                 self.session.log.append(line)
                 if not actor.alive:
                     break

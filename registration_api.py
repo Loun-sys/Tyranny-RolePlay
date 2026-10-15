@@ -267,6 +267,9 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     from talent_runtime import attribute_skill_delta
     skills={name:round(_apply_property(row['value']+attribute_skill_delta(name,character['attributes'],attrs),active_items,name))
             for name,row in character['skills'].items()}
+    from constants import MAGIC_SKILLS
+    for name in skills:
+        if name in MAGIC_SKILLS:skills[name]=round(_apply_property(skills[name],active_items,'Магические навыки'))
     quickness = attrs.get("Быстрота", 10)
     resolve = attrs.get("Стойкость", 10)
     base_defenses = {
@@ -295,13 +298,16 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     }
     attack_skill = skill_by_category.get((primary or {}).get("category"), "Безоружный бой")
     accuracy = round(_apply_property(skills.get(attack_skill,0), active_items, "Точность", "Accuracy"))
+    if attack_skill in {'Луки','Дротики','Волшебный посох'}:
+        accuracy=round(_apply_property(accuracy,active_items,'Точность дальних атак'))
     might_multiplier = max(.1, 1 + (attrs.get("Сила", 10) - 10) * .03)
     damage_min = round(sum(int(item.get("damage_min") or 0) for item in weapons) * might_multiplier)
     damage_max = round(sum(int(item.get("damage_max") or 0) for item in weapons) * might_multiplier)
     if not damage_max:
         from item_effects import unarmed_damage
         fists=next((unarmed_damage(i) for i in active_items if unarmed_damage(i)[1]>0),(2,4))
-        damage_min, damage_max = max(1, round(fists[0] * might_multiplier)), max(2, round(fists[1] * might_multiplier))
+        bonus=_apply_property(0,active_items,'Добавочный безоружный урон')
+        damage_min, damage_max = max(1, round((fists[0]+bonus) * might_multiplier)), max(2, round((fists[1]+bonus) * might_multiplier))
     melee=(primary or {}).get('category') not in {'Луки','Метательное оружие','Посохи'}
     damage_min=round(_apply_property(damage_min,active_items,'Урон','Урон ближнего боя') if melee else _apply_property(damage_min,active_items,'Урон'))
     damage_max=round(_apply_property(damage_max,active_items,'Урон','Урон ближнего боя') if melee else _apply_property(damage_max,active_items,'Урон'))
@@ -325,6 +331,9 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     recovery = _apply_property(recovery, active_items, "Восстановление", "Recovery")
     from talent_runtime import effects as talent_effects, equipment_attack, single_weapon_bonus
     runtime=talent_effects(character.get('talents',[]),active_items,active_set)
+    from equipment_runtime import rules as equipment_rules
+    for stat,value in equipment_rules(active_items,active_set).items():
+        runtime[stat]=runtime.get(stat,1)*value if stat==2116 else runtime.get(stat,0)+value
     if 2012 in runtime:defenses['Парирование']=defenses['Уклонение']
     attack_values=equipment_attack({"accuracy":accuracy,"damageMin":damage_min,"damageMax":damage_max,
         "splitChances":split_chances,"recovery":round(recovery,6),
@@ -340,9 +349,10 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "talentRuntime":runtime,
         "killAccuracyBonus":sum(float(e['Value']) for item in active_items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('runtimeKillBonus')),
         "abilityAccuracyBonus":single_weapon_bonus(runtime,active_items,active_set)+_apply_property(0,active_items,'Точность'),
-        "incomingConversions":{'critToHit':_apply_property(0,active_items,'Отражение критических ударов'),
-            'hitToGraze':_apply_property(0,active_items,'Отражение попаданий'),
-            'grazeToMiss':_apply_property(0,active_items,'Отражение промахов')},
+        "incomingConversions":{'critToHit':deflection+_apply_property(0,active_items,'Отражение критических ударов'),
+            'hitToGraze':deflection+_apply_property(0,active_items,'Отражение попаданий'),
+            'grazeToMiss':deflection+_apply_property(0,active_items,'Отражение промахов')},
+        "disengagementDefenseBonus":_apply_property(0,active_items,'Защита от атак по возможности'),
         "artifactAbilities": __import__('artifact_rules').equipped_artifacts(active_items),
         "effectiveAttributes": attrs,
         "effectiveSkills":skills,"armorByType":typed_armor,
@@ -1035,7 +1045,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261015-5", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6", "skillChecksVersion":"20261015-3", "archiveRecordVersion":"20261015-1", "discordCommandsVersion":"20261015-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261015-5", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6", "skillChecksVersion":"20261015-3", "archiveRecordVersion":"20261015-1", "discordCommandsVersion":"20261015-1", "armorStatsVersion":"20261015-1", "gameplayCopyVersion":"20261015-1"})
 
 
 async def _player_maps(request,cid):

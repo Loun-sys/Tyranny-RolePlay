@@ -26,13 +26,15 @@ def refresh_ability(a):
     for field in ('name','description','range','area','damageMin','damageMax','cooldown','targeting','passive'):
         if a.get('sourceVersion') or (field in a and a[field]!=old.get(field)):
             new[field]=a.get(field,new[field])
+    from localization import localize_player_text
+    new['description']=localize_player_text(new.get('description',''))
     return {**a,**new}
 
 @lru_cache(maxsize=1)
 def legacy_abilities():
-    from localization import neutralize_player_reference
+    from localization import localize_player_text
     rows=json.loads((Path(__file__).parent/'catalog/npc_abilities.json').read_text(encoding='utf-8'))['abilities']
-    for row in rows:row['description']=neutralize_player_reference(row.get('description',''))
+    for row in rows:row['description']=localize_player_text(row.get('description',''))
     return rows
 
 def ability_page(query='',kind='',offset=0):

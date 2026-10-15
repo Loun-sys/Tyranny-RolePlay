@@ -8,7 +8,10 @@ from special_effects import adapted_effects,artifact_shape
 
 @lru_cache(maxsize=1)
 def library():
-    return json.loads((Path(__file__).parent/'catalog/artifact_abilities.json').read_text(encoding='utf-8'))['items']
+    from localization import localize_player_text
+    rows=json.loads((Path(__file__).parent/'catalog/artifact_abilities.json').read_text(encoding='utf-8'))['items']
+    for row in rows.values():row['description']=localize_player_text(row.get('description',''))
+    return rows
 
 
 def equipped_artifacts(items):

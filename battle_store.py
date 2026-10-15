@@ -230,8 +230,15 @@ class BattleStore:
         d['healthMax']=max(1,round(_apply_property(d['healthMax']+attrs.get('Живучесть',10)-old.get('Живучесть',10),items,'Максимум здоровья')))
         d['cooldownMultiplier']=max(.1,1-(attrs.get('Быстрота',10)-10)*.03)*_apply_property(1,items,'Перезарядка')
         d['movementMultiplier']=_apply_property(1,items,'Передвижение')
+        d['incomingDamageMultiplier']=_apply_property(d.get('incomingDamageMultiplier',1),items,'Получаемый урон')
         d['consumableEffectiveness']=1+_apply_property(0,items,'Эффективность расходников')/100
         d['weaponSwitchRecoveryBonus']=_apply_property(0,items,'Восстановление смены оружия')
+        d['disengagementDefenseBonus']=_apply_property(d.get('disengagementDefenseBonus',0),items,'Защита от атак по возможности')
+        deflection=max(0,_apply_property(d.get('deflection',0)+dexterity,items,'Отражение'))
+        added_deflection=deflection-d.get('deflection',0)
+        d['deflection']=deflection
+        d['incomingConversions']={key:_apply_property(d.get('incomingConversions',{}).get(key,0)+added_deflection,items,label)
+            for key,label in [('critToHit','Отражение критических ударов'),('hitToGraze','Отражение попаданий'),('grazeToMiss','Отражение промахов')]}
         attack['recovery']=_apply_property(d.get('equipmentRecoveryRaw',attack.get('recovery',0)),items,'Восстановление')
         from equipment_recovery import finalize_recovery
         finalize_recovery(d)
@@ -251,6 +258,8 @@ class BattleStore:
             d=profiles[other][1].get('_baseDerived',profiles[other][1])
             engine.targets[other]={**remap(token,key,'player'),'baseHealthMax':profiles[other][1]['healthMax'],'portrait':profiles[other][0].get('portrait_url',''),'armor':d.get('armor',0),'defenses':d.get('defenses',{}),'attack':d.get('attack',{}),
                 'armorByType':d.get('armorByType',{}),'incomingConversions':d.get('incomingConversions',{}),
+                'disengagementDefenseBonus':d.get('disengagementDefenseBonus',0),
+                'incomingDamageMultiplier':d.get('incomingDamageMultiplier',1),
                 'talentRuntime':d.get('talentRuntime',{}),'team':'ally' if token['team']==t['team'] else 'enemy',
                 'combatDerived':profiles[other][1],'inventory':profiles[other][2],
                 'combatStance':s['personal'].get(other,{}).get('active_stance',''),

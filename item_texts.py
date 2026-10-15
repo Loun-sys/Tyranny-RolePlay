@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from urllib.parse import unquote
 from official_localization import official_entity
-from item_copy import adapt_item_copy, adapt_item_properties
+from item_copy import adapt_item_copy, adapt_item_properties, NEUTRAL_ITEM_LORE
 
 @lru_cache(maxsize=1)
 def catalog_texts():
@@ -25,6 +25,8 @@ def catalog_texts():
         if explicit_artifact(row):row['quality']='Артефакт'
         for field in ['description','lore']:
             row[field] = clean_copy(row.get(field))
+        if source_lore := NEUTRAL_ITEM_LORE.get(row['properties']['gameData']['prefab']):
+            row['lore'] = source_lore
         row['properties'] = adapt_item_properties(row['properties'])
     return {r['properties']['gameData']['prefab']:r for r in rows}, {r['name'].casefold():r for r in rows}
 

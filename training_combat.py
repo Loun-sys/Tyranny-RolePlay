@@ -282,6 +282,11 @@ class TrainingSession:
         for effect in rule.get('effects',[]):
             if effect['side']!=side:continue
             if not condition_applies(effect,self,target):continue
+            from equipment_runtime import immune as equipment_immune
+            from talent_reactions import actor_inventory
+            equipment=getattr(self,'consumable_inventory',[]) if target=='player' else actor_inventory(self.targets[target])
+            active_set=self.active_weapon_set if target=='player' else self.targets[target].get('combatDerived',{}).get('activeWeaponSet',1)
+            if equipment_immune(equipment,effect,active_set):continue
             from talent_batch_three import immune
             if effect.get('affliction') in immunities or immune(talents,effect.get('affliction')):continue
             from talent_batch_four import condition_immune
@@ -664,6 +669,7 @@ class TrainingSession:
         player_inventory=getattr(self,'consumable_inventory',[])
         player_current=_derived({**player,'active_weapon_set':self.active_weapon_set},player_inventory+
             virtual_equipment(self.conditions.get('player',{}),self.round_number)+stance_equipment(self.active_stance))
+        player_base=_derived({**player,'active_weapon_set':self.active_weapon_set},player_inventory+stance_equipment(self.active_stance))
         clone.events=[];clone.stealthed=False;clone.suspicion={}
         clone.active_stance=npc.get('combatStance','')
         clone.targets={k:v for k,v in clone.targets.items() if k!=actor_id}
@@ -671,6 +677,8 @@ class TrainingSession:
         clone.targets[player_target]={'name':player['name'],'healthMax':self.player_health_max,'armor':player_derived['armor'],
             'armorByType':player_derived.get('armorByType',{}),'defenses':player_derived['defenses'],
             'incomingConversions':player_derived.get('incomingConversions',{}),
+            'disengagementDefenseBonus':player_derived.get('disengagementDefenseBonus',0),
+            'incomingDamageMultiplier':player_base.get('incomingDamageMultiplier',1),
             'talentRuntime':player_derived.get('talentRuntime',{}),
             'combatDerived':player_current,'inventory':player_inventory,
             'combatStance':self.active_stance,
@@ -837,6 +845,11 @@ class TrainingSession:
             self.grid.distance(self.player_position,self.target_positions[target_id]),
             self.player_health/max(1,self.player_health_max),incoming_count(self,'player'))
         accuracy+=round(context['accuracy']);multiplier*=context['multiplier']
+        from equipment_runtime import attack_modifiers as armor_attack
+        equipment_context=armor_attack(getattr(self,'consumable_inventory',[]),
+            target_fraction=self.target_healths[target_id]/max(1,self.targets[target_id]['healthMax']),
+            night=bool(self.custom_map and self.custom_map.get('timeOfDay')=='night'),active_set=self.active_weapon_set)
+        multiplier*=equipment_context['multiplier']
         bonus=sum(s.get('source',{}).get('Value',0) for s in self.conditions.get('player',{}).values() if s.get('source',{}).get('runtimeKillBonus'))
         accuracy+=round(bonus-getattr(self,'runtime_derived',getattr(self,'reaction_source_derived',{})).get('killAccuracyBonus',0))
         accuracy+=round(max((s['source']['Value'] for s in statuses.values() if s.get('source',{}).get('AffectsStat')==2170 and s.get('until',0)>=self.round_number),default=0))
@@ -866,6 +879,8 @@ class TrainingSession:
         if gravelight and self.custom_map and self.custom_map.get('timeOfDay')=='night':multiplier*=getattr(self,'talent_runtime',{}).get(2115,1)
         reflection=max((float(s.get('source',{}).get('Value',0))/100 for s in statuses.values() if s.get('source',{}).get('AffectsStat')==2130 and s.get('until',0)>=self.round_number),default=0) if crafted_spell else 0
         return {'accuracy':accuracy,'defense':defense,'armor':armor,'multiplier':multiplier,
+                'incomingMultiplier':self.targets[target_id].get('incomingDamageMultiplier',1),
+                'equipmentCriticalChance':equipment_context['criticalChance'],
                 'criticalMultiplier':context['criticalMultiplier']+critical_bonus,'conversions':conversions,
                 'spellConversions':spell_conversions(statuses,self.round_number) if crafted_spell else {},
                 'reflections':{i:max(reflection,reflection_chance(defender_rules,attack_mode,result)) for i,result in
@@ -892,7 +907,7 @@ class TrainingSession:
         effective_armor=max(0,armor-penetration)
         damage=max(1,round(raw-effective_armor)) if raw else 0
         from consumables import receive_damage
-        damage=receive_damage(statuses if mutate else copy.deepcopy(statuses),damage)
+        damage=receive_damage(statuses if mutate else copy.deepcopy(statuses),round(damage*parameters.get('incomingMultiplier',1)))
         return damage,effective_armor
 
     def _attack_preview(self, action, target, derived):
@@ -942,7 +957,7 @@ class TrainingSession:
                 armor=self.targets[target]['armor'],target_id=target,damage_type=t.lower())['armor']}
                 for t in weapon['damageTypes']]
         distribution=outcome_distribution(parameters['accuracy'],parameters['defense']+cover,
-            derived.get('attack',{}).get('criticalChance',0),
+            derived.get('attack',{}).get('criticalChance',0)+parameters['equipmentCriticalChance'],
             getattr(self,'talent_runtime',{}).get(102,0),parameters['conversions'],parameters['reflections'],parameters['spellConversions'])
         bounds=[]
         for label,quality in [('graze',.5),('hit',1),('critical',parameters['criticalMultiplier'])]:
@@ -1104,7 +1119,7 @@ class TrainingSession:
         index=roll_quality(roll+accuracy-defense-cover_bonus)
         result=['Промах','Скользящий удар','Попадание','Критическое попадание'][index]
         quality=[0,.5,1,parameters['criticalMultiplier']][index]
-        critical_chance=getattr(self,'runtime_derived',{}).get('attack',{}).get('criticalChance',0)
+        critical_chance=getattr(self,'runtime_derived',{}).get('attack',{}).get('criticalChance',0)+parameters['equipmentCriticalChance']
         converted=False
         if result=='Попадание' and critical_chance and random.randint(1,100)<=critical_chance:
             result,quality='Критическое попадание',parameters['criticalMultiplier']
@@ -1113,7 +1128,9 @@ class TrainingSession:
             if random.random()<self.talent_runtime[102]:result,quality,converted='Попадание',1,True
         conversions=parameters['conversions']
         for current,key,new,new_quality in [('Критическое попадание','critToHit','Попадание',1),('Попадание','hitToGraze','Скользящий удар',.5),('Скользящий удар','grazeToMiss','Промах',0)]:
-            if result==current and conversions.get(key,0) and random.randint(1,100)<=conversions[key]:result,quality,converted=new,new_quality,True
+            if result==current and conversions.get(key,0) and random.randint(1,100)<=conversions[key]:
+                result,quality,converted=new,new_quality,True
+                break  # One defensive downgrade, never critical -> miss in one attack.
         if not converted:
             key,new,new_quality=('critToHit','Попадание',1) if result=='Критическое попадание' else ('hitToGraze','Скользящий удар',.5)
             if result in {'Критическое попадание','Попадание'} and parameters['spellConversions'].get(key,0) and random.randint(1,100)<=parameters['spellConversions'][key]:
@@ -1141,7 +1158,13 @@ class TrainingSession:
             # or reactive field are consumed. The new victim uses its own armor.
             derived=getattr(self,'runtime_derived',{})
             key={'физического':'Дробящий','дробящего':'Дробящий','колющего':'Колющий','рубящего':'Рубящий','огненного':'Огненный','ледяного':'Ледяной','электрического':'Электрический','магического':'Магический'}.get(damage_type,damage_type.capitalize())
-            reflected_parameters={**parameters,'armor':derived.get('armorByType',{}).get(key,derived.get('armor',0))}
+            from item_effects import active_equipment
+            from ability_rules import passive_equipment,stance_equipment
+            from registration_api import _apply_property
+            inventory=getattr(self,'consumable_inventory',[])
+            permanent=active_equipment(inventory,self.active_weapon_set)+passive_equipment(getattr(self,'runtime_talents',[]),inventory,self.active_weapon_set)+stance_equipment(self.active_stance)
+            reflected_parameters={**parameters,'armor':derived.get('armorByType',{}).get(key,derived.get('armor',0)),
+                                  'incomingMultiplier':_apply_property(1,permanent,'Получаемый урон')}
             shield(self,'player',hit=bool(raw))
             reflected=self._attack_damage(raw,quality,reflected_parameters,penetration,'player',mutate=True)[0]
             from talent_batch_four import share_damage,on_damage as fourth_damage,on_death

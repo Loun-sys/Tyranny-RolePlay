@@ -102,4 +102,5 @@ def localize_game_text(value: str) -> str:
 
 def localize_player_text(value: str) -> str:
     """Gameplay prose only; item names and historical lore keep their identities."""
-    return neutralize_player_reference(localize_game_text(value))
+    from gameplay_copy import adapt_gameplay_description
+    return neutralize_player_reference(localize_game_text(adapt_gameplay_description(value)))

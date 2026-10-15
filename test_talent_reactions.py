@@ -373,7 +373,7 @@ class RiposteTests(unittest.TestCase):
     def test_final_converted_miss_triggers_reaction(self):
         _,_,s=session();duelist(s);s.targets['enemy']['incomingConversions']={'hitToGraze':100,'grazeToMiss':100}
         before=s.player_health
-        with patch('training_combat.random.randint',side_effect=[80,1,1,80,10]),patch('training_combat.random.random',return_value=0):
+        with patch('training_combat.random.randint',side_effect=[40,1,80,10]),patch('training_combat.random.random',return_value=0):
             hit=s._roll_attack(name='Удар',accuracy=0,low=10,high=10,defense=0,armor=0)
         self.assertEqual(hit['result'],'Промах');self.assertLess(s.player_health,before)
 
