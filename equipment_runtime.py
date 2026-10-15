@@ -4,6 +4,7 @@ from item_effects import active_equipment, game_data, unconditional
 
 def source_effects(inventory, active_set=1):
     for item in active_equipment(inventory, active_set):
+        if item.get('equipped_slot')=='Эффект':continue
         game=game_data(item)
         for effect in game.get('statusEffects', []):
             if unconditional(effect):yield item,effect

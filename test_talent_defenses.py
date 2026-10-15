@@ -51,10 +51,10 @@ class TalentDefenseTests(unittest.TestCase):
 
     def test_blade_dancing_actual_damage_is_reduced(self):
         s=self.target('PSV_PC_Agility_BladeDancing');s.targets['dummy']['defenses']['Уклонение']=0
-        # First roll hits, conversion rolls fall below 10%: hit -> graze -> miss.
-        with patch('training_combat.random.randint',side_effect=[80,1,1]):
+        # One defensive downgrade: a hit becomes a graze, not a miss.
+        with patch('training_combat.random.randint',side_effect=[80,1,10]):
             hit=s._roll_attack(name='Удар',accuracy=0,low=10,high=10,defense=0,armor=0,attack_mode='melee')
-        self.assertEqual(hit['damage'],0)
+        self.assertEqual(hit['damage'],5)
 
     def test_arrowcatch_reflects_into_attacker_health(self):
         s=self.target('PSV_PC_Ranged_Arrowcatch');s.targets['dummy']['defenses']['Уклонение']=0

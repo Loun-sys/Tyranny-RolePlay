@@ -113,6 +113,16 @@ class ArmorRuntimeTests(unittest.TestCase):
         p=s._attack_parameters(accuracy=0,defense=0,armor=0,target_id='enemy')
         self.assertAlmostEqual(p['criticalMultiplier'],1.65)
 
+    def test_item_bonus_and_highest_talent_rank_do_not_double_count(self):
+        from test_talent_runtime import actor
+        from item_effects import unarmed_damage
+        c=actor('PSV_Comp_Beastwoman_NaturalWeaponry_1of5','PSV_Comp_Beastwoman_NaturalWeaponry_4of5')
+        gear=armor('UNIQUE_Leather_GLOVE_RockbiterVambraces')
+        d=_derived(c,[gear]);low,high=unarmed_damage(gear)
+        bonus=equip_bonuses(gear)['Добавочный безоружный урон']
+        self.assertEqual(d['attack']['damageMin'],low+bonus+13)
+        self.assertEqual(d['attack']['damageMax'],high+bonus+13)
+
     def test_reflection_uses_new_victims_damage_reduction(self):
         c,d,s=session()
         s.targets['enemy'].update(incomingDamageMultiplier=.5,talentRuntime={2138:100})
