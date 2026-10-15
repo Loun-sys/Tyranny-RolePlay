@@ -31,6 +31,10 @@ class ItemTextTests(unittest.TestCase):
         self.assertIn('неполон и требует дальнейшего изучения', rows['Research_Scroll_Library_Baneward']['lore'])
         self.assertIn('нужные сигилы', rows['LibraryResearch_Artifact_HeartsBlood']['lore'])
         self.assertNotIn('нанесете', rows['LibraryResearch_Artifact_HeartsBlood']['lore'])
+        tincture = rows['Recipe_Scroll_Infirmary_Mental_Freedom']['lore']
+        self.assertEqual(tincture, 'По этому рецепту Скованный Ремеслом может изготовить настойку «глоток прозрения» при наличии нужных ингредиентов.')
+        self.assertNotIn('Вы можете', tincture)
+        self.assertNotIn('восстановить', rows['Recipe_Item_Forge_Skorn_Metal']['lore'])
 
     def test_source_metadata_and_real_world_lore_are_not_removed(self):
         props = {'gameData':{'localizedDescription':'Изготовить в кузне Шпиля.', 'Value':2.5},
