@@ -18,6 +18,16 @@ def inspection_effect(effect):
     This formats source rules; it does not pretend unsupported procs execute.
     """
     stat=effect.get('AffectsStat');value=float(effect.get('Value',0))
+    trigger=effect.get('TriggerAdjustment',{})
+    if trigger.get('Type') in {8,9,12}:
+        adjusted=value+float(trigger.get('ValueAdjustment',0))
+        if stat in {45,188,2000,181,2166,153,226,169}:adjusted-=1
+        condition=('При наличии травмы' if trigger['Type']==12 else
+                   f"При здоровье {'ниже' if trigger['Type']==8 else 'выше'} {float(trigger.get('TriggerValue',0))*100:g}%")
+        text=condition+': '+inspection_effect({**effect,'Value':adjusted,'TriggerAdjustment':{}})
+        if trigger.get('DisplayType')==2:
+            text=inspection_effect({**effect,'TriggerAdjustment':{}})+'; '+text
+        return text
     extra=float(effect.get('ExtraValue',0));text=''
     percentages={104:'Задевания становятся промахами',107:'Попадания становятся критическими',74:'Критические попадания становятся обычными'}
     multipliers={153:'Сила заклинаний',170:'Получаемый урон критических попаданий',2169:'Урон ночью'}

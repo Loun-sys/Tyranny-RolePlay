@@ -162,6 +162,8 @@ def party_kill(session):
         session.log.append('Смертоносный натиск: живые союзники восстанавливают 5% максимального здоровья.')
 
 def on_death(session,target,before):
+    from equipment_runtime import on_death as equipment_death
+    equipment_death(session,target,before)
     health=session.player_health if target=='player' else session.target_healths.get(target,0)
     if before<=0 or health>0:return
     talents=getattr(session,'runtime_talents',[]) if target=='player' else session.targets[target].get('abilities',[])

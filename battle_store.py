@@ -216,17 +216,21 @@ class BattleStore:
         d['abilityAccuracyBonus']=d.get('abilityAccuracyBonus',0)+_apply_property(0,items,'Точность')
         d['killAccuracyBonus']=sum(float(e['Value']) for item in items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('runtimeKillBonus'))
         for name,value in d['effectiveSkills'].items():d['effectiveSkills'][name]=round(_apply_property(value+attribute_skill_delta(name,old,attrs),items,name))
+        for name in d['effectiveSkills']:d['effectiveSkills'][name]=round(_apply_property(d['effectiveSkills'][name],items,'Все навыки'))
+        attack['accuracy']=round(_apply_property(attack['accuracy'],items,'Все навыки'))
         for name,value in d['defenses'].items():
             delta=(attrs.get('Стойкость',10)-old.get('Стойкость',10))*1.5
             if name=='Выносливость':delta+=strength*.5
             elif name=='Воля':delta+=(attrs.get('Живучесть',10)-old.get('Живучесть',10))*.5
             elif name=='Магия':delta+=(attrs.get('Смекалка',10)-old.get('Смекалка',10))*.5
             else:delta=attribute_skill_delta(name,old,attrs)
+            if name in {'Парирование','Уклонение'}:delta+=_apply_property(0,items,'Все навыки')
             d['defenses'][name]=round(_apply_property(value+delta,items,name))
         d['armor']=max(0,_apply_property(d['armor'],items,'Броня'))
         armor_bonus=sum(float(e.get('Value',0)) for item in items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('AffectsStat')==32)
         d['armor']+=derived.get('armor',0)*armor_bonus
-        d['armorByType']={k:v*(1+armor_bonus) for k,v in derived.get('armorByType',{}).items()}
+        from item_effects import armor_by_type
+        d['armorByType']={k:v*(1+armor_bonus)+sum(armor_by_type(item).get(k,0) for item in items) for k,v in derived.get('armorByType',{}).items()}
         d['healthMax']=max(1,round(_apply_property(d['healthMax']+attrs.get('Живучесть',10)-old.get('Живучесть',10),items,'Максимум здоровья')))
         d['cooldownMultiplier']=max(.1,1-(attrs.get('Быстрота',10)-10)*.03)*_apply_property(1,items,'Перезарядка')
         d['movementMultiplier']=_apply_property(1,items,'Передвижение')
@@ -259,6 +263,7 @@ class BattleStore:
             engine.targets[other]={**remap(token,key,'player'),'baseHealthMax':profiles[other][1]['healthMax'],'portrait':profiles[other][0].get('portrait_url',''),'armor':d.get('armor',0),'defenses':d.get('defenses',{}),'attack':d.get('attack',{}),
                 'armorByType':d.get('armorByType',{}),'incomingConversions':d.get('incomingConversions',{}),
                 'disengagementDefenseBonus':d.get('disengagementDefenseBonus',0),
+                'equipmentConditionalHealthFraction':d.get('equipmentConditionalHealthFraction',1),
                 'incomingDamageMultiplier':d.get('incomingDamageMultiplier',1),
                 'talentRuntime':d.get('talentRuntime',{}),'team':'ally' if token['team']==t['team'] else 'enemy',
                 'combatDerived':profiles[other][1],'inventory':profiles[other][2],
@@ -477,7 +482,8 @@ class BattleStore:
                     async with self.db.connect() as c:
                         saved=await c.execute_fetchall('SELECT amount FROM retained_breath WHERE character_id=? AND expires>?',(t['characterId'],time.time()))
                         if saved:retained=saved[0]['amount']
-                s['personal'].setdefault(token,{})['breath']=min(breath_limit(talents),retained+int(effects(talents).get(2099,0)))
+                start_breath=profiles[token][1].get('talentRuntime',{}).get(2099,0)
+                s['personal'].setdefault(token,{})['breath']=min(breath_limit(talents),retained+int(start_breath))
                 roll=random.randint(1,20);bonus=initiative_bonus(profiles[token][0].get('attributes',{}).get('Быстрота',10))
                 s['initiative'].append({'id':token,'name':t['name'],'roll':roll,'bonus':bonus,'total':roll+bonus})
             s['initiative'].sort(key=lambda i:-i['total']);s['currentId']=s['initiative'][0]['id'];row['status']='active'

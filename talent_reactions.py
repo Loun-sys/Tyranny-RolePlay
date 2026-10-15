@@ -57,10 +57,14 @@ def npc_derived(actor,rules,inventory,states,round_number):
     base['attack']['recovery']=recovery
     from ability_rules import passive_equipment,stance_equipment
     persistent=passive_equipment(actor.get('abilities',[]),inventory)+stance_equipment(actor.get('combatStance',''))
-    modifiers=virtual_equipment(states,round_number)+persistent
+    from equipment_runtime import conditional_equipment
+    fraction=actor.get('health',actor['healthMax'])/max(1,actor['healthMax'])
+    conditional=conditional_equipment(inventory,fraction,actor.get('wounds',0),actor.get('active_weapon_set',1))
+    base['equipmentConditionalHealthFraction']=fraction
+    modifiers=virtual_equipment(states,round_number)+persistent+conditional
     attributes=virtual_equipment({k:v for k,v in states.items() if v.get('source',{}).get('AffectsStat') in {56,57,58,59,99,100}},round_number)
     derived=BattleStore._npc_modifiers(base,modifiers)
-    derived['_baseDerived']=BattleStore._npc_modifiers(base,attributes+persistent)
+    derived['_baseDerived']=BattleStore._npc_modifiers(base,attributes+persistent+conditional)
     return derived
 
 
@@ -150,6 +154,7 @@ def free_attack(session,source_id,target_id,name,*,chance=1,damage_bonus=0,abili
         'armor':baseline.get('armor',0),'armorByType':baseline.get('armorByType',{}),
         'defenses':baseline.get('defenses',{}),'incomingConversions':baseline.get('incomingConversions',{}),
         'disengagementDefenseBonus':baseline.get('disengagementDefenseBonus',0),
+        'equipmentConditionalHealthFraction':baseline.get('equipmentConditionalHealthFraction',1),
         'incomingDamageMultiplier':baseline.get('incomingDamageMultiplier',1),
         'talentRuntime':getattr(session,'talent_runtime',{}),'team':'enemy',
         'attack':baseline.get('attack',{}),'combatDerived':source_derived,

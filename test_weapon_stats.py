@@ -12,9 +12,9 @@ from test_combat_tactics import TacticalCombatTests
 class WeaponStatsTests(unittest.TestCase):
     def item(self,name):return copy.deepcopy(catalog_texts()[1][name.casefold()])
 
-    def test_all_302_weapons_preserve_source_types_ranges_and_quality_recovery(self):
+    def test_all_source_weapons_preserve_types_ranges_and_quality_recovery(self):
         weapons=[i for i in catalog_texts()[0].values() if readout(i)]
-        self.assertEqual(len(weapons),302)
+        self.assertEqual(len(weapons),317)  # Includes the independently audited recruitment prefabs.
         for i in weapons:
             with self.subTest(item=i['name']):
                 g=game_data(i);a,melee=source_attack(g['prefab']);s=readout(i)

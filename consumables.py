@@ -125,7 +125,7 @@ def virtual_equipment(states,round_number):
     for state in list(states.values()):
         if state.get('consumable') and state['until']>=round_number:
             e=state.get('source',{})
-            if e.get('AffectsStat') in STATS or e.get('AffectsStat') in {7,8,9,14,32,84,140,2046,226,2166,2000,181,45,153,188,169}:
+            if e.get('AffectsStat') in STATS or e.get('AffectsStat') in {7,8,9,14,32,84,140,2046,2098,226,2166,2000,181,45,153,188,169}:
                 e=copy.deepcopy(e);e['Apply']=0;e['ApplicationPrerequisites']=[];e['TriggerAdjustment']={}
                 if e['AffectsStat']==2046 and not e.get('Skill'):
                     for skill_id in {2030,2031,2032,2034,2035,2036,2037,2040,2045,2064,2065}:

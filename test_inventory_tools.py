@@ -17,7 +17,7 @@ class InventoryToolsTests(unittest.IsolatedAsyncioTestCase):
             if item['category']=='Одноручное оружие':self.assertEqual(item['hands'],1,item['name'])
             if item['category'] in {'Двуручное оружие','Луки','Посохи'}:self.assertEqual(item['hands'],2,item['name'])
             self.assertIn('обе руки' if item['hands']==2 else 'одну руку',item['properties']['Хват'],item['name'])
-        self.assertEqual(audited,318)
+        self.assertEqual(audited,354)  # 317 source weapons and 37 shields.
 
     async def test_two_handed_weapon_occupies_both_hands_and_equipment_is_free(self):
         async with self.db.connect() as conn:

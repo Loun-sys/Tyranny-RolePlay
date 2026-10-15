@@ -172,7 +172,9 @@ class TrainingSession:
         self.initialized = True
         from song_rules import breath_limit
         from talent_runtime import effects
-        self.breath=min(breath_limit(character.get('talents',[])),int(effects(character.get('talents',[])).get(2099,0)))
+        from equipment_runtime import rules as equipment_rules
+        start_bonus=equipment_rules(getattr(self,'consumable_inventory',[]),self.active_weapon_set).get(2099,0)
+        self.breath=min(breath_limit(character.get('talents',[])),int(effects(character.get('talents',[])).get(2099,0)+start_bonus))
         self.movement_remaining=self._movement_limit()
         self.log.append("Инициатива: " + " → ".join(row["name"] for row in self.initiative) + ".")
         for entry in self.initiative:
@@ -236,9 +238,20 @@ class TrainingSession:
     def _defense(self, name, target_id=None, include_guard=True):
         target=target_id or self.selected_target_id
         base=self.targets[target]['defenses'].get(name,30)
+        from equipment_runtime import conditional_equipment
+        from talent_reactions import actor_inventory
+        equipment=actor_inventory(self.targets[target]);snapshot=self.targets[target].get('equipmentConditionalHealthFraction',1)
+        current=self.target_healths[target]/max(1,self.targets[target]['healthMax'])
+        from registration_api import _apply_property
+        old=conditional_equipment(equipment,snapshot,active_set=self.targets[target].get('active_weapon_set',1))
+        new=conditional_equipment(equipment,current,active_set=self.targets[target].get('active_weapon_set',1))
+        # Health-conditional armor changes Parry; wound bonuses are already in
+        # baseline attributes and must not be applied twice here.
+        base+=_apply_property(0,new,name)-_apply_property(0,old,name)
         from consumables import virtual_equipment
         from registration_api import _apply_property
         base=_apply_property(base,virtual_equipment(self.conditions.get(target,{}),self.round_number),name)
+        if name in {'Парирование','Уклонение'}:base=_apply_property(base,virtual_equipment(self.conditions.get(target,{}),self.round_number),'Все навыки')
         if name=='Парирование' and self.target_healths[target]/max(1,self.targets[target]['healthMax'])<.5:
             from talent_batch_two import roots
             base+=sum(e['Value'] for row,e in roots(self.targets[target].get('abilities',[])) if row['key']=='ABL_HH_Sentinel_Last_Stand' and e['AffectsStat']==2026)
@@ -405,6 +418,8 @@ class TrainingSession:
         return landed
 
     def _target_talent_rules(self,target):
+        from equipment_runtime import reset_death_triggers
+        reset_death_triggers(self,target)
         from talent_runtime import effects
         if target=='player':return getattr(self,'talent_runtime',{})
         actor=self.targets.get(target,{})
@@ -442,6 +457,29 @@ class TrainingSession:
             self.events.append({'sourceId':target,'targetId':target,'result':'Периодический урон','damage':damage})
             on_death(self,target,before)
             if target!='player':self._after_enemy_kill(target,before)
+        from equipment_runtime import regeneration
+        from talent_reactions import actor_inventory
+        equipment=getattr(self,'consumable_inventory',[]) if target=='player' else actor_inventory(self.targets[target])
+        character=getattr(self,'runtime_character',{}) if target=='player' else self.targets[target].get('character',self.targets[target])
+        active_set=self.active_weapon_set if target=='player' else self.targets[target].get('active_weapon_set',1)
+        after=self.player_health if target=='player' else self.target_healths[target]
+        if after>0:
+            healing=regeneration(equipment,after/max(1,maximum),character.get('wounds',0),active_set)
+            if healing>0:
+                from item_effects import active_equipment
+                from ability_rules import passive_equipment,stance_equipment
+                from registration_api import _apply_property
+                from consumables import virtual_equipment
+                stance=self.active_stance if target=='player' else self.targets[target].get('combatStance','')
+                permanent=active_equipment(equipment,active_set)+passive_equipment(character.get('talents',character.get('abilities',[])),equipment,active_set)+stance_equipment(stance)
+                multiplier=_apply_property(1,permanent+virtual_equipment(current,round_number),'Получаемое лечение')
+                amount=min(maximum-after,math.ceil(round(maximum*healing*elapsed_seconds*multiplier,6)))
+                after+=amount
+                if amount>0:
+                    name=character.get('name',self.targets.get(target,{}).get('name','Персонаж'))
+                    self.log.append(f'{name}: экипировка восстанавливает {amount} здоровья.')
+        if target=='player':self.player_health=after
+        else:self.target_healths[target]=after
         return after
 
     def _execute_ability(self, rule, derived, inventory):
@@ -678,6 +716,7 @@ class TrainingSession:
             'armorByType':player_derived.get('armorByType',{}),'defenses':player_derived['defenses'],
             'incomingConversions':player_derived.get('incomingConversions',{}),
             'disengagementDefenseBonus':player_derived.get('disengagementDefenseBonus',0),
+            'equipmentConditionalHealthFraction':player_derived.get('equipmentConditionalHealthFraction',1),
             'incomingDamageMultiplier':player_base.get('incomingDamageMultiplier',1),
             'talentRuntime':player_derived.get('talentRuntime',{}),
             'combatDerived':player_current,'inventory':player_inventory,
@@ -716,6 +755,8 @@ class TrainingSession:
         return result
 
     def _combat_derived(self, derived):
+        from equipment_runtime import reset_death_triggers
+        reset_death_triggers(self,'player')
         import copy
         result=copy.deepcopy(derived)
         result['activeStance']=self.active_stance
@@ -830,7 +871,7 @@ class TrainingSession:
             raise ValueError("Линию обзора перекрывает препятствие.")
 
     def _attack_parameters(self, *, accuracy, defense, armor, target_id, multiplier=1,
-                           damage_type='физического', attack_mode='melee', defense_name=None, crafted_spell=False,critical_bonus=0,gravelight=False):
+                           damage_type='физического', attack_mode='melee', defense_name=None, crafted_spell=False,critical_bonus=0,gravelight=False,source_derived=None):
         """Shared, read-only attack modifiers for preview and execution."""
         statuses = self.conditions.get(target_id, {})
         from talent_runtime import incoming_defense,incoming_conversions,reflection_chance,spell_conversions
@@ -848,8 +889,16 @@ class TrainingSession:
         from equipment_runtime import attack_modifiers as armor_attack
         equipment_context=armor_attack(getattr(self,'consumable_inventory',[]),
             target_fraction=self.target_healths[target_id]/max(1,self.targets[target_id]['healthMax']),
-            night=bool(self.custom_map and self.custom_map.get('timeOfDay')=='night'),active_set=self.active_weapon_set)
+            night=bool(self.custom_map and self.custom_map.get('timeOfDay')=='night'),active_set=self.active_weapon_set,target_states=statuses)
         multiplier*=equipment_context['multiplier']
+        from equipment_runtime import conditional_equipment,spell_reflection
+        from registration_api import _apply_property
+        equipment=getattr(self,'consumable_inventory',[])
+        source_derived=source_derived if source_derived is not None else getattr(self,'runtime_derived',getattr(self,'reaction_source_derived',{}))
+        snapshot=source_derived.get('equipmentConditionalHealthFraction',1)
+        old_damage=_apply_property(1,conditional_equipment(equipment,snapshot,active_set=self.active_weapon_set),'Урон')
+        new_damage=_apply_property(1,conditional_equipment(equipment,self.player_health/max(1,self.player_health_max),active_set=self.active_weapon_set),'Урон')
+        multiplier*=new_damage/max(.01,old_damage)
         bonus=sum(s.get('source',{}).get('Value',0) for s in self.conditions.get('player',{}).values() if s.get('source',{}).get('runtimeKillBonus'))
         accuracy+=round(bonus-getattr(self,'runtime_derived',getattr(self,'reaction_source_derived',{})).get('killAccuracyBonus',0))
         accuracy+=round(max((s['source']['Value'] for s in statuses.values() if s.get('source',{}).get('AffectsStat')==2170 and s.get('until',0)>=self.round_number),default=0))
@@ -878,6 +927,9 @@ class TrainingSession:
                 conversions[key]=conversions.get(key,0)+mods.get(label,0)
         if gravelight and self.custom_map and self.custom_map.get('timeOfDay')=='night':multiplier*=getattr(self,'talent_runtime',{}).get(2115,1)
         reflection=max((float(s.get('source',{}).get('Value',0))/100 for s in statuses.values() if s.get('source',{}).get('AffectsStat')==2130 and s.get('until',0)>=self.round_number),default=0) if crafted_spell else 0
+        if crafted_spell:
+            from talent_reactions import actor_inventory
+            reflection=min(1,reflection+spell_reflection(actor_inventory(self.targets[target_id]),self.targets[target_id].get('active_weapon_set',1)))
         return {'accuracy':accuracy,'defense':defense,'armor':armor,'multiplier':multiplier,
                 'incomingMultiplier':self.targets[target_id].get('incomingDamageMultiplier',1),
                 'equipmentCriticalChance':equipment_context['criticalChance'],
@@ -950,7 +1002,7 @@ class TrainingSession:
         cover=cover if uses_cover else 0
         parameters=self._attack_parameters(accuracy=accuracy,defense=self._defense(defense,target) if defense!='Нет' else 0,
             armor=self.targets[target]['armor'],target_id=target,attack_mode=mode,
-            defense_name=defense if kind!='artifact' else None,damage_type=damage_type,crafted_spell=kind=='spell')
+            defense_name=defense if kind!='artifact' else None,damage_type=damage_type,crafted_spell=kind=='spell',source_derived=derived)
         possible_parameters=[parameters]
         if ordinary and weapon.get('randomDamage'):
             possible_parameters=[{**parameters,'armor':self._attack_parameters(accuracy=accuracy,defense=0,
@@ -1242,15 +1294,28 @@ class TrainingSession:
                 pseudo={'properties':{'gameData':{'prefab':'weapon_poison','useComponents':[{'StatusEffects':triggered}]}}}
                 self.target_healths[target_id]=apply(pseudo,self.conditions.setdefault(target_id,{}),self.round_number,self.target_healths[target_id],self.targets[target_id]['healthMax'])
                 self.log.append('Критическое попадание активировало нанесённый на оружие состав.')
+        before_log=len(self.log)
         if name in {'Обычная атака','Дополнительный удар'}:
-            before_proc=self.target_healths[target_id];before_log=len(self.log)
+            before_proc=self.target_healths[target_id]
             self._weapon_talent_procs(target_id,result)
             damage+=max(0,before_proc-self.target_healths[target_id])
-            if len(self.log)>before_log:line+=' '+' '.join(self.log[before_log:])
+        if weapon_attack and result=='Критическое попадание' and not getattr(self,'resolving_talent_proc',False):
+            from equipment_runtime import weapon_crit_procs
+            self.resolving_talent_proc=True
+            try:
+                before_proc=self.target_healths[target_id]
+                for proc in weapon_crit_procs(getattr(self,'consumable_inventory',[]),getattr(self,'runtime_derived',getattr(self,'reaction_source_derived',{})),self.active_weapon_set,attack_mode):
+                    if self.target_healths[target_id]<=0:break
+                    self._resolve_graph_attack(proc,target_id)
+                damage+=max(0,before_proc-self.target_healths[target_id])
+            finally:self.resolving_talent_proc=False
+        if len(self.log)>before_log:line+=' '+' '.join(self.log[before_log:])
         return {"result": result, "damage": damage, "roll": roll, "line": line}
 
     def _after_enemy_kill(self,target_id,before_health):
         if before_health<=0 or self.target_healths[target_id]>0 or self.targets[target_id].get('team','enemy')!='enemy':return
+        from equipment_runtime import on_kill
+        on_kill(self,target_id)
         from talent_batch_four import party_kill
         party_kill(self)
         from talent_batch_one import kill_effects

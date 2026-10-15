@@ -261,12 +261,18 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
             or str(item.get("equipped_slot", "")).startswith(f"Оружие {roman} ")
         )
     ]
+    from equipment_runtime import conditional_equipment
+    vitality=round(_apply_property(character['attributes'].get('Живучесть',10),active_items,'Живучесть'))
+    maximum=max(1,round(_apply_property(character.get('health_max',20)+vitality-character['attributes'].get('Живучесть',10),active_items,'Максимум здоровья')))
+    equipment_health_fraction=character.get('health',maximum)/maximum
+    active_items+=conditional_equipment(active_items,equipment_health_fraction,character.get('wounds',0),active_set)
     attrs = dict(character["attributes"])
     for name in attrs:
         attrs[name] = round(_apply_property(attrs[name], active_items, name))
     from talent_runtime import attribute_skill_delta
     skills={name:round(_apply_property(row['value']+attribute_skill_delta(name,character['attributes'],attrs),active_items,name))
             for name,row in character['skills'].items()}
+    for name in skills:skills[name]=round(_apply_property(skills[name],active_items,'Все навыки'))
     from constants import MAGIC_SKILLS
     for name in skills:
         if name in MAGIC_SKILLS:skills[name]=round(_apply_property(skills[name],active_items,'Магические навыки'))
@@ -279,6 +285,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "Парирование": character["skills"].get("Парирование", {}).get("value", 0)+attribute_skill_delta('Парирование',character['attributes'],attrs),
         "Уклонение": character["skills"].get("Уклонение", {}).get("value", 0)+attribute_skill_delta('Уклонение',character['attributes'],attrs),
     }
+    for name in ('Парирование','Уклонение'):base_defenses[name]=_apply_property(base_defenses[name],active_items,'Все навыки')
     defenses = {
         name: round(_apply_property(value, active_items, name, f"Защита {name}", f"{name} defense"))
         for name, value in base_defenses.items()
@@ -347,6 +354,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
     result = {
         "defenses": defenses,
         "talentRuntime":runtime,
+        "equipmentConditionalHealthFraction":equipment_health_fraction,
         "killAccuracyBonus":sum(float(e['Value']) for item in active_items for e in __import__('item_effects').game_data(item).get('statusEffects',[]) if e.get('runtimeKillBonus')),
         "abilityAccuracyBonus":single_weapon_bonus(runtime,active_items,active_set)+_apply_property(0,active_items,'Точность'),
         "incomingConversions":{'critToHit':deflection+_apply_property(0,active_items,'Отражение критических ударов'),
@@ -905,6 +913,7 @@ async def _training_character(request: web.Request, character_id: int, session: 
     if not character:
         raise web.HTTPNotFound(reason="Персонаж не найден.")
     character["active_weapon_set"] = session.active_weapon_set
+    if session.initialized:character['health']=session.player_health
     character["portrait_url"] = _portrait_url(request, character.get("portrait_url", ""))
     inventory = _clean_inventory(await db.inventory(character_id))
     spells = [spell for spell in await db.spells(character_id) if spell.get("equipped_slot") is not None]
@@ -1045,7 +1054,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261015-5", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6", "skillChecksVersion":"20261015-3", "archiveRecordVersion":"20261015-1", "discordCommandsVersion":"20261015-1", "armorStatsVersion":"20261015-1", "gameplayCopyVersion":"20261015-1"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261015-5", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6", "skillChecksVersion":"20261015-3", "archiveRecordVersion":"20261015-1", "discordCommandsVersion":"20261015-1", "armorStatsVersion":"20261015-2", "gameplayCopyVersion":"20261015-1"})
 
 
 async def _player_maps(request,cid):

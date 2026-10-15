@@ -928,6 +928,16 @@ class Database:
             from talent_batch_one import party_xp_multiplier
             members=await self._talent_party(db,character_id)
             multiplier=party_xp_multiplier(members,name)
+            from equipment_runtime import skill_xp_multiplier
+            from talent_reactions import actor_inventory
+            for member in members:
+                cid=member.get('characterId')
+                if cid and member.get('kind')!='npc':
+                    items=await db.execute_fetchall('SELECT item_catalog.*,inventory.equipped_slot FROM inventory JOIN item_catalog ON item_catalog.id=inventory.item_id WHERE inventory.character_id=?',(cid,))
+                    own=await db.execute_fetchall('SELECT active_weapon_set FROM characters WHERE id=?',(cid,))
+                    gear=[dict(i) for i in items];active_set=int(own[0]['active_weapon_set'] or 1) if own else 1
+                else:gear=actor_inventory(member);active_set=member.get('active_weapon_set',1)
+                multiplier+=skill_xp_multiplier(gear,name,active_set)-1
             carry=await db.execute_fetchall('SELECT remainder FROM skill_xp_remainders WHERE character_id=? AND name=?',(character_id,name))
             import math
             raw=max(0,int(amount))*multiplier+(float(carry[0]['remainder']) if carry else 0)
@@ -961,7 +971,7 @@ class Database:
                     if token.get('kind')=='player' and state.get('participants',{}).get(str(cid),{}).get('joined'):ids.add(cid)
                     elif token.get('kind')=='npc':npcs.append(token)
                 break
-        result=[{'talents':[dict(t) for t in await db.execute_fetchall('SELECT name FROM talents WHERE character_id=?',(cid,))]} for cid in [character_id,*sorted(ids-{character_id})]]
+        result=[{'characterId':cid,'talents':[dict(t) for t in await db.execute_fetchall('SELECT name FROM talents WHERE character_id=?',(cid,))]} for cid in [character_id,*sorted(ids-{character_id})]]
         return result+npcs
 
     async def adjust_health(self, character_id: int, delta: int) -> tuple[int, int]:
