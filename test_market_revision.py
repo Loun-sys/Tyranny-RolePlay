@@ -128,6 +128,23 @@ class MarketRevisionStoreTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(await self.db.unequip(1,ident))
         self.assertEqual((await self.db.inventory_capacity(1))['used'],1)
 
+    async def test_source_import_does_not_overwrite_same_named_forged_record(self):
+        item=copy.deepcopy(next(i for k,i in catalog_texts()[0].items() if k.startswith('KenrickRecruit_')))
+        async with self.db.connect() as c:
+            cursor=await c.execute("INSERT INTO item_catalog(name,source_url,quality,damage_min,damage_max,properties) VALUES(?,'craft://owned-name-collision','Хорошее',777,888,'{}')",(item['name'],))
+            old_id=cursor.lastrowid
+            await c.execute('INSERT INTO inventory(character_id,item_id,quantity) VALUES(1,?,1)',(old_id,))
+            before=dict((await c.execute_fetchall('SELECT * FROM item_catalog WHERE id=?',(old_id,)))[0]);await c.commit()
+        await self.db.upsert_catalog([item]);await self.db.upsert_catalog([item])
+        async with self.db.connect() as c:
+            after=dict((await c.execute_fetchall('SELECT * FROM item_catalog WHERE id=?',(old_id,)))[0])
+            imported=await c.execute_fetchall('SELECT id FROM item_catalog WHERE source_url=?',(item['source_url'],))
+            owned=(await c.execute_fetchall('SELECT item_id FROM inventory WHERE character_id=1'))[0]
+        self.assertEqual(after,before)
+        self.assertEqual(owned['item_id'],old_id)
+        self.assertEqual(len(imported),1)
+        self.assertNotEqual(imported[0]['id'],old_id)
+
     async def test_forge_upgrade_only_replaces_selected_owned_instance(self):
         from crafting import CraftingStore,SCHEMA,ORIGIN,upgrade_recipe
         base=copy.deepcopy(next(i for i in catalog_texts()[0].values() if i['slot']=='Торс' and upgrade_recipe(i) and not is_artifact(i)))

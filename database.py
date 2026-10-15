@@ -1141,6 +1141,11 @@ class Database:
                             ),
                         )
                         continue
+                # New source exports must never overwrite an already forged
+                # record solely because their display names happen to match.
+                if str(source_url).startswith('game://'):
+                    forged=await db.execute_fetchall("SELECT id FROM item_catalog WHERE name=? AND source_url LIKE 'craft://%'",(item['name'],))
+                    if forged:item['name']+=' · '+str(item.get('properties',{}).get('gameData',{}).get('prefab') or source_url[7:])
                 await db.execute(
                     """INSERT INTO item_catalog(
                        name,category,slot,quality,description,lore,image_url,source_url,value,weight,hands,
