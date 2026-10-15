@@ -9,6 +9,10 @@
 .check-skill-formula{display:block;margin:8px 0;font:12px/1.6 Arial;color:#b4a9a4}
 .check-skill-formula i{font-style:normal;color:#8c7761}
 .check-skill-formula b{color:#d6bd80}
+.check-skill-roll{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid #433329;padding-top:10px;margin-top:14px;font:12px Arial;color:#d1c0a1}
+.check-skill-roll img{width:22px;height:22px;object-fit:contain;flex:none}
+.check-skill-roll strong{margin-left:auto;font:19px Georgia,serif;color:#e4c489;white-space:nowrap}
+.check-skill-range{display:block;margin-top:9px;font:11px Arial!important;letter-spacing:0!important;color:#a99a83!important}
 #creation-check-skills{margin-top:24px;scroll-margin-top:110px}
 .creation-check-link{font:14px/1.6 Arial;color:#d2b578;text-underline-offset:4px}
 @media(min-width:1700px){.check-skill-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}

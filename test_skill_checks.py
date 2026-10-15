@@ -34,10 +34,9 @@ class SkillCheckTests(unittest.TestCase):
         c=self.checks()['Влияние']
         self.assertEqual(c['value'],29.5)
         self.assertEqual(c['diceCount'],2)
-        self.assertEqual(c['formula'],'5 / 3 + 2d6')
-        self.assertAlmostEqual(c['attributeBonus'],5/3)
-        self.assertAlmostEqual(c['minimum'],5/3+2)
-        self.assertAlmostEqual(c['maximum'],5/3+12)
+        self.assertEqual(c['formula'],'2 + 2d6')
+        self.assertEqual(c['attributeBonus'],2)
+        self.assertEqual((c['minimum'],c['maximum']),(4,14))
 
     def test_full_tens_not_nearest_tens_or_minimum_die(self):
         for value,dice in [(0,0),(9.5,0),(10,1),(19.5,1),(20,2),(29.5,2),(30,3)]:
@@ -45,13 +44,16 @@ class SkillCheckTests(unittest.TestCase):
             self.c['skills']['Знания']['value']=value
             self.assertEqual(self.checks()['Влияние']['diceCount'],dice)
 
-    def test_fractional_third_is_not_rounded_before_the_roll(self):
-        check=self.checks()['Влияние']
+    def test_attribute_third_is_rounded_before_the_roll(self):
         self.assertEqual(configuration()['attributeDivisor'],3)
-        self.assertEqual(check['attributeValue'],10)
-        self.assertAlmostEqual(check['attributeBonus'],10/3)
-        result=roll_check(check,-2,Mock(randint=Mock(side_effect=[2,6])))
-        self.assertAlmostEqual(result['total'],10/3+6)
+        for attribute,bonus in [(8,3),(9,3),(10,3),(11,4),(12,4),(13,4),(14,5),(10.5,4)]:
+            self.c['attributes']['Смекалка']=attribute
+            check=self.checks()['Влияние']
+            self.assertEqual(check['attributeValue'],attribute)
+            self.assertEqual(check['attributeBonus'],bonus)
+            result=roll_check(check,-2,Mock(randint=Mock(side_effect=[2,6])))
+            self.assertEqual(result['total'],bonus+6)
+            self.assertIsInstance(result['total'],int)
 
     def test_strongest_combat_includes_magic_but_not_defenses_or_knowledge(self):
         self.c['skills']['Управление огнём']['value']=80
@@ -86,7 +88,7 @@ class SkillCheckTests(unittest.TestCase):
         rng=Mock()
         result=roll_check(self.checks()['Влияние'],-2,rng)
         self.assertEqual(result['rolls'],[])
-        self.assertAlmostEqual(result['total'],10/3-2)
+        self.assertEqual(result['total'],1)
         rng.randint.assert_not_called()
 
     def test_invalid_modifier_is_rejected(self):
@@ -130,7 +132,7 @@ class DiscordSkillCheckTests(unittest.IsolatedAsyncioTestCase):
         embed=interaction.followup.send.await_args.kwargs['embed']
         self.assertEqual(embed.title,'Влияние · 11')
         self.assertIn('2d6',embed.description)
-        self.assertIn('5 / 3',embed.description)
+        self.assertIn('**2**',embed.description)
         self.assertIn('-2',embed.description)
         self.assertNotIn('УСПЕХ',embed.title)
         self.assertFalse(embed.footer.text)

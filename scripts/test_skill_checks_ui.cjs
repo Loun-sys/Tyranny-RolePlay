@@ -18,10 +18,18 @@ for(const fixture of payload.cases)assert.deepEqual(JSON.parse(JSON.stringify(ch
 const rows=checks.calculate(payload.rules,payload.cases[0].attributes,payload.cases[0].skills),html=checks.render(rows,{preview:true});
 for(const name of ['Запугивание','Влияние','Наблюдательность','Выносливость','Проницательность'])assert(html.includes(`data-check-skill="${name}"`));
 assert(html.includes('<h2>Вне-боевые проверки</h2>'));assert(html.includes('data-no-game-help'));assert(!html.includes('data-step-kind='));
-for(const removed of ['Это не боевая защита','модификатор:-2','Отдельных очков и опыта нет','data-help-text=','tabindex=','Влияние, восприятие и стойкость','Максимум среди','Бросок:','Без модификатора','check-skill-roll','check-skill-description','ПРОВЕРКИ ВНЕ БОЯ','<footer>'])assert(!html.includes(removed),removed);
+for(const removed of ['Это не боевая защита','модификатор:-2','Отдельных очков и опыта нет','data-help-text=','tabindex=','Влияние, восприятие и стойкость','Максимум среди','Бросок:','check-skill-description','ПРОВЕРКИ ВНЕ БОЯ','<footer>'])assert(!html.includes(removed),removed);
+assert.equal((html.match(/class="check-skill-roll"/g)||[]).length,5);
+assert.equal((html.match(/class="check-skill-range"/g)||[]).length,5);
+assert(html.includes('2</b>'));assert(html.includes('Без модификатора:'));
+for(const icon of ['health','wits','quickness','resolve','finesse'])assert(fs.existsSync(`web/assets/game-combat/icon_attribute_${icon}.png`));
+const sample=checks.calculate(payload.rules,{Смекалка:10},{Хитроумие:20,Знания:20});
+assert(checks.render(sample).includes('Без модификатора: 5–15'),'Range uses rounded third, not the full attribute');
+const zero=checks.calculate(payload.rules,{Смекалка:12},{Хитроумие:0,Знания:0});
+assert(checks.render(zero).includes('Без модификатора: 4</small>'),'Zero dice has one possible unmodified result');
 rows.Влияние.sources[0].name='<script>bad</script>';assert(!checks.render(rows).includes('<script>bad</script>'));assert(checks.render(rows).includes('&lt;script&gt;'));
 assert.deepEqual(JSON.parse(JSON.stringify(checks.calculate(null,{},{}))),{});
-for(const path of ['web/index.html','web/archive.html']){const source=fs.readFileSync(path,'utf8');assert(source.includes('skill-checks.css?v=20261015-2'));assert(source.includes('skill-checks.js?v=20261015-2'));assert(source.includes('game-help.js?v=20261015-2'))}
+for(const path of ['web/index.html','web/archive.html']){const source=fs.readFileSync(path,'utf8');assert(source.includes('skill-checks.css?v=20261015-3'));assert(source.includes('skill-checks.js?v=20261015-3'));assert(source.includes('game-help.js?v=20261015-2'))}
 const creation=fs.readFileSync('web/app.js','utf8'),archive=fs.readFileSync('web/archive.js','utf8');assert(creation.includes("checkTarget.innerHTML=SkillChecks.render(SkillChecks.calculate(state.config.checkSkills"));assert(archive.includes('${checkSkillsBox(c,data)}'));
 assert(archive.includes('${checkSkillsBox(c,d)}'),'Public archive must use the opened record, not the signed-in character');
 vm.runInContext(archive.split('\n').find(line=>line.startsWith('function checkSkillsBox(')),ctx);

@@ -747,7 +747,7 @@ async def skill_check(
     number = lambda value: f'{value:.2f}'.rstrip('0').rstrip('.').replace('.',',')
     embed = discord.Embed(title=f'{навык.value} · {number(result["total"])}', color=BRONZE)
     embed.description = (f'**{discord.utils.escape_markdown(character["name"])}**\n'
-        f'{check["attribute"]} **{number(check["attributeValue"])} / 3** + **{check["diceCount"]}d6** '
+        f'{check["attribute"]} **{number(check["attributeBonus"])}** + **{check["diceCount"]}d6** '
         f'{модификатор:+d} = **{number(result["total"])}**')
     breakdown = ' + '.join(f'{source["name"]} {number(source["value"])} × 0,5' for source in check['sources'])
     embed.add_field(name='Навык проверки',value=f'{breakdown} = **{number(check["value"])}**',inline=False)

@@ -15,7 +15,8 @@ CHECK_DEFINITIONS = (
 
 def configuration():
     return {'definitions':[dict(d, sources=list(d['sources'])) for d in CHECK_DEFINITIONS],
-            'combatSkills':list(COMBAT_CHECK_SKILLS),'pointsPerDie':10,'attributeDivisor':3}
+            'combatSkills':list(COMBAT_CHECK_SKILLS),'pointsPerDie':10,'attributeDivisor':3,
+            'attributeRounding':'nearest'}
 
 
 def _value(value):
@@ -42,10 +43,10 @@ def check_skills(attributes, skills):
         value = sum(source['value']*.5 for source in sources)
         dice = max(0,math.floor(value/10))
         attribute_value = _value(attributes.get(definition['attribute'],0))
-        attribute_bonus = attribute_value / 3
+        attribute_bonus = math.floor(attribute_value / 3 + .5)
         result[definition['name']] = {**definition,'sources':sources,'value':value,
             'attributeValue':attribute_value,'attributeBonus':attribute_bonus,'diceCount':dice,
-            'formula':f'{attribute_value} / 3 + {dice}d6',
+            'formula':f'{attribute_bonus} + {dice}d6',
             'minimum':attribute_bonus+dice,'maximum':attribute_bonus+dice*6}
     return result
 
