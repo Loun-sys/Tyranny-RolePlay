@@ -74,6 +74,7 @@ async def main():
             await store.action(qa_battle['id'],1,owner=99,payload={'operation':'order','order':['npc_1','npc_2',f'pc_{cid}',f'pc_{second}']})
             await store.action(qa_battle['id'],1,owner=99,payload={'operation':'turn','tokenId':'npc_1'})
         app.router.add_get("/api/archive", api.archive_list)
+        app.router.add_get("/api/archive/{character_id}", api.archive_character)
         app.router.add_get('/api/registration/{token}',api.registration_info)
         app.router.add_post('/api/registration/{token}',api.registration_submit)
         app.router.add_get("/media/portraits/{name}", api.portrait_media)

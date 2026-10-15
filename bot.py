@@ -26,6 +26,7 @@ from mechanics_data import MECHANICS
 from registration_api import start_registration_api
 from talent_data import TALENT_BY_NAME, TALENTS, TALENTS_BY_TREE
 from wiki_importer import sync_wiki
+from skill_checks import CHECK_DEFINITIONS, character_checks, roll_check
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -225,8 +226,8 @@ class TyrannyBot(commands.Bot):
 
 
 def restrict_commands(tree):
-    """The site owns gameplay; Discord only issues access links."""
-    allowed = {"админ", "регистрация", "персонаж", "удалить-персонажа", "старт-боя", "начать-бой"}
+    """The site owns character management; Discord provides links and checks."""
+    allowed = {"админ", "регистрация", "персонаж", "удалить-персонажа", "старт-боя", "начать-бой", "проверка"}
     for command in list(tree.get_commands()):
         if command.name not in allowed:
             tree.remove_command(command.name)
@@ -729,36 +730,31 @@ async def spellbook_command(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-@bot.tree.command(name="проверка", description="Выполнить процентную проверку навыка Тирании")
-@app_commands.choices(навык=[app_commands.Choice(name=value, value=value) for value in SKILLS])
-@app_commands.describe(сложность="Модификатор порога: отрицательный усложняет, положительный облегчает")
+@bot.tree.command(name="проверка", description="Проверка вне боя: характеристика + кубики d6")
+@app_commands.choices(навык=[app_commands.Choice(name=row['name'], value=row['name']) for row in CHECK_DEFINITIONS])
+@app_commands.describe(навык="Навык проверки персонажа", модификатор="Число к итогу броска: например +3 или -2")
 async def skill_check(
     interaction: discord.Interaction, навык: app_commands.Choice[str],
-    сложность: app_commands.Range[int, -100, 100] = 0,
+    модификатор: app_commands.Range[int, -1000, 1000] = 0,
 ):
     character = await require_character(interaction)
     if not character:
         return
-    base = character["skills"][навык.value]["value"]
-    threshold = max(1, min(100, base + сложность))
-    roll = random.randint(1, 100)
-    critical = roll <= max(1, threshold // 10)
-    fumble = roll >= 96 and roll > threshold
-    if critical:
-        result = "КРИТИЧЕСКИЙ УСПЕХ"
-        color = discord.Color.gold()
-    elif roll <= threshold:
-        result = "УСПЕХ"
-        color = discord.Color.green()
-    elif fumble:
-        result = "КРИТИЧЕСКАЯ НЕУДАЧА"
-        color = discord.Color.dark_red()
-    else:
-        result = "НЕУДАЧА"
-        color = discord.Color.red()
-    embed = discord.Embed(title=f'{навык.value} · {result}', color=color)
-    embed.description = f'**{character["name"]}** бросает **{roll}** против порога **{threshold}**.\nНавык: {base}; модификатор: {сложность:+d}.'
-    await interaction.response.send_message(embed=embed)
+    await interaction.response.defer(thinking=True)
+    checks = await character_checks(bot.db,character)
+    check = checks[навык.value]
+    result = roll_check(check,модификатор)
+    number = lambda value: f'{value:g}'.replace('.',',')
+    embed = discord.Embed(title=f'{навык.value} · {number(result["total"])}', color=BRONZE)
+    embed.description = (f'**{discord.utils.escape_markdown(character["name"])}**\n'
+        f'{check["attribute"]} **{number(check["attributeValue"])}** + **{check["diceCount"]}d6** '
+        f'{модификатор:+d} = **{number(result["total"])}**')
+    breakdown = ' + '.join(f'{source["name"]} {number(source["value"])} × 0,5' for source in check['sources'])
+    embed.add_field(name='Навык проверки',value=f'{breakdown} = **{number(check["value"])}**',inline=False)
+    dice_text = ', '.join(str(value) for value in result['rolls']) or 'Нет кубиков: навык ниже 10.'
+    embed.add_field(name='Результаты d6',value=dice_text[:1024],inline=False)
+    embed.set_footer(text='1d6 за каждые полные 10 навыка. Модификатор прибавляется к итогу. Результат оценивает мастер.')
+    await interaction.followup.send(embed=embed,allowed_mentions=discord.AllowedMentions.none())
 
 
 @bot.tree.command(name="каталог-обновить", description="Импортировать русские предметы и изображения с вики Тирании")

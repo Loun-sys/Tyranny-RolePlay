@@ -33,6 +33,9 @@ class RegistrationNetworkTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(data['config']['backgrounds']), 7)
         self.assertEqual(len(data['config']['specializations']), 10)
         self.assertEqual(len(data['config']['skills']), 22)
+        self.assertEqual(len(data['config']['checkSkills']['definitions']), 5)
+        self.assertEqual(data['config']['checkSkills']['pointsPerDie'], 10)
+        self.assertNotIn('Влияние', data['config']['skills'])
 
     async def test_invalid_link_returns_readable_gone_not_network_failure(self):
         self.db.registration_token_owner.return_value = None

@@ -14,7 +14,7 @@ def remote(name, kind=discord.AppCommandType.chat_input):
 class DiscordCommandSyncTests(unittest.IsolatedAsyncioTestCase):
     def tree(self):
         commands = [SimpleNamespace(name=n) for n in
-                    ['админ', 'регистрация', 'персонаж', 'удалить-персонажа', 'старт-боя', 'начать-бой', 'бой']]
+                    ['админ', 'регистрация', 'персонаж', 'удалить-персонажа', 'старт-боя', 'начать-бой', 'проверка', 'бой']]
         canonical = [remote(c.name) for c in commands if c.name != 'бой']
         return Mock(get_commands=Mock(return_value=commands),
                     sync=AsyncMock(return_value=canonical), fetch_commands=AsyncMock(return_value=[]))
@@ -22,7 +22,7 @@ class DiscordCommandSyncTests(unittest.IsolatedAsyncioTestCase):
     async def test_no_guild_only_publishes_the_allowlisted_global_set(self):
         tree = self.tree()
         result = await sync_application_commands(tree)
-        self.assertEqual(len(result), 6)
+        self.assertEqual(len(result), 7)
         tree.remove_command.assert_called_once_with('бой')
         tree.sync.assert_awaited_once_with()
         tree.fetch_commands.assert_not_awaited()

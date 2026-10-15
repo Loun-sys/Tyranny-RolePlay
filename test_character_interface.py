@@ -36,7 +36,7 @@ class CharacterInterfaceTests(unittest.TestCase):
         commands = list(bot.bot.tree.get_commands())
         try:
             bot.restrict_commands(bot.bot.tree)
-            self.assertEqual({c.name for c in bot.bot.tree.get_commands()}, {'админ','регистрация','персонаж','удалить-персонажа','старт-боя','начать-бой'})
+            self.assertEqual({c.name for c in bot.bot.tree.get_commands()}, {'админ','регистрация','персонаж','удалить-персонажа','старт-боя','начать-бой','проверка'})
         finally:
             for command in commands:
                 bot.bot.tree.add_command(command, override=True)

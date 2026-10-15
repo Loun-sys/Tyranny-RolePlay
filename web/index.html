@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css?v=20261005-1">
   <link rel="stylesheet" href="responsive.css?v=20261005-1">
   <link rel="stylesheet" href="game-items.css?v=20261011-1">
+  <link rel="stylesheet" href="skill-checks.css?v=20261015-1">
 </head>
 <body class="creator-page">
   <header class="hero">
@@ -56,8 +57,9 @@
       </section>
 
       <section class="wizard-step" data-screen="5" hidden>
-        <div class="screen-title"><small>НАВЫКИ</small><h2>Распределите подготовку</h2><p>База навыка вычисляется из характеристик; к ней добавляются бонусы класса и двух специализаций. Распределите ещё 20 очков.</p></div>
+        <div class="screen-title"><small>НАВЫКИ</small><h2>Распределите подготовку</h2><p>База навыка вычисляется из характеристик; к ней добавляются бонусы класса и двух специализаций. Распределите ещё 20 очков.</p><p><a class="creation-check-link" href="#creation-check-skills">Влияние, запугивание и остальные проверки — расчёт ниже ↓</a></p></div>
         <div class="choice-stage stats-stage"><div class="allocation"><div class="allocation-title"><div><p>ДОСТУПНЫЕ ОЧКИ</p><h2>Навыки</h2></div><div id="skill-counter" class="counter" tabindex="0" aria-describedby="glossary-tooltip"></div></div><div id="skills" class="rows skills"></div></div><aside id="skill-detail" class="lore-panel"></aside></div>
+        <div id="creation-check-skills"></div>
       </section>
 
       <section class="wizard-step" data-screen="6" hidden>
@@ -72,8 +74,9 @@
   <dialog id="tooltip" class="tooltip"><button id="tooltip-close" aria-label="Закрыть">×</button><p>АРХИВНАЯ СПРАВКА</p><h2 id="tooltip-title"></h2><div id="tooltip-text"></div></dialog>
   <div id="glossary-tooltip" class="glossary-tooltip" role="tooltip" hidden><b></b><p></p></div>
   <footer><b>ТИРАНИЯ</b><span>Тут был Лоун и его братишка Codex</span></footer>
-  <script src="game-help.js?v=20261012-3" defer></script>
+  <script src="game-help.js?v=20261015-1" defer></script>
   <script src="registration-network.js?v=20261005-1" defer></script>
-  <script src="app.js?v=20261012-3" defer></script>
+  <script src="skill-checks.js?v=20261015-1" defer></script>
+  <script src="app.js?v=20261015-1" defer></script>
 </body>
 </html>

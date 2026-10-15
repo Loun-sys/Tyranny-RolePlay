@@ -30,6 +30,7 @@ from training_combat import TrainingSession
 from sigil_data import SPELL_NAMES, SIGIL_LIBRARY, SIGILS_BY_KEY, sigil_key_from_scroll_url, validate_formula
 from official_localization import official_spell_details
 from campaign_store import CampaignStore
+from skill_checks import configuration as check_configuration, check_skills
 
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
@@ -69,6 +70,7 @@ def _configuration() -> dict[str, Any]:
         "attributes": list(ATTRIBUTES), "backgrounds": list(BACKGROUNDS),
         "specializations": list(SPECIALIZATIONS), "skills": list(SKILLS),
         "attributeTotal": ATTRIBUTE_TOTAL, "skillPoints": SKILL_POINTS,
+        "checkSkills": check_configuration(),
         "attributeMin": 8, "attributeMax": 18,
         "specializationDetails": {
             name: {
@@ -358,6 +360,7 @@ def _derived(character: dict[str, Any], inventory: list[dict[str, Any]]) -> dict
         "equipmentBonuses": [{"item":item['name'],"bonuses":__import__('item_effects').equip_bonuses(item)} for item in active_items],
     }
     finalize_recovery(result)
+    result['checkSkills'] = check_skills(attrs, skills)
     result['artifactAbilities'] = [with_recovery(action, result) for action in result['artifactAbilities']]
     return result
 
@@ -414,6 +417,7 @@ async def _dashboard(request: web.Request, character_id: int) -> dict[str, Any]:
             })
     return {
         "character": character,
+        "checkSkillRules": check_configuration(),
         "wallet": await CampaignStore(db).wallet(character_id),
         "inventory": inventory,
         "capacity": await db.inventory_capacity(character_id),
@@ -1028,7 +1032,7 @@ async def portrait_media(request: web.Request) -> web.StreamResponse:
 
 
 async def health(_: web.Request) -> web.Response:
-    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-3", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6"})
+    return web.json_response({"ok": True, "service": "tyranny-registration", "combatRulesVersion":"20261012-2", "equipmentRecoveryVersion":"20261012-2", "characterToolsVersion":"20261005-1", "sharedBattlesVersion":"20261011-1", "marketVersion":"20261011-3", "weaponStatsVersion":"20261011-1", "itemInspectionVersion":"20261011-1", "overviewVersion":"20261011-6", "skillChecksVersion":"20261015-1"})
 
 
 async def _player_maps(request,cid):

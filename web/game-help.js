@@ -53,7 +53,26 @@ const GameHelp=(()=>{
   for(const [a,b] of Object.entries(aliases))if(entries.has(key(b)))terms.add(a);
   pattern=new RegExp(`(^|[^А-Яа-яЁёA-Za-z0-9])(${[...terms].sort((a,b)=>b.length-a.length).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[её]/gi,'[её]')).join('|')})(?=$|[^А-Яа-яЁёA-Za-z0-9])`,'giu');
  }
- function position(){if(!active?.isConnected){hide();return}const rect=active.getBoundingClientRect(),width=Math.min(400,document.documentElement.clientWidth-24);popup.style.width=width+'px';popup.style.maxHeight=Math.max(80,innerHeight-24)+'px';popup.style.left=Math.max(12,Math.min(rect.left,document.documentElement.clientWidth-width-12))+'px';const height=popup.offsetHeight;popup.style.top=(rect.bottom+9+height<=innerHeight-12?rect.bottom+9:Math.max(12,rect.top-height-9))+'px'}
+ function position(){
+  if(!active?.isConnected){hide();return}
+  // Child icons/text share their control's safe rectangle: a large help card
+  // must not cover the button that the pointer is about to select.
+  const anchor=active.closest('button,input,select,summary,[role="button"]')||active;
+  const rect=anchor.getBoundingClientRect(),screen=document.documentElement.clientWidth,width=Math.min(400,screen-24);
+  popup.style.width=width+'px';popup.style.maxHeight=Math.max(80,innerHeight-24)+'px';popup.style.pointerEvents='';
+  let left=Math.max(12,Math.min(rect.left,screen-width-12)),height=popup.offsetHeight,top;
+  if(rect.bottom+9+height<=innerHeight-12)top=rect.bottom+9;
+  else if(rect.top-height-9>=12)top=rect.top-height-9;
+  else if(rect.left-width-9>=12){left=rect.left-width-9;top=rect.top}
+  else if(rect.right+9+width<=screen-12){left=rect.right+9;top=rect.top}
+  else{
+   const above=Math.max(0,rect.top-21),below=Math.max(0,innerHeight-rect.bottom-21),available=Math.max(above,below);
+   popup.style.maxHeight=Math.max(48,available)+'px';height=popup.offsetHeight;
+   top=below>=above?rect.bottom+9:rect.top-height-9;
+   if(available<48)popup.style.pointerEvents='none';
+  }
+  popup.style.left=left+'px';popup.style.top=Math.max(12,Math.min(top,innerHeight-height-12))+'px';
+ }
  function show(target,title,text){
   clearTimeout(timer);active?.removeAttribute('aria-describedby');active=target;
   if(!popup){popup=document.createElement('div');popup.id='game-help-popover';popup.className='game-help-popover';popup.setAttribute('role','tooltip');popup.setAttribute('popover','manual');document.body.append(popup)}

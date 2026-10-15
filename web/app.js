@@ -207,7 +207,10 @@ function renderAttributes() {
 
 function skillBase(name) {
   const [primary, secondary] = state.config.skillAttributes[name];
-  return Math.round(state.attributes[primary] * 1.5 + state.attributes[secondary] * 0.5);
+  const total=state.attributes[primary]*1.5+state.attributes[secondary]*0.5,lower=Math.floor(total);
+  // Match Database._skill_base / Python round at exact halves, so creation
+  // checks do not shift by half a point after the character is saved.
+  return total-lower===.5?lower+Math.abs(lower%2):Math.round(total);
 }
 
 function sourceBonuses(name) {
@@ -233,6 +236,8 @@ function skillRow(name) {
 
 function renderSkills() {
   const used = Object.values(state.skills).reduce((sum, value) => sum + value, 0);
+  const checkTarget=$('#creation-check-skills');
+  if(checkTarget&&typeof SkillChecks!=='undefined')checkTarget.innerHTML=SkillChecks.render(SkillChecks.calculate(state.config.checkSkills,state.attributes,Object.fromEntries(state.config.skills.map(name=>[name,skillTotal(name)]))),{preview:true});
   const left = state.config.skillPoints - used;
   $("#skill-counter").className = `counter ${left === 0 ? "done" : left < 0 ? "over" : ""}`;
   $("#skill-counter").innerHTML = `<b>${left}</b><span>/ ${state.config.skillPoints}</span><small>${left === 0 ? "РАСПРЕДЕЛЕНО" : "ОСТАЛОСЬ"}</small>`;

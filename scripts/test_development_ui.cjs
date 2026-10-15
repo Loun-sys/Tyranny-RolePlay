@@ -3,7 +3,7 @@ const source=fs.readFileSync('web/archive.js','utf8'),panel={innerHTML:''};
 const skills=Object.fromEntries(Array.from({length:22},(_,i)=>['Навык '+i,{value:40-i,experience:i}]));
 const character={attributes:{Сила:18,Искусность:10},attribute_points:2,skills,talents:[{name:'Выстрел в сердце'}]};
 const ctx=vm.createContext({$:()=>panel,esc:v=>String(v??'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])),localTalentIcon:v=>v,tip:(n,t)=>`<span title="${t}">${n}</span>`,roundText:v=>`${v} раунда`,tab:'development',data:{character,attributeDetails:{},talentLibrary:[],learnedTalents:[{name:'Прицельный выстрел',legacyName:'Выстрел в сердце',icon_url:'assets/talent-icons/test.png',description:'Нормальный текст, не колонка под иконку.',mechanics:{type:'Активная способность',effects:['+12 к точности','Кровотечение'],details:'Дальность: 12 м'}}],derived:{defenses:{Выносливость:24,Воля:20,Магия:20,Парирование:26,Уклонение:26},attack:{accuracy:21,damageMin:12,damageMax:16,criticalChance:2},armor:0,deflection:1,cooldownPercent:0,equipmentRecovery:.17}}});
-for(const name of ['statsBox','skillsBox','talentMechanics','abilitiesBox','derivedBox','talentIcon'])vm.runInContext(source.split('\n').find(line=>line.startsWith(`function ${name}(`)),ctx);
+for(const name of ['statsBox','skillsBox','talentMechanics','abilitiesBox','derivedBox','talentIcon','checkSkillsBox'])vm.runInContext(source.split('\n').find(line=>line.startsWith(`function ${name}(`)),ctx);
 const start=source.indexOf('function renderTab('),end=source.indexOf('\n\n',start);vm.runInContext(source.slice(start,end),ctx);
 ctx.renderTab();const html=panel.innerHTML;
 assert(html.includes('development-top'));assert(html.includes('Остальные навыки (14)'));
