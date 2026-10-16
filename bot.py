@@ -28,6 +28,7 @@ from talent_data import TALENT_BY_NAME, TALENTS, TALENTS_BY_TREE
 from wiki_importer import sync_wiki
 from skill_checks import CHECK_DEFINITIONS, character_checks, roll_check
 from discord_servers import game_guild_ids
+from discord_permissions import master_user_ids
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -37,6 +38,7 @@ DATA_DIR = Path(os.getenv("TYRANNY_DATA_DIR", "data"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 TEST_GUILD_ID = int(os.getenv("DISCORD_GUILD_ID", "0") or 0)
 GAME_GUILD_IDS = game_guild_ids()
+MASTER_USER_IDS = master_user_ids()
 MASTER_ROLE_IDS = {
     int(value.strip()) for value in os.getenv("TYRANNY_MASTER_ROLE_IDS", "").split(",") if value.strip().isdigit()
 }
@@ -70,6 +72,10 @@ def is_master(interaction: discord.Interaction) -> bool:
     member = interaction.user
     if not isinstance(member, discord.Member):
         return False
+    if interaction.guild_id is None or member.guild.id != interaction.guild_id:
+        return False
+    if interaction.guild_id in GAME_GUILD_IDS and member.id in MASTER_USER_IDS:
+        return True
     return member.guild_permissions.administrator or member.guild_permissions.manage_guild or any(
         role.id in MASTER_ROLE_IDS for role in member.roles
     )
