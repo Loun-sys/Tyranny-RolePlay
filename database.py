@@ -18,6 +18,7 @@ from constants import (
 )
 from localization import localize_game_text, wiki_category_icon
 from sigil_data import SIGILS_BY_KEY, sigil_key_from_scroll_url, starting_sigils_and_spells
+from inventory_rules import CONSUMABLE_CATEGORIES, STACKABLE_CATEGORIES, split_consumable_stacks, SINGLE_CONSUMABLE_TRIGGERS
 
 
 SCHEMA = """
@@ -390,6 +391,7 @@ class Database:
                 (SELECT id FROM item_catalog WHERE category='Броня') AND equipped_slot IN ('Голова','Торс','Руки','Ноги')""")
             await db.commit()
         from master_update import apply_master_update
+        await self.normalize_consumable_inventory()
         await apply_master_update(self,int(__import__('os').getenv('DISCORD_GUILD_ID','0') or 0))
         await self.ensure_starting_sigils()
         if spell_slots_added:
@@ -537,6 +539,8 @@ class Database:
 
     @staticmethod
     def _item_consumes_slot(name: str, category: str, weight: float, equipped_slot: str | None = None) -> bool:
+        if category in CONSUMABLE_CATEGORIES:
+            return not equipped_slot or equipped_slot=='Мастерская'
         tiny = ("чернил", "перо", "ключ", "руна", "самоцвет", "записка")
         return (
             (not equipped_slot or equipped_slot=='Мастерская') and category not in {"Материалы", "Сигилы"}
@@ -1204,7 +1208,7 @@ class Database:
             if not rows:
                 return False
             item_id, category = int(rows[0]["id"]), rows[0]["category"]
-            stackable = category in {"Расходуемые предметы", "Зелья", "Еда", "Материалы"}
+            stackable = category in STACKABLE_CATEGORIES
             existing = await db.execute_fetchall(
                 "SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL", (character_id, item_id)
             )
@@ -1247,7 +1251,7 @@ class Database:
             if not rows:
                 return False
             item_id, category = int(rows[0]["id"]), str(rows[0]["category"])
-            stackable = category in {"Расходуемые предметы", "Зелья", "Еда", "Материалы", "Сигилы"}
+            stackable = category in STACKABLE_CATEGORIES
             if stackable:
                 existing = await db.execute_fetchall(
                     "SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL",
@@ -1283,6 +1287,14 @@ class Database:
             await db.commit()
             return True
 
+    async def normalize_consumable_inventory(self):
+        async with self.connect() as db:
+            await db.execute('BEGIN IMMEDIATE')
+            count=await split_consumable_stacks(db)
+            await db.commit()
+            await db.executescript(SINGLE_CONSUMABLE_TRIGGERS)
+            return count
+
     async def inventory(self, character_id: int) -> list[dict[str, Any]]:
         async with self.connect() as db:
             rows = await db.execute_fetchall(
@@ -1308,13 +1320,15 @@ class Database:
             if slot.startswith("Быстрый предмет") and int(slot.rsplit(" ", 1)[1]) > limits["quickSlots"]:
                 return False, "Дополнительные быстрые ячейки открывает талант «Патронташ»."
             rows = await db.execute_fetchall(
-                """SELECT inventory.id,item_catalog.category,item_catalog.hands FROM inventory
+                """SELECT inventory.id,inventory.quantity,item_catalog.category,item_catalog.hands FROM inventory
                    JOIN item_catalog ON item_catalog.id=inventory.item_id
                    WHERE inventory.id=? AND inventory.character_id=? AND COALESCE(inventory.equipped_slot,'')!='Мастерская'""", (inventory_id, character_id)
             )
             if not rows:
                 return False, "Предмет не найден в инвентаре."
             category = rows[0]["category"]
+            if slot.startswith('Быстрый предмет') and rows[0]['quantity']!=1:
+                return False,'В быстрый слот помещается только один расходник.'
             if category=='Щиты' and slot.startswith('Оружие') and 'правая рука' in slot:
                 return False,'Щит экипируется в левую руку.'
             if slot.startswith("Оружие") and category not in {

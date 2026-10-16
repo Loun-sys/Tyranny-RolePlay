@@ -7,6 +7,7 @@ request=async function(path,options={}){
   const opts={...options};
   if(opts.body)opts.body=JSON.stringify({...JSON.parse(opts.body),revision:sharedBattle?.revision});
   const j=await requestBeforeBattle(`/api/portal/${encodeURIComponent(token)}/battles/${sharedBattleId}`,opts);
+  if(Array.isArray(j.inventory)){data.inventory=j.inventory;if(j.capacity)data.capacity=j.capacity}
   sharedBattle=j.battle;return {...j,training:j.battle.training||{active:false}};
  }
  return requestBeforeBattle(path,options);

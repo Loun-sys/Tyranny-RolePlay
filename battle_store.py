@@ -116,8 +116,9 @@ class BattleStore:
                 (json.dumps(state,ensure_ascii=False),row['status'],row['id'],row['revision']))
             if cur.rowcount!=1:raise ValueError('Бой изменился. Обновите экран и повторите действие.')
             for inv_id,count,cid in inventory_deltas or []:
-                items=await c.execute_fetchall('SELECT quantity FROM inventory WHERE id=? AND character_id=?',(inv_id,cid))
-                if not items or items[0]['quantity']<count:raise ValueError('Расходник уже использован или передан.')
+                items=await c.execute_fetchall('SELECT quantity,equipped_slot FROM inventory WHERE id=? AND character_id=?',(inv_id,cid))
+                from inventory_rules import prepared_consumable
+                if not items or not prepared_consumable(dict(items[0])) or count!=1:raise ValueError('Расходник уже использован, передан или снят с быстрого слота.')
                 if items[0]['quantity']==count:await c.execute('DELETE FROM inventory WHERE id=?',(inv_id,))
                 else:await c.execute('UPDATE inventory SET quantity=quantity-? WHERE id=?',(count,inv_id))
             if row['status']!='lobby':
@@ -253,6 +254,7 @@ class BattleStore:
         from combat_actor_refs import remap
         s=row['state'];t=s['tokens'][key];actor,derived,inventory,spells,limits=profiles[key]
         engine=BattleEngine(t.get('characterId',0));engine.initialized=True;engine.custom_map=s['map']
+        engine.shared_battle=True
         points=lambda field:{(p['x'],p['y']) for p in s['map'].get(field,[])}
         engine.grid=TacticalGrid(s['map']['width'],s['map']['height'],points('blocked'),points('sightBlocked'),points('cover'))
         engine.player_position=(t['x'],t['y']);engine.player_health=t['health'];engine.player_health_max=t['healthMax'];engine.player_base_health_max=derived['healthMax'];engine.token_movement=t.get('movement',5)

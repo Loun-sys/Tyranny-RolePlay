@@ -9,7 +9,7 @@ class AbilityResponseTests(unittest.IsolatedAsyncioTestCase):
     async def test_potion_modifiers_visible_in_same_response(self):
         from types import SimpleNamespace
         from consumables import virtual_equipment
-        c=character();s=TrainingSession(1);i=item('IT_CONS_PotionOfHeroes');i.update(inventory_id=1,quantity=1);s.consumable_inventory=[i]
+        c=character();s=TrainingSession(1);i=item('IT_CONS_PotionOfHeroes');i.update(inventory_id=1,quantity=1,equipped_slot='Быстрый предмет 1');s.consumable_inventory=[i]
         s.view(c,_derived(c,[]),[],2)
         async def snapshot(*args):return c,[i]+virtual_equipment(s.conditions.get('player',{}),s.round_number),[],{'weaponSets':2}
         request=SimpleNamespace(app={'training_locks':{},'training_sessions':{1:s}})
@@ -50,24 +50,24 @@ class AbilityRulesTests(unittest.TestCase):
         with patch('training_combat.random.randint',return_value=100):s.act({'kind':'ability','name':'Шквал ударов'},c,_derived(c,[]),[],2)
         self.assertEqual(s.attacks,2)
     def test_self_consumable_free_even_after_action_spent(self):
-        c=character();s=TrainingSession(1);i=item('IT_CONS_PotionOfHeroes');i.update(inventory_id=1,quantity=1);s.consumable_inventory=[i]
+        c=character();s=TrainingSession(1);i=item('IT_CONS_PotionOfHeroes');i.update(inventory_id=1,quantity=1,equipped_slot='Быстрый предмет 1');s.consumable_inventory=[i]
         s.view(c,_derived(c,[]),[],2);s.action_available=False
         result=s.act({'kind':'item','name':'1','targetId':'player'},c,_derived(c,[]),[],2)
         self.assertFalse(s.action_available);self.assertEqual(i['quantity'],1)
         self.assertIn('Предмет',result['result'])
     def test_neighbor_consumable_spends_action_and_heals_target(self):
-        c=character();s=TrainingSession(1);i=item('IT_CONS_HealingPotionCommon');i.update(inventory_id=1,quantity=1);s.consumable_inventory=[i]
+        c=character();s=TrainingSession(1);i=item('IT_CONS_HealingPotionCommon');i.update(inventory_id=1,quantity=1,equipped_slot='Быстрый предмет 1');s.consumable_inventory=[i]
         s.view(c,_derived(c,[]),[],2);s.player_position=(9,4);s.target_healths['dummy']=20
         s.act({'kind':'item','name':'1','targetId':'dummy'},c,_derived(c,[]),[],2)
         self.assertFalse(s.action_available);self.assertGreater(s.target_healths['dummy'],20)
         self.assertEqual(s.player_health,c['health'])
     def test_distant_consumable_rejected_without_consumption(self):
-        c=character();s=TrainingSession(1);i=item('IT_CONS_HealingPotionCommon');i.update(inventory_id=1,quantity=1);s.consumable_inventory=[i]
+        c=character();s=TrainingSession(1);i=item('IT_CONS_HealingPotionCommon');i.update(inventory_id=1,quantity=1,equipped_slot='Быстрый предмет 1');s.consumable_inventory=[i]
         s.view(c,_derived(c,[]),[],2)
         with self.assertRaises(ValueError):s.act({'kind':'item','name':'1','targetId':'dummy'},c,_derived(c,[]),[],2)
         self.assertTrue(s.action_available);self.assertFalse(getattr(s,'consumable_used',{}))
     def test_neighbor_consumable_requires_unspent_action(self):
-        c=character();s=TrainingSession(1);i=item('IT_CONS_HealingPotionCommon');i.update(inventory_id=1,quantity=1);s.consumable_inventory=[i]
+        c=character();s=TrainingSession(1);i=item('IT_CONS_HealingPotionCommon');i.update(inventory_id=1,quantity=1,equipped_slot='Быстрый предмет 1');s.consumable_inventory=[i]
         s.view(c,_derived(c,[]),[],2);s.player_position=(9,4);s.target_healths['dummy']=20;s.action_available=False
         with self.assertRaises(ValueError):s.act({'kind':'item','name':'1','targetId':'dummy'},c,_derived(c,[]),[],2)
         self.assertEqual(s.target_healths['dummy'],20);self.assertFalse(getattr(s,'consumable_used',{}))

@@ -143,7 +143,7 @@ class EquipmentRecoveryTests(unittest.TestCase):
 
     def test_consumable_cooldown_does_not_change_self_or_adjacent_action_cost(self):
         source=copy.deepcopy(catalog_texts()[0]['IT_CONS_HealingPotionCommon'])
-        source.update(inventory_id=7,quantity=3,image_url='')
+        source.update(inventory_id=7,quantity=1,image_url='',equipped_slot='Быстрый предмет 1')
         for recipient,free in [('player',True),('enemy',False)]:
             c,d,s=self.battle()
             s.consumable_inventory=[source]

@@ -25,7 +25,7 @@ SPECIALIZATION_STARTS={
  'Заклинания льда':[('WPN_STF_WD_Staff_Starting_Frost',1)],
  'Заклинания истощения':[('WPN_STF_WD_Staff_Starting_Weakness',1)],
 }
-STACKABLE={'Расходуемые предметы','Зелья','Еда','Материалы','Сигилы'}
+from inventory_rules import STACKABLE_CATEGORIES as STACKABLE
 
 def starting_items(background,specializations):
     """Class supplies plus both distinct specialization weapon kits."""

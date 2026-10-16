@@ -1544,6 +1544,8 @@ class TrainingSession:
             item=next((i for i in getattr(self,'consumable_inventory',[]) if str(i['inventory_id'])==name),None)
             used=getattr(self,'consumable_used',{})
             if not item or int(item['quantity'])<=used.get(name,0):raise ValueError('Расходник недоступен.')
+            from inventory_rules import prepared_consumable
+            if not prepared_consumable(item):raise ValueError('Поместите один расходник в быстрый слот перед применением в бою.')
             info=profile(item)
             if not info:raise ValueError('Этот предмет не является расходником.')
             info=with_recovery(info,derived)
@@ -1566,7 +1568,7 @@ class TrainingSession:
                 self.player_health=apply(item,self.conditions.setdefault('player',{}),self.round_number,self.player_health,self.player_health_max)
             used[name]=used.get(name,0)+1;self.consumable_used=used
             self.cooldowns['item:'+name]=self.round_number+info['cooldown']+1
-            line=f"«{item['name']}»: {info['description']} (тренировка — настоящий предмет не расходуется)."
+            line=f"«{item['name']}»: {info['description']}"+(' (тренировка — настоящий предмет не расходуется).' if not getattr(self,'shared_battle',False) else '.')
             self.log.append(line)
             return {'result':'Предмет применён','damage':0,'line':line}
         if kind == "select_target":
@@ -1840,14 +1842,16 @@ class TrainingSession:
                     "cells": [{"x": selected_target["x"], "y": selected_target["y"]}]}]
         from consumables import profile
         for item in getattr(self,'consumable_inventory',[]):
+            from inventory_rules import prepared_consumable
+            if not prepared_consumable(item):continue
             info=profile(item)
             if not info:continue
             info=with_recovery(info,derived)
             used=getattr(self,'consumable_used',{}).get(str(item['inventory_id']),0)
             if info and int(item['quantity'])>used:
-                actions.append({'kind':'item','name':str(item['inventory_id']),'displayName':item['name'],
+                actions.append({'kind':'item','name':str(item['inventory_id']),'displayName':item['name']+' · '+item['equipped_slot'],
                     'cooldown':info['cooldown'],'cooldownBase':info['cooldownBase'],'equipmentRecovery':info['equipmentRecovery'],
-                    'description':info['description']+f" · На себя: без действия. На соседнюю цель (1 клетка): основное действие. Осталось в тренировке: {int(item['quantity'])-used}",
+                    'description':info['description']+f" · {item['equipped_slot']}: 1 предмет. После применения слот освободится. На себя: без действия. На соседнюю цель (1 клетка): основное действие.",
                     'icon':item['image_url'],'targeting':'unit','range':1,'freeOnSelf':True,'includeSelf':info['targeting']=='self','requiresFallen':info['targeting']=='ally',
                     'remaining':self.remaining('item:'+str(item['inventory_id'])), 'disabledReason':'','limitation':'','cells':[]})
         for ability in derived.get('artifactAbilities',[]):

@@ -57,7 +57,7 @@ class ConsumableRulesTests(unittest.TestCase):
         self.assertTrue(any(s['AffectsStat']==25 for s in e))
         self.assertEqual(e[0]['Duration'],30)
     def test_training_simulates_stock_without_changing_owned_quantity(self):
-        i=item('IT_CONS_PotionOfHeroes');i.update(inventory_id=1,quantity=1)
+        i=item('IT_CONS_PotionOfHeroes');i.update(inventory_id=1,quantity=1,equipped_slot='Быстрый предмет 1')
         session=TrainingSession(1);session.consumable_inventory=[i];c=character();d=_derived(c,[])
         session.view(c,d,[],2)
         session.act({'kind':'item','name':'1'},c,d,[],2)

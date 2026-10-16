@@ -136,6 +136,7 @@ class SharedBattleTests(unittest.IsolatedAsyncioTestCase):
             cur=await c.execute('INSERT INTO item_catalog(name,category,properties) VALUES(?,?,?)',(potion['name'],'Зелья',json.dumps(potion['properties'],ensure_ascii=False)))
             inv=await c.execute('INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,1)',(1,cur.lastrowid));inv_id=inv.lastrowid
             await c.commit()
+        await self.db.equip(1,inv_id,'Быстрый предмет 1')
         await self.start();await self.edit(operation='turn',tokenId='pc_1')
         await self.store.action(self.ident,1,cid=1,payload={'kind':'item','name':str(inv_id),'targetId':'pc_1','x':1,'y':1})
         row=await self.store.get(self.ident,1,99)
@@ -155,19 +156,19 @@ class SharedBattleTests(unittest.IsolatedAsyncioTestCase):
             row=await self.store.get(self.ident,1,99);await self.edit(operation='act',actorId=row['state']['currentId'],kind='end_turn')
         self.assertEqual((await self.store.get(self.ident,1,99))['state']['tokens']['pc_1']['health'],96)
 
-    async def test_real_consumable_stack_is_not_subtracted_twice_and_master_spends_it(self):
+    async def test_two_prepared_consumables_are_independent_and_master_spends_second(self):
         from test_consumables import item
         potion=item('IT_CONS_PotionOfHeroes')
         async with self.db.connect() as c:
             cur=await c.execute('INSERT INTO item_catalog(name,category,properties) VALUES(?,?,?)',(potion['name'],'Зелья',json.dumps(potion['properties'],ensure_ascii=False)))
-            inv=await c.execute('INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,2)',(1,cur.lastrowid));inv_id=inv.lastrowid
+            inv=await c.execute("INSERT INTO inventory(character_id,item_id,quantity,equipped_slot) VALUES(?,?,1,'Быстрый предмет 1')",(1,cur.lastrowid));inv_id=inv.lastrowid
+            second=await c.execute("INSERT INTO inventory(character_id,item_id,quantity,equipped_slot) VALUES(?,?,1,'Быстрый предмет 2')",(1,cur.lastrowid));second_id=second.lastrowid
             await c.commit()
         await self.start();await self.edit(operation='turn',tokenId='pc_1')
         await self.store.action(self.ident,1,cid=1,payload={'kind':'item','name':str(inv_id),'targetId':'pc_1','x':1,'y':1})
         self.assertEqual((await self.db.inventory(1))[0]['quantity'],1)
-        # Reset only the cooldown to test another use without waiting for its original duration.
-        row=await self.store.get(self.ident,1,99);row['state']['personal']['pc_1']['cooldowns']={};await self.store._save(row)
-        await self.edit(operation='act',actorId='pc_1',kind='item',name=str(inv_id),targetId='pc_1',x=1,y=1)
+        self.assertEqual((await self.db.inventory(1))[0]['inventory_id'],second_id)
+        await self.edit(operation='act',actorId='pc_1',kind='item',name=str(second_id),targetId='pc_1',x=1,y=1)
         self.assertFalse(await self.db.inventory(1))
 
     async def test_npc_ability_runs_same_executor_and_spends_own_action(self):

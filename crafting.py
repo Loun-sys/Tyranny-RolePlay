@@ -195,8 +195,10 @@ class CraftingStore:
             capacity=min(40,8+(await self.db.effective_skill_in_connection(c,cid,'Атлетика'))//5)
             used=sum(self.db._item_consumes_slot(i['name'],i['category'],i['weight'],i['equipped_slot']) for i in inventory)
             for out in job['outputs']:
-                existing=await c.execute_fetchall('SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL',(cid,out['itemId']))
-                if existing:await c.execute('UPDATE inventory SET quantity=quantity+? WHERE id=?',(out['quantity'],existing[0]['id']))
-                else:
-                    if used>=capacity:raise ValueError('Освободите место в инвентаре, чтобы забрать работу.')
-                    await c.execute('INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,?)',(cid,out['itemId'],out['quantity']));used+=1
+                # Every bottle/food/poison occupies its own bag slot, even if
+                # an identical consumable is already present in the inventory.
+                needed=out['quantity']
+                if used+needed>capacity:raise ValueError('Освободите место в инвентаре для каждого изготовленного расходника.')
+                await c.executemany('INSERT INTO inventory(character_id,item_id,quantity) VALUES(?,?,1)',
+                                    [(cid,out['itemId'])]*needed)
+                used+=needed

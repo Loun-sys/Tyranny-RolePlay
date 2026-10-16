@@ -37,7 +37,12 @@ async def player_battles(request):
             for token in result['training']['grid']['tokens']:
                 token['portraitUrl']=battle_portrait(request,token.get('portraitUrl',''))
             result['training']['character']['portraitUrl']=battle_portrait(request,result['training']['character'].get('portraitUrl',''))
-        return web.json_response({'ok':True,'battle':result,'message':'Бой обновлён.'})
+        response={'ok':True,'battle':result,'message':'Бой обновлён.'}
+        if request.method=='POST' and p.get('kind')=='item':
+            from registration_api import _clean_inventory
+            response['inventory']=_clean_inventory(await request.app['db'].inventory(cid))
+            response['capacity']=await request.app['db'].inventory_capacity(cid)
+        return web.json_response(response)
     except (ValueError,TypeError,KeyError) as e:raise web.HTTPConflict(reason=str(e)) from e
 
 

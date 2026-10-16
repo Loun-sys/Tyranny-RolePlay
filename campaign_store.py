@@ -277,7 +277,8 @@ class CampaignStore:
                 balance=(await conn.execute_fetchall('SELECT copper FROM wallets WHERE character_id=?',(cid,)))[0]['copper']
                 if cost>balance: raise ValueError('Недостаточно колец.')
                 if item['stock']!=-1 and quantity>item['stock']: raise ValueError('Недостаточный запас в лавке.')
-                stackable=item['category'] in {'Расходуемые предметы','Зелья','Еда','Материалы','Сигилы'}
+                from inventory_rules import STACKABLE_CATEGORIES
+                stackable=item['category'] in STACKABLE_CATEGORIES
                 existing=await conn.execute_fetchall('SELECT id FROM inventory WHERE character_id=? AND item_id=? AND equipped_slot IS NULL',(cid,ident))
                 inventory=await conn.execute_fetchall('SELECT item_catalog.name,item_catalog.category,item_catalog.weight,inventory.equipped_slot FROM inventory JOIN item_catalog ON item_catalog.id=item_id WHERE character_id=?',(cid,))
                 athletics=await conn.execute_fetchall("SELECT value FROM skills WHERE character_id=? AND name='Атлетика'",(cid,))

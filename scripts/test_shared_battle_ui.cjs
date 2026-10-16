@@ -1,7 +1,7 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const calls=[],intervals=[],panel={innerHTML:'',querySelector(){return null},querySelectorAll(){return []}},tabs={querySelector(){return null},insertAdjacentHTML(_,html){this.html=html}};
 const context=vm.createContext({q:new URLSearchParams(''),encodeURIComponent,token:'test',api:'test',data:{character:{name:'Hero'}},
- training:null,tab:'development',combatBusy:false,renderTab(){},renderTraining(){},request:async(path,opts)=>{calls.push([path,opts]);return {battle:{id:1,revision:2,status:'lobby',participants:{1:{name:'Hero',joined:true}},training:{active:true}}}},
+ training:null,tab:'development',combatBusy:false,renderTab(){},renderTraining(){},request:async(path,opts)=>{calls.push([path,opts]);return {battle:{id:1,revision:2,status:'lobby',participants:{1:{name:'Hero',joined:true}},training:{active:true}},...(context.inventorySnapshot?{inventory:context.inventorySnapshot,capacity:{used:0,capacity:8}}:{})}},
  document:{addEventListener(){},querySelector:s=>s==='#tabs'?tabs:null,activeElement:null},$:()=>panel,toast(){},esc:x=>String(x),setInterval(fn){intervals.push(fn)},animateTokenMovement(){}});
 vm.runInContext(fs.readFileSync('web/player-battle.js','utf8'),context);
 vm.runInContext('ensureBattleTab()',context);assert(tabs.html.includes('data-tab="battle"'));
@@ -14,6 +14,12 @@ async function main(){
  vm.runInContext('renderSharedBattle()',context);assert(panel.innerHTML.includes('сбор участников'));
  vm.runInContext('sharedBattleMode=false',context);
  await vm.runInContext('request("/api/portal/test/training/action")',context);assert(calls[1][0].endsWith('/training/action'));
+ context.inventorySnapshot=[{inventory_id:2,quantity:1,equipped_slot:'Быстрый предмет 2'}];
+ vm.runInContext('sharedBattleMode=true',context);
+ await vm.runInContext('request("/api/portal/test/training/action",{method:"POST",body:JSON.stringify({kind:"item",name:"1"})})',context);
+ assert.equal(context.data.inventory.length,1,'Spent quick-slot item is immediately removed from cached inventory');
+ assert.equal(context.data.inventory[0].inventory_id,2,'Second identical potion remains a separate item');
+ assert.equal(context.data.capacity.used,0);
  const admin=fs.readFileSync('web/admin-battles.js','utf8');
  for(const operation of ['place_player','add_npc','move','health','effect','remove_effect','order','turn','refresh_turn','start','finish','remove_token'])assert(admin.includes(operation),operation);
  assert(admin.includes('revision:masterBattle.revision'));

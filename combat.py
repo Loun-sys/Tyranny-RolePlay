@@ -16,6 +16,7 @@ from typing import Any, Callable
 import discord
 
 from constants import ABILITY_DETAILS
+from inventory_rules import prepared_consumable
 from sigil_data import spell_runtime_profile
 from tactical_grid import BASE_MOVEMENT, TACTICAL_MAPS, TacticalGrid, initiative_bonus
 
@@ -617,9 +618,9 @@ class BattleView(discord.ui.View):
     @discord.ui.button(label="Предмет", emoji="🧪", style=discord.ButtonStyle.secondary, row=1)
     async def item(self, interaction: discord.Interaction, _: discord.ui.Button):
         actor = self.session.current
-        usable = [item for item in actor.inventory if item.get("category") in {"Зелья", "Еда", "Расходуемые предметы"} and item.get("quantity", 0) > 0]
+        usable = [item for item in actor.inventory if item.get("category") in {"Зелья", "Еда", "Расходуемые предметы"} and prepared_consumable(item)]
         if not usable:
-            await interaction.response.send_message("В инвентаре нет доступных расходников.", ephemeral=True)
+            await interaction.response.send_message("В быстрых слотах нет доступных расходников.", ephemeral=True)
             return
         await interaction.response.send_message("Выберите предмет:", view=ItemView(self.session, usable), ephemeral=True)
 
@@ -663,14 +664,18 @@ class ItemSelect(discord.ui.Select):
         self.session = session
         self.rows = {str(item["inventory_id"]): item for item in rows}
         super().__init__(placeholder="Выберите расходник", options=[
-            discord.SelectOption(label=item["name"][:100], value=str(item["inventory_id"]), description=f"Количество: {item['quantity']}")
+            discord.SelectOption(label=item["name"][:100], value=str(item["inventory_id"]), description=item['equipped_slot'])
             for item in rows[:25]
         ])
 
     async def callback(self, interaction: discord.Interaction):
         actor = self.session.current
         item = self.rows[self.values[0]]
-        before = actor.health
+        current_item = next((row for row in await self.session.db.inventory(actor.character_id)
+                             if row['inventory_id'] == item['inventory_id']), None)
+        if not current_item or not prepared_consumable(current_item):
+            await interaction.response.send_message('Этот расходник уже использован или снят с быстрого слота.', ephemeral=True)
+            return
         from consumables import profile
         from consumable_store import use,states
         info=profile(item)
